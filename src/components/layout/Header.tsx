@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { NotificationBell } from "./NotificationBell";
 import { Menu, User, Settings, Calendar, MessageSquare, LogOut, Heart } from "lucide-react";
 
 export function Header() {
@@ -69,6 +70,8 @@ export function Header() {
           {isLoading ? (
             <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
           ) : isAuthenticated ? (
+            <>
+            <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
@@ -129,6 +132,7 @@ export function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
               <Link href="/login">
