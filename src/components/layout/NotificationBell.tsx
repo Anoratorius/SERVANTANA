@@ -9,12 +9,11 @@ import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Send, Loader2, ArrowLeft, MessageSquare } from "lucide-react";
+import { Bell, Send, Loader2, ArrowLeft, MessageSquare, X } from "lucide-react";
 import { toast } from "sonner";
 import { useMessageStream, StreamMessage } from "@/hooks/useMessageStream";
 
@@ -32,7 +31,7 @@ interface RecentMessage {
 }
 
 export function NotificationBell() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [unreadCount, setUnreadCount] = useState(0);
   const [recentMessages, setRecentMessages] = useState<RecentMessage[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -50,17 +49,23 @@ export function NotificationBell() {
 
     // Add to recent messages (keep last 5)
     setRecentMessages((prev) => {
-      const updated = [
-        {
-          id: message.id,
-          content: message.content,
-          createdAt: message.createdAt,
-          senderId: message.senderId,
-          sender: message.sender,
-        },
-        ...prev,
-      ].slice(0, 5);
-      return updated;
+      // Check if we already have a message from this sender, update it
+      const existingIndex = prev.findIndex(m => m.senderId === message.senderId);
+      const newMessage = {
+        id: message.id,
+        content: message.content,
+        createdAt: message.createdAt,
+        senderId: message.senderId,
+        sender: message.sender,
+      };
+
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = newMessage;
+        return updated;
+      }
+
+      return [newMessage, ...prev].slice(0, 5);
     });
 
     // Show toast notification with quick reply
@@ -68,6 +73,7 @@ export function NotificationBell() {
       description: message.content.length > 50
         ? message.content.substring(0, 50) + "..."
         : message.content,
+      duration: 5000,
       action: {
         label: "Reply",
         onClick: () => {
@@ -134,7 +140,8 @@ export function NotificationBell() {
     }
   }, [selectedMessage]);
 
-  const handleOpenChange = (open: boolean) => {
+  // Refetch unread count when dropdown closes
+  const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
     if (!open) {
       // Reset state when closing
@@ -143,13 +150,50 @@ export function NotificationBell() {
     }
   };
 
-  const handleSelectMessage = (message: RecentMessage) => {
+  // Mark message as read and select for reply
+  const handleSelectMessage = async (message: RecentMessage) => {
     setSelectedMessage(message);
+
+    // Mark as read in background
+    try {
+      await fetch(`/api/messages/${message.senderId}/read`, {
+        method: "POST",
+      });
+
+      // Decrease unread count
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+
+      // Remove from recent messages after marking as read
+      setRecentMessages((prev) =>
+        prev.filter((m) => m.senderId !== message.senderId)
+      );
+    } catch (error) {
+      console.error("Failed to mark as read:", error);
+    }
   };
 
   const handleBack = () => {
     setSelectedMessage(null);
     setReplyText("");
+  };
+
+  const handleDismiss = async (message: RecentMessage, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // Mark as read
+    try {
+      await fetch(`/api/messages/${message.senderId}/read`, {
+        method: "POST",
+      });
+
+      // Update UI
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+      setRecentMessages((prev) =>
+        prev.filter((m) => m.senderId !== message.senderId)
+      );
+    } catch (error) {
+      console.error("Failed to mark as read:", error);
+    }
   };
 
   const handleSendReply = async () => {
@@ -169,14 +213,6 @@ export function NotificationBell() {
       if (response.ok) {
         toast.success("Reply sent!");
         setReplyText("");
-
-        // Remove from recent messages and decrease unread count
-        setRecentMessages((prev) =>
-          prev.filter((m) => m.senderId !== selectedMessage.senderId)
-        );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-
-        // Go back to list
         setSelectedMessage(null);
       } else {
         const data = await response.json();
@@ -305,9 +341,9 @@ export function NotificationBell() {
             ) : (
               <>
                 {recentMessages.map((message) => (
-                  <DropdownMenuItem
+                  <div
                     key={message.id}
-                    className="flex items-start gap-3 p-3 cursor-pointer"
+                    className="flex items-start gap-3 p-3 cursor-pointer hover:bg-accent rounded-md mx-1 my-1 relative group"
                     onClick={() => handleSelectMessage(message)}
                   >
                     <Avatar className="h-10 w-10 shrink-0">
@@ -327,18 +363,28 @@ export function NotificationBell() {
                         {formatTime(message.createdAt)}
                       </p>
                     </div>
-                    <MessageSquare className="h-4 w-4 text-blue-500 shrink-0" />
-                  </DropdownMenuItem>
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="h-4 w-4 text-blue-500 shrink-0" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => handleDismiss(message, e)}
+                        title="Mark as read"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
                 ))}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/messages"
-                    className="w-full text-center text-sm text-blue-600 hover:text-blue-700 cursor-pointer justify-center"
-                  >
-                    View all messages
-                  </Link>
-                </DropdownMenuItem>
+                <Link
+                  href="/messages"
+                  className="block w-full text-center text-sm text-blue-600 hover:text-blue-700 p-2 hover:bg-accent rounded-md"
+                  onClick={() => setIsOpen(false)}
+                >
+                  View all messages
+                </Link>
               </>
             )}
           </>
