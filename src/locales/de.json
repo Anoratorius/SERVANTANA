@@ -1,0 +1,266 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "viewAll": "Alle anzeigen",
+    "learnMore": "Mehr erfahren",
+    "getStarted": "Loslegen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "submit": "Absenden",
+    "confirm": "Bestätigen",
+    "close": "Schließen"
+  },
+  "nav": {
+    "home": "Startseite",
+    "findWorkers": "Fachkräfte finden",
+    "howItWorks": "So funktioniert's",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden",
+    "dashboard": "Dashboard",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "bookings": "Buchungen",
+    "messages": "Nachrichten"
+  },
+  "home": {
+    "hero": {
+      "title": "WELTGRÖSSTER MARKTPLATZ",
+      "subtitle": "Finden Sie Fachleute in Ihrer Nähe",
+      "searchPlaceholder": "Geben Sie Ihren Standort ein...",
+      "searchButton": "Fachkräfte finden"
+    },
+    "features": {
+      "title": "Servantana wählen",
+      "verified": {
+        "title": "Verifizierte Fachkräfte",
+        "description": "Alle Fachkräfte sind überprüft und verifiziert für Ihre Sicherheit."
+      },
+      "transparent": {
+        "title": "Transparente Preise",
+        "description": "Sehen Sie Preise im Voraus. Keine versteckten Gebühren oder Überraschungen."
+      },
+      "flexible": {
+        "title": "Flexible Terminplanung",
+        "description": "Buchen Sie, wann es Ihnen passt. Buchungen am selben Tag möglich."
+      },
+      "secure": {
+        "title": "Sichere Zahlungen",
+        "description": "Zahlen Sie sicher über unsere Plattform. Ihre Zahlung ist geschützt."
+      }
+    },
+    "howItWorks": {
+      "title": "So funktioniert's",
+      "subtitle": "In 4 einfachen Schritten zu Ihrem sauberen Zuhause",
+      "step1": {
+        "title": "Suchen",
+        "description": "Geben Sie Ihren Standort ein, um verfügbare Fachkräfte zu finden."
+      },
+      "step2": {
+        "title": "Auswählen",
+        "description": "Vergleichen Sie Fachkräfte nach Bewertungen und Preisen."
+      },
+      "step3": {
+        "title": "Buchen",
+        "description": "Wählen Sie Ihr bevorzugtes Datum, Zeit und Dienstleistungen."
+      },
+      "step4": {
+        "title": "Entspannen",
+        "description": "Lehnen Sie sich zurück, während Ihr Raum professionell gereinigt wird."
+      }
+    },
+    "cta": {
+      "title": "Bereit loszulegen?",
+      "subtitle": "Schließen Sie sich Tausenden zufriedener Kunden an.",
+      "customerButton": "Fachkraft buchen",
+      "cleanerButton": "Fachkraft werden"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Willkommen zurück",
+      "subtitle": "Melden Sie sich bei Ihrem Konto an",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "rememberMe": "Angemeldet bleiben",
+      "forgotPassword": "Passwort vergessen?",
+      "loginButton": "Anmelden",
+      "noAccount": "Noch kein Konto?",
+      "signupLink": "Registrieren"
+    },
+    "signup": {
+      "title": "Konto erstellen",
+      "subtitle": "Jetzt beitreten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "phone": "Telefonnummer",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "accountType": "Ich möchte:",
+      "customer": "Fachkraft buchen",
+      "cleaner": "Fachkraft werden",
+      "terms": "Ich stimme den AGB und der Datenschutzerklärung zu",
+      "signupButton": "Konto erstellen",
+      "hasAccount": "Haben Sie bereits ein Konto?",
+      "loginLink": "Anmelden"
+    },
+    "social": {
+      "continueWith": "Oder fortfahren mit",
+      "google": "Google",
+      "facebook": "Facebook",
+      "apple": "Apple"
+    },
+    "phone": {
+      "title": "Telefonnummer verifizieren",
+      "subtitle": "Wir senden Ihnen einen Bestätigungscode",
+      "sendCode": "Code senden",
+      "verifyCode": "Bestätigungscode eingeben",
+      "resend": "Code erneut senden",
+      "verify": "Verifizieren"
+    },
+    "forgotPassword": {
+      "title": "Passwort vergessen?",
+      "subtitle": "Keine Sorge! Geben Sie Ihre E-Mail oder Telefonnummer ein und wir senden Ihnen einen Wiederherstellungscode.",
+      "emailTab": "E-Mail",
+      "phoneTab": "Telefon",
+      "emailLabel": "E-Mail-Adresse",
+      "phoneLabel": "Telefonnummer",
+      "sendCode": "Wiederherstellungscode senden",
+      "backToLogin": "Zurück zur Anmeldung",
+      "verifyTitle": "Bestätigungscode eingeben",
+      "codeLabel": "6-stelliger Code",
+      "verifyCode": "Code verifizieren",
+      "changeMethod": "Ändern",
+      "resendCode": "Code erneut senden",
+      "resetTitle": "Neues Passwort erstellen",
+      "resetSubtitle": "Wählen Sie ein sicheres Passwort mit mindestens 8 Zeichen.",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "passwordHint": "Muss Groß-, Kleinbuchstaben und eine Zahl enthalten",
+      "resetButton": "Passwort zurücksetzen",
+      "successTitle": "Passwort zurückgesetzt!",
+      "successMessage": "Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
+      "goToLogin": "Zur Anmeldung"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Fachkraft-Profil",
+      "about": "Über mich",
+      "services": "Dienstleistungen",
+      "reviews": "Bewertungen",
+      "availability": "Verfügbarkeit",
+      "hourlyRate": "Stundensatz",
+      "experience": "Erfahrung",
+      "years": "Jahre",
+      "verified": "Verifiziert",
+      "rating": "Bewertung",
+      "bookings": "Abgeschlossene Buchungen",
+      "responseTime": "Antwortzeit",
+      "bookNow": "Jetzt buchen"
+    },
+    "dashboard": {
+      "title": "Fachkraft-Dashboard",
+      "earnings": "Einnahmen",
+      "todayBookings": "Heutige Buchungen",
+      "pendingRequests": "Ausstehende Anfragen",
+      "completedJobs": "Abgeschlossene Aufträge",
+      "upcomingBookings": "Kommende Buchungen",
+      "recentReviews": "Aktuelle Bewertungen"
+    },
+    "services": {
+      "regular": "Regelmäßige Reinigung",
+      "deep": "Grundreinigung",
+      "moveInOut": "Ein-/Auszugsreinigung",
+      "office": "Büroreinigung",
+      "window": "Fensterreinigung",
+      "carpet": "Teppichreinigung",
+      "laundry": "Wäscheservice",
+      "organizing": "Aufräumen"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "title": "Mein Dashboard",
+      "upcomingBookings": "Kommende Buchungen",
+      "pastBookings": "Vergangene Buchungen",
+      "favoriteWorkers": "Favoriten",
+      "quickBook": "Schnellbuchung"
+    },
+    "search": {
+      "title": "Fachkräfte finden",
+      "location": "Standort",
+      "service": "Serviceart",
+      "date": "Datum",
+      "priceRange": "Preisbereich",
+      "rating": "Mindestbewertung",
+      "results": "Fachkräfte gefunden",
+      "noResults": "Keine Fachkräfte in Ihrer Nähe gefunden"
+    }
+  },
+  "booking": {
+    "title": "Service buchen",
+    "selectService": "Service auswählen",
+    "selectDate": "Datum & Zeit auswählen",
+    "address": "Serviceadresse",
+    "notes": "Zusätzliche Hinweise",
+    "notesPlaceholder": "Besondere Anweisungen oder Anforderungen...",
+    "summary": "Buchungsübersicht",
+    "worker": "Fachkraft",
+    "service": "Service",
+    "dateTime": "Datum & Zeit",
+    "duration": "Dauer",
+    "hours": "Stunden",
+    "total": "Gesamt",
+    "confirmBooking": "Buchung bestätigen",
+    "status": {
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Storniert"
+    }
+  },
+  "review": {
+    "title": "Bewertung abgeben",
+    "rating": "Bewertung",
+    "comment": "Ihre Bewertung",
+    "commentPlaceholder": "Teilen Sie Ihre Erfahrung...",
+    "submit": "Bewertung absenden",
+    "thankYou": "Vielen Dank für Ihre Bewertung!"
+  },
+  "messages": {
+    "title": "Nachrichten",
+    "noMessages": "Noch keine Nachrichten",
+    "placeholder": "Nachricht eingeben...",
+    "send": "Senden"
+  },
+  "footer": {
+    "description": "Wir verbinden Sie mit vertrauenswürdigen Fachleuten.",
+    "company": "Unternehmen",
+    "support": "Support",
+    "legal": "Rechtliches",
+    "aboutUs": "Über uns",
+    "careers": "Karriere",
+    "press": "Presse",
+    "helpCenter": "Hilfecenter",
+    "contactUs": "Kontakt",
+    "faq": "FAQ",
+    "termsOfService": "AGB",
+    "privacyPolicy": "Datenschutz",
+    "cookiePolicy": "Cookie-Richtlinie",
+    "allRightsReserved": "Alle Rechte vorbehalten."
+  }
+}

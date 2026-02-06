@@ -1,0 +1,266 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "加载中...",
+    "error": "发生错误",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "viewAll": "查看全部",
+    "learnMore": "了解更多",
+    "getStarted": "开始使用",
+    "back": "返回",
+    "next": "下一步",
+    "submit": "提交",
+    "confirm": "确认",
+    "close": "关闭"
+  },
+  "nav": {
+    "home": "首页",
+    "findWorkers": "找专业人员",
+    "howItWorks": "如何使用",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "login": "登录",
+    "signup": "注册",
+    "logout": "退出",
+    "dashboard": "控制面板",
+    "profile": "个人资料",
+    "settings": "设置",
+    "bookings": "预订",
+    "messages": "消息"
+  },
+  "home": {
+    "hero": {
+      "title": "全球最大的服务市场",
+      "subtitle": "在您附近找到专业人员",
+      "searchPlaceholder": "输入您的位置...",
+      "searchButton": "找专业人员"
+    },
+    "features": {
+      "title": "选择 Servantana",
+      "verified": {
+        "title": "经验证的专业人员",
+        "description": "所有专业人员都经过背景调查和验证，让您安心。"
+      },
+      "transparent": {
+        "title": "透明定价",
+        "description": "提前查看价格。没有隐藏费用或意外。"
+      },
+      "flexible": {
+        "title": "灵活安排",
+        "description": "在方便的时候预订。可当天预订。"
+      },
+      "secure": {
+        "title": "安全支付",
+        "description": "通过我们的平台安全支付。您的付款受到保护。"
+      }
+    },
+    "howItWorks": {
+      "title": "如何使用",
+      "subtitle": "预约服务就像1-2-3-4一样简单",
+      "step1": {
+        "title": "搜索",
+        "description": "输入您的位置以查找可用的专业人员。"
+      },
+      "step2": {
+        "title": "选择",
+        "description": "根据评分、评论和价格比较专业人员。"
+      },
+      "step3": {
+        "title": "预订",
+        "description": "选择您喜欢的日期、时间和服务。"
+      },
+      "step4": {
+        "title": "放松",
+        "description": "坐下来放松，让专业人员为您服务。"
+      }
+    },
+    "cta": {
+      "title": "准备好开始了吗？",
+      "subtitle": "加入数千名信任 Servantana 的满意客户。",
+      "customerButton": "预约专业人员",
+      "cleanerButton": "成为专业人员"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "欢迎回来",
+      "subtitle": "登录您的账户",
+      "email": "电子邮件",
+      "password": "密码",
+      "rememberMe": "记住我",
+      "forgotPassword": "忘记密码？",
+      "loginButton": "登录",
+      "noAccount": "没有账户？",
+      "signupLink": "注册"
+    },
+    "signup": {
+      "title": "创建账户",
+      "subtitle": "立即加入",
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "电子邮件",
+      "phone": "电话号码",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "accountType": "我想要：",
+      "customer": "预约专业人员",
+      "cleaner": "成为专业人员",
+      "terms": "我同意服务条款和隐私政策",
+      "signupButton": "创建账户",
+      "hasAccount": "已有账户？",
+      "loginLink": "登录"
+    },
+    "social": {
+      "continueWith": "或继续使用",
+      "google": "谷歌",
+      "facebook": "脸书",
+      "apple": "苹果"
+    },
+    "phone": {
+      "title": "验证电话号码",
+      "subtitle": "我们将向您发送验证码",
+      "sendCode": "发送验证码",
+      "verifyCode": "输入验证码",
+      "resend": "重新发送",
+      "verify": "验证"
+    },
+    "forgotPassword": {
+      "title": "忘记密码？",
+      "subtitle": "别担心！输入您的电子邮件或电话号码，我们将发送恢复代码。",
+      "emailTab": "电子邮件",
+      "phoneTab": "电话",
+      "emailLabel": "电子邮件地址",
+      "phoneLabel": "电话号码",
+      "sendCode": "发送恢复代码",
+      "backToLogin": "返回登录",
+      "verifyTitle": "输入验证码",
+      "codeLabel": "6位数代码",
+      "verifyCode": "验证代码",
+      "changeMethod": "更改",
+      "resendCode": "重新发送代码",
+      "resetTitle": "创建新密码",
+      "resetSubtitle": "选择至少8个字符的强密码。",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "passwordHint": "必须包含大写字母、小写字母和数字",
+      "resetButton": "重置密码",
+      "successTitle": "密码已重置！",
+      "successMessage": "您的密码已成功重置。现在可以使用新密码登录。",
+      "goToLogin": "前往登录"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "专业人员资料",
+      "about": "关于",
+      "services": "服务",
+      "reviews": "评论",
+      "availability": "可用性",
+      "hourlyRate": "时薪",
+      "experience": "经验",
+      "years": "年",
+      "verified": "已验证",
+      "rating": "评分",
+      "bookings": "完成预订",
+      "responseTime": "响应时间",
+      "bookNow": "立即预订"
+    },
+    "dashboard": {
+      "title": "专业人员控制面板",
+      "earnings": "收入",
+      "todayBookings": "今日预订",
+      "pendingRequests": "待处理请求",
+      "completedJobs": "完成的工作",
+      "upcomingBookings": "即将到来的预订",
+      "recentReviews": "最近评论"
+    },
+    "services": {
+      "regular": "常规清洁",
+      "deep": "深度清洁",
+      "moveInOut": "搬家清洁",
+      "office": "办公室清洁",
+      "window": "窗户清洁",
+      "carpet": "地毯清洁",
+      "laundry": "洗衣服务",
+      "organizing": "整理收纳"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "title": "我的控制面板",
+      "upcomingBookings": "即将到来的预订",
+      "pastBookings": "过去的预订",
+      "favoriteWorkers": "收藏的专业人员",
+      "quickBook": "快速预订"
+    },
+    "search": {
+      "title": "找专业人员",
+      "location": "位置",
+      "service": "服务类型",
+      "date": "日期",
+      "priceRange": "价格范围",
+      "rating": "最低评分",
+      "results": "名专业人员",
+      "noResults": "您所在地区未找到专业人员"
+    }
+  },
+  "booking": {
+    "title": "预订服务",
+    "selectService": "选择服务",
+    "selectDate": "选择日期和时间",
+    "address": "服务地址",
+    "notes": "附加说明",
+    "notesPlaceholder": "任何特殊说明或要求...",
+    "summary": "预订摘要",
+    "worker": "专业人员",
+    "service": "服务",
+    "dateTime": "日期和时间",
+    "duration": "时长",
+    "hours": "小时",
+    "total": "总计",
+    "confirmBooking": "确认预订",
+    "status": {
+      "pending": "待处理",
+      "confirmed": "已确认",
+      "inProgress": "进行中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    }
+  },
+  "review": {
+    "title": "留下评论",
+    "rating": "评分",
+    "comment": "您的评论",
+    "commentPlaceholder": "分享您的体验...",
+    "submit": "提交评论",
+    "thankYou": "感谢您的评论！"
+  },
+  "messages": {
+    "title": "消息",
+    "noMessages": "暂无消息",
+    "placeholder": "输入消息...",
+    "send": "发送"
+  },
+  "footer": {
+    "description": "为您连接值得信赖的专业人员。",
+    "company": "公司",
+    "support": "支持",
+    "legal": "法律",
+    "aboutUs": "关于我们",
+    "careers": "招聘",
+    "press": "新闻",
+    "helpCenter": "帮助中心",
+    "contactUs": "联系我们",
+    "faq": "常见问题",
+    "termsOfService": "服务条款",
+    "privacyPolicy": "隐私政策",
+    "cookiePolicy": "Cookie 政策",
+    "allRightsReserved": "版权所有。"
+  }
+}

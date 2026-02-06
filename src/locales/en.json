@@ -1,0 +1,266 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "viewAll": "View All",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "nav": {
+    "home": "Home",
+    "findWorkers": "Find Workers",
+    "howItWorks": "How It Works",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "bookings": "Bookings",
+    "messages": "Messages"
+  },
+  "home": {
+    "hero": {
+      "title": "WORLDS LARGEST MARKETPLACE",
+      "subtitle": "Find Professionals Near You",
+      "searchPlaceholder": "Enter your location...",
+      "searchButton": "Find Workers"
+    },
+    "features": {
+      "title": "Choose Servantana",
+      "verified": {
+        "title": "Verified Professionals",
+        "description": "All workers are background-checked and verified for your peace of mind."
+      },
+      "transparent": {
+        "title": "Transparent Pricing",
+        "description": "See prices upfront. No hidden fees or surprises."
+      },
+      "flexible": {
+        "title": "Flexible Scheduling",
+        "description": "Book when it suits you. Same-day bookings available."
+      },
+      "secure": {
+        "title": "Secure Payments",
+        "description": "Pay securely through our platform. Your payment is protected."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Getting your space cleaned is as easy as 1-2-3-4",
+      "step1": {
+        "title": "Search",
+        "description": "Enter your location to find available workers in your area."
+      },
+      "step2": {
+        "title": "Choose",
+        "description": "Compare workers based on ratings, reviews, and pricing."
+      },
+      "step3": {
+        "title": "Book",
+        "description": "Select your preferred date, time, and services."
+      },
+      "step4": {
+        "title": "Relax",
+        "description": "Sit back while your space gets professionally cleaned."
+      }
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Join thousands of happy customers who trust Servantana.",
+      "customerButton": "Book a Worker",
+      "cleanerButton": "Become a Worker"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Log in to your account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Log In",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Sign up"
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join Now",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "accountType": "I want to:",
+      "customer": "Book a Worker",
+      "cleaner": "Become a Worker",
+      "terms": "I agree to the Terms of Service and Privacy Policy",
+      "signupButton": "Create Account",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Log in"
+    },
+    "social": {
+      "continueWith": "Or continue with",
+      "google": "Google",
+      "facebook": "Facebook",
+      "apple": "Apple"
+    },
+    "phone": {
+      "title": "Verify Phone Number",
+      "subtitle": "We'll send you a verification code",
+      "sendCode": "Send Code",
+      "verifyCode": "Enter Verification Code",
+      "resend": "Resend Code",
+      "verify": "Verify"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "No worries! Enter your email or phone number and we'll send you a reset code.",
+      "emailTab": "Email",
+      "phoneTab": "Phone",
+      "emailLabel": "Email Address",
+      "phoneLabel": "Phone Number",
+      "sendCode": "Send Reset Code",
+      "backToLogin": "Back to Login",
+      "verifyTitle": "Enter Verification Code",
+      "codeLabel": "6-Digit Code",
+      "verifyCode": "Verify Code",
+      "changeMethod": "Change",
+      "resendCode": "Resend Code",
+      "resetTitle": "Create New Password",
+      "resetSubtitle": "Choose a strong password with at least 8 characters.",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "passwordHint": "Must contain uppercase, lowercase, and a number",
+      "resetButton": "Reset Password",
+      "successTitle": "Password Reset!",
+      "successMessage": "Your password has been successfully reset. You can now log in with your new password.",
+      "goToLogin": "Go to Login"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Worker Profile",
+      "about": "About",
+      "services": "Services",
+      "reviews": "Reviews",
+      "availability": "Availability",
+      "hourlyRate": "Hourly Rate",
+      "experience": "Experience",
+      "years": "years",
+      "verified": "Verified",
+      "rating": "Rating",
+      "bookings": "Bookings Completed",
+      "responseTime": "Response Time",
+      "bookNow": "Book Now"
+    },
+    "dashboard": {
+      "title": "Worker Dashboard",
+      "earnings": "Earnings",
+      "todayBookings": "Today's Bookings",
+      "pendingRequests": "Pending Requests",
+      "completedJobs": "Completed Jobs",
+      "upcomingBookings": "Upcoming Bookings",
+      "recentReviews": "Recent Reviews"
+    },
+    "services": {
+      "regular": "Regular Cleaning",
+      "deep": "Deep Cleaning",
+      "moveInOut": "Move In/Out Cleaning",
+      "office": "Office Cleaning",
+      "window": "Window Cleaning",
+      "carpet": "Carpet Cleaning",
+      "laundry": "Laundry Service",
+      "organizing": "Organizing"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "title": "My Dashboard",
+      "upcomingBookings": "Upcoming Bookings",
+      "pastBookings": "Past Bookings",
+      "favoriteWorkers": "Favorite Workers",
+      "quickBook": "Quick Book"
+    },
+    "search": {
+      "title": "Find Workers",
+      "location": "Location",
+      "service": "Service Type",
+      "date": "Date",
+      "priceRange": "Price Range",
+      "rating": "Minimum Rating",
+      "results": "workers found",
+      "noResults": "No workers found in your area"
+    }
+  },
+  "booking": {
+    "title": "Book Cleaning Service",
+    "selectService": "Select Service",
+    "selectDate": "Select Date & Time",
+    "address": "Service Address",
+    "notes": "Additional Notes",
+    "notesPlaceholder": "Any special instructions or requirements...",
+    "summary": "Booking Summary",
+    "worker": "Worker",
+    "service": "Service",
+    "dateTime": "Date & Time",
+    "duration": "Duration",
+    "hours": "hours",
+    "total": "Total",
+    "confirmBooking": "Confirm Booking",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "review": {
+    "title": "Leave a Review",
+    "rating": "Rating",
+    "comment": "Your Review",
+    "commentPlaceholder": "Share your experience...",
+    "submit": "Submit Review",
+    "thankYou": "Thank you for your review!"
+  },
+  "messages": {
+    "title": "Messages",
+    "noMessages": "No messages yet",
+    "placeholder": "Type a message...",
+    "send": "Send"
+  },
+  "footer": {
+    "description": "Connecting you with trusted cleaning professionals.",
+    "company": "Company",
+    "support": "Support",
+    "legal": "Legal",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "press": "Press",
+    "helpCenter": "Help Center",
+    "contactUs": "Contact Us",
+    "faq": "FAQ",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "cookiePolicy": "Cookie Policy",
+    "allRightsReserved": "All rights reserved."
+  }
+}
