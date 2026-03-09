@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { BookingStatus, Role } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const status = searchParams.get("status");
+    const status = searchParams.get("status") as BookingStatus | null;
 
     // Get bookings for the current user (as customer or cleaner)
     const bookings = await prisma.booking.findMany({
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     // Verify cleaner exists
     const cleaner = await prisma.user.findUnique({
-      where: { id: cleanerId, role: "CLEANER" },
+      where: { id: cleanerId, role: Role.CLEANER },
     });
 
     if (!cleaner) {
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
         postalCode: postalCode || null,
         notes: notes || null,
         totalPrice: totalPrice || service.basePrice,
-        status: "PENDING",
+        status: BookingStatus.PENDING,
       },
       include: {
         customer: {

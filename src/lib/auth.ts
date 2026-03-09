@@ -122,7 +122,7 @@ export const authOptions: NextAuthConfig = {
     },
     async signIn({ user, account, profile }) {
       // For OAuth providers, handle user creation and account linking
-      if (account?.provider !== "credentials" && user.email) {
+      if (account && account.provider !== "credentials" && user.email) {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email },
           include: { accounts: true },

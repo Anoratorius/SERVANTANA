@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { EarningStatus, Role } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
       select: { role: true },
     });
 
-    if (user?.role !== "CLEANER") {
+    if (user?.role !== Role.CLEANER) {
       return NextResponse.json(
         { error: "Only cleaners can view earnings" },
         { status: 403 }
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const period = searchParams.get("period") || "all"; // all, week, month, year
-    const status = searchParams.get("status"); // PENDING, AVAILABLE, PAID_OUT
+    const status = searchParams.get("status") as EarningStatus | null; // PENDING, AVAILABLE, PAID_OUT
 
     // Build date filter
     let dateFilter: Date | undefined;
@@ -75,13 +76,13 @@ export async function GET(request: NextRequest) {
     // Calculate totals
     const totalEarned = earnings.reduce((sum, e) => sum + e.amount, 0);
     const totalPending = earnings
-      .filter((e) => e.status === "PENDING")
+      .filter((e) => e.status === EarningStatus.PENDING)
       .reduce((sum, e) => sum + e.amount, 0);
     const totalAvailable = earnings
-      .filter((e) => e.status === "AVAILABLE")
+      .filter((e) => e.status === EarningStatus.AVAILABLE)
       .reduce((sum, e) => sum + e.amount, 0);
     const totalPaidOut = earnings
-      .filter((e) => e.status === "PAID_OUT")
+      .filter((e) => e.status === EarningStatus.PAID_OUT)
       .reduce((sum, e) => sum + e.amount, 0);
     const totalPlatformFees = earnings.reduce((sum, e) => sum + e.platformFee, 0);
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { BookingStatus, Role } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,19 +15,19 @@ export async function GET(request: NextRequest) {
       select: { role: true },
     });
 
-    if (adminUser?.role !== "ADMIN") {
+    if (adminUser?.role !== Role.ADMIN) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status");
+    const status = searchParams.get("status") as BookingStatus | null;
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
 
-    if (status && status !== "all") {
+    if (status && status !== ("all" as unknown)) {
       where.status = status;
     }
 
