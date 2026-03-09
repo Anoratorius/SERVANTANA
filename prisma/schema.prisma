@@ -6,13 +6,52 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-// Note: SQLite doesn't support enums, so we use String fields
-// Role values: CUSTOMER, CLEANER, ADMIN
-// BookingStatus values: PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
+// Enums for PostgreSQL
+enum Role {
+  CUSTOMER
+  CLEANER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum EarningStatus {
+  PENDING
+  AVAILABLE
+  PAID_OUT
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum CategoryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
 
 // User model - base for both customers and cleaners
 model User {
@@ -25,8 +64,9 @@ model User {
   firstName         String
   lastName          String
   avatar            String?
-  role              String    @default("CUSTOMER") // CUSTOMER, CLEANER, ADMIN
+  role              Role      @default(CUSTOMER)
   preferredLanguage String    @default("en")
+  tokenVersion      Int       @default(0) // Incremented on password change to invalidate sessions
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -204,7 +244,7 @@ model Booking {
 
   // Details
   notes         String?
-  status        String   @default("PENDING") // PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
+  status        BookingStatus @default(PENDING)
   totalPrice    Float
   currency      String   @default("USD")
 
@@ -302,7 +342,7 @@ model Payment {
   cryptoTxId        String?  // Blockchain transaction ID
   amount            Float
   currency          String   @default("USD")
-  status            String   @default("PENDING") // PENDING, PROCESSING, SUCCEEDED, FAILED, REFUNDED
+  status            PaymentStatus @default(PENDING)
   paymentMethod     String?  // card, bank_transfer, paypal, crypto, etc.
   receiptUrl        String?
   failureReason     String?
@@ -323,7 +363,7 @@ model Earning {
   platformFee   Float    // Platform's cut
   grossAmount   Float    // Total payment received
   currency      String   @default("USD")
-  status        String   @default("PENDING") // PENDING, AVAILABLE, PAID_OUT
+  status        EarningStatus @default(PENDING)
   availableAt   DateTime // When funds become available for payout
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -337,13 +377,49 @@ model Earning {
   @@index([status])
 }
 
+// Custom category submitted by users
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  nameDE      String?  // German translation
+  description String?
+  emoji       String   @default("📁")
+  gradient    String   @default("from-gray-400 to-gray-600")
+  status      CategoryStatus @default(PENDING)
+  submittedBy String?  // userId of submitter
+  reviewedBy  String?  // admin userId who reviewed
+  reviewedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  professions Profession[]
+
+  @@index([status])
+}
+
+// Professions within a category
+model Profession {
+  id          String   @id @default(cuid())
+  categoryId  String
+  name        String
+  nameDE      String?  // German translation
+  emoji       String   @default("👤")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+}
+
 // Payout model for tracking cleaner payouts
 model Payout {
   id              String    @id @default(cuid())
   cleanerId       String
   amount          Float
   currency        String    @default("USD")
-  status          String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  status          PayoutStatus @default(PENDING)
   payoutMethod    String?   // bank_transfer, paypal, etc.
   stripePayoutId  String?   @unique
   failureReason   String?

@@ -1,4 +1,7 @@
 import { prisma } from "./prisma";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Generate a 6-digit code
 export function generateResetCode(): string {
@@ -65,36 +68,62 @@ export async function markTokenUsed(identifier: string, code: string): Promise<v
   });
 }
 
-// Simulated email sending (replace with real email service like SendGrid, Resend, etc.)
+// Send password reset email via Resend
 export async function sendResetEmail(
   email: string,
   code: string
 ): Promise<{ success: boolean; message: string }> {
-  // In production, integrate with email service:
-  // - SendGrid: https://sendgrid.com
-  // - Resend: https://resend.com
-  // - AWS SES: https://aws.amazon.com/ses/
+  try {
+    const { error } = await resend.emails.send({
+      from: "Servantana <noreply@servantana.com>",
+      to: email,
+      subject: "Reset Your Servantana Password",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="background: linear-gradient(to right, #2563eb, #16a34a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; margin: 0;">SERVANTANA</h1>
+          </div>
 
-  console.log(`
-    ========================================
-    PASSWORD RESET EMAIL
-    ========================================
-    To: ${email}
-    Subject: Reset Your Servantana Password
+          <h2 style="color: #333; margin-bottom: 20px;">Password Reset Request</h2>
 
-    Your password reset code is: ${code}
+          <p style="color: #555; font-size: 16px; line-height: 1.6;">
+            You requested to reset your password. Use the code below to complete the process:
+          </p>
 
-    This code expires in 15 minutes.
+          <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2563eb;">${code}</span>
+          </div>
 
-    If you didn't request this, please ignore this email.
-    ========================================
-  `);
+          <p style="color: #555; font-size: 14px;">
+            This code expires in <strong>15 minutes</strong>.
+          </p>
 
-  // For development, always succeed
-  return {
-    success: true,
-    message: `Reset code sent to ${maskEmail(email)}`,
-  };
+          <p style="color: #888; font-size: 14px; margin-top: 30px;">
+            If you didn't request this password reset, please ignore this email or contact support if you have concerns.
+          </p>
+
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
+
+          <p style="color: #aaa; font-size: 12px; text-align: center;">
+            &copy; 2026 Servantana. All rights reserved.
+          </p>
+        </div>
+      `,
+    });
+
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, message: "Failed to send email" };
+    }
+
+    return {
+      success: true,
+      message: `Reset code sent to ${maskEmail(email)}`,
+    };
+  } catch (error) {
+    console.error("Email sending error:", error);
+    return { success: false, message: "Failed to send email" };
+  }
 }
 
 // Simulated SMS sending (replace with real SMS service like Twilio, etc.)

@@ -9,15 +9,18 @@ export function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-50 to-gray-100 py-12">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-8">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
+            {t("common.appName")}
+          </Link>
+        </div>
+
+        {/* Company, Support, Legal - side by side on all screens */}
+        <div className="grid grid-cols-3 gap-4 md:gap-8 text-center max-w-4xl mx-auto">
           <div>
-            <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              {t("common.appName")}
-            </Link>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">{t("footer.company")}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="font-semibold mb-2 md:mb-4 text-xs md:text-base">{t("footer.company")}</h4>
+            <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-muted-foreground">
               <li>
                 <Link href="/about" className="hover:text-blue-600 transition-colors">
                   {t("footer.aboutUs")}
@@ -36,13 +39,8 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">{t("footer.support")}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/help" className="hover:text-blue-600 transition-colors">
-                  {t("footer.helpCenter")}
-                </Link>
-              </li>
+            <h4 className="font-semibold mb-2 md:mb-4 text-xs md:text-base">{t("footer.support")}</h4>
+            <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-muted-foreground">
               <li>
                 <Link href="/contact" className="hover:text-blue-600 transition-colors">
                   {t("footer.contactUs")}
@@ -56,8 +54,8 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">{t("footer.legal")}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="font-semibold mb-2 md:mb-4 text-xs md:text-base">{t("footer.legal")}</h4>
+            <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-muted-foreground">
               <li>
                 <Link href="/terms" className="hover:text-blue-600 transition-colors">
                   {t("footer.termsOfService")}
@@ -77,7 +75,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} {t("common.appName")}. {t("footer.allRightsReserved")}
+          &copy; {new Date().getFullYear()} <span className="uppercase" style={{ fontFamily: 'var(--font-logo)' }}>{t("common.appName")}</span>. {t("footer.allRightsReserved")}
         </div>
       </div>
     </footer>

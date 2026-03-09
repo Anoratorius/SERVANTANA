@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
 
@@ -11,6 +12,11 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const ethnocentric = localFont({
+  src: "../../public/fonts/ethnocentric.ttf",
+  variable: "--font-logo",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +34,7 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${ethnocentric.variable} antialiased`}
       >
         {children}
       </body>

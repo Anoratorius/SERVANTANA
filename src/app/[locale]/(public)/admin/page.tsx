@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
   UserCheck,
   AlertTriangle,
   Trash2,
+  FolderPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -124,6 +126,17 @@ interface Review {
   };
 }
 
+interface Category {
+  id: string;
+  name: string;
+  nameDE: string | null;
+  description: string | null;
+  emoji: string;
+  gradient: string;
+  status: string;
+  createdAt: string;
+}
+
 const SERVICE_NAMES: Record<string, string> = {
   regular: "Regular Cleaning",
   deep: "Deep Cleaning",
@@ -136,6 +149,7 @@ const SERVICE_NAMES: Record<string, string> = {
 };
 
 export default function AdminPage() {
+  const t = useTranslations();
   const router = useRouter();
   const { data: session, status: authStatus } = useSession();
 
@@ -166,6 +180,12 @@ export default function AdminPage() {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
 
+  // Categories state
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [categoriesFilter, setCategoriesFilter] = useState("PENDING");
+  const [processingCategoryId, setProcessingCategoryId] = useState<string | null>(null);
+
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login?callbackUrl=/admin");
@@ -174,7 +194,7 @@ export default function AdminPage() {
 
     if (authStatus === "authenticated" && session?.user?.role !== "ADMIN") {
       router.push("/dashboard");
-      toast.error("Access denied. Admin only.");
+      toast.error(t("admin.accessDenied"));
       return;
     }
   }, [authStatus, session, router]);
@@ -265,6 +285,21 @@ export default function AdminPage() {
     }
   }, [reviewsPage]);
 
+  const fetchCategories = useCallback(async () => {
+    setLoadingCategories(true);
+    try {
+      const response = await fetch(`/api/admin/categories?status=${categoriesFilter}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoadingCategories(false);
+    }
+  }, [categoriesFilter]);
+
   useEffect(() => {
     if (activeTab === "users" && authStatus === "authenticated") {
       fetchUsers();
@@ -283,6 +318,12 @@ export default function AdminPage() {
     }
   }, [activeTab, fetchReviews, authStatus]);
 
+  useEffect(() => {
+    if (activeTab === "categories" && authStatus === "authenticated") {
+      fetchCategories();
+    }
+  }, [activeTab, fetchCategories, authStatus]);
+
   const handleVerifyCleaner = async (userId: string, verified: boolean) => {
     setVerifyingId(userId);
     try {
@@ -293,21 +334,21 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        toast.success(verified ? "Cleaner verified!" : "Verification revoked");
+        toast.success(verified ? t("admin.cleanerVerified") : t("admin.verificationRevoked"));
         fetchCleaners();
         fetchStats();
       } else {
-        toast.error("Failed to update verification");
+        toast.error(t("admin.failedVerification"));
       }
     } catch {
-      toast.error("Failed to update verification");
+      toast.error(t("admin.failedVerification"));
     } finally {
       setVerifyingId(null);
     }
   };
 
   const handleDeleteReview = async (reviewId: string) => {
-    if (!confirm("Are you sure you want to delete this review?")) return;
+    if (!confirm(t("admin.confirmDeleteReview"))) return;
 
     setDeletingReviewId(reviewId);
     try {
@@ -316,16 +357,38 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        toast.success("Review deleted");
+        toast.success(t("admin.reviewDeleted"));
         fetchReviews();
         fetchStats();
       } else {
-        toast.error("Failed to delete review");
+        toast.error(t("admin.failedDeleteReview"));
       }
     } catch {
-      toast.error("Failed to delete review");
+      toast.error(t("admin.failedDeleteReview"));
     } finally {
       setDeletingReviewId(null);
+    }
+  };
+
+  const handleCategoryAction = async (categoryId: string, status: "APPROVED" | "REJECTED") => {
+    setProcessingCategoryId(categoryId);
+    try {
+      const response = await fetch(`/api/admin/categories/${categoryId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        toast.success(status === "APPROVED" ? t("admin.categoryApproved") : t("admin.categoryRejected"));
+        fetchCategories();
+      } else {
+        toast.error(t("admin.failedCategoryAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedCategoryAction"));
+    } finally {
+      setProcessingCategoryId(null);
     }
   };
 
@@ -342,34 +405,36 @@ export default function AdminPage() {
       <Header />
 
       <main className="flex-1 bg-gradient-to-b from-purple-50 to-white py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-8">
-            <Shield className="h-8 w-8 text-purple-500" />
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Admin Dashboard
-              </h1>
-              <p className="text-muted-foreground">Manage your marketplace</p>
-            </div>
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-8">
+            <Shield className="h-12 w-12 mx-auto text-purple-500 mb-4" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              {t("admin.title")}
+            </h1>
+            <p className="text-muted-foreground">{t("admin.subtitle")}</p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6">
+            <TabsList className="mb-6 w-full justify-center">
               <TabsTrigger value="overview" className="gap-2">
                 <TrendingUp className="h-4 w-4" />
-                Overview
+                {t("admin.overview")}
               </TabsTrigger>
               <TabsTrigger value="users" className="gap-2">
                 <Users className="h-4 w-4" />
-                Users
+                {t("admin.users")}
               </TabsTrigger>
               <TabsTrigger value="cleaners" className="gap-2">
                 <UserCheck className="h-4 w-4" />
-                Verification
+                {t("admin.verification")}
               </TabsTrigger>
               <TabsTrigger value="reviews" className="gap-2">
                 <Star className="h-4 w-4" />
-                Reviews
+                {t("admin.reviews")}
+              </TabsTrigger>
+              <TabsTrigger value="categories" className="gap-2">
+                <FolderPlus className="h-4 w-4" />
+                {t("admin.categories")}
               </TabsTrigger>
             </TabsList>
 
@@ -879,6 +944,102 @@ export default function AdminPage() {
                         </div>
                       </div>
                     </>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Categories Tab */}
+            <TabsContent value="categories">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{t("admin.categoryManagement")}</CardTitle>
+                    <select
+                      value={categoriesFilter}
+                      onChange={(e) => setCategoriesFilter(e.target.value)}
+                      className="border rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="PENDING">{t("admin.pendingCategories")}</option>
+                      <option value="APPROVED">{t("admin.approvedCategories")}</option>
+                      <option value="REJECTED">{t("admin.rejectedCategories")}</option>
+                    </select>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loadingCategories ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : categories.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      {t("admin.noCategories")}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {categories.map((category) => (
+                        <div
+                          key={category.id}
+                          className="p-4 border rounded-lg"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${category.gradient} flex items-center justify-center shadow-md`}>
+                                <span className="text-2xl">{category.emoji}</span>
+                              </div>
+                              <div>
+                                <p className="font-semibold text-lg">{category.name}</p>
+                                {category.nameDE && (
+                                  <p className="text-sm text-muted-foreground">DE: {category.nameDE}</p>
+                                )}
+                                {category.description && (
+                                  <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                                )}
+                                <p className="text-xs text-muted-foreground mt-2">
+                                  {new Date(category.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            {category.status === "PENDING" && (
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  className="bg-green-500 hover:bg-green-600"
+                                  onClick={() => handleCategoryAction(category.id, "APPROVED")}
+                                  disabled={processingCategoryId === category.id}
+                                >
+                                  {processingCategoryId === category.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <CheckCircle className="h-4 w-4 mr-1" />
+                                  )}
+                                  {t("admin.approve")}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600"
+                                  onClick={() => handleCategoryAction(category.id, "REJECTED")}
+                                  disabled={processingCategoryId === category.id}
+                                >
+                                  {processingCategoryId === category.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <XCircle className="h-4 w-4 mr-1" />
+                                  )}
+                                  {t("admin.reject")}
+                                </Button>
+                              </div>
+                            )}
+                            {category.status !== "PENDING" && (
+                              <Badge variant={category.status === "APPROVED" ? "default" : "destructive"}>
+                                {category.status}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </CardContent>
               </Card>

@@ -32,14 +32,22 @@
     "profile": "Profil",
     "settings": "Einstellungen",
     "bookings": "Buchungen",
-    "messages": "Nachrichten"
+    "messages": "Nachrichten",
+    "favorites": "Favoriten"
   },
   "home": {
     "hero": {
-      "title": "WELTGRÖSSTER MARKTPLATZ",
+      "title": "GRÖSSTER MARKTPLATZ FÜR ARBEITSKRÄFTE",
       "subtitle": "Finden Sie Fachleute in Ihrer Nähe",
       "searchPlaceholder": "Geben Sie Ihren Standort ein...",
-      "searchButton": "Fachkräfte finden"
+      "searchButton": "Fachkräfte finden",
+      "detectingLocation": "Standort wird ermittelt...",
+      "selectCategory": "Kategorie auswählen...",
+      "searchCategories": "Kategorien suchen...",
+      "noCategoriesFound": "Keine Kategorien gefunden",
+      "selectJob": "Beruf auswählen...",
+      "searchJobs": "Berufe suchen...",
+      "noJobsFound": "Keine Berufe gefunden"
     },
     "features": {
       "title": "Servantana wählen",
@@ -112,6 +120,8 @@
       "customer": "Fachkraft buchen",
       "cleaner": "Fachkraft werden",
       "terms": "Ich stimme den AGB und der Datenschutzerklärung zu",
+      "termsPrefix": "Ich stimme den",
+      "termsAnd": "und der",
       "signupButton": "Konto erstellen",
       "hasAccount": "Haben Sie bereits ein Konto?",
       "loginLink": "Anmelden"
@@ -155,7 +165,7 @@
       "goToLogin": "Zur Anmeldung"
     }
   },
-  "worker": {
+  "cleaner": {
     "profile": {
       "title": "Fachkraft-Profil",
       "about": "Über mich",
@@ -225,6 +235,23 @@
     "hours": "Stunden",
     "total": "Gesamt",
     "confirmBooking": "Buchung bestätigen",
+    "upcoming": "Anstehend",
+    "past": "Vergangen",
+    "paid": "Bezahlt",
+    "paymentDue": "Zahlung fällig",
+    "payNow": "Jetzt bezahlen",
+    "message": "Nachricht",
+    "confirm": "Bestätigen",
+    "startJob": "Job starten",
+    "complete": "Abschließen",
+    "cancel": "Stornieren",
+    "leaveReview": "Bewertung abgeben",
+    "reviewed": "Bewertet",
+    "noUpcoming": "Keine anstehenden Buchungen",
+    "noUpcomingDesc": "Sie haben noch keine anstehenden Buchungen.",
+    "findCleaner": "Fachkraft finden",
+    "noPast": "Keine vergangenen Buchungen",
+    "noPastDesc": "Ihre abgeschlossenen und stornierten Buchungen werden hier angezeigt.",
     "status": {
       "pending": "Ausstehend",
       "confirmed": "Bestätigt",
@@ -245,7 +272,309 @@
     "title": "Nachrichten",
     "noMessages": "Noch keine Nachrichten",
     "placeholder": "Nachricht eingeben...",
-    "send": "Senden"
+    "send": "Senden",
+    "newMessageFrom": "Neue Nachricht von",
+    "reply": "Antworten",
+    "fullChat": "Vollständiger Chat",
+    "unread": "ungelesen",
+    "noNewMessages": "Keine neuen Nachrichten",
+    "markAsRead": "Als gelesen markieren",
+    "viewAllMessages": "Alle Nachrichten anzeigen",
+    "justNow": "Gerade eben",
+    "minutesAgo": " Min.",
+    "hoursAgo": " Std."
+  },
+  "admin": {
+    "title": "Admin-Dashboard",
+    "subtitle": "Marktplatz verwalten",
+    "overview": "Übersicht",
+    "users": "Benutzer",
+    "verification": "Verifizierung",
+    "reviews": "Bewertungen",
+    "totalUsers": "Gesamte Benutzer",
+    "totalCleaners": "Gesamte Fachkräfte",
+    "verified": "verifiziert",
+    "totalBookings": "Gesamte Buchungen",
+    "completed": "abgeschlossen",
+    "totalRevenue": "Gesamtumsatz",
+    "pendingVerification": "Ausstehende Verifizierung",
+    "newUsers30d": "Neue Benutzer (30T)",
+    "totalReviews": "Gesamte Bewertungen",
+    "avg": "Durchschn.",
+    "cancelled": "Storniert",
+    "recentUsers": "Neueste Benutzer",
+    "recentBookings": "Neueste Buchungen",
+    "userManagement": "Benutzerverwaltung",
+    "searchUsers": "Benutzer suchen...",
+    "allRoles": "Alle Rollen",
+    "customers": "Kunden",
+    "cleaners": "Fachkräfte",
+    "admins": "Admins",
+    "bookings": "Buchungen",
+    "page": "Seite",
+    "of": "von",
+    "cleanerVerification": "Fachkraft-Verifizierung",
+    "pendingVerificationFilter": "Ausstehende Verifizierung",
+    "verifiedFilter": "Verifiziert",
+    "noCleanersPending": "Keine Fachkräfte zur Verifizierung ausstehend",
+    "noCleanersVerified": "Keine verifizierten Fachkräfte",
+    "revoke": "Widerrufen",
+    "verify": "Verifizieren",
+    "reviewModeration": "Bewertungsmoderation",
+    "noReviews": "Keine Bewertungen zu moderieren",
+    "reviewed": "bewertet",
+    "delete": "Löschen",
+    "accessDenied": "Zugriff verweigert. Nur für Admins.",
+    "cleanerVerified": "Fachkraft verifiziert!",
+    "verificationRevoked": "Verifizierung widerrufen",
+    "failedVerification": "Verifizierung konnte nicht aktualisiert werden",
+    "reviewDeleted": "Bewertung gelöscht",
+    "failedDeleteReview": "Bewertung konnte nicht gelöscht werden",
+    "confirmDeleteReview": "Sind Sie sicher, dass Sie diese Bewertung löschen möchten?",
+    "categories": "Kategorien",
+    "categoryManagement": "Kategorienverwaltung",
+    "pendingCategories": "Ausstehend",
+    "approvedCategories": "Genehmigt",
+    "rejectedCategories": "Abgelehnt",
+    "noCategories": "Keine Kategorien gefunden",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen",
+    "categoryApproved": "Kategorie genehmigt!",
+    "categoryRejected": "Kategorie abgelehnt",
+    "failedCategoryAction": "Kategorie konnte nicht aktualisiert werden"
+  },
+  "legal": {
+    "terms": {
+      "title": "Nutzungsbedingungen",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "acceptance": {
+        "title": "1. Annahme der Bedingungen",
+        "content": "Durch die Nutzung von Servantana stimmen Sie diesen Bedingungen zu. Wenn Sie nicht zustimmen, nutzen Sie unsere Plattform nicht."
+      },
+      "service": {
+        "title": "2. Servicebeschreibung",
+        "content": "Servantana ist ein Marktplatz, der Kunden mit selbstständigen Reinigungsfachkräften verbindet. Wir beschäftigen keine Reinigungskräfte direkt und sind nicht für die Qualität der erbrachten Dienstleistungen verantwortlich."
+      },
+      "accounts": {
+        "title": "3. Benutzerkonten",
+        "content": "Sie sind für die Vertraulichkeit Ihrer Kontodaten und alle Aktivitäten unter Ihrem Konto verantwortlich. Sie müssen korrekte Angaben machen und mindestens 18 Jahre alt sein."
+      },
+      "payments": {
+        "title": "4. Zahlungen",
+        "content": "Alle Zahlungen werden über Drittanbieter abgewickelt. Gebühren sind nicht erstattungsfähig, außer wenn gesetzlich vorgeschrieben. Fachkräfte legen ihre eigenen Preise fest und sind für ihre eigenen Steuern verantwortlich."
+      },
+      "liability": {
+        "title": "5. Haftungsbeschränkung",
+        "content": "Servantana wird ohne Gewährleistung bereitgestellt. Wir haften nicht für Schäden aus der Nutzung der Plattform, Streitigkeiten zwischen Nutzern oder Handlungen von Dienstleistern. Unsere Gesamthaftung übersteigt nicht die in den letzten 12 Monaten an uns gezahlten Gebühren."
+      },
+      "termination": {
+        "title": "6. Kündigung",
+        "content": "Wir können Konten nach eigenem Ermessen bei Verstößen gegen diese Bedingungen oder aus anderen Gründen mit oder ohne Vorankündigung sperren oder kündigen."
+      },
+      "changes": {
+        "title": "7. Änderungen der Bedingungen",
+        "content": "Wir können diese Bedingungen jederzeit ändern. Die weitere Nutzung nach Änderungen gilt als Annahme der neuen Bedingungen."
+      }
+    },
+    "privacy": {
+      "title": "Datenschutzerklärung",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "collection": {
+        "title": "1. Erhobene Daten",
+        "content": "Wir erheben von Ihnen bereitgestellte Informationen (Name, E-Mail, Telefon, Adresse) und automatisch erfasste Daten (IP-Adresse, Geräteinformationen, Nutzungsdaten) für unsere Dienste."
+      },
+      "use": {
+        "title": "2. Verwendung der Daten",
+        "content": "Wir verwenden Ihre Daten zur Bereitstellung und Verbesserung unserer Dienste, Zahlungsabwicklung, Kommunikation und Plattformsicherheit."
+      },
+      "sharing": {
+        "title": "3. Datenweitergabe",
+        "content": "Wir teilen Daten mit Dienstleistern für Buchungen, Zahlungsabwicklern und wie gesetzlich vorgeschrieben. Wir verkaufen Ihre persönlichen Daten nicht."
+      },
+      "security": {
+        "title": "4. Datensicherheit",
+        "content": "Wir setzen angemessene Sicherheitsmaßnahmen um, können jedoch keine absolute Sicherheit garantieren. Sie sind für die Sicherheit Ihrer Kontodaten verantwortlich."
+      },
+      "rights": {
+        "title": "5. Ihre Rechte",
+        "content": "Sie können Ihre Kontoinformationen jederzeit einsehen, aktualisieren oder löschen. Kontaktieren Sie uns zur Ausübung Ihrer Datenrechte."
+      },
+      "contact": {
+        "title": "6. Kontakt",
+        "content": "Bei Datenschutzfragen kontaktieren Sie uns über die Plattform oder unter support@servantana.com."
+      }
+    },
+    "cookies": {
+      "title": "Cookie-Richtlinie",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "what": {
+        "title": "1. Was sind Cookies?",
+        "content": "Cookies sind kleine Textdateien, die auf Ihrem Gerät gespeichert werden, wenn Sie unsere Website besuchen. Sie helfen uns, Ihre Präferenzen zu speichern und zu verstehen, wie Sie unsere Plattform nutzen."
+      },
+      "types": {
+        "title": "2. Arten von Cookies",
+        "content": "Wir verwenden verschiedene Arten von Cookies für unterschiedliche Zwecke:",
+        "essential": {
+          "title": "Notwendige Cookies",
+          "content": "Erforderlich für die ordnungsgemäße Funktion der Website. Diese können nicht deaktiviert werden."
+        },
+        "functional": {
+          "title": "Funktionale Cookies",
+          "content": "Speichern Ihre Präferenzen wie Sprach- und Standorteinstellungen."
+        },
+        "analytics": {
+          "title": "Analyse-Cookies",
+          "content": "Helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, um die Nutzererfahrung zu verbessern."
+        },
+        "marketing": {
+          "title": "Marketing-Cookies",
+          "content": "Werden verwendet, um relevante Werbung zu liefern und die Kampagnenleistung zu verfolgen."
+        }
+      },
+      "manage": {
+        "title": "3. Cookies verwalten",
+        "content": "Sie können Cookies über Ihre Browsereinstellungen kontrollieren. Beachten Sie, dass das Deaktivieren bestimmter Cookies die Website-Funktionalität beeinträchtigen kann."
+      },
+      "thirdParty": {
+        "title": "4. Drittanbieter-Cookies",
+        "content": "Einige Cookies werden von Drittanbietern gesetzt, die wir nutzen, wie Analyseanbieter und Zahlungsabwickler. Diese Parteien haben ihre eigenen Datenschutzrichtlinien."
+      },
+      "contact": {
+        "title": "5. Kontakt",
+        "content": "Bei Fragen zu unserer Cookie-Richtlinie kontaktieren Sie uns unter support@servantana.com."
+      }
+    }
+  },
+  "categories": {
+    "pageTitle": "Kategorie auswählen",
+    "pageSubtitle": "Wählen Sie eine Kategorie, um Fachleute zu finden",
+    "selectProfession": "Beruf auswählen",
+    "notFound": "Kategorie nicht gefunden",
+    "home_services": "Haushaltsdienstleistungen",
+    "construction": "Bau & Handwerk",
+    "automotive": "Automobil",
+    "personal_care": "Körperpflege",
+    "care_services": "Pflegedienste",
+    "delivery_moving": "Lieferung & Umzug",
+    "tech_it": "Technik & IT",
+    "events_entertainment": "Events & Unterhaltung",
+    "education_tutoring": "Bildung & Nachhilfe",
+    "professional_services": "Professionelle Dienste",
+    "fashion_tailoring": "Mode & Schneiderei",
+    "food_cooking": "Essen & Kochen",
+    "security": "Sicherheit",
+    "agriculture": "Landwirtschaft",
+    "suggest_new": "Eigene erstellen",
+    "suggest": {
+      "title": "Kategorie vorschlagen",
+      "subtitle": "Helfen Sie uns, neue Kategorien hinzuzufügen",
+      "categoryName": "Kategoriename",
+      "categoryPlaceholder": "z.B. Haustierservice, Hausautomation...",
+      "description": "Beschreibung (optional)",
+      "descriptionPlaceholder": "Welche Fachleute wären in dieser Kategorie?",
+      "submit": "Vorschlag senden",
+      "thankYou": "Vielen Dank!",
+      "submitted": "Ihr Vorschlag wurde zur Überprüfung eingereicht.",
+      "backToCategories": "Zurück zu Kategorien"
+    }
+  },
+  "jobs": {
+    "cleaner": "Reinigungskraft",
+    "housekeeper": "Haushälterin",
+    "maid": "Hausmädchen",
+    "gardener": "Gärtner",
+    "landscaper": "Landschaftsgärtner",
+    "pool_cleaner": "Poolreiniger",
+    "window_cleaner": "Fensterputzer",
+    "carpet_cleaner": "Teppichreiniger",
+    "pressure_washer": "Hochdruckreiniger",
+    "pest_control": "Schädlingsbekämpfer",
+    "plumber": "Klempner",
+    "electrician": "Elektriker",
+    "carpenter": "Tischler",
+    "painter": "Maler",
+    "roofer": "Dachdecker",
+    "mason": "Maurer",
+    "welder": "Schweißer",
+    "tiler": "Fliesenleger",
+    "plasterer": "Stuckateur",
+    "glazier": "Glaser",
+    "flooring_installer": "Bodenleger",
+    "drywall_installer": "Trockenbauer",
+    "insulation_worker": "Isolierer",
+    "hvac_technician": "Heizungstechniker",
+    "locksmith": "Schlüsseldienst",
+    "mechanic": "Mechaniker",
+    "auto_electrician": "Autoelektriker",
+    "car_washer": "Autowäscher",
+    "auto_detailer": "Autoaufbereiter",
+    "tire_technician": "Reifenmonteur",
+    "body_repair": "Karosseriebauer",
+    "tow_truck_driver": "Abschleppfahrer",
+    "barber": "Friseur",
+    "hairdresser": "Friseurin",
+    "beautician": "Kosmetikerin",
+    "makeup_artist": "Visagist",
+    "nail_technician": "Nageldesignerin",
+    "massage_therapist": "Masseur",
+    "personal_trainer": "Personal Trainer",
+    "tattoo_artist": "Tätowierer",
+    "babysitter": "Babysitter",
+    "nanny": "Kindermädchen",
+    "elderly_caregiver": "Altenpfleger",
+    "pet_sitter": "Tiersitter",
+    "dog_walker": "Hundeausführer",
+    "pet_groomer": "Tierpfleger",
+    "nurse": "Krankenpfleger",
+    "home_health_aide": "Hauspflegehelfer",
+    "mover": "Möbelpacker",
+    "delivery_driver": "Lieferfahrer",
+    "courier": "Kurier",
+    "truck_driver": "LKW-Fahrer",
+    "furniture_assembler": "Möbelmonteur",
+    "computer_technician": "Computertechniker",
+    "phone_repair": "Handyreparatur",
+    "network_technician": "Netzwerktechniker",
+    "security_installer": "Sicherheitstechniker",
+    "smart_home_installer": "Smart-Home-Installateur",
+    "appliance_repair": "Gerätereparatur",
+    "photographer": "Fotograf",
+    "videographer": "Videograf",
+    "dj": "DJ",
+    "musician": "Musiker",
+    "event_planner": "Eventplaner",
+    "caterer": "Caterer",
+    "bartender": "Barkeeper",
+    "waiter": "Kellner",
+    "tutor": "Nachhilfelehrer",
+    "music_teacher": "Musiklehrer",
+    "language_teacher": "Sprachlehrer",
+    "driving_instructor": "Fahrlehrer",
+    "sports_coach": "Sporttrainer",
+    "yoga_instructor": "Yogalehrer",
+    "accountant": "Buchhalter",
+    "lawyer": "Anwalt",
+    "translator": "Übersetzer",
+    "notary": "Notar",
+    "real_estate_agent": "Immobilienmakler",
+    "insurance_agent": "Versicherungsvertreter",
+    "tailor": "Schneider",
+    "seamstress": "Näherin",
+    "shoe_repair": "Schuhmacher",
+    "dry_cleaner": "Chemische Reinigung",
+    "laundry_service": "Wäscherei",
+    "chef": "Koch",
+    "cook": "Köchin",
+    "baker": "Bäcker",
+    "butcher": "Metzger",
+    "personal_chef": "Privatkoch",
+    "security_guard": "Sicherheitsdienst",
+    "bodyguard": "Leibwächter",
+    "private_investigator": "Privatdetektiv",
+    "farmer": "Landwirt",
+    "farmhand": "Landarbeiter",
+    "veterinarian": "Tierarzt",
+    "beekeeper": "Imker"
   },
   "footer": {
     "description": "Wir verbinden Sie mit vertrauenswürdigen Fachleuten.",
@@ -262,5 +591,235 @@
     "privacyPolicy": "Datenschutz",
     "cookiePolicy": "Cookie-Richtlinie",
     "allRightsReserved": "Alle Rechte vorbehalten."
+  },
+  "about": {
+    "title": "Über Servantana",
+    "subtitle": "Wir bauen den größten Marktplatz für Arbeitskräfte, um qualifizierte Fachleute mit Menschen zu verbinden, die ihre Dienste benötigen.",
+    "mission": {
+      "title": "Unsere Mission",
+      "content": "Wir glauben, dass jeder Zugang zu zuverlässigen, qualifizierten Fachleuten verdient. Unsere Mission ist es, sinnvolle Arbeitsmöglichkeiten zu schaffen und es Kunden leicht zu machen, vertrauenswürdige Hilfe zu finden."
+    },
+    "stats": {
+      "professionals": "Fachleute",
+      "bookings": "Buchungen",
+      "satisfaction": "Zufriedenheit",
+      "cities": "Städte"
+    },
+    "story": {
+      "title": "Unsere Geschichte",
+      "content1": "Servantana wurde 2024 mit einer einfachen Idee gegründet: Es einfacher machen, zuverlässige Hilfe zu finden. Wir haben festgestellt, dass qualifizierte Fachleute überall waren, aber die Verbindung zu Kunden unnötig schwierig war.",
+      "content2": "Heute sind wir stolz darauf, eine Plattform aufgebaut zu haben, die Tausenden von Fachleuten ermöglicht, ihre Geschäfte zu erweitern, während Kunden mit Vertrauen Dinge erledigen können."
+    },
+    "values": {
+      "title": "Unsere Werte",
+      "trust": {
+        "title": "Vertrauen",
+        "content": "Wir verifizieren jeden Fachmann und schützen jede Transaktion für Ihre Sicherheit."
+      },
+      "quality": {
+        "title": "Qualität",
+        "content": "Wir halten hohe Standards und arbeiten nur mit qualifizierten, zuverlässigen Fachleuten."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "content": "Wir verbessern kontinuierlich unsere Plattform, um das Finden von Hilfe einfacher zu machen."
+      }
+    }
+  },
+  "careers": {
+    "title": "Werde Teil unseres Teams",
+    "subtitle": "Hilf uns, die Zukunft der Arbeit zu gestalten. Wir suchen leidenschaftliche Menschen, die etwas bewegen wollen.",
+    "why": {
+      "title": "WARUM WIR?",
+      "growth": {
+        "title": "Karrierewachstum",
+        "content": "Entwickle deine Fähigkeiten und bringe deine Karriere in einem schnelllebigen Startup-Umfeld voran."
+      },
+      "remote": {
+        "title": "Remote First",
+        "content": "Arbeite von überall. Wir glauben an Flexibilität und Work-Life-Balance."
+      },
+      "benefits": {
+        "title": "Großartige Benefits",
+        "content": "Wettbewerbsfähiges Gehalt, Beteiligung, Krankenversicherung und unbegrenzter Urlaub."
+      }
+    },
+    "positions": {
+      "title": "Offene Stellen",
+      "frontend": {
+        "title": "Senior Frontend-Entwickler"
+      },
+      "backend": {
+        "title": "Backend-Entwickler"
+      },
+      "designer": {
+        "title": "Product Designer"
+      },
+      "marketing": {
+        "title": "Marketing Manager"
+      },
+      "support": {
+        "title": "Kundensupport-Spezialist"
+      }
+    },
+    "departments": {
+      "engineering": "Entwicklung",
+      "design": "Design",
+      "marketing": "Marketing",
+      "support": "Support"
+    },
+    "locations": {
+      "remote": "Remote",
+      "hybrid": "Hybrid"
+    },
+    "types": {
+      "fullTime": "Vollzeit",
+      "partTime": "Teilzeit"
+    },
+    "apply": "Jetzt bewerben",
+    "noPosition": {
+      "title": "Keine passende Stelle gefunden?",
+      "content": "Wir suchen immer nach talentierten Menschen. Sende uns deinen Lebenslauf und wir behalten dich für zukünftige Möglichkeiten im Auge.",
+      "button": "Lebenslauf senden"
+    }
+  },
+  "press": {
+    "title": "Presse & Medien",
+    "subtitle": "Neuigkeiten, Updates und Ressourcen für Journalisten und Medienfachleute.",
+    "kit": {
+      "title": "Pressekit",
+      "logos": {
+        "title": "Markenlogos",
+        "content": "Laden Sie unser Logo in verschiedenen Formaten für die Presse herunter."
+      },
+      "photos": {
+        "title": "Produktfotos",
+        "content": "Hochauflösende Screenshots und Produktbilder."
+      }
+    },
+    "download": "Herunterladen",
+    "facts": {
+      "title": "Unternehmensfakten",
+      "founded": "Gegründet",
+      "headquarters": "Hauptsitz",
+      "employees": "Mitarbeiter",
+      "users": "Registrierte Nutzer"
+    },
+    "contact": {
+      "title": "Pressekontakt",
+      "content": "Für Medienanfragen, Interviewanfragen oder Zugang zum Pressekit kontaktieren Sie bitte unser Presseteam."
+    }
+  },
+  "help": {
+    "title": "Hilfecenter",
+    "subtitle": "Finden Sie Antworten auf Ihre Fragen",
+    "searchPlaceholder": "Nach Hilfe suchen...",
+    "categories": {
+      "title": "Nach Kategorie durchsuchen",
+      "account": {
+        "title": "Konto & Profil",
+        "articles": "12 Artikel"
+      },
+      "booking": {
+        "title": "Buchung & Terminplanung",
+        "articles": "15 Artikel"
+      },
+      "payments": {
+        "title": "Zahlungen & Abrechnung",
+        "articles": "10 Artikel"
+      },
+      "safety": {
+        "title": "Sicherheit & Vertrauen",
+        "articles": "8 Artikel"
+      },
+      "communication": {
+        "title": "Kommunikation",
+        "articles": "6 Artikel"
+      },
+      "settings": {
+        "title": "Einstellungen",
+        "articles": "9 Artikel"
+      }
+    },
+    "popular": {
+      "title": "Beliebte Artikel",
+      "article1": "Wie buche ich einen Fachmann?",
+      "article2": "Wie storniere oder verschiebe ich eine Buchung?",
+      "article3": "Wie funktionieren Zahlungen?",
+      "article4": "Wie werden Fachleute verifiziert?",
+      "article5": "Wie werde ich Fachmann bei Servantana?"
+    },
+    "contact": {
+      "title": "Noch Hilfe benötigt?",
+      "content": "Unser Support-Team hilft Ihnen gerne bei allen Fragen.",
+      "button": "Support kontaktieren"
+    }
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Wir freuen uns von Ihnen zu hören. Senden Sie uns eine Nachricht und wir antworten so schnell wie möglich.",
+    "email": {
+      "title": "E-Mail"
+    },
+    "phone": {
+      "title": "Telefon"
+    },
+    "address": {
+      "title": "Adresse"
+    },
+    "form": {
+      "name": "Ihr Name",
+      "email": "E-Mail-Adresse",
+      "subject": "Betreff",
+      "message": "Nachricht",
+      "submit": "Nachricht senden"
+    },
+    "success": {
+      "title": "Nachricht gesendet!",
+      "message": "Vielen Dank für Ihre Kontaktaufnahme. Wir melden uns innerhalb von 24 Stunden."
+    }
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Finden Sie Antworten auf die häufigsten Fragen zu Servantana.",
+    "items": {
+      "whatIsServantana": {
+        "question": "Was ist Servantana?",
+        "answer": "Servantana ist ein Marktplatz, der Kunden mit qualifizierten Fachleuten für verschiedene Dienstleistungen verbindet, darunter Reinigung, Reparaturen, Körperpflege und mehr. Wir verifizieren alle Fachleute und bieten sichere Zahlungsabwicklung."
+      },
+      "howToBook": {
+        "question": "Wie buche ich einen Fachmann?",
+        "answer": "Wählen Sie einfach eine Kategorie, wählen Sie einen Beruf, durchsuchen Sie verfügbare Fachleute in Ihrer Nähe, wählen Sie einen basierend auf Bewertungen, wählen Sie Ihr bevorzugtes Datum und bestätigen Sie Ihre Buchung. So einfach ist das!"
+      },
+      "paymentMethods": {
+        "question": "Welche Zahlungsmethoden werden akzeptiert?",
+        "answer": "Wir akzeptieren alle gängigen Kredit- und Debitkarten sowie PayPal. Zahlungen werden sicher über unsere Plattform abgewickelt und Sie werden erst nach Abschluss des Services belastet."
+      },
+      "cancellation": {
+        "question": "Was ist die Stornierungsrichtlinie?",
+        "answer": "Sie können eine Buchung bis zu 24 Stunden vor dem geplanten Termin kostenlos stornieren oder verschieben. Stornierungen innerhalb von 24 Stunden können einer Stornierungsgebühr unterliegen."
+      },
+      "workerVerification": {
+        "question": "Wie werden Fachleute verifiziert?",
+        "answer": "Alle Fachleute durchlaufen einen Verifizierungsprozess, der Identitätsprüfung, Hintergrundüberprüfungen und Kompetenzbewertung umfasst. Wir sammeln und zeigen auch Bewertungen von früheren Kunden an."
+      },
+      "becomeWorker": {
+        "question": "Wie werde ich Fachmann bei Servantana?",
+        "answer": "Registrieren Sie sich für ein Fachmann-Konto, vervollständigen Sie Ihr Profil, reichen Sie erforderliche Dokumente zur Verifizierung ein, und sobald Sie genehmigt sind, können Sie Buchungen annehmen und Ihr Geschäft ausbauen."
+      },
+      "pricing": {
+        "question": "Wie werden Preise festgelegt?",
+        "answer": "Fachleute legen ihre eigenen Preise basierend auf ihrer Erfahrung und den angebotenen Dienstleistungen fest. Alle Preise werden vor der Buchung transparent angezeigt, ohne versteckte Gebühren."
+      },
+      "safety": {
+        "question": "Ist Servantana sicher?",
+        "answer": "Ja! Wir priorisieren Sicherheit mit verifizierten Fachleuten, sicheren Zahlungen und einem Bewertungssystem. Wir bieten auch Kundensupport und eine Zufriedenheitsgarantie für alle Buchungen."
+      }
+    },
+    "contact": {
+      "title": "Noch Fragen?",
+      "content": "Können Sie nicht finden, was Sie suchen? Unser Support-Team hilft Ihnen gerne.",
+      "button": "Kontaktieren Sie uns"
+    }
   }
 }

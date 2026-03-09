@@ -122,29 +122,32 @@ export default function BookingsPage() {
       <Header />
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            {t("nav.bookings")}
-          </h1>
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-8">
+            <Calendar className="h-12 w-12 mx-auto text-blue-500 mb-4" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              {t("nav.bookings")}
+            </h1>
+          </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6">
+            <TabsList className="mb-6 w-full justify-center">
               <TabsTrigger value="upcoming" className="gap-2">
                 <Calendar className="h-4 w-4" />
-                Upcoming ({upcomingBookings.length})
+                {t("booking.upcoming")} ({upcomingBookings.length})
               </TabsTrigger>
               <TabsTrigger value="past" className="gap-2">
                 <CheckCircle className="h-4 w-4" />
-                Past ({pastBookings.length})
+                {t("booking.past")} ({pastBookings.length})
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="upcoming">
               {upcomingBookings.length === 0 ? (
                 <EmptyState
-                  title="No upcoming bookings"
-                  description="You don't have any upcoming bookings yet."
-                  actionLabel="Find a Cleaner"
+                  title={t("booking.noUpcoming")}
+                  description={t("booking.noUpcomingDesc")}
+                  actionLabel={t("booking.findCleaner")}
                   actionHref="/search"
                 />
               ) : (
@@ -164,8 +167,8 @@ export default function BookingsPage() {
             <TabsContent value="past">
               {pastBookings.length === 0 ? (
                 <EmptyState
-                  title="No past bookings"
-                  description="Your completed and cancelled bookings will appear here."
+                  title={t("booking.noPast")}
+                  description={t("booking.noPastDesc")}
                 />
               ) : (
                 <div className="space-y-4">
@@ -299,12 +302,12 @@ function BookingCard({
                 {isPaid ? (
                   <Badge className="bg-green-100 text-green-800">
                     <CheckCircle className="h-3 w-3 mr-1" />
-                    Paid
+                    {t("booking.paid")}
                   </Badge>
                 ) : needsPayment ? (
                   <Badge className="bg-amber-100 text-amber-800">
                     <CreditCard className="h-3 w-3 mr-1" />
-                    Payment Due
+                    {t("booking.paymentDue")}
                   </Badge>
                 ) : null}
                 <Badge className={statusColors[booking.status]}>
@@ -345,14 +348,14 @@ function BookingCard({
                         ) : (
                           <CreditCard className="h-4 w-4 mr-1" />
                         )}
-                        Pay Now
+                        {t("booking.payNow")}
                       </Button>
                     )}
 
                     <Link href={`/messages/${otherUser.id}`}>
                       <Button variant="outline" size="sm">
                         <MessageCircle className="h-4 w-4 mr-1" />
-                        Message
+                        {t("booking.message")}
                       </Button>
                     </Link>
 
@@ -369,7 +372,7 @@ function BookingCard({
                         ) : (
                           <CheckCircle className="h-4 w-4 mr-1" />
                         )}
-                        Confirm
+                        {t("booking.confirm")}
                       </Button>
                     )}
 
@@ -385,7 +388,7 @@ function BookingCard({
                         ) : (
                           <Play className="h-4 w-4 mr-1" />
                         )}
-                        Start Job
+                        {t("booking.startJob")}
                       </Button>
                     )}
 
@@ -401,7 +404,7 @@ function BookingCard({
                         ) : (
                           <CheckCircle className="h-4 w-4 mr-1" />
                         )}
-                        Complete
+                        {t("booking.complete")}
                       </Button>
                     )}
 
@@ -419,7 +422,7 @@ function BookingCard({
                         ) : (
                           <XCircle className="h-4 w-4 mr-1" />
                         )}
-                        Cancel
+                        {t("booking.cancel")}
                       </Button>
                     )}
                   </>
@@ -429,14 +432,14 @@ function BookingCard({
                     <Link href={`/bookings/${booking.id}/review`}>
                       <Button size="sm" variant="outline" className="text-green-600">
                         <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
-                        {booking.review.rating}/5 Reviewed
+                        {booking.review.rating}/5 {t("booking.reviewed")}
                       </Button>
                     </Link>
                   ) : (
                     <Link href={`/bookings/${booking.id}/review`}>
                       <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600">
                         <Star className="h-4 w-4 mr-1" />
-                        Leave Review
+                        {t("booking.leaveReview")}
                       </Button>
                     </Link>
                   )

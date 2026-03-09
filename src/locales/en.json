@@ -32,14 +32,22 @@
     "profile": "Profile",
     "settings": "Settings",
     "bookings": "Bookings",
-    "messages": "Messages"
+    "messages": "Messages",
+    "favorites": "Favorites"
   },
   "home": {
     "hero": {
-      "title": "WORLDS LARGEST MARKETPLACE",
+      "title": "LARGEST WORKFORCE MARKETPLACE",
       "subtitle": "Find Professionals Near You",
       "searchPlaceholder": "Enter your location...",
-      "searchButton": "Find Workers"
+      "searchButton": "Find Workers",
+      "detectingLocation": "Detecting your location...",
+      "selectCategory": "Select category...",
+      "searchCategories": "Search categories...",
+      "noCategoriesFound": "No categories found",
+      "selectJob": "Select profession...",
+      "searchJobs": "Search professions...",
+      "noJobsFound": "No professions found"
     },
     "features": {
       "title": "Choose Servantana",
@@ -112,6 +120,8 @@
       "customer": "Book a Worker",
       "cleaner": "Become a Worker",
       "terms": "I agree to the Terms of Service and Privacy Policy",
+      "termsPrefix": "I agree to the",
+      "termsAnd": "and",
       "signupButton": "Create Account",
       "hasAccount": "Already have an account?",
       "loginLink": "Log in"
@@ -155,7 +165,7 @@
       "goToLogin": "Go to Login"
     }
   },
-  "worker": {
+  "cleaner": {
     "profile": {
       "title": "Worker Profile",
       "about": "About",
@@ -225,6 +235,23 @@
     "hours": "hours",
     "total": "Total",
     "confirmBooking": "Confirm Booking",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "paid": "Paid",
+    "paymentDue": "Payment Due",
+    "payNow": "Pay Now",
+    "message": "Message",
+    "confirm": "Confirm",
+    "startJob": "Start Job",
+    "complete": "Complete",
+    "cancel": "Cancel",
+    "leaveReview": "Leave Review",
+    "reviewed": "Reviewed",
+    "noUpcoming": "No upcoming bookings",
+    "noUpcomingDesc": "You don't have any upcoming bookings yet.",
+    "findCleaner": "Find a Cleaner",
+    "noPast": "No past bookings",
+    "noPastDesc": "Your completed and cancelled bookings will appear here.",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
@@ -245,7 +272,309 @@
     "title": "Messages",
     "noMessages": "No messages yet",
     "placeholder": "Type a message...",
-    "send": "Send"
+    "send": "Send",
+    "newMessageFrom": "New message from",
+    "reply": "Reply",
+    "fullChat": "Full chat",
+    "unread": "unread",
+    "noNewMessages": "No new messages",
+    "markAsRead": "Mark as read",
+    "viewAllMessages": "View all messages",
+    "justNow": "Just now",
+    "minutesAgo": "m ago",
+    "hoursAgo": "h ago"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "subtitle": "Manage your marketplace",
+    "overview": "Overview",
+    "users": "Users",
+    "verification": "Verification",
+    "reviews": "Reviews",
+    "totalUsers": "Total Users",
+    "totalCleaners": "Total Cleaners",
+    "verified": "verified",
+    "totalBookings": "Total Bookings",
+    "completed": "completed",
+    "totalRevenue": "Total Revenue",
+    "pendingVerification": "Pending Verification",
+    "newUsers30d": "New Users (30d)",
+    "totalReviews": "Total Reviews",
+    "avg": "Avg",
+    "cancelled": "Cancelled",
+    "recentUsers": "Recent Users",
+    "recentBookings": "Recent Bookings",
+    "userManagement": "User Management",
+    "searchUsers": "Search users...",
+    "allRoles": "All Roles",
+    "customers": "Customers",
+    "cleaners": "Cleaners",
+    "admins": "Admins",
+    "bookings": "bookings",
+    "page": "Page",
+    "of": "of",
+    "cleanerVerification": "Cleaner Verification",
+    "pendingVerificationFilter": "Pending Verification",
+    "verifiedFilter": "Verified",
+    "noCleanersPending": "No cleaners pending verification",
+    "noCleanersVerified": "No verified cleaners",
+    "revoke": "Revoke",
+    "verify": "Verify",
+    "reviewModeration": "Review Moderation",
+    "noReviews": "No reviews to moderate",
+    "reviewed": "reviewed",
+    "delete": "Delete",
+    "accessDenied": "Access denied. Admin only.",
+    "cleanerVerified": "Cleaner verified!",
+    "verificationRevoked": "Verification revoked",
+    "failedVerification": "Failed to update verification",
+    "reviewDeleted": "Review deleted",
+    "failedDeleteReview": "Failed to delete review",
+    "confirmDeleteReview": "Are you sure you want to delete this review?",
+    "categories": "Categories",
+    "categoryManagement": "Category Management",
+    "pendingCategories": "Pending",
+    "approvedCategories": "Approved",
+    "rejectedCategories": "Rejected",
+    "noCategories": "No categories found",
+    "approve": "Approve",
+    "reject": "Reject",
+    "categoryApproved": "Category approved!",
+    "categoryRejected": "Category rejected",
+    "failedCategoryAction": "Failed to update category"
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last Updated",
+      "acceptance": {
+        "title": "1. Acceptance of Terms",
+        "content": "By accessing or using Servantana, you agree to be bound by these Terms. If you do not agree, do not use our platform."
+      },
+      "service": {
+        "title": "2. Service Description",
+        "content": "Servantana is a marketplace connecting customers with independent cleaning professionals. We do not employ cleaners directly and are not responsible for the quality of services provided."
+      },
+      "accounts": {
+        "title": "3. User Accounts",
+        "content": "You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account. You must provide accurate information and be at least 18 years old."
+      },
+      "payments": {
+        "title": "4. Payments",
+        "content": "All payments are processed through third-party providers. Fees are non-refundable except as required by law. Cleaners set their own rates and are responsible for their own taxes."
+      },
+      "liability": {
+        "title": "5. Limitation of Liability",
+        "content": "Servantana is provided \"as is\" without warranties. We are not liable for any damages arising from use of the platform, disputes between users, or actions of service providers. Our total liability shall not exceed the fees paid to us in the last 12 months."
+      },
+      "termination": {
+        "title": "6. Termination",
+        "content": "We may suspend or terminate accounts at our discretion for violations of these terms or for any reason with or without notice."
+      },
+      "changes": {
+        "title": "7. Changes to Terms",
+        "content": "We may modify these terms at any time. Continued use after changes constitutes acceptance of the new terms."
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated",
+      "collection": {
+        "title": "1. Information We Collect",
+        "content": "We collect information you provide (name, email, phone, address) and automatically collected data (IP address, device info, usage data) to operate our services."
+      },
+      "use": {
+        "title": "2. How We Use Information",
+        "content": "We use your information to provide and improve our services, process payments, communicate with you, and ensure platform safety."
+      },
+      "sharing": {
+        "title": "3. Information Sharing",
+        "content": "We share information with service providers for bookings, payment processors, and as required by law. We do not sell your personal data."
+      },
+      "security": {
+        "title": "4. Data Security",
+        "content": "We implement reasonable security measures but cannot guarantee absolute security. You are responsible for keeping your account credentials secure."
+      },
+      "rights": {
+        "title": "5. Your Rights",
+        "content": "You may access, update, or delete your account information at any time. Contact us to exercise your data rights."
+      },
+      "contact": {
+        "title": "6. Contact",
+        "content": "For privacy questions, contact us through the platform or at support@servantana.com."
+      }
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "lastUpdated": "Last Updated",
+      "what": {
+        "title": "1. What Are Cookies?",
+        "content": "Cookies are small text files stored on your device when you visit our website. They help us remember your preferences and understand how you use our platform."
+      },
+      "types": {
+        "title": "2. Types of Cookies We Use",
+        "content": "We use several types of cookies for different purposes:",
+        "essential": {
+          "title": "Essential Cookies",
+          "content": "Required for the website to function properly. These cannot be disabled."
+        },
+        "functional": {
+          "title": "Functional Cookies",
+          "content": "Remember your preferences like language and location settings."
+        },
+        "analytics": {
+          "title": "Analytics Cookies",
+          "content": "Help us understand how visitors interact with our website to improve user experience."
+        },
+        "marketing": {
+          "title": "Marketing Cookies",
+          "content": "Used to deliver relevant advertisements and track campaign performance."
+        }
+      },
+      "manage": {
+        "title": "3. Managing Cookies",
+        "content": "You can control cookies through your browser settings. Note that disabling certain cookies may affect website functionality. Most browsers allow you to block or delete cookies."
+      },
+      "thirdParty": {
+        "title": "4. Third-Party Cookies",
+        "content": "Some cookies are placed by third-party services we use, such as analytics providers and payment processors. These parties have their own privacy policies."
+      },
+      "contact": {
+        "title": "5. Contact Us",
+        "content": "If you have questions about our cookie policy, please contact us at support@servantana.com."
+      }
+    }
+  },
+  "categories": {
+    "pageTitle": "Select a Category",
+    "pageSubtitle": "Choose a category to find professionals",
+    "selectProfession": "Select a profession",
+    "notFound": "Category not found",
+    "home_services": "Home Services",
+    "construction": "Construction & Trades",
+    "automotive": "Automotive",
+    "personal_care": "Personal Care",
+    "care_services": "Care Services",
+    "delivery_moving": "Delivery & Moving",
+    "tech_it": "Tech & IT",
+    "events_entertainment": "Events & Entertainment",
+    "education_tutoring": "Education & Tutoring",
+    "professional_services": "Professional Services",
+    "fashion_tailoring": "Fashion & Tailoring",
+    "food_cooking": "Food & Cooking",
+    "security": "Security",
+    "agriculture": "Agriculture",
+    "suggest_new": "Create Yours",
+    "suggest": {
+      "title": "Suggest a Category",
+      "subtitle": "Help us grow by suggesting new categories",
+      "categoryName": "Category Name",
+      "categoryPlaceholder": "e.g. Pet Services, Home Automation...",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "What types of professionals would be in this category?",
+      "submit": "Submit Suggestion",
+      "thankYou": "Thank You!",
+      "submitted": "Your suggestion has been submitted for review.",
+      "backToCategories": "Back to Categories"
+    }
+  },
+  "jobs": {
+    "cleaner": "Cleaner",
+    "housekeeper": "Housekeeper",
+    "maid": "Maid",
+    "gardener": "Gardener",
+    "landscaper": "Landscaper",
+    "pool_cleaner": "Pool Cleaner",
+    "window_cleaner": "Window Cleaner",
+    "carpet_cleaner": "Carpet Cleaner",
+    "pressure_washer": "Pressure Washer",
+    "pest_control": "Pest Control",
+    "plumber": "Plumber",
+    "electrician": "Electrician",
+    "carpenter": "Carpenter",
+    "painter": "Painter",
+    "roofer": "Roofer",
+    "mason": "Mason",
+    "welder": "Welder",
+    "tiler": "Tiler",
+    "plasterer": "Plasterer",
+    "glazier": "Glazier",
+    "flooring_installer": "Flooring Installer",
+    "drywall_installer": "Drywall Installer",
+    "insulation_worker": "Insulation Worker",
+    "hvac_technician": "HVAC Technician",
+    "locksmith": "Locksmith",
+    "mechanic": "Mechanic",
+    "auto_electrician": "Auto Electrician",
+    "car_washer": "Car Washer",
+    "auto_detailer": "Auto Detailer",
+    "tire_technician": "Tire Technician",
+    "body_repair": "Body Repair",
+    "tow_truck_driver": "Tow Truck Driver",
+    "barber": "Barber",
+    "hairdresser": "Hairdresser",
+    "beautician": "Beautician",
+    "makeup_artist": "Makeup Artist",
+    "nail_technician": "Nail Technician",
+    "massage_therapist": "Massage Therapist",
+    "personal_trainer": "Personal Trainer",
+    "tattoo_artist": "Tattoo Artist",
+    "babysitter": "Babysitter",
+    "nanny": "Nanny",
+    "elderly_caregiver": "Elderly Caregiver",
+    "pet_sitter": "Pet Sitter",
+    "dog_walker": "Dog Walker",
+    "pet_groomer": "Pet Groomer",
+    "nurse": "Nurse",
+    "home_health_aide": "Home Health Aide",
+    "mover": "Mover",
+    "delivery_driver": "Delivery Driver",
+    "courier": "Courier",
+    "truck_driver": "Truck Driver",
+    "furniture_assembler": "Furniture Assembler",
+    "computer_technician": "Computer Technician",
+    "phone_repair": "Phone Repair",
+    "network_technician": "Network Technician",
+    "security_installer": "Security Installer",
+    "smart_home_installer": "Smart Home Installer",
+    "appliance_repair": "Appliance Repair",
+    "photographer": "Photographer",
+    "videographer": "Videographer",
+    "dj": "DJ",
+    "musician": "Musician",
+    "event_planner": "Event Planner",
+    "caterer": "Caterer",
+    "bartender": "Bartender",
+    "waiter": "Waiter",
+    "tutor": "Tutor",
+    "music_teacher": "Music Teacher",
+    "language_teacher": "Language Teacher",
+    "driving_instructor": "Driving Instructor",
+    "sports_coach": "Sports Coach",
+    "yoga_instructor": "Yoga Instructor",
+    "accountant": "Accountant",
+    "lawyer": "Lawyer",
+    "translator": "Translator",
+    "notary": "Notary",
+    "real_estate_agent": "Real Estate Agent",
+    "insurance_agent": "Insurance Agent",
+    "tailor": "Tailor",
+    "seamstress": "Seamstress",
+    "shoe_repair": "Shoe Repair",
+    "dry_cleaner": "Dry Cleaner",
+    "laundry_service": "Laundry Service",
+    "chef": "Chef",
+    "cook": "Cook",
+    "baker": "Baker",
+    "butcher": "Butcher",
+    "personal_chef": "Personal Chef",
+    "security_guard": "Security Guard",
+    "bodyguard": "Bodyguard",
+    "private_investigator": "Private Investigator",
+    "farmer": "Farmer",
+    "farmhand": "Farmhand",
+    "veterinarian": "Veterinarian",
+    "beekeeper": "Beekeeper"
   },
   "footer": {
     "description": "Connecting you with trusted cleaning professionals.",
@@ -262,5 +591,235 @@
     "privacyPolicy": "Privacy Policy",
     "cookiePolicy": "Cookie Policy",
     "allRightsReserved": "All rights reserved."
+  },
+  "about": {
+    "title": "About Servantana",
+    "subtitle": "We're the largest workforce marketplace to connect skilled professionals with people who need their services.",
+    "mission": {
+      "title": "Our Mission",
+      "content": "We believe everyone deserves access to reliable, skilled professionals. Our mission is to create meaningful work opportunities while making it easy for customers to find trusted help for any task."
+    },
+    "stats": {
+      "professionals": "Professionals",
+      "bookings": "Bookings",
+      "satisfaction": "Satisfaction",
+      "cities": "Cities"
+    },
+    "story": {
+      "title": "Our Story",
+      "content1": "Servantana was founded in 2024 with a simple idea: make it easier for people to find reliable help. We noticed that while skilled professionals were everywhere, connecting them with customers who needed their services was unnecessarily difficult.",
+      "content2": "Today, we're proud to have built a platform that empowers thousands of professionals to grow their businesses while helping customers get things done with confidence."
+    },
+    "values": {
+      "title": "Our Values",
+      "trust": {
+        "title": "Trust",
+        "content": "We verify every professional and protect every transaction to ensure peace of mind."
+      },
+      "quality": {
+        "title": "Quality",
+        "content": "We maintain high standards and only work with skilled, reliable professionals."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "content": "We continuously improve our platform to make hiring help easier than ever."
+      }
+    }
+  },
+  "careers": {
+    "title": "Join Our Team",
+    "subtitle": "Help us build the future of work. We're looking for passionate people who want to make a difference.",
+    "why": {
+      "title": "WHY US?",
+      "growth": {
+        "title": "Career Growth",
+        "content": "Grow your skills and advance your career in a fast-paced startup environment."
+      },
+      "remote": {
+        "title": "Remote First",
+        "content": "Work from anywhere. We believe in flexibility and work-life balance."
+      },
+      "benefits": {
+        "title": "Great Benefits",
+        "content": "Competitive salary, equity, health insurance, and unlimited PTO."
+      }
+    },
+    "positions": {
+      "title": "Open Positions",
+      "frontend": {
+        "title": "Senior Frontend Developer"
+      },
+      "backend": {
+        "title": "Backend Developer"
+      },
+      "designer": {
+        "title": "Product Designer"
+      },
+      "marketing": {
+        "title": "Marketing Manager"
+      },
+      "support": {
+        "title": "Customer Support Specialist"
+      }
+    },
+    "departments": {
+      "engineering": "Engineering",
+      "design": "Design",
+      "marketing": "Marketing",
+      "support": "Support"
+    },
+    "locations": {
+      "remote": "Remote",
+      "hybrid": "Hybrid"
+    },
+    "types": {
+      "fullTime": "Full-time",
+      "partTime": "Part-time"
+    },
+    "apply": "Apply Now",
+    "noPosition": {
+      "title": "Don't see a role that fits?",
+      "content": "We're always looking for talented people. Send us your resume and we'll keep you in mind for future opportunities.",
+      "button": "Send Resume"
+    }
+  },
+  "press": {
+    "title": "Press & Media",
+    "subtitle": "News, updates, and resources for journalists and media professionals.",
+    "kit": {
+      "title": "Press Kit",
+      "logos": {
+        "title": "Brand Logos",
+        "content": "Download our logo in various formats for press use."
+      },
+      "photos": {
+        "title": "Product Photos",
+        "content": "High-resolution screenshots and product images."
+      }
+    },
+    "download": "Download",
+    "facts": {
+      "title": "Company Facts",
+      "founded": "Founded",
+      "headquarters": "Headquarters",
+      "employees": "Employees",
+      "users": "Registered Users"
+    },
+    "contact": {
+      "title": "Press Contact",
+      "content": "For media inquiries, interview requests, or press kit access, please contact our press team."
+    }
+  },
+  "help": {
+    "title": "Help Center",
+    "subtitle": "Find answers to your questions",
+    "searchPlaceholder": "Search for help...",
+    "categories": {
+      "title": "Browse by Category",
+      "account": {
+        "title": "Account & Profile",
+        "articles": "12 articles"
+      },
+      "booking": {
+        "title": "Booking & Scheduling",
+        "articles": "15 articles"
+      },
+      "payments": {
+        "title": "Payments & Billing",
+        "articles": "10 articles"
+      },
+      "safety": {
+        "title": "Safety & Trust",
+        "articles": "8 articles"
+      },
+      "communication": {
+        "title": "Communication",
+        "articles": "6 articles"
+      },
+      "settings": {
+        "title": "Settings",
+        "articles": "9 articles"
+      }
+    },
+    "popular": {
+      "title": "Popular Articles",
+      "article1": "How do I book a professional?",
+      "article2": "How do I cancel or reschedule a booking?",
+      "article3": "How do payments work?",
+      "article4": "How are professionals verified?",
+      "article5": "How do I become a professional on Servantana?"
+    },
+    "contact": {
+      "title": "Still need help?",
+      "content": "Our support team is here to help you with any questions.",
+      "button": "Contact Support"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+    "email": {
+      "title": "Email"
+    },
+    "phone": {
+      "title": "Phone"
+    },
+    "address": {
+      "title": "Address"
+    },
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send Message"
+    },
+    "success": {
+      "title": "Message Sent!",
+      "message": "Thank you for contacting us. We'll get back to you within 24 hours."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to the most common questions about Servantana.",
+    "items": {
+      "whatIsServantana": {
+        "question": "What is Servantana?",
+        "answer": "Servantana is a marketplace that connects customers with skilled professionals for various services including cleaning, repairs, personal care, and more. We verify all professionals and provide secure payment processing."
+      },
+      "howToBook": {
+        "question": "How do I book a professional?",
+        "answer": "Simply select a category, choose a profession, browse available professionals in your area, select one based on their ratings and reviews, choose your preferred date and time, and confirm your booking. It's that easy!"
+      },
+      "paymentMethods": {
+        "question": "What payment methods are accepted?",
+        "answer": "We accept all major credit cards, debit cards, and PayPal. Payments are processed securely through our platform, and you're only charged after the service is completed."
+      },
+      "cancellation": {
+        "question": "What is the cancellation policy?",
+        "answer": "You can cancel or reschedule a booking up to 24 hours before the scheduled time at no charge. Cancellations within 24 hours may be subject to a cancellation fee."
+      },
+      "workerVerification": {
+        "question": "How are professionals verified?",
+        "answer": "All professionals undergo a verification process that includes identity verification, background checks, and skill assessment. We also collect and display reviews from previous customers."
+      },
+      "becomeWorker": {
+        "question": "How do I become a professional on Servantana?",
+        "answer": "Sign up for a professional account, complete your profile, submit required documents for verification, and once approved, you can start accepting bookings and growing your business."
+      },
+      "pricing": {
+        "question": "How is pricing determined?",
+        "answer": "Professionals set their own rates based on their experience and the services they offer. All prices are displayed upfront before booking, with no hidden fees."
+      },
+      "safety": {
+        "question": "Is Servantana safe to use?",
+        "answer": "Yes! We prioritize safety with verified professionals, secure payments, and a rating system. We also provide customer support and a satisfaction guarantee on all bookings."
+      }
+    },
+    "contact": {
+      "title": "Still have questions?",
+      "content": "Can't find what you're looking for? Our support team is happy to help.",
+      "button": "Contact Us"
+    }
   }
 }

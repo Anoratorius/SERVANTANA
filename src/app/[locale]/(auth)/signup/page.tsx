@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
+import { Header } from "@/components/layout";
 
 function SignupForm() {
   const t = useTranslations();
@@ -31,7 +32,6 @@ function SignupForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [hoveredRole, setHoveredRole] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -114,7 +114,7 @@ function SignupForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mb-4">
-          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+          <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
             {t("common.appName")}
           </Link>
         </div>
@@ -210,12 +210,10 @@ function SignupForm() {
             <div className="grid grid-cols-2 gap-3">
               <label
                 className={`flex items-center justify-center p-3 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
-                  hoveredRole === "CUSTOMER"
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-blue-600 text-blue-600 bg-transparent"
+                  formData.role === "CUSTOMER"
+                    ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200"
+                    : "border-gray-300 text-gray-500 bg-transparent hover:border-blue-400 hover:text-blue-500"
                 }`}
-                onMouseEnter={() => setHoveredRole("CUSTOMER")}
-                onMouseLeave={() => setHoveredRole(null)}
               >
                 <input
                   type="radio"
@@ -229,12 +227,10 @@ function SignupForm() {
               </label>
               <label
                 className={`flex items-center justify-center p-3 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
-                  hoveredRole === "CLEANER"
-                    ? "border-green-600 bg-green-600 text-white"
-                    : "border-green-600 text-green-600 bg-transparent"
+                  formData.role === "CLEANER"
+                    ? "border-green-600 bg-green-600 text-white shadow-lg shadow-green-200"
+                    : "border-gray-300 text-gray-500 bg-transparent hover:border-green-400 hover:text-green-500"
                 }`}
-                onMouseEnter={() => setHoveredRole("CLEANER")}
-                onMouseLeave={() => setHoveredRole(null)}
               >
                 <input
                   type="radio"
@@ -258,13 +254,13 @@ function SignupForm() {
               className="mt-1 rounded"
             />
             <span className="text-muted-foreground">
-              I agree to the{" "}
+              {t("auth.signup.termsPrefix")}{" "}
               <Link href="/terms" className="text-blue-600 hover:underline font-medium">
-                Terms of Service
+                {t("footer.termsOfService")}
               </Link>{" "}
-              and{" "}
+              {t("auth.signup.termsAnd")}{" "}
               <Link href="/privacy" className="text-blue-600 hover:underline font-medium">
-                Privacy Policy
+                {t("footer.privacyPolicy")}
               </Link>
             </span>
           </label>
@@ -352,10 +348,13 @@ function SignupFormSkeleton() {
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8">
-      <Suspense fallback={<SignupFormSkeleton />}>
-        <SignupForm />
-      </Suspense>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-1 flex items-center justify-center bg-muted/30 px-4 py-8">
+        <Suspense fallback={<SignupFormSkeleton />}>
+          <SignupForm />
+        </Suspense>
+      </div>
     </div>
   );
 }

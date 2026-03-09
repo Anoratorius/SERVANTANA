@@ -140,12 +140,9 @@ export default function MessagesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-3xl">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <MessageCircle className="h-8 w-8 text-blue-500" />
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                {t("messages.title")}
-              </h1>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <MessageCircle className="h-12 w-12 text-blue-500" />
               <span title={isConnected ? "Real-time updates active" : "Connecting..."}>
                 {isConnected ? (
                   <Wifi className="h-4 w-4 text-green-500" />
@@ -154,8 +151,11 @@ export default function MessagesPage() {
                 )}
               </span>
             </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              {t("messages.title")}
+            </h1>
             {totalUnread > 0 && (
-              <Badge className="bg-red-500 text-white">
+              <Badge className="bg-red-500 text-white mt-2">
                 {totalUnread} unread
               </Badge>
             )}

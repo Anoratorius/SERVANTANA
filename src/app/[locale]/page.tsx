@@ -1,19 +1,17 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Header, Footer } from "@/components/layout";
 import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
+import { HeroSearch } from "@/components/home/HeroSearch";
+import { HeroBackground } from "@/components/home/HeroBackground";
 import {
   Search,
   Shield,
   DollarSign,
   Calendar,
   Lock,
-  ChevronRight,
   UserCheck,
   CalendarCheck,
   Sparkles,
@@ -47,11 +45,13 @@ function FeatureCard({ icon, title, color }: { icon: React.ReactNode; title: str
 function FlowStep({
   icon,
   title,
-  color
+  color,
+  small = false
 }: {
   icon: React.ReactNode;
   title: string;
   color: "blue" | "teal" | "green" | "emerald";
+  small?: boolean;
 }) {
   const colorClasses = {
     blue: "from-blue-500 to-blue-600 shadow-blue-500/30",
@@ -69,11 +69,11 @@ function FlowStep({
 
   return (
     <div className="flex flex-col items-center text-center group">
-      <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center mb-6 shadow-xl transition-transform group-hover:scale-110`}>
+      <div className={`${small ? 'w-12 h-12 mb-2' : 'w-20 h-20 mb-6'} rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center shadow-xl transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <div className={`w-full p-5 rounded-xl border ${bgClasses[color]} transition-all group-hover:shadow-md`}>
-        <h3 className="font-bold text-xl text-gray-800">{title}</h3>
+      <div className={`w-full ${small ? 'p-2' : 'p-5'} rounded-xl border ${bgClasses[color]} transition-all group-hover:shadow-md`}>
+        <h3 className={`font-bold ${small ? 'text-xs' : 'text-xl'} text-gray-800`}>{title}</h3>
       </div>
     </div>
   );
@@ -137,29 +137,17 @@ function HomeContent() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-4 md:py-8">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-5xl md:text-8xl font-bold tracking-tight mb-14 pb-1 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent leading-tight">
+        <section className="relative py-6 md:py-8 overflow-hidden">
+          {/* Dynamic City Background */}
+          <HeroBackground />
+          <div className="container mx-auto px-4 text-center flex flex-col items-center relative z-10">
+            <h1 className="font-bold tracking-tight mb-6 md:mb-14 pb-1 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent leading-tight text-center max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.25rem, 4vw, 3rem)', fontFamily: 'var(--font-logo)' }}>
               {t("home.hero.title")}
             </h1>
-            <p className="text-xl md:text-2xl font-bold tracking-tight mb-16 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            <p className="text-base md:text-2xl font-bold tracking-tight mb-8 md:mb-16 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent text-center max-w-2xl mx-auto px-2">
               {t("home.hero.subtitle")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder={t("home.hero.searchPlaceholder")}
-                  className="pl-10 h-12"
-                />
-              </div>
-              <Link href="/search">
-                <Button size="lg" className="h-12 w-full sm:w-auto bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
-                  {t("home.hero.searchButton")}
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
+            <HeroSearch />
 
             {/* Scroll Indicator */}
             <ScrollIndicator />
@@ -169,7 +157,7 @@ function HomeContent() {
         {/* Features Section */}
         <section id="features" className="py-20 bg-white">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
               <FeatureCard
                 icon={<Shield className="h-10 w-10" />}
                 title={t("home.features.verified.title")}
@@ -196,7 +184,7 @@ function HomeContent() {
 
         {/* Flow Section */}
         <section className="py-20 bg-muted/30 overflow-hidden">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 max-w-5xl">
             {/* Desktop Flow - Horizontal Connected Timeline */}
             <div className="hidden lg:block relative max-w-5xl mx-auto">
               {/* Connecting Line */}
@@ -227,32 +215,35 @@ function HomeContent() {
               </div>
             </div>
 
-            {/* Mobile Flow - Vertical Timeline */}
+            {/* Mobile Flow - Horizontal in one line */}
             <div className="lg:hidden relative">
-              <div className="space-y-0">
-                <MobileFlowStep
-                  icon={<Search className="h-6 w-6" />}
+              {/* Connecting Line */}
+              <div className="absolute top-6 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 via-green-500 to-emerald-500 rounded-full" />
+
+              <div className="grid grid-cols-4 gap-2 relative">
+                <FlowStep
+                  icon={<Search className="h-5 w-5" />}
                   title={t("home.howItWorks.step1.title")}
                   color="blue"
-                  isLast={false}
+                  small
                 />
-                <MobileFlowStep
-                  icon={<UserCheck className="h-6 w-6" />}
+                <FlowStep
+                  icon={<UserCheck className="h-5 w-5" />}
                   title={t("home.howItWorks.step2.title")}
                   color="teal"
-                  isLast={false}
+                  small
                 />
-                <MobileFlowStep
-                  icon={<CalendarCheck className="h-6 w-6" />}
+                <FlowStep
+                  icon={<CalendarCheck className="h-5 w-5" />}
                   title={t("home.howItWorks.step3.title")}
                   color="green"
-                  isLast={false}
+                  small
                 />
-                <MobileFlowStep
-                  icon={<Sparkles className="h-6 w-6" />}
+                <FlowStep
+                  icon={<Sparkles className="h-5 w-5" />}
                   title={t("home.howItWorks.step4.title")}
                   color="emerald"
-                  isLast={true}
+                  small
                 />
               </div>
             </div>
@@ -261,8 +252,8 @@ function HomeContent() {
 
         {/* CTA Section */}
         <section className="py-12 bg-gradient-to-r from-blue-600 to-green-600 text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-8">
+          <div className="container mx-auto px-4 text-center max-w-3xl">
+            <h2 className="text-3xl font-bold mb-8" style={{ fontFamily: 'var(--font-logo)' }}>
               {t("home.cta.title")}
             </h2>
             <CTAButtons

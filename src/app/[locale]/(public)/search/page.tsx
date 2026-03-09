@@ -66,9 +66,34 @@ function SearchContent() {
 
   // Filter state
   const [location, setLocation] = useState(searchParams.get("location") || "");
+  const [isDetectingLocation, setIsDetectingLocation] = useState(true);
   const [serviceFilter, setServiceFilter] = useState(searchParams.get("service") || "all");
   const [minRating, setMinRating] = useState(searchParams.get("rating") || "0");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("price") || "any");
+
+  // Auto-detect location via IP on mount
+  useEffect(() => {
+    async function detectLocation() {
+      try {
+        const response = await fetch("http://ip-api.com/json/?fields=city,regionName,country");
+        const data = await response.json();
+        if (data.city) {
+          setLocation(data.city);
+        }
+      } catch (error) {
+        console.error("Error detecting location:", error);
+      } finally {
+        setIsDetectingLocation(false);
+      }
+    }
+
+    // Only detect if no location provided in URL
+    if (!searchParams.get("location")) {
+      detectLocation();
+    } else {
+      setIsDetectingLocation(false);
+    }
+  }, [searchParams]);
 
   // Fetch services on mount
   useEffect(() => {
@@ -132,19 +157,21 @@ function SearchContent() {
       <main className="flex-1 bg-muted/30">
         {/* Search Header */}
         <section className="bg-white border-b py-6">
-          <div className="container mx-auto px-4">
-            <h1 className="text-2xl font-bold mb-4">{t("customer.search.title")}</h1>
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-6">
+              <Search className="h-10 w-10 mx-auto text-blue-500 mb-3" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{t("customer.search.title")}</h1>
+            </div>
             <div className="grid md:grid-cols-4 gap-4">
               <div>
                 <Label className="text-sm">{t("customer.search.location")}</Label>
-                <div className="relative mt-1">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder={t("home.hero.searchPlaceholder")}
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="pl-9"
-                  />
+                <div className="relative mt-1 flex items-center gap-2 h-10 px-3 border rounded-md bg-muted/50">
+                  <MapPin className="h-4 w-4 text-blue-500" />
+                  {isDetectingLocation ? (
+                    <span className="text-sm text-muted-foreground">{t("home.hero.detectingLocation")}</span>
+                  ) : (
+                    <span className="text-sm font-medium">{location || "Unknown"}</span>
+                  )}
                 </div>
               </div>
               <div>
@@ -198,7 +225,7 @@ function SearchContent() {
 
         {/* Results */}
         <section className="py-8">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 max-w-5xl">
             {isLoading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (

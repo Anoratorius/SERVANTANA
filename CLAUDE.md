@@ -57,6 +57,63 @@ Core entities: User, CleanerProfile, Service, CleanerService, Booking, Review, M
 - Translations in `src/locales/{locale}.json`
 - Default locale is English with "as-needed" prefix strategy
 
+## Critical Rules
+
+### Do NOT Change Unrelated Code
+When asked to make a specific change, change ONLY what was requested. Do NOT:
+- "Fix" or "improve" nearby code
+- Update related strings or values that weren't mentioned
+- Refactor or clean up code you happen to see
+- Add translations for things that weren't asked
+- Change formatting, naming, or structure of untouched code
+
+If the user asks to "add German translations for categories", add ONLY the category translations. Do not touch titles, subtitles, or anything else. One task = one change. Stay in your lane.
+
+### Follow Instructions Exactly
+Do EXACTLY what the user asks. Do NOT interpret, assume, or expand on requests.
+
+- If the user provides text to replace, replace it with EXACTLY that text
+- If the user asks for your opinion, give it and WAIT for confirmation before implementing
+- If the user says "ok" or confirms, THEN implement
+- Do NOT add, remove, or modify anything beyond what was explicitly requested
+- One small change means ONE small change - not multiple "improvements"
+
+Example:
+- User: "Change X to Y" → Change X to Y. Nothing else.
+- User: "What do you think about X?" → Give opinion, wait for response
+- User: "Ok do it" → Now implement
+
+### One Change Does NOT Require Another
+Making one change does NOT justify or require making other changes unless ABSOLUTELY necessary for the first change to work. Examples:
+- Adding a new page does NOT require changing existing page layouts
+- Fixing a bug does NOT require refactoring surrounding code
+- Adding translations does NOT require changing component structure
+- Creating new files does NOT require modifying unrelated existing files
+
+If a change CAN work without touching other files, then DO NOT touch other files. Period.
+
+## Layout Standards
+
+### Centering and Symmetry
+ALL pages must be centered and symmetrical by default, both on mobile and web. This is a fundamental requirement - do NOT create pages without proper centering.
+
+**Required patterns:**
+- Use `container mx-auto px-4` on all main content wrappers
+- Add `max-w-*` constraint (typically `max-w-3xl`, `max-w-4xl`, or `max-w-5xl`) to prevent content from stretching full width
+- Use `text-center` for headings and hero sections
+- Use `mx-auto` on grid/flex containers when centering is needed
+
+**Page structure template:**
+```tsx
+<main className="flex-1 bg-...">
+  <div className="container mx-auto px-4 max-w-5xl">
+    {/* Centered content */}
+  </div>
+</main>
+```
+
+This applies to ALL pages - never create a page without these centering classes.
+
 ## Code Conventions
 
 - Path alias: `@/*` maps to `src/*`

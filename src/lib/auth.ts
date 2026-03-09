@@ -74,7 +74,7 @@ export const authOptions: NextAuthConfig = {
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
-          select: { id: true, role: true, firstName: true, lastName: true },
+          select: { id: true, role: true, firstName: true, lastName: true, tokenVersion: true },
         });
 
         if (dbUser) {
@@ -82,6 +82,7 @@ export const authOptions: NextAuthConfig = {
           token.role = dbUser.role;
           token.firstName = dbUser.firstName;
           token.lastName = dbUser.lastName;
+          token.tokenVersion = dbUser.tokenVersion;
         }
 
         // Check remember me preference on initial sign in
@@ -96,6 +97,17 @@ export const authOptions: NextAuthConfig = {
             token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
           }
         }
+      } else if (token.id) {
+        // On subsequent requests, verify tokenVersion hasn't changed (password reset)
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { tokenVersion: true },
+        });
+
+        if (!dbUser || dbUser.tokenVersion !== token.tokenVersion) {
+          // Token version changed (password was reset) - invalidate session
+          return {} as typeof token;
+        }
       }
       return token;
     },
@@ -108,17 +120,49 @@ export const authOptions: NextAuthConfig = {
       }
       return session;
     },
-    async signIn({ user, account }) {
-      // For OAuth providers, ensure user exists in our User table
+    async signIn({ user, account, profile }) {
+      // For OAuth providers, handle user creation and account linking
       if (account?.provider !== "credentials" && user.email) {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email },
+          include: { accounts: true },
         });
 
-        if (!existingUser) {
-          // Create user for OAuth sign-in
+        if (existingUser) {
+          // Check if this OAuth provider is already linked
+          const existingAccount = existingUser.accounts.find(
+            (acc) => acc.provider === account.provider
+          );
+
+          if (!existingAccount) {
+            // Link OAuth account to existing user
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                refresh_token: account.refresh_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+              },
+            });
+          }
+
+          // Update user avatar if not set
+          if (!existingUser.avatar && user.image) {
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: { avatar: user.image },
+            });
+          }
+        } else {
+          // Create new user for OAuth sign-in
           const nameParts = (user.name || "User").split(" ");
-          await prisma.user.create({
+          const newUser = await prisma.user.create({
             data: {
               email: user.email,
               firstName: nameParts[0] || "User",
@@ -126,6 +170,22 @@ export const authOptions: NextAuthConfig = {
               avatar: user.image,
               emailVerified: new Date(),
               role: "CUSTOMER",
+            },
+          });
+
+          // Create account link
+          await prisma.account.create({
+            data: {
+              userId: newUser.id,
+              type: account.type,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              access_token: account.access_token,
+              refresh_token: account.refresh_token,
+              expires_at: account.expires_at,
+              token_type: account.token_type,
+              scope: account.scope,
+              id_token: account.id_token,
             },
           });
         }

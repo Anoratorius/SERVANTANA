@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,7 @@ interface Conversation {
 }
 
 export function NotificationBell() {
+  const t = useTranslations();
   const { data: session, status } = useSession();
   const [unreadCount, setUnreadCount] = useState(0);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -104,13 +106,13 @@ export function NotificationBell() {
       });
 
       // Show toast
-      toast.message(`New message from ${message.sender.firstName}`, {
+      toast.message(`${t("messages.newMessageFrom")} ${message.sender.firstName}`, {
         description: message.content.length > 50
           ? message.content.substring(0, 50) + "..."
           : message.content,
         duration: 5000,
         action: {
-          label: "Reply",
+          label: t("messages.reply"),
           onClick: () => {
             openChat({
               id: message.senderId,
@@ -336,7 +338,7 @@ export function NotificationBell() {
                 className="text-xs text-blue-600 hover:underline"
                 onClick={() => setIsOpen(false)}
               >
-                Full chat
+                {t("messages.fullChat")}
               </Link>
             </div>
 
@@ -348,7 +350,7 @@ export function NotificationBell() {
                 </div>
               ) : chatMessages.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                  No messages yet
+                  {t("messages.noMessages")}
                 </div>
               ) : (
                 <>
@@ -368,7 +370,7 @@ export function NotificationBell() {
                         >
                           <p className="break-words">{msg.content}</p>
                           <p className={`text-xs mt-1 ${isMe ? "text-blue-100" : "text-muted-foreground"}`}>
-                            {formatTime(msg.createdAt)}
+                            {formatTime(msg.createdAt, t)}
                           </p>
                         </div>
                       </div>
@@ -387,7 +389,7 @@ export function NotificationBell() {
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type a message..."
+                  placeholder={t("messages.placeholder")}
                   disabled={isSending}
                   className="flex-1 h-9"
                 />
@@ -410,10 +412,10 @@ export function NotificationBell() {
           // Notifications List View
           <>
             <div className="flex items-center justify-between p-2">
-              <span className="font-semibold">Messages</span>
+              <span className="font-semibold">{t("messages.title")}</span>
               {unreadCount > 0 && (
                 <Badge variant="secondary" className="text-xs">
-                  {unreadCount} unread
+                  {unreadCount} {t("messages.unread")}
                 </Badge>
               )}
             </div>
@@ -422,7 +424,7 @@ export function NotificationBell() {
             <div className="max-h-80 overflow-y-auto">
               {unreadConversations.length === 0 ? (
                 <div className="p-4 text-center text-muted-foreground text-sm">
-                  No new messages
+                  {t("messages.noNewMessages")}
                 </div>
               ) : (
                 unreadConversations.map((conv) => (
@@ -452,7 +454,7 @@ export function NotificationBell() {
                         {conv.lastMessage.content}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {formatTime(conv.lastMessage.createdAt)}
+                        {formatTime(conv.lastMessage.createdAt, t)}
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
@@ -462,7 +464,7 @@ export function NotificationBell() {
                         size="icon"
                         className="h-6 w-6 opacity-0 group-hover:opacity-100"
                         onClick={(e) => handleDismiss(conv, e)}
-                        title="Mark as read"
+                        title={t("messages.markAsRead")}
                       >
                         <X className="h-3 w-3" />
                       </Button>
@@ -478,7 +480,7 @@ export function NotificationBell() {
               className="block w-full text-center text-sm text-blue-600 hover:text-blue-700 p-2 hover:bg-accent rounded-md"
               onClick={() => setIsOpen(false)}
             >
-              View all messages
+              {t("messages.viewAllMessages")}
             </Link>
           </>
         )}
@@ -487,16 +489,16 @@ export function NotificationBell() {
   );
 }
 
-function formatTime(dateString: string): string {
+function formatTime(dateString: string, t: (key: string) => string): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
 
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffMins < 1) return t("messages.justNow");
+  if (diffMins < 60) return `${diffMins}${t("messages.minutesAgo")}`;
+  if (diffHours < 24) return `${diffHours}${t("messages.hoursAgo")}`;
 
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }

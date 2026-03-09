@@ -100,25 +100,21 @@ export default function DashboardPage() {
       <Header />
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 max-w-5xl">
           {/* Welcome Section */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-            <div className="flex items-center gap-4 mb-4 md:mb-0">
-              <Avatar className="h-16 w-16 ring-4 ring-blue-100">
-                <AvatarImage src={session?.user?.image || undefined} />
-                <AvatarFallback className="text-xl bg-gradient-to-br from-blue-500 to-green-500 text-white">
-                  {userInitials}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h1 className="text-2xl font-bold">
-                  Welcome back, {session?.user?.firstName || session?.user?.name}!
-                </h1>
-                <p className="text-muted-foreground">
-                  {isCleaner ? t("cleaner.dashboard.title") : t("customer.dashboard.title")}
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-col items-center text-center mb-8">
+            <Avatar className="h-20 w-20 ring-4 ring-blue-100 mb-4">
+              <AvatarImage src={session?.user?.image || undefined} />
+              <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-green-500 text-white">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
+            <h1 className="text-2xl font-bold">
+              Welcome back, {session?.user?.firstName || session?.user?.name}!
+            </h1>
+            <p className="text-muted-foreground mb-4">
+              {isCleaner ? t("cleaner.dashboard.title") : t("customer.dashboard.title")}
+            </p>
             <Link href={isCleaner ? "/dashboard/settings" : "/search"}>
               <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
                 {isCleaner ? (

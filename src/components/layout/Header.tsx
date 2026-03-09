@@ -46,9 +46,9 @@ export function Header() {
 
   return (
     <header className="border-b bg-white sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto px-2 sm:px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+        <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
           {t("common.appName")}
         </Link>
 
@@ -66,7 +66,7 @@ export function Header() {
         </nav>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
           {isLoading ? (
             <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
           ) : isAuthenticated ? (
@@ -105,7 +105,7 @@ export function Header() {
                   <DropdownMenuItem asChild>
                     <Link href="/favorites" className="cursor-pointer">
                       <Heart className="mr-2 h-4 w-4" />
-                      Favorites
+                      {t("nav.favorites")}
                     </Link>
                   </DropdownMenuItem>
                 )}
