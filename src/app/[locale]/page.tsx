@@ -5,7 +5,6 @@ import { Header, Footer } from "@/components/layout";
 import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
-import { HeroBackground } from "@/components/home/HeroBackground";
 import {
   Search,
   Shield,
@@ -137,9 +136,7 @@ function HomeContent() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-6 md:py-8 overflow-hidden">
-          {/* Dynamic City Background */}
-          <HeroBackground />
+        <section className="relative py-6 md:py-8 overflow-hidden min-h-[400px]">
           <div className="container mx-auto px-4 text-center flex flex-col items-center relative z-10">
             <h1 className="font-bold tracking-tight mb-6 md:mb-14 pb-1 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent leading-tight text-center max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.25rem, 4vw, 3rem)', fontFamily: 'var(--font-logo)' }}>
               {t("home.hero.title")}

@@ -1,39 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { MapPin, Loader2 } from "lucide-react";
-
-interface GeoLocation {
-  city: string;
-  countryCode: string;
-}
+import { useLocation } from "@/hooks/useLocation";
 
 export function HeaderLocation() {
-  const [isDetecting, setIsDetecting] = useState(true);
-  const [location, setLocation] = useState<GeoLocation | null>(null);
-
-  useEffect(() => {
-    async function detectLocation() {
-      try {
-        const response = await fetch("https://ipapi.co/json/");
-        if (response.ok) {
-          const data = await response.json();
-          if (data.city) {
-            setLocation({
-              city: data.city,
-              countryCode: data.country_code,
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Failed to detect location:", error);
-      } finally {
-        setIsDetecting(false);
-      }
-    }
-
-    detectLocation();
-  }, []);
+  const { location, isDetecting } = useLocation();
 
   if (isDetecting) {
     return (

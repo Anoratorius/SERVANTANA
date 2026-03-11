@@ -49,10 +49,11 @@ export function Header() {
           {t("common.appName")}
         </Link>
 
-        {/* Center - Location */}
-        <div className="hidden md:flex items-center">
+        {/* Location - center */}
+        <div className="hidden md:flex">
           <HeaderLocation />
         </div>
+
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-1 sm:gap-3">
@@ -144,7 +145,6 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px]">
               <nav className="flex flex-col gap-4 mt-8">
-                <HeaderLocation />
                 {!isAuthenticated && (
                   <>
                     <hr className="my-4" />

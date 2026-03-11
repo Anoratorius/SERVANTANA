@@ -1,8 +1,5 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import Google from "next-auth/providers/google";
-import Facebook from "next-auth/providers/facebook";
-import Apple from "next-auth/providers/apple";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
@@ -20,18 +17,6 @@ export const authOptions: NextAuthConfig = {
     error: "/login",
   },
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    Facebook({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    }),
-    Apple({
-      clientId: process.env.APPLE_CLIENT_ID,
-      clientSecret: process.env.APPLE_CLIENT_SECRET,
-    }),
     Credentials({
       name: "credentials",
       credentials: {
@@ -120,76 +105,7 @@ export const authOptions: NextAuthConfig = {
       }
       return session;
     },
-    async signIn({ user, account, profile }) {
-      // For OAuth providers, handle user creation and account linking
-      if (account && account.provider !== "credentials" && user.email) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email },
-          include: { accounts: true },
-        });
-
-        if (existingUser) {
-          // Check if this OAuth provider is already linked
-          const existingAccount = existingUser.accounts.find(
-            (acc) => acc.provider === account.provider
-          );
-
-          if (!existingAccount) {
-            // Link OAuth account to existing user
-            await prisma.account.create({
-              data: {
-                userId: existingUser.id,
-                type: account.type,
-                provider: account.provider,
-                providerAccountId: account.providerAccountId,
-                access_token: account.access_token,
-                refresh_token: account.refresh_token,
-                expires_at: account.expires_at,
-                token_type: account.token_type,
-                scope: account.scope,
-                id_token: account.id_token,
-              },
-            });
-          }
-
-          // Update user avatar if not set
-          if (!existingUser.avatar && user.image) {
-            await prisma.user.update({
-              where: { id: existingUser.id },
-              data: { avatar: user.image },
-            });
-          }
-        } else {
-          // Create new user for OAuth sign-in
-          const nameParts = (user.name || "User").split(" ");
-          const newUser = await prisma.user.create({
-            data: {
-              email: user.email,
-              firstName: nameParts[0] || "User",
-              lastName: nameParts.slice(1).join(" ") || "",
-              avatar: user.image,
-              emailVerified: new Date(),
-              role: "CUSTOMER",
-            },
-          });
-
-          // Create account link
-          await prisma.account.create({
-            data: {
-              userId: newUser.id,
-              type: account.type,
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              access_token: account.access_token,
-              refresh_token: account.refresh_token,
-              expires_at: account.expires_at,
-              token_type: account.token_type,
-              scope: account.scope,
-              id_token: account.id_token,
-            },
-          });
-        }
-      }
+    async signIn() {
       return true;
     },
   },
