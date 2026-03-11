@@ -15,13 +15,13 @@ export function HeaderLocation() {
   useEffect(() => {
     async function detectLocation() {
       try {
-        const response = await fetch("http://ip-api.com/json/?fields=city,countryCode");
+        const response = await fetch("https://ipapi.co/json/");
         if (response.ok) {
           const data = await response.json();
           if (data.city) {
             setLocation({
               city: data.city,
-              countryCode: data.countryCode,
+              countryCode: data.country_code,
             });
           }
         }
