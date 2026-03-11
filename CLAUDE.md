@@ -92,6 +92,24 @@ Making one change does NOT justify or require making other changes unless ABSOLU
 
 If a change CAN work without touching other files, then DO NOT touch other files. Period.
 
+### Never Revert User Changes
+If the user has modified code (either manually or by asking you to change it):
+- Do NOT change it back unless explicitly asked
+- Do NOT "fix" or "improve" their modifications
+- Do NOT undo their decisions
+- Their code is THEIR code - hands off
+
+Before editing ANY file, ask yourself: "Did the user recently modify this?" If yes, do NOT touch it unless they specifically ask you to.
+
+### Pre-Edit Checklist
+Before EVERY code change, verify:
+1. Was I explicitly asked to make this change? If no → STOP
+2. Did the user modify this code recently? If yes → STOP (unless they asked)
+3. Is this the minimum change needed? If no → reduce scope
+4. Am I adding anything not requested? If yes → remove it
+
+If any check fails, do NOT proceed.
+
 ## Layout Standards
 
 ### Centering and Symmetry
