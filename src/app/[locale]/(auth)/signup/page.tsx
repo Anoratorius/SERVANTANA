@@ -95,8 +95,8 @@ function SignupForm() {
       if (result?.error) {
         router.push("/login");
       } else {
-        router.push(formData.role === "CLEANER" ? "/dashboard" : "/");
-        router.refresh();
+        // Force full page reload to ensure session cookies are properly set
+        window.location.href = formData.role === "CLEANER" ? "/dashboard" : "/";
       }
     } catch {
       setErrorMessage("An error occurred. Please try again.");
