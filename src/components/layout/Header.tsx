@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -23,9 +23,13 @@ import { Menu, User, Settings, Calendar, MessageSquare, LogOut, Heart } from "lu
 export function Header() {
   const t = useTranslations();
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const isLoginPage = pathname?.includes("/login");
+  const isSignupPage = pathname?.includes("/signup");
 
   const handleSignOut = useCallback(async () => {
     setIsSigningOut(true);
@@ -42,21 +46,22 @@ export function Header() {
     : session?.user?.name?.split(" ").map(n => n[0]).join("") || "U";
 
   return (
-    <header className="border-b bg-white sticky top-0 z-50">
-      <div className="container mx-auto px-2 sm:px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
-          {t("common.appName")}
-        </Link>
+    <header className="border-b bg-white sticky top-0 z-50 w-screen">
+      <div className="relative w-full px-[5vw] py-4 flex items-center justify-between">
+        {/* Left - Logo */}
+        <div className="flex-shrink-0">
+          <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
+            {t("common.appName")}
+          </Link>
+        </div>
 
-        {/* Location - center */}
-        <div className="hidden md:flex">
+        {/* Center - Location (absolute center at 50vw) */}
+        <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <HeaderLocation />
         </div>
 
-
-        {/* Right Side Actions */}
-        <div className="flex items-center gap-1 sm:gap-3">
+        {/* Right - Actions */}
+        <div className="flex-shrink-0 flex items-center gap-[2vw]">
           {isLoading ? (
             <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
           ) : isAuthenticated ? (
@@ -126,10 +131,21 @@ export function Header() {
           ) : (
             <div className="hidden sm:flex items-center gap-2">
               <Link href="/login">
-                <Button variant="ghost" size="sm">{t("nav.login")}</Button>
+                <Button
+                  variant={isLoginPage ? "default" : "ghost"}
+                  size="sm"
+                  className={isLoginPage ? "bg-green-600 hover:bg-green-700" : ""}
+                >
+                  {t("nav.login")}
+                </Button>
               </Link>
               <Link href="/signup">
-                <Button size="sm">{t("nav.signup")}</Button>
+                <Button
+                  variant={isLoginPage ? "ghost" : "default"}
+                  size="sm"
+                >
+                  {t("nav.signup")}
+                </Button>
               </Link>
             </div>
           )}
@@ -149,10 +165,20 @@ export function Header() {
                   <>
                     <hr className="my-4" />
                     <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full">{t("nav.login")}</Button>
+                      <Button
+                        variant={isLoginPage ? "default" : "outline"}
+                        className={`w-full ${isLoginPage ? "bg-green-600 hover:bg-green-700" : ""}`}
+                      >
+                        {t("nav.login")}
+                      </Button>
                     </Link>
                     <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                      <Button className="w-full">{t("nav.signup")}</Button>
+                      <Button
+                        variant={isLoginPage ? "outline" : "default"}
+                        className="w-full"
+                      >
+                        {t("nav.signup")}
+                      </Button>
                     </Link>
                   </>
                 )}

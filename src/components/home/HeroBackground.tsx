@@ -3,17 +3,16 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "@/hooks/useLocation";
 
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1920";
-
 export function HeroBackground() {
   const { location, isDetecting } = useLocation();
-  const [imageUrl, setImageUrl] = useState<string>(FALLBACK_IMAGE);
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   useEffect(() => {
     if (isDetecting || !location?.city) return;
 
+    const cityName = location.city;
+
     async function fetchCityImage() {
-      const cityName = location.city;
 
       try {
         // Get city image from Wikipedia
@@ -39,12 +38,13 @@ export function HeroBackground() {
         console.error("Failed to fetch city image:", error);
       }
 
-      // Keep fallback
-      setImageUrl(FALLBACK_IMAGE);
+      // No fallback - keep empty if city image not found
     }
 
     fetchCityImage();
   }, [location, isDetecting]);
+
+  if (!imageUrl) return null;
 
   return (
     <>
@@ -52,7 +52,7 @@ export function HeroBackground() {
         src={imageUrl}
         alt="City"
         className="absolute inset-0 w-full h-full object-cover z-0"
-        onError={() => setImageUrl(FALLBACK_IMAGE)}
+        onError={() => setImageUrl("")}
       />
       <div className="absolute inset-0 z-0 bg-white/60" />
     </>

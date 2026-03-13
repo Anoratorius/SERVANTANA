@@ -46,19 +46,20 @@ async function fetchLocation(): Promise<GeoLocation | null> {
   return null;
 }
 
+function getInitialLocation(): { location: GeoLocation | null; cacheValid: boolean } {
+  const now = Date.now();
+  const cacheValid = cachedLocation !== null && (now - cacheTimestamp) < CACHE_DURATION;
+  return { location: cacheValid ? cachedLocation : null, cacheValid };
+}
+
 export function useLocation() {
-  const [location, setLocation] = useState<GeoLocation | null>(cachedLocation);
-  const [isDetecting, setIsDetecting] = useState(!cachedLocation);
+  const initial = getInitialLocation();
+  const [location, setLocation] = useState<GeoLocation | null>(initial.location);
+  const [isDetecting, setIsDetecting] = useState(!initial.cacheValid);
 
   useEffect(() => {
-    const now = Date.now();
-    const cacheValid = cachedLocation && (now - cacheTimestamp) < CACHE_DURATION;
-
-    if (cacheValid) {
-      setLocation(cachedLocation);
-      setIsDetecting(false);
-      return;
-    }
+    // Skip if cache was valid during initialization
+    if (initial.cacheValid) return;
 
     // Reset cache
     cachedLocation = null;
@@ -73,7 +74,7 @@ export function useLocation() {
       setLocation(result);
       setIsDetecting(false);
     });
-  }, []);
+  }, [initial.cacheValid]);
 
   return { location, isDetecting };
 }

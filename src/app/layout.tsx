@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { getLocale } from "next-intl/server";
@@ -22,6 +22,16 @@ const ethnocentric = localFont({
 export const metadata: Metadata = {
   title: "Servantana - Find Trusted Cleaners",
   description: "Book professional cleaning services in minutes. Verified cleaners, transparent pricing, and hassle-free booking.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Servantana",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
 };
 
 type Props = {

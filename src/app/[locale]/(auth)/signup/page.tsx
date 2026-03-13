@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 import { Header } from "@/components/layout";
+import { HeroBackground } from "@/components/home/HeroBackground";
 
 function SignupForm() {
   const t = useTranslations();
@@ -105,7 +106,7 @@ function SignupForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md relative z-10">
       <CardHeader className="text-center">
         <div className="mb-4">
           <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
@@ -122,7 +123,7 @@ function SignupForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="nope" data-form-type="other">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">{t("auth.signup.firstName")}</Label>
@@ -133,6 +134,7 @@ function SignupForm() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
+                autoComplete="nope"
               />
             </div>
             <div className="space-y-2">
@@ -144,6 +146,7 @@ function SignupForm() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
+                autoComplete="nope"
               />
             </div>
           </div>
@@ -158,6 +161,7 @@ function SignupForm() {
               onChange={handleChange}
               required
               disabled={isLoading}
+              autoComplete="nope"
             />
           </div>
 
@@ -170,6 +174,7 @@ function SignupForm() {
               value={formData.phone}
               onChange={handleChange}
               disabled={isLoading}
+              autoComplete="nope"
             />
           </div>
 
@@ -183,6 +188,7 @@ function SignupForm() {
               onChange={handleChange}
               required
               disabled={isLoading}
+              autoComplete="new-password"
             />
           </div>
 
@@ -196,6 +202,7 @@ function SignupForm() {
               onChange={handleChange}
               required
               disabled={isLoading}
+              autoComplete="new-password"
             />
           </div>
 
@@ -305,6 +312,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <div className="flex-1 flex items-center justify-center bg-muted/30 px-4 py-8">
+        <HeroBackground />
         <Suspense fallback={<SignupFormSkeleton />}>
           <SignupForm />
         </Suspense>

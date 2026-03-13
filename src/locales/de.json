@@ -779,6 +779,11 @@
       "message": "Vielen Dank für Ihre Kontaktaufnahme. Wir melden uns innerhalb von 24 Stunden."
     }
   },
+  "pwa": {
+    "installTitle": "Servantana installieren",
+    "installDescription": "Zum Startbildschirm hinzufügen für das beste Erlebnis",
+    "installButton": "Installieren"
+  },
   "faq": {
     "title": "Häufig gestellte Fragen",
     "subtitle": "Finden Sie Antworten auf die häufigsten Fragen zu Servantana.",

@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 import { Header } from "@/components/layout";
+import { HeroBackground } from "@/components/home/HeroBackground";
 
 function LoginForm() {
   const t = useTranslations();
@@ -59,7 +60,7 @@ function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md relative z-10">
       <CardHeader className="text-center">
         <div className="mb-4">
           <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
@@ -76,7 +77,7 @@ function LoginForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="nope">
           <div className="space-y-2">
             <Label htmlFor="email">{t("auth.login.email")}</Label>
             <Input
@@ -86,6 +87,7 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isLoading}
+              autoComplete="nope"
             />
           </div>
 
@@ -98,6 +100,7 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={isLoading}
+              autoComplete="new-password"
             />
           </div>
 
@@ -158,6 +161,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <div className="flex-1 flex items-center justify-center bg-muted/30 px-4">
+        <HeroBackground />
         <Suspense fallback={<LoginFormSkeleton />}>
           <LoginForm />
         </Suspense>

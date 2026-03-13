@@ -779,6 +779,11 @@
       "message": "Thank you for contacting us. We'll get back to you within 24 hours."
     }
   },
+  "pwa": {
+    "installTitle": "Install Servantana",
+    "installDescription": "Add to your home screen for the best experience",
+    "installButton": "Install"
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Find answers to the most common questions about Servantana.",
