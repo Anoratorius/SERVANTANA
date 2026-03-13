@@ -29,7 +29,6 @@ export function Header() {
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const isLoginPage = pathname?.includes("/login");
-  const isSignupPage = pathname?.includes("/signup");
 
   const handleSignOut = useCallback(async () => {
     setIsSigningOut(true);

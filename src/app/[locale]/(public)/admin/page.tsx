@@ -197,7 +197,7 @@ export default function AdminPage() {
       toast.error(t("admin.accessDenied"));
       return;
     }
-  }, [authStatus, session, router]);
+  }, [authStatus, session, router, t]);
 
   useEffect(() => {
     if (authStatus === "authenticated" && session?.user?.role === "ADMIN") {

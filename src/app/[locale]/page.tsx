@@ -80,47 +80,6 @@ function FlowStep({
   );
 }
 
-function MobileFlowStep({
-  icon,
-  title,
-  color,
-  isLast
-}: {
-  icon: React.ReactNode;
-  title: string;
-  color: "blue" | "teal" | "green" | "emerald";
-  isLast: boolean;
-}) {
-  const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    teal: "from-teal-500 to-teal-600",
-    green: "from-green-500 to-green-600",
-    emerald: "from-emerald-500 to-emerald-600",
-  };
-
-  return (
-    <div className="relative flex gap-4 items-center">
-      <div className="flex flex-col items-center">
-        <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center shadow-lg flex-shrink-0`}>
-          {icon}
-        </div>
-        {!isLast && (
-          <div
-            className="w-1 h-8 my-2 rounded-full"
-            style={{
-              backgroundImage: `linear-gradient(to bottom, ${color === "blue" ? "#3b82f6, #14b8a6" : color === "teal" ? "#14b8a6, #22c55e" : "#22c55e, #10b981"})`,
-            }}
-          />
-        )}
-      </div>
-      <div className="flex-1">
-        <h3 className="font-bold text-xl text-gray-800">{title}</h3>
-      </div>
-    </div>
-  );
-}
-
-
 // Main Page Component
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;

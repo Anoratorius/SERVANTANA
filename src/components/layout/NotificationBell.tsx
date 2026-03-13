@@ -60,6 +60,37 @@ export function NotificationBell() {
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // openChat must be defined before handleNewMessage since it's used in the callback
+  const openChat = useCallback(async (partner: Conversation["partner"]) => {
+    setSelectedPartner(partner);
+    setIsLoadingChat(true);
+
+    try {
+      // Fetch chat history
+      const response = await fetch(`/api/messages/${partner.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setChatMessages(data.messages || []);
+
+        // Update unread count
+        setConversations((prevConvs) => {
+          const conv = prevConvs.find(c => c.partnerId === partner.id);
+          if (conv && conv.unreadCount > 0) {
+            setUnreadCount((prev) => Math.max(0, prev - conv.unreadCount));
+            return prevConvs.map(c =>
+              c.partnerId === partner.id ? { ...c, unreadCount: 0 } : c
+            );
+          }
+          return prevConvs;
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load chat:", error);
+    } finally {
+      setIsLoadingChat(false);
+    }
+  }, []);
+
   // Handle new messages from SSE
   const handleNewMessage = useCallback((message: StreamMessage) => {
     const newMsg: Message = {
@@ -125,7 +156,7 @@ export function NotificationBell() {
         },
       });
     }
-  }, [selectedPartner]);
+  }, [selectedPartner, t, openChat]);
 
   // Connect to SSE stream
   useMessageStream({
@@ -176,35 +207,6 @@ export function NotificationBell() {
       setSelectedPartner(null);
       setChatMessages([]);
       setReplyText("");
-    }
-  };
-
-  const openChat = async (partner: Conversation["partner"]) => {
-    setSelectedPartner(partner);
-    setIsLoadingChat(true);
-
-    try {
-      // Fetch chat history
-      const response = await fetch(`/api/messages/${partner.id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setChatMessages(data.messages || []);
-
-        // Update unread count
-        const conv = conversations.find(c => c.partnerId === partner.id);
-        if (conv && conv.unreadCount > 0) {
-          setUnreadCount((prev) => Math.max(0, prev - conv.unreadCount));
-          setConversations((prev) =>
-            prev.map(c =>
-              c.partnerId === partner.id ? { ...c, unreadCount: 0 } : c
-            )
-          );
-        }
-      }
-    } catch (error) {
-      console.error("Failed to load chat:", error);
-    } finally {
-      setIsLoadingChat(false);
     }
   };
 

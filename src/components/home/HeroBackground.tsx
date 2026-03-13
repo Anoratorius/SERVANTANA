@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useLocation } from "@/hooks/useLocation";
 
 export function HeroBackground() {
@@ -48,11 +49,13 @@ export function HeroBackground() {
 
   return (
     <>
-      <img
+      <Image
         src={imageUrl}
         alt="City"
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        fill
+        className="object-cover z-0"
         onError={() => setImageUrl("")}
+        unoptimized
       />
       <div className="absolute inset-0 z-0 bg-white/60" />
     </>

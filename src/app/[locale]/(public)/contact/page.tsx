@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Phone, MapPin, Send, Loader2, CheckCircle } from "lucide-react";
+import { Mail, Send, Loader2, CheckCircle } from "lucide-react";
 
 export default function ContactPage() {
   const t = useTranslations();

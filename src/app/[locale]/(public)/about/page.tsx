@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { Header, Footer } from "@/components/layout";
-import { Users, Target, Heart, Globe } from "lucide-react";
 
 type Props = {
   params: Promise<{ locale: string }>;
