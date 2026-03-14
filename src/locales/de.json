@@ -826,5 +826,14 @@
       "content": "Können Sie nicht finden, was Sie suchen? Unser Support-Team hilft Ihnen gerne.",
       "button": "Kontaktieren Sie uns"
     }
+  },
+  "errors": {
+    "somethingWentWrong": "Etwas ist schief gelaufen",
+    "tryAgainLater": "Wir entschuldigen uns für die Unannehmlichkeiten. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.",
+    "tryAgain": "Erneut versuchen",
+    "goHome": "Zur Startseite",
+    "pageNotFound": "Seite nicht gefunden",
+    "pageNotFoundDescription": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "browseServices": "Dienste durchsuchen"
   }
 }

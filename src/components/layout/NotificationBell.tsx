@@ -163,9 +163,11 @@ export function NotificationBell() {
     onNewMessage: handleNewMessage,
   });
 
-  // Fetch conversations on mount
+  const [hasFetched, setHasFetched] = useState(false);
+
+  // Fetch conversations only when dropdown opens (lazy load)
   useEffect(() => {
-    if (status !== "authenticated") return;
+    if (status !== "authenticated" || !isOpen || hasFetched) return;
 
     async function fetchConversations() {
       try {
@@ -180,6 +182,7 @@ export function NotificationBell() {
             0
           );
           setUnreadCount(total);
+          setHasFetched(true);
         }
       } catch (error) {
         console.error("Failed to fetch conversations:", error);
@@ -187,7 +190,7 @@ export function NotificationBell() {
     }
 
     fetchConversations();
-  }, [status]);
+  }, [status, isOpen, hasFetched]);
 
   // Scroll to bottom when messages change
   useEffect(() => {

@@ -74,6 +74,11 @@ export function useMessageStream(
       return;
     }
 
+    // Delay SSE connection to not block initial page load
+    const initialDelay = setTimeout(() => {
+      connect();
+    }, 3000);
+
     function connect() {
       // Clean up existing connection
       if (eventSourceRef.current) {
@@ -157,6 +162,7 @@ export function useMessageStream(
 
     // Cleanup on unmount
     return () => {
+      clearTimeout(initialDelay);
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
         eventSourceRef.current = null;

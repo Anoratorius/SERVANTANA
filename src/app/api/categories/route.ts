@@ -15,7 +15,11 @@ export async function GET() {
       orderBy: { name: "asc" },
     });
 
-    return NextResponse.json(categories);
+    return NextResponse.json(categories, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
+    });
   } catch (error) {
     console.error("Failed to fetch categories:", error);
     return NextResponse.json(

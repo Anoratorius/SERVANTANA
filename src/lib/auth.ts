@@ -108,6 +108,23 @@ export const authOptions: NextAuthConfig = {
     async signIn() {
       return true;
     },
+    async redirect({ url, baseUrl }) {
+      // If the URL is relative (starts with /), ensure it has a locale prefix
+      if (url.startsWith("/")) {
+        // Check if it already has a locale prefix
+        if (/^\/(en|de)(\/|$)/.test(url)) {
+          return `${baseUrl}${url}`;
+        }
+        // Add default locale prefix
+        return `${baseUrl}/en${url}`;
+      }
+      // If URL is absolute and same origin, return as-is
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      // Default fallback
+      return `${baseUrl}/en`;
+    },
   },
 };
 

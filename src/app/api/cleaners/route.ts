@@ -101,7 +101,11 @@ export async function GET(request: NextRequest) {
     // Filter out null profiles (should already be filtered but be safe)
     const filteredCleaners = cleaners.filter((c) => c.cleanerProfile !== null);
 
-    return NextResponse.json({ cleaners: filteredCleaners });
+    return NextResponse.json({ cleaners: filteredCleaners }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
+      },
+    });
   } catch (error) {
     console.error("Error fetching cleaners:", error);
     return NextResponse.json(

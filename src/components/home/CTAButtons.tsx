@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 export function CTAButtons({
@@ -13,12 +14,13 @@ export function CTAButtons({
 }) {
   const { status } = useSession();
   const router = useRouter();
+  const locale = useLocale();
 
   const handleBookWorker = () => {
     if (status === "authenticated") {
       router.push("/search");
     } else {
-      router.push("/login?callbackUrl=/search");
+      router.push(`/login?callbackUrl=/${locale}/search`);
     }
   };
 
@@ -26,7 +28,7 @@ export function CTAButtons({
     if (status === "authenticated") {
       router.push("/dashboard");
     } else {
-      router.push("/login?callbackUrl=/dashboard");
+      router.push(`/login?callbackUrl=/${locale}/dashboard`);
     }
   };
 

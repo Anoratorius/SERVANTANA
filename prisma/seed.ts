@@ -93,8 +93,8 @@ async function main() {
       bio: "Professional cleaner with over 8 years of experience. I take pride in leaving every home spotless and fresh. Specializing in deep cleaning and move-in/out services.",
       hourlyRate: 35,
       experienceYears: 8,
-      city: "New York",
-      state: "NY",
+      city: "Tbilisi",
+      state: "",
       verified: true,
       availableNow: true,
       averageRating: 4.9,
@@ -109,8 +109,8 @@ async function main() {
       bio: "Reliable and detail-oriented cleaning professional. I use eco-friendly products and pay attention to every corner of your home.",
       hourlyRate: 30,
       experienceYears: 5,
-      city: "Brooklyn",
-      state: "NY",
+      city: "Tbilisi",
+      state: "",
       verified: true,
       availableNow: false,
       averageRating: 4.7,
@@ -125,8 +125,8 @@ async function main() {
       bio: "Experienced office and residential cleaner. I provide thorough, consistent cleaning services that you can count on week after week.",
       hourlyRate: 40,
       experienceYears: 10,
-      city: "Manhattan",
-      state: "NY",
+      city: "Tbilisi",
+      state: "",
       verified: true,
       availableNow: true,
       averageRating: 4.8,
@@ -141,8 +141,8 @@ async function main() {
       bio: "Professional cleaner specializing in carpet and upholstery cleaning. I use industry-leading equipment for the best results.",
       hourlyRate: 45,
       experienceYears: 6,
-      city: "Queens",
-      state: "NY",
+      city: "Tbilisi",
+      state: "",
       verified: false,
       availableNow: true,
       averageRating: 4.6,
@@ -155,11 +155,12 @@ async function main() {
   const hashedPassword = await hash("password123", 12);
 
   for (const cleaner of sampleCleaners) {
-    const existingUser = await prisma.user.findUnique({
+    // Delete existing user if exists (to update with new data)
+    await prisma.user.deleteMany({
       where: { email: cleaner.email },
     });
 
-    if (!existingUser) {
+    {
       const user = await prisma.user.create({
         data: {
           email: cleaner.email,

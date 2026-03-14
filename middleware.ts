@@ -38,9 +38,5 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/',
-    '/(en|de)/:path*',
-    '/((?!api|_next|_vercel|.*\\..*).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icon|.*\\..*).*)'],
 };
