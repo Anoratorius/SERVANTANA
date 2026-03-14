@@ -3,6 +3,9 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Use environment variable for from email, fallback to Resend's test domain for development
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@resend.dev>";
+
 // Generate a 6-digit code
 export function generateResetCode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -73,9 +76,17 @@ export async function sendResetEmail(
   email: string,
   code: string
 ): Promise<{ success: boolean; message: string }> {
+  // Check if API key is configured
+  if (!process.env.RESEND_API_KEY) {
+    console.error("RESEND_API_KEY is not configured");
+    return { success: false, message: "Email service not configured" };
+  }
+
+  console.log(`Sending password reset email to ${email} from ${FROM_EMAIL}`);
+
   try {
-    const { error } = await resend.emails.send({
-      from: "Servantana <noreply@servantana.com>",
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: email,
       subject: "Reset Your Servantana Password",
       html: `
@@ -113,8 +124,10 @@ export async function sendResetEmail(
 
     if (error) {
       console.error("Resend error:", error);
-      return { success: false, message: "Failed to send email" };
+      return { success: false, message: error.message || "Failed to send email" };
     }
+
+    console.log("Email sent successfully:", data?.id);
 
     return {
       success: true,

@@ -19,18 +19,19 @@ export default function middleware(request: NextRequest) {
   // Check if this is a root path request (no locale prefix yet)
   const hasLocalePrefix = /^\/(en|de)(\/|$)/.test(pathname);
 
-  if (!hasLocalePrefix && pathname === '/') {
-    // Get country from various CDN/hosting headers
-    const country =
-      request.headers.get('x-vercel-ip-country') ||
-      request.headers.get('cf-ipcountry') ||
-      request.headers.get('x-country-code') ||
-      '';
+  // Get country from various CDN/hosting headers
+  const country =
+    request.headers.get('x-vercel-ip-country') ||
+    request.headers.get('cf-ipcountry') ||
+    request.headers.get('x-country-code') ||
+    '';
 
-    // Redirect to German if from German-speaking country, otherwise English
-    const locale = GERMAN_COUNTRIES.includes(country.toUpperCase()) ? 'de' : 'en';
+  // Determine locale
+  const locale = GERMAN_COUNTRIES.includes(country.toUpperCase()) ? 'de' : 'en';
 
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+  // Redirect paths without locale prefix to include locale
+  if (!hasLocalePrefix && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
+    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
   }
 
   return intlMiddleware(request);
