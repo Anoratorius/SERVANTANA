@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyCoinbaseWebhook } from "@/lib/crypto";
-
-// Platform fee percentage (3.8% - fair marketplace rate)
-const PLATFORM_FEE_PERCENT = 0.038;
-// Days until earnings become available
-const EARNINGS_HOLD_DAYS = 7;
+import { PLATFORM_FEE_PERCENT, EARNINGS_HOLD_DAYS } from "@/lib/payment-config";
 
 interface CoinbaseWebhookEvent {
   id: string;
@@ -47,22 +43,28 @@ export async function POST(request: NextRequest) {
 
   const webhookSecret = process.env.COINBASE_COMMERCE_WEBHOOK_SECRET;
 
-  if (webhookSecret) {
-    try {
-      const isValid = verifyCoinbaseWebhook(body, signature, webhookSecret);
-      if (!isValid) {
-        return NextResponse.json(
-          { error: "Invalid webhook signature" },
-          { status: 400 }
-        );
-      }
-    } catch (error) {
-      console.error("Webhook verification failed:", error);
+  if (!webhookSecret) {
+    console.error("COINBASE_COMMERCE_WEBHOOK_SECRET is not configured");
+    return NextResponse.json(
+      { error: "Webhook verification not configured" },
+      { status: 500 }
+    );
+  }
+
+  try {
+    const isValid = verifyCoinbaseWebhook(body, signature, webhookSecret);
+    if (!isValid) {
       return NextResponse.json(
-        { error: "Webhook verification failed" },
+        { error: "Invalid webhook signature" },
         { status: 400 }
       );
     }
+  } catch (error) {
+    console.error("Webhook verification failed:", error);
+    return NextResponse.json(
+      { error: "Webhook verification failed" },
+      { status: 400 }
+    );
   }
 
   try {

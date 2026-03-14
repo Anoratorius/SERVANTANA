@@ -1,14 +1,15 @@
 import { prisma } from "./prisma";
 import { Resend } from "resend";
+import { randomInt } from "crypto";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Use environment variable for from email, fallback to Resend's test domain for development
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@resend.dev>";
 
-// Generate a 6-digit code
+// Generate a cryptographically secure 6-digit code
 export function generateResetCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return randomInt(100000, 1000000).toString();
 }
 
 // Create a password reset token

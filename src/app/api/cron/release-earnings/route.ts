@@ -5,11 +5,11 @@ import { prisma } from "@/lib/prisma";
 // to release earnings that have passed their hold period
 export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret (in production, use a secret key)
+    // Verify cron secret - required for security
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
 
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { PLATFORM_FEE_PERCENT, EARNINGS_HOLD_DAYS } from "@/lib/payment-config";
 import Stripe from "stripe";
 
 export async function POST(request: NextRequest) {
@@ -69,11 +70,6 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// Platform fee percentage (3.8% - fair marketplace rate)
-const PLATFORM_FEE_PERCENT = 0.038;
-// Days until earnings become available for payout
-const EARNINGS_HOLD_DAYS = 7;
 
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const bookingId = session.metadata?.bookingId;

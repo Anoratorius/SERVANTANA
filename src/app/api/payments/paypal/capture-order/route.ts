@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOrdersController } from "@/lib/paypal";
-
-// Platform fee percentage (3.8% - fair marketplace rate)
-const PLATFORM_FEE_PERCENT = 0.038;
-// Days until earnings become available
-const EARNINGS_HOLD_DAYS = 7;
+import { PLATFORM_FEE_PERCENT, EARNINGS_HOLD_DAYS } from "@/lib/payment-config";
 
 export async function POST(request: NextRequest) {
   try {
