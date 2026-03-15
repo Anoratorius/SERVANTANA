@@ -3,6 +3,17 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { verifyResetToken, markTokenUsed } from "@/lib/reset-code";
+import {
+  checkRateLimit,
+  getClientIP,
+  rateLimiters,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
+import {
+  checkIPBlock,
+  recordIPViolation,
+} from "@/lib/security";
+import { writeAuditLog } from "@/lib/audit-log";
 
 const resetPasswordSchema = z.object({
   identifier: z.string().min(1, "Email or phone is required"),
@@ -17,6 +28,20 @@ const resetPasswordSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check if IP is blocked
+  const ipBlock = checkIPBlock(clientIP);
+  if (ipBlock) return ipBlock;
+
+  // Rate limiting: 5 requests per 15 minutes per IP
+  const rateLimit = checkRateLimit(`reset-password:${clientIP}`, rateLimiters.strict);
+
+  if (!rateLimit.success) {
+    recordIPViolation(clientIP, "Password reset rate limit exceeded");
+    return rateLimitResponse(rateLimit.resetTime);
+  }
+
   try {
     const body = await request.json();
     const validationResult = resetPasswordSchema.safeParse(body);
@@ -78,6 +103,15 @@ export async function POST(request: NextRequest) {
         identifier: normalizedIdentifier,
         used: false,
       },
+    });
+
+    // Audit log (database-persisted)
+    await writeAuditLog({
+      action: "PASSWORD_RESET_COMPLETED",
+      actorId: user.id,
+      actorEmail: user.email,
+      ip: clientIP,
+      userAgent: request.headers.get("user-agent") || undefined,
     });
 
     return NextResponse.json({

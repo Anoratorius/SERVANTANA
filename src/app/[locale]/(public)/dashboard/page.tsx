@@ -19,6 +19,7 @@ import {
   CheckCircle,
   ArrowRight,
   Search,
+  Shield,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -115,18 +116,26 @@ export default function DashboardPage() {
             <p className="text-muted-foreground mb-4">
               {isCleaner ? t("cleaner.dashboard.title") : t("customer.dashboard.title")}
             </p>
-            <Link href={isCleaner ? "/dashboard/settings" : "/search"}>
-              <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
-                {isCleaner ? (
-                  <>Edit Profile</>
-                ) : (
-                  <>
-                    <Search className="mr-2 h-4 w-4" />
-                    {t("customer.dashboard.quickBook")}
-                  </>
-                )}
-              </Button>
-            </Link>
+            <div className="flex gap-3">
+              <Link href={isCleaner ? "/dashboard/settings" : "/search"}>
+                <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+                  {isCleaner ? (
+                    <>Edit Profile</>
+                  ) : (
+                    <>
+                      <Search className="mr-2 h-4 w-4" />
+                      {t("customer.dashboard.quickBook")}
+                    </>
+                  )}
+                </Button>
+              </Link>
+              <Link href="/dashboard/security">
+                <Button variant="outline">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Security
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Stats Grid */}

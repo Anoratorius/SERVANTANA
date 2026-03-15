@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { writeAuditLog } from "@/lib/audit-log";
+import { getClientIP } from "@/lib/rate-limit";
 
 const updateUserSchema = z.object({
   role: z.enum(["CUSTOMER", "CLEANER", "ADMIN"]).optional(),
@@ -147,6 +149,20 @@ export async function PATCH(
       }
     }
 
+    // Audit log for role changes
+    if (body.role) {
+      writeAuditLog({
+        action: "USER_ROLE_CHANGED",
+        actorId: session.user.id,
+        actorEmail: session.user.email,
+        targetId: id,
+        targetType: "User",
+        details: { newRole: body.role, previousRole: "unknown" },
+        ip: getClientIP(request),
+        userAgent: request.headers.get("user-agent") || undefined,
+      });
+    }
+
     return NextResponse.json({
       message: "User updated successfully",
       user,
@@ -190,8 +206,26 @@ export async function DELETE(
       );
     }
 
+    // Get user info before deletion for audit log
+    const userToDelete = await prisma.user.findUnique({
+      where: { id },
+      select: { email: true },
+    });
+
     await prisma.user.delete({
       where: { id },
+    });
+
+    // Audit log user deletion
+    writeAuditLog({
+      action: "USER_DELETED",
+      actorId: session.user.id,
+      actorEmail: session.user.email,
+      targetId: id,
+      targetType: "User",
+      details: { deletedUserEmail: userToDelete?.email },
+      ip: getClientIP(request),
+      userAgent: request.headers.get("user-agent") || undefined,
     });
 
     return NextResponse.json({

@@ -6,6 +6,18 @@ import {
   sendResetEmail,
   sendResetSMS,
 } from "@/lib/reset-code";
+import {
+  checkRateLimit,
+  getClientIP,
+  rateLimiters,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
+import {
+  checkIPBlock,
+  recordIPViolation,
+  randomDelay,
+} from "@/lib/security";
+import { writeAuditLog } from "@/lib/audit-log";
 
 const forgotPasswordSchema = z.object({
   identifier: z.string().min(1, "Email or phone is required"),
@@ -13,6 +25,20 @@ const forgotPasswordSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check if IP is blocked
+  const ipBlock = checkIPBlock(clientIP);
+  if (ipBlock) return ipBlock;
+
+  // Rate limiting: 5 requests per 15 minutes per IP (strict)
+  const rateLimit = checkRateLimit(`forgot-password:${clientIP}`, rateLimiters.strict);
+
+  if (!rateLimit.success) {
+    recordIPViolation(clientIP, "Password reset rate limit exceeded");
+    return rateLimitResponse(rateLimit.resetTime);
+  }
+
   try {
     const body = await request.json();
     const validationResult = forgotPasswordSchema.safeParse(body);
@@ -44,7 +70,7 @@ export async function POST(request: NextRequest) {
     // But only actually send code if user exists and has a password
     if (!user) {
       // Simulate delay to prevent timing attacks
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await randomDelay(300, 600);
       return NextResponse.json({
         success: true,
         message:
@@ -83,6 +109,16 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Audit log (database-persisted)
+    await writeAuditLog({
+      action: "PASSWORD_RESET_REQUESTED",
+      actorId: user.id,
+      actorEmail: type === "email" ? identifier : undefined,
+      ip: clientIP,
+      userAgent: request.headers.get("user-agent") || undefined,
+      details: { type },
+    });
 
     return NextResponse.json({
       success: true,

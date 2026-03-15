@@ -1,11 +1,48 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import {
+  checkRateLimit,
+  getClientIP,
+  rateLimiters,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
+import {
+  checkIPBlock,
+  recordIPViolation,
+  checkHoneypot,
+} from "@/lib/security";
+import { writeAuditLog } from "@/lib/audit-log";
+import { sendVerificationEmail } from "@/lib/email-verification";
 
 export async function POST(request: Request) {
+  const clientIP = getClientIP(request);
+
+  // Check if IP is blocked
+  const ipBlock = checkIPBlock(clientIP);
+  if (ipBlock) return ipBlock;
+
+  // Rate limiting: 10 registrations per 15 minutes per IP
+  const rateLimit = checkRateLimit(`register:${clientIP}`, rateLimiters.auth);
+
+  if (!rateLimit.success) {
+    recordIPViolation(clientIP, "Registration rate limit exceeded");
+    return rateLimitResponse(rateLimit.resetTime);
+  }
+
   try {
     const body = await request.json();
-    const { email, password, firstName, lastName, phone, role } = body;
+    const { email, password, firstName, lastName, phone, role, website } = body;
+
+    // Honeypot check - if filled, silently reject (likely bot)
+    if (!checkHoneypot(website)) {
+      recordIPViolation(clientIP, "Honeypot triggered on registration");
+      // Return fake success to not tip off bots
+      return NextResponse.json(
+        { user: { id: "fake", email } },
+        { status: 201 }
+      );
+    }
 
     // Validation
     if (!email || !password || !firstName || !lastName) {
@@ -66,6 +103,23 @@ export async function POST(request: Request) {
       });
     }
 
+    // Send verification email (non-blocking)
+    sendVerificationEmail(user.id, user.email, user.firstName).catch((err) => {
+      console.error("Failed to send verification email:", err);
+    });
+
+    // Audit log (database-persisted)
+    await writeAuditLog({
+      action: "USER_CREATED",
+      actorId: user.id,
+      actorEmail: user.email,
+      targetId: user.id,
+      targetType: "User",
+      details: { role: user.role },
+      ip: clientIP,
+      userAgent: request.headers.get("user-agent") || undefined,
+    });
+
     return NextResponse.json(
       {
         user: {
@@ -74,7 +128,9 @@ export async function POST(request: Request) {
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
+          emailVerified: false,
         },
+        message: "Account created. Please check your email to verify your account.",
       },
       { status: 201 }
     );

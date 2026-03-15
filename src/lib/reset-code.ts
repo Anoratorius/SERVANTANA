@@ -72,6 +72,19 @@ export async function markTokenUsed(identifier: string, code: string): Promise<v
   });
 }
 
+// Invalidate all tokens for an identifier (used after too many failed attempts)
+export async function invalidateToken(identifier: string): Promise<void> {
+  await prisma.passwordResetToken.updateMany({
+    where: {
+      identifier,
+      used: false,
+    },
+    data: {
+      used: true,
+    },
+  });
+}
+
 // Send password reset email via Resend
 export async function sendResetEmail(
   email: string,

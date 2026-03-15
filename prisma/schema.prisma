@@ -47,6 +47,97 @@ enum PayoutStatus {
   FAILED
 }
 
+// ============================================
+// DISPUTE SYSTEM ENUMS
+// ============================================
+
+enum DisputeStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  CLOSED
+}
+
+enum DisputeType {
+  SERVICE_QUALITY
+  PAYMENT_ISSUE
+  NO_SHOW
+  PROPERTY_DAMAGE
+  UNPROFESSIONAL_BEHAVIOR
+  OTHER
+}
+
+enum DisputeResolution {
+  FULL_REFUND
+  PARTIAL_REFUND
+  NO_REFUND
+  SERVICE_CREDIT
+  DISMISSED
+}
+
+// ============================================
+// NOTIFICATION ENUMS
+// ============================================
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationType {
+  BOOKING_CREATED
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  BOOKING_REMINDER
+  BOOKING_COMPLETED
+  PAYMENT_RECEIVED
+  PAYOUT_SENT
+  DISPUTE_OPENED
+  DISPUTE_RESOLVED
+  DOCUMENT_VERIFIED
+  DOCUMENT_REJECTED
+  MESSAGE_RECEIVED
+  REVIEW_RECEIVED
+}
+
+// ============================================
+// BOOKING CHANGE ENUMS
+// ============================================
+
+enum BookingChangeType {
+  RESCHEDULE
+  CANCEL
+}
+
+enum BookingChangeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  AUTO_APPROVED
+}
+
+// ============================================
+// DOCUMENT VERIFICATION ENUMS
+// ============================================
+
+enum DocumentType {
+  GOVERNMENT_ID
+  DRIVERS_LICENSE
+  PASSPORT
+  BUSINESS_LICENSE
+  INSURANCE_CERTIFICATE
+  BACKGROUND_CHECK
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
 enum CategoryStatus {
   PENDING
   APPROVED
@@ -84,6 +175,40 @@ model User {
   favoritedBy      Favorite[] @relation("CleanerFavorites")
   earnings         Earning[]  @relation("CleanerEarnings")
   payouts          Payout[]   @relation("CleanerPayouts")
+
+  // Security relations
+  userSessions     UserSession[] @relation("UserSessions")
+  userDevices      UserDevice[]  @relation("UserDevices")
+  emailVerifications EmailVerificationToken[] @relation("EmailVerifications")
+
+  // Dispute relations
+  disputesAsCustomer Dispute[] @relation("CustomerDisputes")
+  disputesAsCleaner  Dispute[] @relation("CleanerDisputes")
+  disputesResolved   Dispute[] @relation("ResolvedDisputes")
+  disputeMessages    DisputeMessage[] @relation("DisputeMessagesSent")
+  disputeEvidence    DisputeEvidence[] @relation("DisputeEvidenceUploaded")
+
+  // Notification relations
+  notificationPreferences NotificationPreference[] @relation("NotificationPreferences")
+  pushSubscriptions       PushSubscription[] @relation("PushSubscriptions")
+  notificationLogs        NotificationLog[] @relation("NotificationLogs")
+
+  // Booking change relations
+  bookingChangeRequests  BookingChange[] @relation("BookingChangeRequester")
+  bookingChangeResponses BookingChange[] @relation("BookingChangeResponder")
+
+  // Photo relations
+  bookingPhotos  BookingPhoto[] @relation("BookingPhotosUploaded")
+
+  // Document relations
+  cleanerDocuments  CleanerDocument[] @relation("CleanerDocuments")
+  documentsVerified CleanerDocument[] @relation("DocumentsVerified")
+
+  // Calendar relations
+  calendarConnections CalendarConnection[] @relation("CalendarConnections")
+
+  // Analytics relations
+  analyticsSnapshots AnalyticsSnapshot[] @relation("AnalyticsSnapshots")
 }
 
 // NextAuth.js Account model
@@ -266,6 +391,10 @@ model Booking {
   messages      Message[]
   payment       Payment?
   earning       Earning?
+  disputes      Dispute[]
+  changes       BookingChange[]
+  photos        BookingPhoto[]
+  calendarEvents CalendarEvent[]
 
   @@index([customerId])
   @@index([cleanerId])
@@ -432,4 +561,360 @@ model Payout {
 
   @@index([cleanerId])
   @@index([status])
+}
+
+// ============================================
+// DISPUTE SYSTEM MODELS
+// ============================================
+
+model Dispute {
+  id            String           @id @default(cuid())
+  bookingId     String
+  customerId    String
+  cleanerId     String
+  type          DisputeType
+  status        DisputeStatus    @default(OPEN)
+  subject       String
+  description   String
+  resolution    DisputeResolution?
+  resolutionNote String?
+  refundAmount  Float?
+  resolvedById  String?
+  resolvedAt    DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  booking       Booking          @relation(fields: [bookingId], references: [id])
+  customer      User             @relation("CustomerDisputes", fields: [customerId], references: [id])
+  cleaner       User             @relation("CleanerDisputes", fields: [cleanerId], references: [id])
+  resolvedBy    User?            @relation("ResolvedDisputes", fields: [resolvedById], references: [id])
+  messages      DisputeMessage[]
+  evidence      DisputeEvidence[]
+
+  @@index([customerId])
+  @@index([cleanerId])
+  @@index([status])
+  @@index([bookingId])
+}
+
+model DisputeMessage {
+  id          String   @id @default(cuid())
+  disputeId   String
+  senderId    String
+  content     String
+  isAdmin     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  dispute     Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  sender      User     @relation("DisputeMessagesSent", fields: [senderId], references: [id])
+
+  @@index([disputeId])
+}
+
+model DisputeEvidence {
+  id          String   @id @default(cuid())
+  disputeId   String
+  uploaderId  String
+  fileUrl     String
+  fileName    String
+  fileType    String
+  fileSize    Int
+  description String?
+  createdAt   DateTime @default(now())
+
+  dispute     Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  uploader    User     @relation("DisputeEvidenceUploaded", fields: [uploaderId], references: [id])
+
+  @@index([disputeId])
+}
+
+// ============================================
+// NOTIFICATION MODELS
+// ============================================
+
+model NotificationPreference {
+  id          String              @id @default(cuid())
+  userId      String
+  type        NotificationType
+  channel     NotificationChannel
+  enabled     Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  user        User                @relation("NotificationPreferences", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, channel])
+  @@index([userId])
+}
+
+model PushSubscription {
+  id          String   @id @default(cuid())
+  userId      String
+  endpoint    String   @unique
+  p256dh      String
+  auth        String
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation("PushSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model NotificationLog {
+  id          String              @id @default(cuid())
+  userId      String
+  type        NotificationType
+  channel     NotificationChannel
+  title       String
+  body        String
+  data        Json?
+  sent        Boolean             @default(false)
+  sentAt      DateTime?
+  error       String?
+  createdAt   DateTime            @default(now())
+
+  user        User                @relation("NotificationLogs", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============================================
+// BOOKING CHANGE MODEL (Reschedule/Cancel)
+// ============================================
+
+model BookingChange {
+  id                String              @id @default(cuid())
+  bookingId         String
+  requesterId       String
+  type              BookingChangeType
+  status            BookingChangeStatus @default(PENDING)
+  reason            String?
+
+  // For reschedule
+  originalDate      DateTime?
+  originalTime      String?
+  newDate           DateTime?
+  newTime           String?
+
+  // For cancellation
+  refundAmount      Float?
+  refundPercent     Float?
+
+  responderId       String?
+  responseNote      String?
+  respondedAt       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  booking           Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  requester         User                @relation("BookingChangeRequester", fields: [requesterId], references: [id])
+  responder         User?               @relation("BookingChangeResponder", fields: [responderId], references: [id])
+
+  @@index([bookingId])
+  @@index([requesterId])
+  @@index([status])
+}
+
+// ============================================
+// BOOKING PHOTOS MODEL
+// ============================================
+
+model BookingPhoto {
+  id          String   @id @default(cuid())
+  bookingId   String
+  uploaderId  String
+  type        String   // "before" or "after"
+  fileUrl     String
+  thumbnailUrl String?
+  fileName    String
+  fileSize    Int
+  caption     String?
+  createdAt   DateTime @default(now())
+
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  uploader    User     @relation("BookingPhotosUploaded", fields: [uploaderId], references: [id])
+
+  @@index([bookingId])
+  @@index([type])
+}
+
+// ============================================
+// CLEANER DOCUMENT VERIFICATION MODEL
+// ============================================
+
+model CleanerDocument {
+  id            String         @id @default(cuid())
+  cleanerId     String
+  type          DocumentType
+  status        DocumentStatus @default(PENDING)
+  fileUrl       String
+  fileName      String
+  fileSize      Int
+  expiresAt     DateTime?
+  verifiedById  String?
+  verifiedAt    DateTime?
+  rejectionNote String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  cleaner       User           @relation("CleanerDocuments", fields: [cleanerId], references: [id], onDelete: Cascade)
+  verifiedBy    User?          @relation("DocumentsVerified", fields: [verifiedById], references: [id])
+
+  @@index([cleanerId])
+  @@index([status])
+  @@index([type])
+}
+
+// ============================================
+// CALENDAR SYNC MODELS
+// ============================================
+
+model CalendarConnection {
+  id              String   @id @default(cuid())
+  userId          String
+  provider        String   // "google" or "outlook"
+  email           String
+  accessToken     String   // Encrypted
+  refreshToken    String?  // Encrypted
+  tokenExpiresAt  DateTime?
+  calendarId      String?
+  lastSyncAt      DateTime?
+  syncEnabled     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation("CalendarConnections", fields: [userId], references: [id], onDelete: Cascade)
+  events          CalendarEvent[]
+
+  @@unique([userId, provider])
+  @@index([userId])
+}
+
+model CalendarEvent {
+  id              String   @id @default(cuid())
+  connectionId    String
+  bookingId       String?
+  externalEventId String   // Google/Outlook event ID
+  title           String
+  description     String?
+  startTime       DateTime
+  endTime         DateTime
+  location        String?
+  lastSyncAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  connection      CalendarConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  booking         Booking?           @relation(fields: [bookingId], references: [id])
+
+  @@unique([connectionId, externalEventId])
+  @@index([bookingId])
+}
+
+// ============================================
+// ANALYTICS SNAPSHOT MODEL (Optional caching)
+// ============================================
+
+model AnalyticsSnapshot {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // "cleaner" or "admin"
+  period      String   // "daily", "weekly", "monthly"
+  date        DateTime // Start of period
+  data        Json
+  createdAt   DateTime @default(now())
+
+  user        User     @relation("AnalyticsSnapshots", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, period, date])
+  @@index([userId])
+  @@index([date])
+}
+
+// ============================================
+// SECURITY MODELS
+// ============================================
+
+// Persistent audit log for security events
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String   // e.g., "LOGIN_SUCCESS", "USER_DELETED", "PASSWORD_RESET"
+  actorId     String?  // User who performed the action
+  actorEmail  String?  // Email of actor (for when user is deleted)
+  targetId    String?  // Resource affected
+  targetType  String?  // e.g., "User", "Booking", "Payment"
+  details     Json?    // Additional context (sanitized)
+  ip          String?  // IP address
+  userAgent   String?  // Browser/device info
+  country     String?  // Geo-location country
+  severity    String   @default("INFO") // INFO, WARNING, CRITICAL
+  createdAt   DateTime @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([severity])
+}
+
+// Active user sessions for session management
+model UserSession {
+  id            String    @id @default(cuid())
+  userId        String
+  sessionToken  String    @unique // JWT token hash or session ID
+  deviceId      String?   // Link to known device
+  ip            String?
+  userAgent     String?
+  country       String?
+  city          String?
+  lastActiveAt  DateTime  @default(now())
+  expiresAt     DateTime
+  isValid       Boolean   @default(true) // Can be revoked
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
+  device        UserDevice? @relation(fields: [deviceId], references: [id])
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([isValid])
+}
+
+// Known user devices for fingerprinting
+model UserDevice {
+  id              String    @id @default(cuid())
+  userId          String
+  fingerprint     String    // Hash of device characteristics
+  name            String?   // User-friendly name (e.g., "Chrome on Windows")
+  browser         String?
+  os              String?
+  deviceType      String?   // desktop, mobile, tablet
+  isTrusted       Boolean   @default(false) // User has verified this device
+  lastSeenAt      DateTime  @default(now())
+  lastIp          String?
+  lastCountry     String?
+  createdAt       DateTime  @default(now())
+
+  user            User      @relation("UserDevices", fields: [userId], references: [id], onDelete: Cascade)
+  sessions        UserSession[]
+
+  @@unique([userId, fingerprint])
+  @@index([userId])
+}
+
+// Email verification tokens
+model EmailVerificationToken {
+  id          String   @id @default(cuid())
+  userId      String
+  token       String   @unique
+  expires     DateTime
+  used        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation("EmailVerifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
 }

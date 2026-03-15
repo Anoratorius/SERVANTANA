@@ -4,6 +4,58 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
+import { checkRateLimit, rateLimiters } from "./rate-limit";
+import { recordIPViolation, randomDelay } from "./security";
+import { writeAuditLog } from "./audit-log";
+
+// Track failed login attempts per email for account lockout
+const failedLoginAttempts = new Map<string, { count: number; lockedUntil: number | null }>();
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+
+function trackFailedLogin(email: string, ip?: string): void {
+  const attempts = failedLoginAttempts.get(email);
+  const now = Date.now();
+
+  // Record IP violation for security tracking
+  if (ip) {
+    recordIPViolation(ip, `Failed login for ${email}`);
+  }
+
+  // Audit log failed login (non-blocking database write)
+  writeAuditLog({
+    action: "LOGIN_FAILED",
+    actorEmail: email,
+    ip,
+    details: { reason: "Invalid credentials" },
+  });
+
+  if (!attempts) {
+    failedLoginAttempts.set(email, { count: 1, lockedUntil: null });
+    return;
+  }
+
+  // Clear lockout if it has expired
+  if (attempts.lockedUntil && now > attempts.lockedUntil) {
+    failedLoginAttempts.set(email, { count: 1, lockedUntil: null });
+    return;
+  }
+
+  attempts.count += 1;
+
+  // Lock account after max attempts
+  if (attempts.count >= MAX_LOGIN_ATTEMPTS) {
+    attempts.lockedUntil = now + LOCKOUT_DURATION_MS;
+    writeAuditLog({
+      action: "USER_LOCKED",
+      actorEmail: email,
+      ip,
+      details: { reason: "Too many failed login attempts", lockDuration: LOCKOUT_DURATION_MS },
+    });
+  }
+
+  failedLoginAttempts.set(email, attempts);
+}
 
 export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -28,11 +80,30 @@ export const authOptions: NextAuthConfig = {
           return null;
         }
 
+        const email = (credentials.email as string).toLowerCase();
+
+        // Check rate limit per email
+        const rateLimit = checkRateLimit(`login:${email}`, rateLimiters.strict);
+        if (!rateLimit.success) {
+          throw new Error("Too many login attempts. Please try again later.");
+        }
+
+        // Check for account lockout
+        const attempts = failedLoginAttempts.get(email);
+        if (attempts?.lockedUntil && Date.now() < attempts.lockedUntil) {
+          const remainingMinutes = Math.ceil((attempts.lockedUntil - Date.now()) / 60000);
+          throw new Error(`Account locked. Try again in ${remainingMinutes} minutes.`);
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email },
         });
 
         if (!user || !user.password) {
+          // Track failed attempt
+          trackFailedLogin(email);
+          // Add random delay to prevent timing attacks
+          await randomDelay(200, 500);
           return null;
         }
 
@@ -42,14 +113,28 @@ export const authOptions: NextAuthConfig = {
         );
 
         if (!isPasswordValid) {
+          // Track failed attempt
+          trackFailedLogin(email);
           return null;
         }
+
+        // Clear failed attempts on successful login
+        failedLoginAttempts.delete(email);
+
+        // Audit log successful login (non-blocking database write)
+        writeAuditLog({
+          action: "LOGIN_SUCCESS",
+          actorId: user.id,
+          actorEmail: user.email,
+          details: { method: "credentials", emailVerified: !!user.emailVerified },
+        });
 
         return {
           id: user.id,
           email: user.email,
           name: `${user.firstName} ${user.lastName}`,
           image: user.avatar,
+          emailVerified: user.emailVerified,
         };
       },
     }),
@@ -59,7 +144,7 @@ export const authOptions: NextAuthConfig = {
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
-          select: { id: true, role: true, firstName: true, lastName: true, tokenVersion: true },
+          select: { id: true, role: true, firstName: true, lastName: true, tokenVersion: true, emailVerified: true },
         });
 
         if (dbUser) {
@@ -68,6 +153,7 @@ export const authOptions: NextAuthConfig = {
           token.firstName = dbUser.firstName;
           token.lastName = dbUser.lastName;
           token.tokenVersion = dbUser.tokenVersion;
+          token.isEmailVerified = !!dbUser.emailVerified;
         }
 
         // Check remember me preference on initial sign in
@@ -102,6 +188,7 @@ export const authOptions: NextAuthConfig = {
         session.user.role = token.role as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
+        session.user.isEmailVerified = token.isEmailVerified as boolean;
       }
       return session;
     },
@@ -141,6 +228,7 @@ declare module "next-auth" {
       role: string;
       firstName: string;
       lastName: string;
+      isEmailVerified: boolean;
     };
   }
 }
