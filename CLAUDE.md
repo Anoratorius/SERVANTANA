@@ -25,7 +25,7 @@ npm run db:studio        # Open Prisma Studio GUI
 - **Auth:** NextAuth.js v5 (JWT strategy, OAuth + credentials providers)
 - **Database:** Prisma ORM with Neon PostgreSQL
 - **Styling:** Tailwind CSS 4 + shadcn/ui components
-- **i18n:** next-intl v4 (8 languages: en, de, es, fr, ru, zh, ja, ka)
+- **i18n:** next-intl v4 (en, de)
 
 ### Key Directories
 - `src/app/[locale]/` - Pages with i18n dynamic routing
