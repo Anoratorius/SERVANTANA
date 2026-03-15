@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Servantana is a marketplace application for finding and booking professional cleaning services. Built with Next.js 16 (App Router), React 19, TypeScript, and Prisma ORM with SQLite.
+Servantana is a marketplace application for finding and booking professional cleaning services. Built with Next.js 16 (App Router), React 19, TypeScript, and Prisma ORM with Neon PostgreSQL.
 
 ## Common Commands
 
@@ -23,7 +23,7 @@ npm run db:studio        # Open Prisma Studio GUI
 ### Tech Stack
 - **Framework:** Next.js 16 with App Router
 - **Auth:** NextAuth.js v5 (JWT strategy, OAuth + credentials providers)
-- **Database:** Prisma ORM with SQLite (dev.db)
+- **Database:** Prisma ORM with Neon PostgreSQL
 - **Styling:** Tailwind CSS 4 + shadcn/ui components
 - **i18n:** next-intl v4 (8 languages: en, de, es, fr, ru, zh, ja, ka)
 
@@ -187,7 +187,8 @@ This applies to ALL pages - never create a page without these centering classes.
 ## Environment Variables
 
 Required in `.env`:
-- `DATABASE_URL` - Database connection string
+- `POSTGRES_PRISMA_URL` - PostgreSQL connection string (pooled)
+- `POSTGRES_URL_NON_POOLING` - PostgreSQL direct connection string
 - `NEXTAUTH_URL` - Auth callback URL
 - `NEXTAUTH_SECRET` - JWT secret
 - OAuth credentials: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, etc.
