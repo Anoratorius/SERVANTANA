@@ -59,6 +59,48 @@ Core entities: User, CleanerProfile, Service, CleanerService, Booking, Review, M
 
 ## Critical Rules
 
+### ⛔ ABSOLUTE RULE: ASK PERMISSION BEFORE ANY CHANGE ⛔
+
+**THIS IS THE MOST IMPORTANT RULE. VIOLATION IS UNACCEPTABLE.**
+
+Before modifying ANY file, you MUST:
+1. **STOP** - Do not write, edit, or change anything yet
+2. **ASK** - Tell the user exactly what you plan to change and why
+3. **WAIT** - Get explicit permission ("yes", "ok", "do it", etc.)
+4. **ONLY THEN** - Make the change
+
+**NO EXCEPTIONS. EVER.**
+
+This applies to:
+- Adding new code
+- Modifying existing code
+- Deleting code
+- Changing configurations
+- Updating dependencies
+- ANY file modification whatsoever
+
+**What "asking permission" looks like:**
+- ✅ "I need to modify `src/components/Header.tsx` to add the logo. Should I proceed?"
+- ✅ "This requires changes to 3 files: X, Y, Z. Can I make these changes?"
+- ❌ Just making changes and telling the user after
+- ❌ Assuming permission because it seems related to the task
+
+**If the user gives a broad task like "implement feature X":**
+1. First explain what files need to be created/modified
+2. List all changes you plan to make
+3. Wait for approval
+4. Only then implement
+
+**Consequences of violating this rule:**
+- User's existing work gets broken
+- User has to redo things multiple times
+- User loses trust
+- User's time is wasted
+
+**When in doubt: ASK. Always ASK.**
+
+---
+
 ### Do NOT Change Unrelated Code
 When asked to make a specific change, change ONLY what was requested. Do NOT:
 - "Fix" or "improve" nearby code

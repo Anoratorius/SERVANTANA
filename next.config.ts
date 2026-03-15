@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.stripe.com https://www.paypal.com https://*.coinbase.com",
+              "connect-src 'self' https://api.stripe.com https://www.paypal.com https://*.coinbase.com https://ipinfo.io https://ipwho.is https://en.wikipedia.org",
               "frame-src 'self' https://js.stripe.com https://www.paypal.com",
               "object-src 'none'",
               "base-uri 'self'",
