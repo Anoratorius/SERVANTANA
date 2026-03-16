@@ -1019,6 +1019,32 @@ model EmailVerificationToken {
 }
 
 // ============================================
+// SMART LOCK ENUMS
+// ============================================
+
+enum SmartLockProvider {
+  AUGUST
+  YALE
+  SCHLAGE
+  KWIKSET
+  TTLOCK
+  NUKI
+  GENERIC
+}
+
+enum SmartLockAccessType {
+  PERMANENT
+  TEMPORARY
+  ONE_TIME
+}
+
+enum SmartLockAccessStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+// ============================================
 // PROPERTY MANAGEMENT MODEL
 // ============================================
 
@@ -1043,8 +1069,58 @@ model Property {
 
   owner       User     @relation("UserProperties", fields: [ownerId], references: [id], onDelete: Cascade)
   bookings    Booking[]
+  smartLocks  SmartLock[]
 
   @@index([ownerId])
+}
+
+// ============================================
+// SMART LOCK MODELS
+// ============================================
+
+model SmartLock {
+  id            String            @id @default(cuid())
+  propertyId    String
+  name          String            // e.g., "Front Door", "Back Door"
+  provider      SmartLockProvider
+  deviceId      String?           // External device ID from provider
+  serialNumber  String?
+  isActive      Boolean           @default(true)
+  batteryLevel  Int?              // 0-100 percentage
+  lastSyncAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  property      Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  accessCodes   SmartLockAccess[]
+
+  @@index([propertyId])
+}
+
+model SmartLockAccess {
+  id            String                @id @default(cuid())
+  lockId        String
+  bookingId     String?               // Optional link to booking
+  cleanerId     String?               // Cleaner who has access
+  accessType    SmartLockAccessType   @default(TEMPORARY)
+  accessCode    String                // The PIN code or access token
+  validFrom     DateTime
+  validUntil    DateTime?             // Null for permanent access
+  status        SmartLockAccessStatus @default(ACTIVE)
+  usedAt        DateTime?             // When the code was first used
+  usageCount    Int                   @default(0)
+  maxUsage      Int?                  // Max times code can be used (null = unlimited)
+  revokedAt     DateTime?
+  revokedReason String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  lock          SmartLock             @relation(fields: [lockId], references: [id], onDelete: Cascade)
+
+  @@index([lockId])
+  @@index([bookingId])
+  @@index([cleanerId])
+  @@index([status])
 }
 
 // ============================================

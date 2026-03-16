@@ -22,6 +22,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { SmartLockManager } from "@/components/properties/SmartLockManager";
 
 interface Property {
   id: string;
@@ -224,6 +225,11 @@ export default function PropertyDetailPage() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Smart Locks */}
+          <div className="mt-6">
+            <SmartLockManager propertyId={property.id} />
           </div>
 
           {/* Recent Bookings */}

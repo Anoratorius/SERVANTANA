@@ -29,6 +29,7 @@ import { BookingChat } from "@/components/bookings/BookingChat";
 import { BookingTeam } from "@/components/bookings/BookingTeam";
 import { TipDialog } from "@/components/bookings/TipDialog";
 import { CustomerReviewDialog } from "@/components/bookings/CustomerReviewDialog";
+import { SmartLockAccess } from "@/components/bookings/SmartLockAccess";
 
 interface Booking {
   id: string;
@@ -501,6 +502,13 @@ export default function BookingDetailPage() {
                 )}
               </CardContent>
             </Card>
+          )}
+
+          {/* Smart Lock Access - For cleaners on confirmed/in-progress bookings */}
+          {isCleaner && ["CONFIRMED", "IN_PROGRESS"].includes(booking.status) && (
+            <div className="mt-6">
+              <SmartLockAccess bookingId={bookingId} />
+            </div>
           )}
 
           {/* Team Section - For team bookings */}
