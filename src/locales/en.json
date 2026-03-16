@@ -383,6 +383,24 @@
     "teamBooking": "Team Booking",
     "largeJobNote": "Recommended for large properties or deep cleaning"
   },
+  "tip": {
+    "title": "Add a Tip",
+    "addTip": "Add Tip",
+    "description": "Show your appreciation for {name}'s great work!",
+    "satisfied": "Happy with the service?",
+    "showAppreciation": "Show your appreciation with a tip",
+    "alreadyTipped": "You tipped ${amount} - Thank you!",
+    "percentageOf": "Percentage of ${price}",
+    "orFixed": "Or a fixed amount",
+    "orCustom": "Or enter a custom amount",
+    "selectAmount": "Please select a tip amount",
+    "selectToTip": "Select amount to tip",
+    "sendTip": "Send ${amount} Tip",
+    "sent": "Tip of ${amount} sent!",
+    "thankYou": "Thank you! ${amount} tip sent to your cleaner",
+    "failed": "Failed to process tip",
+    "goesToCleaner": "100% of your tip goes directly to the cleaner"
+  },
   "review": {
     "title": "Leave a Review",
     "rating": "Rating",

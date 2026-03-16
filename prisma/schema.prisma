@@ -388,6 +388,10 @@ model Booking {
   currency      String   @default("USD")
   teamSize      Int      @default(1)  // Number of cleaners for this job
 
+  // Tipping
+  tipAmount     Float?   // Tip amount (100% goes to cleaner)
+  tipPaidAt     DateTime?
+
   // Timestamps
   confirmedAt   DateTime?
   startedAt     DateTime?

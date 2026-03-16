@@ -383,6 +383,24 @@
     "teamBooking": "Team-Buchung",
     "largeJobNote": "Empfohlen für große Immobilien oder Grundreinigung"
   },
+  "tip": {
+    "title": "Trinkgeld geben",
+    "addTip": "Trinkgeld",
+    "description": "Zeigen Sie Ihre Wertschätzung für {name}s tolle Arbeit!",
+    "satisfied": "Zufrieden mit dem Service?",
+    "showAppreciation": "Zeigen Sie Ihre Wertschätzung mit einem Trinkgeld",
+    "alreadyTipped": "Sie haben ${amount} Trinkgeld gegeben - Danke!",
+    "percentageOf": "Prozentsatz von ${price}",
+    "orFixed": "Oder ein fester Betrag",
+    "orCustom": "Oder einen eigenen Betrag eingeben",
+    "selectAmount": "Bitte wählen Sie einen Betrag",
+    "selectToTip": "Betrag auswählen",
+    "sendTip": "${amount} Trinkgeld senden",
+    "sent": "Trinkgeld von ${amount} gesendet!",
+    "thankYou": "Danke! ${amount} Trinkgeld an Ihren Reiniger gesendet",
+    "failed": "Trinkgeld konnte nicht verarbeitet werden",
+    "goesToCleaner": "100% Ihres Trinkgeldes geht direkt an den Reiniger"
+  },
   "review": {
     "title": "Bewertung abgeben",
     "rating": "Bewertung",

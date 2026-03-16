@@ -27,6 +27,7 @@ import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { BookingChat } from "@/components/bookings/BookingChat";
 import { BookingTeam } from "@/components/bookings/BookingTeam";
+import { TipDialog } from "@/components/bookings/TipDialog";
 
 interface Booking {
   id: string;
@@ -38,6 +39,7 @@ interface Booking {
   status: string;
   totalPrice: number;
   teamSize: number;
+  tipAmount: number | null;
   notes: string | null;
   customer: {
     id: string;
@@ -509,6 +511,35 @@ export default function BookingDetailPage() {
                 teamSize={booking.teamSize}
               />
             </div>
+          )}
+
+          {/* Tip Section - For customers on completed bookings */}
+          {booking.status === "COMPLETED" && isCustomer && (
+            <Card className="mt-6">
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-semibold">{t("tip.satisfied")}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {booking.tipAmount
+                        ? t("tip.alreadyTipped", { amount: booking.tipAmount.toFixed(2) })
+                        : t("tip.showAppreciation")}
+                    </p>
+                  </div>
+                  {!booking.tipAmount && (
+                    <TipDialog
+                      bookingId={bookingId}
+                      cleanerName={`${booking.cleaner.firstName} ${booking.cleaner.lastName}`}
+                      totalPrice={booking.totalPrice}
+                      onTipComplete={() => {
+                        // Refresh booking data
+                        window.location.reload();
+                      }}
+                    />
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {/* Chat Section - Only for completed bookings */}
