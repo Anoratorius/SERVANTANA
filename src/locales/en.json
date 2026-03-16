@@ -297,6 +297,14 @@
     "notStarted": "Tracking not started",
     "notStartedDesc": "The cleaner will share their location when they're on their way"
   },
+  "chat": {
+    "title": "Chat",
+    "noMessages": "No messages yet. Start the conversation!",
+    "placeholder": "Type your message...",
+    "sendError": "Failed to send message",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
   "review": {
     "title": "Leave a Review",
     "rating": "Rating",

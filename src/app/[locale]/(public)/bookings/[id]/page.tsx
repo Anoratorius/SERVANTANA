@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { BookingChat } from "@/components/bookings/BookingChat";
 
 interface Booking {
   id: string;
@@ -495,6 +496,13 @@ export default function BookingDetailPage() {
                 )}
               </CardContent>
             </Card>
+          )}
+
+          {/* Chat Section - Only for completed bookings */}
+          {booking.status === "COMPLETED" && (
+            <div className="mt-6">
+              <BookingChat bookingId={bookingId} />
+            </div>
           )}
         </div>
       </main>

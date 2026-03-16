@@ -297,6 +297,14 @@
     "notStarted": "Tracking nicht gestartet",
     "notStartedDesc": "Der Reiniger wird seinen Standort teilen, wenn er unterwegs ist"
   },
+  "chat": {
+    "title": "Chat",
+    "noMessages": "Noch keine Nachrichten. Starten Sie das Gespräch!",
+    "placeholder": "Nachricht eingeben...",
+    "sendError": "Nachricht konnte nicht gesendet werden",
+    "today": "Heute",
+    "yesterday": "Gestern"
+  },
   "review": {
     "title": "Bewertung abgeben",
     "rating": "Bewertung",
