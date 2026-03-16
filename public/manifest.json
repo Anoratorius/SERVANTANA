@@ -3,22 +3,53 @@
   "short_name": "Servantana",
   "description": "Find trusted cleaners. Book professional cleaning services in minutes.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "portrait-primary",
+  "categories": ["lifestyle", "utilities"],
   "icons": [
     {
       "src": "/icons/icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Search Cleaners",
+      "short_name": "Search",
+      "description": "Find available cleaners near you",
+      "url": "/search",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Bookings",
+      "short_name": "Bookings",
+      "description": "View your upcoming bookings",
+      "url": "/bookings",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
     }
   ]
 }

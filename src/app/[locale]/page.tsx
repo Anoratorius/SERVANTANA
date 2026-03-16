@@ -6,7 +6,6 @@ import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
-import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import {
   Search,
   Shield,
@@ -224,7 +223,6 @@ function HomeContent() {
       </main>
 
       <Footer />
-      <InstallPrompt />
     </div>
   );
 }

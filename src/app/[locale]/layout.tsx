@@ -4,6 +4,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -30,6 +31,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <NextIntlClientProvider messages={messages}>
         {children}
         <Toaster />
+        <InstallPrompt />
       </NextIntlClientProvider>
     </SessionProvider>
   );
