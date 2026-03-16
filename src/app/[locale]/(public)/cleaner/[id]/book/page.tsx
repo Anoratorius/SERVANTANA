@@ -85,6 +85,7 @@ export default function BookingPage({
   const [selectedService, setSelectedService] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedDuration, setSelectedDuration] = useState<number>(1);
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -107,6 +108,10 @@ export default function BookingPage({
         }
         const data = await response.json();
         setCleaner(data.cleaner);
+        // Auto-select first service
+        if (data.cleaner?.cleanerProfile?.services?.length > 0) {
+          setSelectedService(data.cleaner.cleanerProfile.services[0].service.id);
+        }
       } catch {
         setError("Failed to load cleaner");
       } finally {
@@ -145,11 +150,11 @@ export default function BookingPage({
     (s) => s.service.id === selectedService
   );
 
-  const servicePrice = selectedServiceData
+  const hourlyRate = selectedServiceData
     ? selectedServiceData.customPrice ?? selectedServiceData.service.basePrice
     : 0;
 
-  const serviceDuration = selectedServiceData?.service.duration ?? 0;
+  const totalPrice = hourlyRate * selectedDuration;
 
   // Generate available time slots
   const timeSlots = [
@@ -178,12 +183,12 @@ export default function BookingPage({
           serviceId: selectedService,
           scheduledDate: selectedDate,
           scheduledTime: selectedTime,
-          duration: serviceDuration,
+          duration: selectedDuration * 60,
           address,
           city,
           postalCode,
           notes,
-          totalPrice: servicePrice,
+          totalPrice: totalPrice,
         }),
       });
 
@@ -257,58 +262,15 @@ export default function BookingPage({
             {/* Booking Form */}
             <div className="lg:col-span-2">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Service Selection */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">1</span>
-                      {t("booking.selectService")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-3">
-                      {profile.services.map((s) => {
-                        const price = s.customPrice ?? s.service.basePrice;
-                        const isSelected = selectedService === s.service.id;
-                        return (
-                          <div
-                            key={s.service.id}
-                            onClick={() => setSelectedService(s.service.id)}
-                            className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                              isSelected
-                                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
-                                : "hover:border-blue-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h4 className="font-semibold">
-                                  {t(`cleaner.services.${s.service.name}` as Parameters<typeof t>[0])}
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
-                                  ~{s.service.duration} min
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <div className="font-bold text-lg text-green-600">${price}</div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-
                 {/* Date & Time Selection */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">2</span>
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">1</span>
                       {t("booking.selectDate")}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="date" className="flex items-center gap-2 mb-2">
@@ -344,6 +306,28 @@ export default function BookingPage({
                         </Select>
                       </div>
                     </div>
+                    <div>
+                      <Label className="flex items-center gap-2 mb-2">
+                        <Clock className="h-4 w-4 text-blue-500" />
+                        Duration (hours)
+                      </Label>
+                      <div className="flex gap-2 flex-wrap">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((hours) => (
+                          <button
+                            key={hours}
+                            type="button"
+                            onClick={() => setSelectedDuration(hours)}
+                            className={`w-10 h-10 rounded-lg border-2 font-semibold transition-all ${
+                              selectedDuration === hours
+                                ? "border-blue-500 bg-blue-500 text-white"
+                                : "border-gray-300 bg-white text-gray-700 hover:border-blue-400"
+                            }`}
+                          >
+                            {hours}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -351,7 +335,7 @@ export default function BookingPage({
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">3</span>
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">2</span>
                       {t("booking.address")}
                     </CardTitle>
                   </CardHeader>
@@ -398,7 +382,7 @@ export default function BookingPage({
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">4</span>
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">3</span>
                       {t("booking.notes")}
                     </CardTitle>
                   </CardHeader>
@@ -460,34 +444,54 @@ export default function BookingPage({
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">{t("booking.service")}</span>
-                        <span className="font-medium">
+                        <span className="font-medium text-right">
                           {selectedServiceData
                             ? t(`cleaner.services.${selectedServiceData.service.name}` as Parameters<typeof t>[0])
                             : "-"}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t("booking.dateTime")}</span>
+                        <span className="text-muted-foreground">Date</span>
                         <span className="font-medium">
-                          {selectedDate && selectedTime
-                            ? `${new Date(selectedDate).toLocaleDateString()} ${selectedTime}`
+                          {selectedDate
+                            ? new Date(selectedDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
                             : "-"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Time</span>
+                        <span className="font-medium">
+                          {selectedTime || "-"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">{t("booking.duration")}</span>
                         <span className="font-medium">
-                          {serviceDuration > 0 ? `${serviceDuration} min` : "-"}
+                          {selectedDuration} {selectedDuration === 1 ? "hour" : "hours"}
                         </span>
                       </div>
+                      {address && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Location</span>
+                          <span className="font-medium text-right max-w-[150px] truncate">
+                            {city ? `${address}, ${city}` : address}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Total */}
-                    <div className="pt-4 border-t">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold">{t("booking.total")}</span>
+                    {/* Price Calculation */}
+                    <div className="pt-4 border-t space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          ${hourlyRate}/hr × {selectedDuration} {selectedDuration === 1 ? "hour" : "hours"}
+                        </span>
+                        <span className="font-medium">${totalPrice}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t">
+                        <span className="font-semibold text-lg">{t("booking.total")}</span>
                         <span className="text-2xl font-bold text-green-600">
-                          ${servicePrice}
+                          ${totalPrice}
                         </span>
                       </div>
                     </div>
