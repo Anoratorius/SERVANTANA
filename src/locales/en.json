@@ -803,6 +803,21 @@
     "cannotRefresh": "Cannot refresh while offline",
     "usingCachedData": "Using cached data - you appear to be offline"
   },
+  "route": {
+    "title": "Today's Route",
+    "stops": "Stops",
+    "totalDistance": "Total Distance",
+    "travelTime": "Travel Time",
+    "finishBy": "Finish By",
+    "openFullRoute": "Open Full Route in Maps",
+    "startLocation": "Start",
+    "yourLocation": "Your Location",
+    "navigate": "Navigate",
+    "routeComplete": "Route Complete",
+    "estimatedFinish": "Estimated finish",
+    "noBookings": "No bookings today",
+    "noBookingsDesc": "You don't have any confirmed bookings for today"
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Find answers to the most common questions about Servantana.",

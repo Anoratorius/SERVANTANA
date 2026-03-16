@@ -803,6 +803,21 @@
     "cannotRefresh": "Aktualisierung im Offline-Modus nicht möglich",
     "usingCachedData": "Zwischengespeicherte Daten werden verwendet - Sie scheinen offline zu sein"
   },
+  "route": {
+    "title": "Heutige Route",
+    "stops": "Stopps",
+    "totalDistance": "Gesamtstrecke",
+    "travelTime": "Fahrzeit",
+    "finishBy": "Fertig bis",
+    "openFullRoute": "Komplette Route in Maps öffnen",
+    "startLocation": "Start",
+    "yourLocation": "Ihr Standort",
+    "navigate": "Navigieren",
+    "routeComplete": "Route abgeschlossen",
+    "estimatedFinish": "Voraussichtliches Ende",
+    "noBookings": "Keine Buchungen heute",
+    "noBookingsDesc": "Sie haben heute keine bestätigten Buchungen"
+  },
   "faq": {
     "title": "Häufig gestellte Fragen",
     "subtitle": "Finden Sie Antworten auf die häufigsten Fragen zu Servantana.",
