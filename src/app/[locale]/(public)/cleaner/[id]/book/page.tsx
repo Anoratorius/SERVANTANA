@@ -167,9 +167,9 @@ export default function BookingPage({
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split("T")[0];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedService || !selectedDate || !selectedTime || !address) {
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!selectedService || !selectedDate || !selectedTime) {
       return;
     }
 
@@ -350,8 +350,7 @@ export default function BookingPage({
                           id="address"
                           value={address}
                           onChange={(e) => setAddress(e.target.value)}
-                          placeholder="123 Main Street, Apt 4B"
-                          required
+                          placeholder="123 Main Street, Apt 4B (optional)"
                         />
                       </div>
                       <div className="grid md:grid-cols-2 gap-4">
@@ -402,7 +401,7 @@ export default function BookingPage({
                     type="submit"
                     size="lg"
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                    disabled={!selectedService || !selectedDate || !selectedTime || !address || isSubmitting}
+                    disabled={!selectedService || !selectedDate || !selectedTime || isSubmitting}
                   >
                     {isSubmitting ? t("common.loading") : t("booking.confirmBooking")}
                   </Button>
@@ -498,11 +497,11 @@ export default function BookingPage({
 
                     {/* Submit Button (desktop) */}
                     <Button
-                      type="submit"
+                      type="button"
                       size="lg"
                       className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hidden lg:flex"
-                      disabled={!selectedService || !selectedDate || !selectedTime || !address || isSubmitting}
-                      onClick={handleSubmit}
+                      disabled={!selectedService || !selectedDate || !selectedTime || isSubmitting}
+                      onClick={() => handleSubmit()}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
                       {isSubmitting ? t("common.loading") : t("booking.confirmBooking")}
