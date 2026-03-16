@@ -268,7 +268,34 @@
       "inProgress": "In Bearbeitung",
       "completed": "Abgeschlossen",
       "cancelled": "Storniert"
-    }
+    },
+    "details": "Buchungsdetails",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "location": "Standort",
+    "customer": "Kunde",
+    "cleaner": "Reiniger",
+    "notFound": "Buchung nicht gefunden"
+  },
+  "tracking": {
+    "title": "Live-Tracking",
+    "cleanerDescription": "Teilen Sie Ihren Standort, damit der Kunde sehen kann, wann Sie ankommen",
+    "startSharing": "Standort teilen",
+    "stopSharing": "Teilen beenden",
+    "sharingActive": "Standortfreigabe aktiv",
+    "navigate": "Navigieren",
+    "started": "Standortfreigabe gestartet",
+    "stopped": "Standortfreigabe beendet",
+    "startFailed": "Tracking konnte nicht gestartet werden",
+    "stopFailed": "Tracking konnte nicht beendet werden",
+    "gpsNotSupported": "GPS wird auf diesem Gerät nicht unterstützt",
+    "locationError": "Standort konnte nicht ermittelt werden",
+    "cleanerEnRoute": "{name} ist unterwegs",
+    "distance": "Entfernung",
+    "eta": "Voraussichtliche Ankunft",
+    "lastUpdate": "Zuletzt aktualisiert",
+    "notStarted": "Tracking nicht gestartet",
+    "notStartedDesc": "Der Reiniger wird seinen Standort teilen, wenn er unterwegs ist"
   },
   "review": {
     "title": "Bewertung abgeben",

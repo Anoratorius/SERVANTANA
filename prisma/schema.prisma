@@ -392,6 +392,13 @@ model Booking {
   substitutedFromId String?  // Original booking this was created from
   substitutedToId   String?  // New booking created as substitute
 
+  // GPS tracking (cleaner en route)
+  trackingActive      Boolean   @default(false)
+  cleanerLatitude     Float?
+  cleanerLongitude    Float?
+  lastLocationUpdate  DateTime?
+  estimatedArrival    DateTime?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

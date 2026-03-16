@@ -268,7 +268,34 @@
       "inProgress": "In Progress",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "details": "Booking Details",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "customer": "Customer",
+    "cleaner": "Cleaner",
+    "notFound": "Booking not found"
+  },
+  "tracking": {
+    "title": "Live Tracking",
+    "cleanerDescription": "Share your location so the customer can see when you'll arrive",
+    "startSharing": "Start Sharing Location",
+    "stopSharing": "Stop Sharing",
+    "sharingActive": "Location sharing active",
+    "navigate": "Navigate",
+    "started": "Location sharing started",
+    "stopped": "Location sharing stopped",
+    "startFailed": "Failed to start tracking",
+    "stopFailed": "Failed to stop tracking",
+    "gpsNotSupported": "GPS is not supported on this device",
+    "locationError": "Could not get your location",
+    "cleanerEnRoute": "{name} is on the way",
+    "distance": "Distance",
+    "eta": "Estimated Arrival",
+    "lastUpdate": "Last updated",
+    "notStarted": "Tracking not started",
+    "notStartedDesc": "The cleaner will share their location when they're on their way"
   },
   "review": {
     "title": "Leave a Review",
