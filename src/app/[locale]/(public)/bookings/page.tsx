@@ -23,9 +23,12 @@ import {
   Loader2,
   CreditCard,
   RotateCcw,
+  WifiOff,
+  RefreshCw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { useOfflineStorage } from "@/hooks/useOfflineStorage";
 
 interface Booking {
   id: string;
@@ -79,6 +82,15 @@ export default function BookingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("upcoming");
 
+  // Offline storage for bookings
+  const {
+    data: cachedBookings,
+    isOffline,
+    isFromCache,
+    lastSynced,
+    saveToCache,
+  } = useOfflineStorage<Booking[]>({ key: "bookings" });
+
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login?callbackUrl=/bookings");
@@ -87,14 +99,29 @@ export default function BookingsPage() {
 
   useEffect(() => {
     async function fetchBookings() {
+      // If offline, use cached data immediately
+      if (isOffline && cachedBookings) {
+        setBookings(cachedBookings);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch("/api/bookings");
         if (response.ok) {
           const data = await response.json();
-          setBookings(data.bookings || []);
+          const fetchedBookings = data.bookings || [];
+          setBookings(fetchedBookings);
+          // Save to cache for offline access
+          saveToCache(fetchedBookings);
         }
       } catch (error) {
         console.error("Error fetching bookings:", error);
+        // Fall back to cached data if fetch fails
+        if (cachedBookings) {
+          setBookings(cachedBookings);
+          toast.info(t("offline.usingCachedData"));
+        }
       } finally {
         setIsLoading(false);
       }
@@ -103,7 +130,29 @@ export default function BookingsPage() {
     if (authStatus === "authenticated") {
       fetchBookings();
     }
-  }, [authStatus]);
+  }, [authStatus, isOffline, cachedBookings, saveToCache, t]);
+
+  const refreshBookings = async () => {
+    if (isOffline) {
+      toast.error(t("offline.cannotRefresh"));
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/bookings");
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedBookings = data.bookings || [];
+        setBookings(fetchedBookings);
+        saveToCache(fetchedBookings);
+        toast.success(t("offline.refreshed"));
+      }
+    } catch {
+      toast.error(t("offline.refreshFailed"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const upcomingBookings = bookings.filter((b) =>
     ["PENDING", "CONFIRMED", "IN_PROGRESS"].includes(b.status)
@@ -124,6 +173,39 @@ export default function BookingsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
+          {/* Offline indicator */}
+          {(isOffline || isFromCache) && (
+            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <WifiOff className="h-5 w-5 text-amber-600" />
+                  <div>
+                    <p className="font-medium text-amber-800">
+                      {isOffline ? t("offline.youAreOffline") : t("offline.viewingCached")}
+                    </p>
+                    {lastSynced && (
+                      <p className="text-sm text-amber-600">
+                        {t("offline.lastSynced")}: {lastSynced.toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {!isOffline && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={refreshBookings}
+                    disabled={isLoading}
+                    className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-1 ${isLoading ? "animate-spin" : ""}`} />
+                    {t("offline.refresh")}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="text-center mb-8">
             <Calendar className="h-12 w-12 mx-auto text-blue-500 mb-4" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">

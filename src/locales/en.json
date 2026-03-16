@@ -793,6 +793,16 @@
     "installDescription": "Add to your home screen for the best experience",
     "installButton": "Install"
   },
+  "offline": {
+    "youAreOffline": "You're offline",
+    "viewingCached": "Viewing cached data",
+    "lastSynced": "Last synced",
+    "refresh": "Refresh",
+    "refreshed": "Data refreshed successfully",
+    "refreshFailed": "Failed to refresh data",
+    "cannotRefresh": "Cannot refresh while offline",
+    "usingCachedData": "Using cached data - you appear to be offline"
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Find answers to the most common questions about Servantana.",

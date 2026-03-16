@@ -793,6 +793,16 @@
     "installDescription": "Zum Startbildschirm hinzufügen für das beste Erlebnis",
     "installButton": "Installieren"
   },
+  "offline": {
+    "youAreOffline": "Sie sind offline",
+    "viewingCached": "Zwischengespeicherte Daten werden angezeigt",
+    "lastSynced": "Zuletzt synchronisiert",
+    "refresh": "Aktualisieren",
+    "refreshed": "Daten erfolgreich aktualisiert",
+    "refreshFailed": "Aktualisierung fehlgeschlagen",
+    "cannotRefresh": "Aktualisierung im Offline-Modus nicht möglich",
+    "usingCachedData": "Zwischengespeicherte Daten werden verwendet - Sie scheinen offline zu sein"
+  },
   "faq": {
     "title": "Häufig gestellte Fragen",
     "subtitle": "Finden Sie Antworten auf die häufigsten Fragen zu Servantana.",
