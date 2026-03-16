@@ -82,6 +82,8 @@ export async function POST(
         status: "CANCELLED",
         cancelledAt: new Date(),
         cancellationReason: reason,
+        // Track who cancelled
+        ...(isCleaner && { cancelledByCleaner: true }),
       },
     });
 
@@ -97,6 +99,9 @@ export async function POST(
       });
     }
 
+    // If cleaner cancelled, provide substitute URL for customer
+    const substituteUrl = isCleaner ? `/bookings/${id}/substitutes` : null;
+
     return NextResponse.json({
       change: bookingChange,
       refund: {
@@ -105,6 +110,8 @@ export async function POST(
         reason: refund.reason,
       },
       message: "Booking cancelled successfully",
+      cancelledByCleaner: isCleaner,
+      substituteUrl,
     });
   } catch (error) {
     console.error("Error cancelling booking:", error);

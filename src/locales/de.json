@@ -818,6 +818,19 @@
     "noBookings": "Keine Buchungen heute",
     "noBookingsDesc": "Sie haben heute keine bestätigten Buchungen"
   },
+  "substitutes": {
+    "title": "Ersatz finden",
+    "subtitle": "Wählen Sie einen verfügbaren Reiniger als Ersatz für Ihre stornierte Buchung",
+    "originalCancelled": "{name} hat Ihre Buchung storniert",
+    "availableCount": "{count} Reiniger verfügbar",
+    "bookings": "Buchungen",
+    "accept": "Akzeptieren",
+    "accepted": "Ersatz akzeptiert! Neue Buchung erstellt.",
+    "noAvailable": "Keine Ersatzkräfte verfügbar",
+    "noAvailableDesc": "Leider sind für diesen Zeitraum keine Reiniger verfügbar",
+    "findNewCleaner": "Neuen Reiniger finden",
+    "skipForNow": "Jetzt überspringen"
+  },
   "faq": {
     "title": "Häufig gestellte Fragen",
     "subtitle": "Finden Sie Antworten auf die häufigsten Fragen zu Servantana.",

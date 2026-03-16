@@ -818,6 +818,19 @@
     "noBookings": "No bookings today",
     "noBookingsDesc": "You don't have any confirmed bookings for today"
   },
+  "substitutes": {
+    "title": "Find a Substitute",
+    "subtitle": "Choose an available cleaner to replace your cancelled booking",
+    "originalCancelled": "{name} cancelled your booking",
+    "availableCount": "{count} cleaners available",
+    "bookings": "bookings",
+    "accept": "Accept",
+    "accepted": "Substitute accepted! New booking created.",
+    "noAvailable": "No substitutes available",
+    "noAvailableDesc": "Unfortunately, no cleaners are available for this time slot",
+    "findNewCleaner": "Find a New Cleaner",
+    "skipForNow": "Skip for now"
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Find answers to the most common questions about Servantana.",
