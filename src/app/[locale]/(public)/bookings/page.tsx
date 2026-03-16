@@ -22,6 +22,7 @@ import {
   Play,
   Loader2,
   CreditCard,
+  RotateCcw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
@@ -428,21 +429,29 @@ function BookingCard({
                   </>
                 )}
                 {isPast && booking.status === "COMPLETED" && isCustomer && (
-                  booking.review ? (
-                    <Link href={`/bookings/${booking.id}/review`}>
-                      <Button size="sm" variant="outline" className="text-green-600">
-                        <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
-                        {booking.review.rating}/5 {t("booking.reviewed")}
+                  <>
+                    <Link href={`/cleaner/${booking.cleaner.id}?rebook=${booking.id}`}>
+                      <Button size="sm" className="bg-gradient-to-r from-green-500 to-green-600">
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                        {t("booking.bookAgain")}
                       </Button>
                     </Link>
-                  ) : (
-                    <Link href={`/bookings/${booking.id}/review`}>
-                      <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600">
-                        <Star className="h-4 w-4 mr-1" />
-                        {t("booking.leaveReview")}
-                      </Button>
-                    </Link>
-                  )
+                    {booking.review ? (
+                      <Link href={`/bookings/${booking.id}/review`}>
+                        <Button size="sm" variant="outline" className="text-green-600">
+                          <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
+                          {booking.review.rating}/5 {t("booking.reviewed")}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link href={`/bookings/${booking.id}/review`}>
+                        <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600">
+                          <Star className="h-4 w-4 mr-1" />
+                          {t("booking.leaveReview")}
+                        </Button>
+                      </Link>
+                    )}
+                  </>
                 )}
               </div>
             </div>

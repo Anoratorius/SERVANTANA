@@ -9,6 +9,9 @@ export async function GET(request: NextRequest) {
     const minRating = searchParams.get("minRating");
     const maxPrice = searchParams.get("maxPrice");
     const city = searchParams.get("city");
+    const ecoFriendly = searchParams.get("ecoFriendly");
+    const petFriendly = searchParams.get("petFriendly");
+    const specialtyServices = searchParams.get("specialty");
 
     // Build cleaner profile filter conditions
     const profileFilters: Prisma.CleanerProfileWhereInput = {};
@@ -44,6 +47,26 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    // Filter by eco-friendly
+    if (ecoFriendly === "true") {
+      profileFilters.ecoFriendly = true;
+    }
+
+    // Filter by pet-friendly
+    if (petFriendly === "true") {
+      profileFilters.petFriendly = true;
+    }
+
+    // Filter by specialty services
+    if (specialtyServices === "true") {
+      profileFilters.services = {
+        some: {
+          service: { isSpecialty: true },
+          isActive: true,
+        },
+      };
+    }
+
     // Build where clause - use 'is' to filter and ensure profile exists
     const where: Prisma.UserWhereInput = {
       role: "CLEANER",
@@ -69,6 +92,8 @@ export async function GET(request: NextRequest) {
             experienceYears: true,
             verified: true,
             availableNow: true,
+            ecoFriendly: true,
+            petFriendly: true,
             city: true,
             state: true,
             averageRating: true,
@@ -83,6 +108,7 @@ export async function GET(request: NextRequest) {
                     name: true,
                     basePrice: true,
                     duration: true,
+                    isSpecialty: true,
                   },
                 },
               },

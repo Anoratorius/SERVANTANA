@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Header, Footer } from "@/components/layout";
@@ -27,6 +28,7 @@ import {
   CheckCircle,
   Star,
   CreditCard,
+  RotateCcw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -69,12 +71,15 @@ export default function BookingPage({
   const { id } = use(params);
   const t = useTranslations();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { status } = useSession();
+  const rebookId = searchParams.get("rebook");
 
   const [cleaner, setCleaner] = useState<Cleaner | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRebooking, setIsRebooking] = useState(false);
 
   // Form state
   const [selectedService, setSelectedService] = useState<string>("");
@@ -110,6 +115,31 @@ export default function BookingPage({
     }
     fetchCleaner();
   }, [id]);
+
+  // Pre-fill form with previous booking details when rebooking
+  useEffect(() => {
+    async function fetchPreviousBooking() {
+      if (!rebookId) return;
+      setIsRebooking(true);
+      try {
+        const response = await fetch(`/api/bookings/${rebookId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const booking = data.booking;
+          if (booking) {
+            setSelectedService(booking.service?.id || "");
+            setAddress(booking.address || "");
+            setCity(booking.city || "");
+            setPostalCode(booking.postalCode || "");
+            setNotes(booking.notes || "");
+          }
+        }
+      } catch {
+        console.error("Failed to fetch previous booking for rebooking");
+      }
+    }
+    fetchPreviousBooking();
+  }, [rebookId]);
 
   const selectedServiceData = cleaner?.cleanerProfile?.services.find(
     (s) => s.service.id === selectedService
@@ -213,9 +243,16 @@ export default function BookingPage({
             {t("common.back")}
           </Link>
 
-          <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             {t("booking.title")}
           </h1>
+
+          {isRebooking && (
+            <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+              <RotateCcw className="h-5 w-5 text-green-600" />
+              <span className="text-green-800 font-medium">{t("booking.rebookingInfo")}</span>
+            </div>
+          )}
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Booking Form */}

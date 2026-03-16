@@ -89,6 +89,8 @@ export default function SettingsPage() {
     hourlyRate: 25,
     experienceYears: 0,
     availableNow: false,
+    ecoFriendly: false,
+    petFriendly: false,
     address: "",
     city: "",
     state: "",
@@ -144,6 +146,8 @@ export default function SettingsPage() {
               hourlyRate: profileData.profile.hourlyRate || 25,
               experienceYears: profileData.profile.experienceYears || 0,
               availableNow: profileData.profile.availableNow || false,
+              ecoFriendly: profileData.profile.ecoFriendly || false,
+              petFriendly: profileData.profile.petFriendly || false,
               address: profileData.profile.address || "",
               city: profileData.profile.city || "",
               state: profileData.profile.state || "",
@@ -449,6 +453,40 @@ export default function SettingsPage() {
                         checked={formData.availableNow}
                         onCheckedChange={(checked) =>
                           setFormData((prev) => ({ ...prev, availableNow: checked }))
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-lg">
+                      <div>
+                        <Label htmlFor="ecoFriendly" className="text-base font-medium">
+                          Eco-Friendly Cleaning
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          I use environmentally friendly, non-toxic cleaning products
+                        </p>
+                      </div>
+                      <Switch
+                        id="ecoFriendly"
+                        checked={formData.ecoFriendly}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, ecoFriendly: checked }))
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
+                      <div>
+                        <Label htmlFor="petFriendly" className="text-base font-medium">
+                          Pet-Friendly
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          I&apos;m comfortable working in homes with pets
+                        </p>
+                      </div>
+                      <Switch
+                        id="petFriendly"
+                        checked={formData.petFriendly}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, petFriendly: checked }))
                         }
                       />
                     </div>

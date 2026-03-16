@@ -15,6 +15,8 @@ import {
   MapPin,
   Clock,
   CheckCircle,
+  Leaf,
+  PawPrint,
   Calendar,
   MessageCircle,
   Heart,
@@ -65,6 +67,8 @@ interface CleanerProfile {
   experienceYears: number;
   verified: boolean;
   availableNow: boolean;
+  ecoFriendly: boolean;
+  petFriendly: boolean;
   city: string | null;
   state: string | null;
   country: string | null;
@@ -239,6 +243,18 @@ export default function CleanerProfilePage({
                   {profile.availableNow && (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                       Available Now
+                    </Badge>
+                  )}
+                  {profile.ecoFriendly && (
+                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-800">
+                      <Leaf className="h-3 w-3 mr-1" />
+                      {t("cleaner.profile.ecoFriendly")}
+                    </Badge>
+                  )}
+                  {profile.petFriendly && (
+                    <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                      <PawPrint className="h-3 w-3 mr-1" />
+                      {t("cleaner.profile.petFriendly")}
                     </Badge>
                   )}
                 </div>

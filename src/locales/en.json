@@ -179,7 +179,9 @@
       "rating": "Rating",
       "bookings": "Bookings Completed",
       "responseTime": "Response Time",
-      "bookNow": "Book Now"
+      "bookNow": "Book Now",
+      "ecoFriendly": "Eco-Friendly",
+      "petFriendly": "Pet-Friendly"
     },
     "dashboard": {
       "title": "Worker Dashboard",
@@ -198,7 +200,9 @@
       "window": "Window Cleaning",
       "carpet": "Carpet Cleaning",
       "laundry": "Laundry Service",
-      "organizing": "Organizing"
+      "organizing": "Organizing",
+      "postConstruction": "Post-Construction Cleaning",
+      "airbnb": "Airbnb Turnover"
     }
   },
   "customer": {
@@ -217,7 +221,10 @@
       "priceRange": "Price Range",
       "rating": "Minimum Rating",
       "results": "workers found",
-      "noResults": "No workers found in your area"
+      "noResults": "No workers found in your area",
+      "ecoFriendly": "Eco-Friendly",
+      "petFriendly": "Pet-Friendly",
+      "specialtyServices": "Specialty Services"
     }
   },
   "booking": {
@@ -247,6 +254,8 @@
     "cancel": "Cancel",
     "leaveReview": "Leave Review",
     "reviewed": "Reviewed",
+    "bookAgain": "Book Again",
+    "rebookingInfo": "Rebooking from your previous order - address and service pre-filled",
     "noUpcoming": "No upcoming bookings",
     "noUpcomingDesc": "You don't have any upcoming bookings yet.",
     "findCleaner": "Find a Cleaner",

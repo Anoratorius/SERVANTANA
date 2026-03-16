@@ -179,7 +179,9 @@
       "rating": "Bewertung",
       "bookings": "Abgeschlossene Buchungen",
       "responseTime": "Antwortzeit",
-      "bookNow": "Jetzt buchen"
+      "bookNow": "Jetzt buchen",
+      "ecoFriendly": "Umweltfreundlich",
+      "petFriendly": "Haustierfreundlich"
     },
     "dashboard": {
       "title": "Fachkraft-Dashboard",
@@ -198,7 +200,9 @@
       "window": "Fensterreinigung",
       "carpet": "Teppichreinigung",
       "laundry": "Wäscheservice",
-      "organizing": "Aufräumen"
+      "organizing": "Aufräumen",
+      "postConstruction": "Bauendreinigung",
+      "airbnb": "Airbnb-Reinigung"
     }
   },
   "customer": {
@@ -217,7 +221,10 @@
       "priceRange": "Preisbereich",
       "rating": "Mindestbewertung",
       "results": "Fachkräfte gefunden",
-      "noResults": "Keine Fachkräfte in Ihrer Nähe gefunden"
+      "noResults": "Keine Fachkräfte in Ihrer Nähe gefunden",
+      "ecoFriendly": "Umweltfreundlich",
+      "petFriendly": "Haustierfreundlich",
+      "specialtyServices": "Spezialreinigung"
     }
   },
   "booking": {
@@ -247,6 +254,8 @@
     "cancel": "Stornieren",
     "leaveReview": "Bewertung abgeben",
     "reviewed": "Bewertet",
+    "bookAgain": "Erneut buchen",
+    "rebookingInfo": "Erneute Buchung aus Ihrer vorherigen Bestellung - Adresse und Service vorausgefüllt",
     "noUpcoming": "Keine anstehenden Buchungen",
     "noUpcomingDesc": "Sie haben noch keine anstehenden Buchungen.",
     "findCleaner": "Fachkraft finden",

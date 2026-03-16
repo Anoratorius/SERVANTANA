@@ -18,13 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Star, MapPin, CheckCircle } from "lucide-react";
+import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint, Sparkles } from "lucide-react";
 
 interface Service {
   id: string;
   name: string;
   basePrice: number;
   duration: number;
+  isSpecialty?: boolean;
 }
 
 interface CleanerService {
@@ -40,6 +41,8 @@ interface CleanerProfile {
   experienceYears: number;
   verified: boolean;
   availableNow: boolean;
+  ecoFriendly: boolean;
+  petFriendly: boolean;
   city: string | null;
   state: string | null;
   averageRating: number;
@@ -69,6 +72,9 @@ function SearchContent() {
   const [serviceFilter, setServiceFilter] = useState(searchParams.get("service") || "all");
   const [minRating, setMinRating] = useState(searchParams.get("rating") || "0");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("price") || "any");
+  const [ecoFriendly, setEcoFriendly] = useState(searchParams.get("eco") === "true");
+  const [petFriendly, setPetFriendly] = useState(searchParams.get("pet") === "true");
+  const [specialtyServices, setSpecialtyServices] = useState(searchParams.get("specialty") === "true");
 
   // Auto-detect location via IP on mount
   useEffect(() => {
@@ -117,6 +123,9 @@ function SearchContent() {
       if (minRating && minRating !== "0") params.set("minRating", minRating);
       if (maxPrice && maxPrice !== "any") params.set("maxPrice", maxPrice);
       if (location) params.set("city", location);
+      if (ecoFriendly) params.set("ecoFriendly", "true");
+      if (petFriendly) params.set("petFriendly", "true");
+      if (specialtyServices) params.set("specialty", "true");
 
       const response = await fetch(`/api/cleaners?${params.toString()}`);
       const data = await response.json();
@@ -126,7 +135,7 @@ function SearchContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [serviceFilter, minRating, maxPrice, location]);
+  }, [serviceFilter, minRating, maxPrice, location, ecoFriendly, petFriendly, specialtyServices]);
 
   // Debounce filter changes to prevent excessive API calls
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -219,6 +228,41 @@ function SearchContent() {
                 </Select>
               </div>
             </div>
+            <div className="flex items-center gap-4 mt-4">
+              <button
+                onClick={() => setEcoFriendly(!ecoFriendly)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                  ecoFriendly
+                    ? "bg-emerald-100 border-emerald-500 text-emerald-700"
+                    : "bg-white border-gray-300 text-gray-600 hover:border-emerald-400"
+                }`}
+              >
+                <Leaf className="h-4 w-4" />
+                <span className="text-sm font-medium">{t("customer.search.ecoFriendly")}</span>
+              </button>
+              <button
+                onClick={() => setPetFriendly(!petFriendly)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                  petFriendly
+                    ? "bg-orange-100 border-orange-500 text-orange-700"
+                    : "bg-white border-gray-300 text-gray-600 hover:border-orange-400"
+                }`}
+              >
+                <PawPrint className="h-4 w-4" />
+                <span className="text-sm font-medium">{t("customer.search.petFriendly")}</span>
+              </button>
+              <button
+                onClick={() => setSpecialtyServices(!specialtyServices)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                  specialtyServices
+                    ? "bg-purple-100 border-purple-500 text-purple-700"
+                    : "bg-white border-gray-300 text-gray-600 hover:border-purple-400"
+                }`}
+              >
+                <Sparkles className="h-4 w-4" />
+                <span className="text-sm font-medium">{t("customer.search.specialtyServices")}</span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -279,6 +323,12 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
               </h3>
               {profile.verified && (
                 <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+              )}
+              {profile.ecoFriendly && (
+                <Leaf className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+              )}
+              {profile.petFriendly && (
+                <PawPrint className="h-4 w-4 text-orange-500 flex-shrink-0" />
               )}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
