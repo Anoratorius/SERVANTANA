@@ -235,12 +235,11 @@ export default function BookingPage({
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4">
           {/* Back button */}
-          <Link
-            href={`/cleaner/${id}`}
-            className="inline-flex items-center text-muted-foreground hover:text-blue-600 mb-6"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.back")}
+          <Link href={`/cleaner/${id}`} className="inline-block mb-6">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("common.back")}
+            </Button>
           </Link>
 
           <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">

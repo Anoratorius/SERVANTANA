@@ -268,9 +268,11 @@ export default function ForgotPasswordPage() {
                   </Button>
 
                   <div className="text-center">
-                    <Link href="/login" className="text-sm text-blue-600 hover:underline">
-                      <ArrowLeft className="h-4 w-4 inline mr-1" />
-                      Back to Login
+                    <Link href="/login">
+                      <Button variant="ghost" size="sm">
+                        <ArrowLeft className="h-4 w-4 mr-1" />
+                        Back to Login
+                      </Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -317,13 +319,14 @@ export default function ForgotPasswordPage() {
                   </Button>
 
                   <div className="flex justify-between items-center text-sm">
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setStep("identifier")}
-                      className="text-gray-500 hover:text-gray-700"
                     >
-                      <ArrowLeft className="h-4 w-4 inline mr-1" />
+                      <ArrowLeft className="h-4 w-4 mr-1" />
                       Change {resetType}
-                    </button>
+                    </Button>
                     <button
                       onClick={handleResendCode}
                       disabled={isLoading}

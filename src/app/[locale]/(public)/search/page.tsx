@@ -238,68 +238,66 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
   const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-[3px] md:border-t-4 border-t-blue-500 w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[240px] md:h-[360px]">
-      <CardContent className="p-2 md:p-5 h-full flex flex-col">
+    <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-[3px] md:border-t-4 border-t-blue-500 w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[220px] md:h-[340px]">
+      <CardContent className="p-2 md:p-5 h-full flex flex-col justify-between">
+        {/* Top: Avatar and info */}
         <div className="flex flex-col items-center text-center">
-          <Avatar className="h-9 w-9 md:h-14 md:w-14 ring-2 ring-blue-100">
+          <Avatar className="h-8 w-8 md:h-12 md:w-12 ring-2 ring-blue-100">
             <AvatarImage src={cleaner.avatar || undefined} />
-            <AvatarFallback className="text-xs md:text-lg bg-gradient-to-br from-blue-500 to-green-500 text-white">{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs md:text-base bg-gradient-to-br from-blue-500 to-green-500 text-white">{initials}</AvatarFallback>
           </Avatar>
-          <div className="mt-1 md:mt-3 w-full">
-            <div className="flex items-center justify-center gap-0.5 md:gap-1.5 flex-wrap">
-              <h3 className="font-semibold text-[11px] md:text-base">
+          <div className="mt-1 md:mt-2 w-full">
+            <div className="flex items-center justify-center gap-0.5 md:gap-1">
+              <h3 className="font-semibold text-[10px] md:text-sm">
                 {cleaner.firstName} {cleaner.lastName}
               </h3>
               {profile.verified && (
-                <CheckCircle className="h-2 w-2 md:h-4 md:w-4 text-blue-500 flex-shrink-0" />
-              )}
-              {profile.ecoFriendly && (
-                <Leaf className="h-2 w-2 md:h-4 md:w-4 text-emerald-500 flex-shrink-0" />
-              )}
-              {profile.petFriendly && (
-                <PawPrint className="h-2 w-2 md:h-4 md:w-4 text-orange-500 flex-shrink-0" />
+                <CheckCircle className="h-2 w-2 md:h-3.5 md:w-3.5 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex items-center justify-center gap-0.5 md:gap-1 text-[9px] md:text-sm text-muted-foreground mt-0.5 md:mt-1">
-              <Star className="h-2 w-2 md:h-4 md:w-4 fill-yellow-400 text-yellow-400" />
+            <div className="flex items-center justify-center gap-0.5 text-[8px] md:text-xs text-muted-foreground mt-0.5">
+              <Star className="h-2 w-2 md:h-3 md:w-3 fill-yellow-400 text-yellow-400" />
               <span className="font-medium text-gray-700">{profile.averageRating.toFixed(1)}</span>
               <span>({profile.totalBookings})</span>
+              {profile.city && (
+                <>
+                  <span className="mx-0.5">•</span>
+                  <span>{profile.city}</span>
+                </>
+              )}
             </div>
-            {profile.city && (
-              <div className="flex items-center justify-center gap-0.5 md:gap-1 text-[9px] md:text-sm text-muted-foreground mt-0.5 md:mt-1">
-                <MapPin className="h-2 w-2 md:h-4 md:w-4 text-blue-500" />
-                <span>{profile.city}</span>
-              </div>
-            )}
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col">
-          <p className="text-[9px] md:text-sm text-muted-foreground mt-1 md:mt-3 line-clamp-2 text-center">
-            {profile.bio || "\u00A0"}
+        {/* Middle: Bio and badges - fixed height with overflow hidden */}
+        <div className="flex-1 overflow-hidden flex flex-col justify-center min-h-0 my-1 md:my-2">
+          <p className="text-[8px] md:text-xs text-muted-foreground line-clamp-2 text-center">
+            {profile.bio || "Professional cleaning services"}
           </p>
-
-          <div className="flex flex-wrap justify-center gap-0.5 md:gap-1.5 mt-1 md:mt-3">
+          <div className="flex flex-wrap justify-center gap-0.5 md:gap-1 mt-1 md:mt-2">
             {profile.services.slice(0, 2).map((s) => (
-              <Badge key={s.service.id} className="text-[8px] md:text-xs px-1 md:px-2.5 py-0 md:py-0.5 bg-blue-100 text-blue-700 hover:bg-blue-200">
+              <Badge key={s.service.id} className="text-[7px] md:text-[10px] px-1 md:px-2 py-0 bg-blue-100 text-blue-700">
                 {t(`cleaner.services.${s.service.name}` as Parameters<typeof t>[0])}
               </Badge>
             ))}
             {profile.services.length > 2 && (
-              <Badge className="text-[8px] md:text-xs px-1 md:px-2.5 py-0 md:py-0.5 bg-green-100 text-green-700">
+              <Badge className="text-[7px] md:text-[10px] px-1 md:px-2 py-0 bg-green-100 text-green-700">
                 +{profile.services.length - 2}
               </Badge>
             )}
           </div>
         </div>
 
-        <div className="mt-auto pt-1 md:pt-3 border-t text-center">
-          <span className="text-sm md:text-2xl font-bold text-blue-600">${profile.hourlyRate}</span>
-          <span className="text-muted-foreground text-[9px] md:text-base">/hr</span>
+        {/* Bottom: Price and button - always visible */}
+        <div className="flex-shrink-0">
+          <div className="pt-1 md:pt-2 border-t text-center">
+            <span className="text-sm md:text-xl font-bold text-blue-600">${profile.hourlyRate}</span>
+            <span className="text-muted-foreground text-[8px] md:text-sm">/hr</span>
+          </div>
+          <Link href={`/cleaner/${cleaner.id}`} className="block mt-1 md:mt-2">
+            <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[9px] md:text-sm h-6 md:h-9">{t("cleaner.profile.bookNow")}</Button>
+          </Link>
         </div>
-        <Link href={`/cleaner/${cleaner.id}`} className="block mt-1 md:mt-3">
-          <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[10px] md:text-sm h-6 md:h-10">{t("cleaner.profile.bookNow")}</Button>
-        </Link>
       </CardContent>
     </Card>
   );
@@ -307,23 +305,25 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
 
 function CleanerCardSkeleton() {
   return (
-    <Card className="w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[240px] md:h-[360px]">
-      <CardContent className="p-2 md:p-5 h-full flex flex-col">
+    <Card className="w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[220px] md:h-[340px]">
+      <CardContent className="p-2 md:p-5 h-full flex flex-col justify-between">
         <div className="flex flex-col items-center">
-          <Skeleton className="h-9 w-9 md:h-14 md:w-14 rounded-full" />
-          <Skeleton className="h-2.5 md:h-5 w-20 md:w-32 mt-1 md:mt-3" />
-          <Skeleton className="h-2 md:h-4 w-14 md:w-24 mt-0.5 md:mt-1" />
+          <Skeleton className="h-8 w-8 md:h-12 md:w-12 rounded-full" />
+          <Skeleton className="h-2 md:h-4 w-20 md:w-28 mt-1 md:mt-2" />
+          <Skeleton className="h-2 md:h-3 w-24 md:w-32 mt-0.5" />
         </div>
-        <div className="flex-1 flex flex-col">
-          <Skeleton className="h-2 md:h-4 w-full mt-1 md:mt-3" />
-          <div className="flex justify-center gap-0.5 md:gap-1.5 mt-1 md:mt-3">
-            <Skeleton className="h-3 md:h-6 w-10 md:w-16" />
-            <Skeleton className="h-3 md:h-6 w-10 md:w-16" />
+        <div className="flex-1 overflow-hidden flex flex-col justify-center my-1 md:my-2">
+          <Skeleton className="h-2 md:h-3 w-full" />
+          <div className="flex justify-center gap-0.5 md:gap-1 mt-1 md:mt-2">
+            <Skeleton className="h-3 md:h-5 w-10 md:w-14" />
+            <Skeleton className="h-3 md:h-5 w-10 md:w-14" />
           </div>
         </div>
-        <div className="mt-auto pt-1 md:pt-3 border-t flex flex-col items-center">
-          <Skeleton className="h-3.5 md:h-7 w-12 md:w-20" />
-          <Skeleton className="h-6 md:h-10 w-full mt-1 md:mt-3" />
+        <div className="flex-shrink-0">
+          <div className="pt-1 md:pt-2 border-t flex flex-col items-center">
+            <Skeleton className="h-3 md:h-5 w-12 md:w-16" />
+            <Skeleton className="h-6 md:h-9 w-full mt-1 md:mt-2" />
+          </div>
         </div>
       </CardContent>
     </Card>

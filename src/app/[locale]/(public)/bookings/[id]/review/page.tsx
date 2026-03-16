@@ -280,12 +280,11 @@ export default function ReviewPage({
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
-          <Link
-            href="/bookings"
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            {t("common.back")}
+          <Link href="/bookings" className="inline-block mb-6">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              {t("common.back")}
+            </Button>
           </Link>
 
           <Card>

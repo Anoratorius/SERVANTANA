@@ -278,12 +278,11 @@ export default function BookingDetailPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Back button */}
-          <Link
-            href="/bookings"
-            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.back")}
+          <Link href="/bookings" className="inline-block mb-6">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("common.back")}
+            </Button>
           </Link>
 
           {/* Header */}

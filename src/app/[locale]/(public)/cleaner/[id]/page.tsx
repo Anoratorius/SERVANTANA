@@ -214,9 +214,11 @@ export default function CleanerProfilePage({
       <main className="flex-1 bg-muted/30">
         {/* Back button */}
         <div className="container mx-auto px-4 py-4">
-          <Link href="/search" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.back")}
+          <Link href="/search">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("common.back")}
+            </Button>
           </Link>
         </div>
 
