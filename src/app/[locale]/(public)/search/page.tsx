@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint, Sparkles } from "lucide-react";
+import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
 
 interface Service {
   id: string;
@@ -74,7 +74,6 @@ function SearchContent() {
   const [maxPrice, setMaxPrice] = useState(searchParams.get("price") || "any");
   const [ecoFriendly, setEcoFriendly] = useState(searchParams.get("eco") === "true");
   const [petFriendly, setPetFriendly] = useState(searchParams.get("pet") === "true");
-  const [specialtyServices, setSpecialtyServices] = useState(searchParams.get("specialty") === "true");
 
   // Auto-detect location via IP on mount
   useEffect(() => {
@@ -125,7 +124,6 @@ function SearchContent() {
       if (location) params.set("city", location);
       if (ecoFriendly) params.set("ecoFriendly", "true");
       if (petFriendly) params.set("petFriendly", "true");
-      if (specialtyServices) params.set("specialty", "true");
 
       const response = await fetch(`/api/cleaners?${params.toString()}`);
       const data = await response.json();
@@ -135,7 +133,7 @@ function SearchContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [serviceFilter, minRating, maxPrice, location, ecoFriendly, petFriendly, specialtyServices]);
+  }, [serviceFilter, minRating, maxPrice, location, ecoFriendly, petFriendly]);
 
   // Debounce filter changes to prevent excessive API calls
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -159,134 +157,65 @@ function SearchContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Header />
 
-      <main className="flex-1 bg-muted/30">
+      <main className="flex-1 bg-muted/30 overflow-x-hidden">
         {/* Search Header */}
-        <section className="bg-white border-b py-6">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <div className="text-center mb-6">
-              <Search className="h-10 w-10 mx-auto text-blue-500 mb-3" />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{t("customer.search.title")}</h1>
+        <section className="bg-white border-b py-3 md:py-8">
+          <div className="container mx-auto px-2 md:px-4 max-w-5xl">
+            <div className="text-center mb-3 md:mb-6">
+              <Search className="h-7 w-7 md:h-12 md:w-12 mx-auto text-blue-500 mb-1.5 md:mb-3" />
+              <h1 className="text-lg md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{t("customer.search.title")}</h1>
             </div>
-            <div className="grid md:grid-cols-4 gap-4">
-              <div>
-                <Label className="text-sm">{t("customer.search.location")}</Label>
-                <div className="relative mt-1 flex items-center gap-2 h-10 px-3 border rounded-md bg-muted/50">
-                  <MapPin className="h-4 w-4 text-blue-500" />
-                  {isDetectingLocation ? (
-                    <span className="text-sm text-muted-foreground">{t("home.hero.detectingLocation")}</span>
-                  ) : (
-                    <span className="text-sm font-medium">{location || "Unknown"}</span>
-                  )}
-                </div>
-              </div>
-              <div>
-                <Label className="text-sm">{t("customer.search.service")}</Label>
-                <Select value={serviceFilter} onValueChange={setServiceFilter}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="All services" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Services</SelectItem>
-                    {services.map((service) => (
-                      <SelectItem key={service.id} value={service.name}>
-                        {getServiceLabel(service.name)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm">{t("customer.search.rating")}</Label>
-                <Select value={minRating} onValueChange={setMinRating}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">Any Rating</SelectItem>
-                    <SelectItem value="3">3+ Stars</SelectItem>
-                    <SelectItem value="4">4+ Stars</SelectItem>
-                    <SelectItem value="4.5">4.5+ Stars</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm">{t("customer.search.priceRange")}</Label>
-                <Select value={maxPrice} onValueChange={setMaxPrice}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Any price" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any Price</SelectItem>
-                    <SelectItem value="25">Up to $25/hr</SelectItem>
-                    <SelectItem value="50">Up to $50/hr</SelectItem>
-                    <SelectItem value="75">Up to $75/hr</SelectItem>
-                    <SelectItem value="100">Up to $100/hr</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 mt-4">
+            <div className="flex items-center justify-center gap-1.5 md:gap-4 mt-2 md:mt-4 flex-wrap">
               <button
                 onClick={() => setEcoFriendly(!ecoFriendly)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                className={`flex items-center gap-1 md:gap-2 px-2.5 md:px-5 py-1 md:py-2.5 rounded-full border transition-colors ${
                   ecoFriendly
                     ? "bg-emerald-100 border-emerald-500 text-emerald-700"
                     : "bg-white border-gray-300 text-gray-600 hover:border-emerald-400"
                 }`}
               >
-                <Leaf className="h-4 w-4" />
-                <span className="text-sm font-medium">{t("customer.search.ecoFriendly")}</span>
+                <Leaf className="h-3 w-3 md:h-5 md:w-5" />
+                <span className="text-[10px] md:text-base font-medium">{t("customer.search.ecoFriendly")}</span>
               </button>
               <button
                 onClick={() => setPetFriendly(!petFriendly)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                className={`flex items-center gap-1 md:gap-2 px-2.5 md:px-5 py-1 md:py-2.5 rounded-full border transition-colors ${
                   petFriendly
                     ? "bg-orange-100 border-orange-500 text-orange-700"
                     : "bg-white border-gray-300 text-gray-600 hover:border-orange-400"
                 }`}
               >
-                <PawPrint className="h-4 w-4" />
-                <span className="text-sm font-medium">{t("customer.search.petFriendly")}</span>
-              </button>
-              <button
-                onClick={() => setSpecialtyServices(!specialtyServices)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
-                  specialtyServices
-                    ? "bg-purple-100 border-purple-500 text-purple-700"
-                    : "bg-white border-gray-300 text-gray-600 hover:border-purple-400"
-                }`}
-              >
-                <Sparkles className="h-4 w-4" />
-                <span className="text-sm font-medium">{t("customer.search.specialtyServices")}</span>
+                <PawPrint className="h-3 w-3 md:h-5 md:w-5" />
+                <span className="text-[10px] md:text-base font-medium">{t("customer.search.petFriendly")}</span>
               </button>
             </div>
           </div>
         </section>
 
         {/* Results */}
-        <section className="py-8">
-          <div className="container mx-auto px-4 max-w-5xl">
+        <section className="py-4 md:py-10">
+          <div className="container mx-auto px-2 md:px-4 max-w-5xl">
             {isLoading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="flex flex-col items-center gap-2.5 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <CleanerCardSkeleton key={i} />
                 ))}
               </div>
             ) : cleaners.length === 0 ? (
-              <div className="text-center py-12">
-                <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h2 className="text-xl font-semibold mb-2">{t("customer.search.noResults")}</h2>
-                <p className="text-muted-foreground">Try adjusting your filters</p>
+              <div className="text-center py-6 md:py-16">
+                <Search className="h-8 w-8 md:h-14 md:w-14 mx-auto text-muted-foreground mb-2 md:mb-5" />
+                <h2 className="text-base md:text-2xl font-semibold mb-1 md:mb-2">{t("customer.search.noResults")}</h2>
+                <p className="text-xs md:text-base text-muted-foreground">Try adjusting your filters</p>
               </div>
             ) : (
               <>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-xs md:text-base text-muted-foreground mb-2 md:mb-6 text-center">
                   {cleaners.length} {t("customer.search.results")}
                 </p>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex flex-col items-center gap-2.5 w-full md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
                   {cleaners.map((cleaner) => (
                     <CleanerCard key={cleaner.id} cleaner={cleaner} t={t} />
                   ))}
@@ -309,70 +238,68 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
   const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-4 border-t-blue-500">
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <Avatar className="h-16 w-16 ring-2 ring-blue-100">
+    <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-[3px] md:border-t-4 border-t-blue-500 w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[200px] md:h-[320px]">
+      <CardContent className="p-2 md:p-5 h-full flex flex-col">
+        <div className="flex flex-col items-center text-center">
+          <Avatar className="h-9 w-9 md:h-14 md:w-14 ring-2 ring-blue-100">
             <AvatarImage src={cleaner.avatar || undefined} />
-            <AvatarFallback className="text-lg bg-gradient-to-br from-blue-500 to-green-500 text-white">{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs md:text-lg bg-gradient-to-br from-blue-500 to-green-500 text-white">{initials}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold truncate">
+          <div className="mt-1 md:mt-3 w-full">
+            <div className="flex items-center justify-center gap-0.5 md:gap-1.5 flex-wrap">
+              <h3 className="font-semibold text-[11px] md:text-base">
                 {cleaner.firstName} {cleaner.lastName}
               </h3>
               {profile.verified && (
-                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <CheckCircle className="h-2 w-2 md:h-4 md:w-4 text-blue-500 flex-shrink-0" />
               )}
               {profile.ecoFriendly && (
-                <Leaf className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                <Leaf className="h-2 w-2 md:h-4 md:w-4 text-emerald-500 flex-shrink-0" />
               )}
               {profile.petFriendly && (
-                <PawPrint className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                <PawPrint className="h-2 w-2 md:h-4 md:w-4 text-orange-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            <div className="flex items-center justify-center gap-0.5 md:gap-1 text-[9px] md:text-sm text-muted-foreground mt-0.5 md:mt-1">
+              <Star className="h-2 w-2 md:h-4 md:w-4 fill-yellow-400 text-yellow-400" />
               <span className="font-medium text-gray-700">{profile.averageRating.toFixed(1)}</span>
-              <span>({profile.totalBookings} {t("cleaner.profile.bookings")})</span>
+              <span>({profile.totalBookings})</span>
             </div>
             {profile.city && (
-              <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                <MapPin className="h-3 w-3 text-blue-500" />
-                <span>{profile.city}{profile.state ? `, ${profile.state}` : ""}</span>
+              <div className="flex items-center justify-center gap-0.5 md:gap-1 text-[9px] md:text-sm text-muted-foreground mt-0.5 md:mt-1">
+                <MapPin className="h-2 w-2 md:h-4 md:w-4 text-blue-500" />
+                <span>{profile.city}</span>
               </div>
             )}
           </div>
         </div>
 
-        {profile.bio && (
-          <p className="text-sm text-muted-foreground mt-4 line-clamp-2">
-            {profile.bio}
+        <div className="flex-1 flex flex-col">
+          <p className="text-[9px] md:text-sm text-muted-foreground mt-1 md:mt-3 line-clamp-2 text-center">
+            {profile.bio || "\u00A0"}
           </p>
-        )}
 
-        <div className="flex flex-wrap gap-1 mt-4">
-          {profile.services.slice(0, 3).map((s) => (
-            <Badge key={s.service.id} className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200">
-              {t(`cleaner.services.${s.service.name}` as Parameters<typeof t>[0])}
-            </Badge>
-          ))}
-          {profile.services.length > 3 && (
-            <Badge className="text-xs bg-green-100 text-green-700">
-              +{profile.services.length - 3}
-            </Badge>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between mt-6 pt-4 border-t">
-          <div>
-            <span className="text-2xl font-bold text-blue-600">${profile.hourlyRate}</span>
-            <span className="text-muted-foreground">/hr</span>
+          <div className="flex flex-wrap justify-center gap-0.5 md:gap-1.5 mt-1 md:mt-3">
+            {profile.services.slice(0, 2).map((s) => (
+              <Badge key={s.service.id} className="text-[8px] md:text-xs px-1 md:px-2.5 py-0 md:py-0.5 bg-blue-100 text-blue-700 hover:bg-blue-200">
+                {t(`cleaner.services.${s.service.name}` as Parameters<typeof t>[0])}
+              </Badge>
+            ))}
+            {profile.services.length > 2 && (
+              <Badge className="text-[8px] md:text-xs px-1 md:px-2.5 py-0 md:py-0.5 bg-green-100 text-green-700">
+                +{profile.services.length - 2}
+              </Badge>
+            )}
           </div>
-          <Link href={`/cleaner/${cleaner.id}`}>
-            <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">{t("cleaner.profile.bookNow")}</Button>
-          </Link>
         </div>
+
+        <div className="mt-auto pt-1 md:pt-3 border-t text-center">
+          <span className="text-sm md:text-2xl font-bold text-blue-600">${profile.hourlyRate}</span>
+          <span className="text-muted-foreground text-[9px] md:text-base">/hr</span>
+        </div>
+        <Link href={`/cleaner/${cleaner.id}`} className="block mt-1 md:mt-3">
+          <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[10px] md:text-sm h-6 md:h-10">{t("cleaner.profile.bookNow")}</Button>
+        </Link>
       </CardContent>
     </Card>
   );
@@ -380,25 +307,23 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
 
 function CleanerCardSkeleton() {
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <Skeleton className="h-16 w-16 rounded-full" />
-          <div className="flex-1">
-            <Skeleton className="h-5 w-32 mb-2" />
-            <Skeleton className="h-4 w-24 mb-1" />
-            <Skeleton className="h-4 w-20" />
+    <Card className="w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[200px] md:h-[320px]">
+      <CardContent className="p-2 md:p-5 h-full flex flex-col">
+        <div className="flex flex-col items-center">
+          <Skeleton className="h-9 w-9 md:h-14 md:w-14 rounded-full" />
+          <Skeleton className="h-2.5 md:h-5 w-20 md:w-32 mt-1 md:mt-3" />
+          <Skeleton className="h-2 md:h-4 w-14 md:w-24 mt-0.5 md:mt-1" />
+        </div>
+        <div className="flex-1 flex flex-col">
+          <Skeleton className="h-2 md:h-4 w-full mt-1 md:mt-3" />
+          <div className="flex justify-center gap-0.5 md:gap-1.5 mt-1 md:mt-3">
+            <Skeleton className="h-3 md:h-6 w-10 md:w-16" />
+            <Skeleton className="h-3 md:h-6 w-10 md:w-16" />
           </div>
         </div>
-        <Skeleton className="h-10 w-full mt-4" />
-        <div className="flex gap-1 mt-4">
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
-        </div>
-        <div className="flex items-center justify-between mt-6 pt-4 border-t">
-          <Skeleton className="h-8 w-20" />
-          <Skeleton className="h-10 w-24" />
+        <div className="mt-auto pt-1 md:pt-3 border-t flex flex-col items-center">
+          <Skeleton className="h-3.5 md:h-7 w-12 md:w-20" />
+          <Skeleton className="h-6 md:h-10 w-full mt-1 md:mt-3" />
         </div>
       </CardContent>
     </Card>
@@ -415,22 +340,24 @@ export default function SearchPage() {
 
 function SearchPageSkeleton() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1 bg-muted/30">
-        <section className="bg-white border-b py-6">
-          <div className="container mx-auto px-4">
-            <Skeleton className="h-8 w-48 mb-4" />
-            <div className="grid md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-10" />
-              ))}
+      <main className="flex-1 bg-muted/30 overflow-x-hidden">
+        <section className="bg-white border-b py-3 md:py-8">
+          <div className="container mx-auto px-2 md:px-4">
+            <div className="flex flex-col items-center">
+              <Skeleton className="h-7 w-7 md:h-12 md:w-12 mb-1.5 md:mb-3 rounded-full" />
+              <Skeleton className="h-4 md:h-8 w-28 md:w-48" />
+            </div>
+            <div className="flex justify-center gap-1.5 md:gap-4 mt-2 md:mt-4">
+              <Skeleton className="h-6 md:h-11 w-20 md:w-32 rounded-full" />
+              <Skeleton className="h-6 md:h-11 w-20 md:w-32 rounded-full" />
             </div>
           </div>
         </section>
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="py-3 md:py-10">
+          <div className="container mx-auto px-2 md:px-4">
+            <div className="flex flex-col items-center gap-2.5 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <CleanerCardSkeleton key={i} />
               ))}

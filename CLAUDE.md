@@ -174,6 +174,33 @@ ALL pages must be centered and symmetrical by default, both on mobile and web. T
 
 This applies to ALL pages - never create a page without these centering classes.
 
+## Mobile-First Design Standards
+
+This is a mobile-first application. Most users access via mobile devices. ALL UI must follow these rules:
+
+### Symmetry & Centering
+- All content MUST be symmetrical and centered on mobile (375px width)
+- Buttons must be fully visible, never cut off or overflowing
+- Cards must have equal padding on all sides
+- Badge/tag groups must use `flex-wrap` with `justify-center`
+- No horizontal scrolling allowed
+
+### Layout Rules
+- Use `text-center` for headings and labels on mobile
+- Buttons should be full-width (`w-full`) or centered on mobile
+- Service badges must wrap gracefully and stay centered
+- Minimum touch target: 44px for all interactive elements
+- Test all components at mobile width before committing
+
+### Pre-Commit Checklist (Mobile)
+Before adding ANY UI component, verify:
+1. Is it centered on mobile?
+2. Are all buttons fully visible?
+3. Do badges/tags wrap symmetrically?
+4. Is there equal spacing on left and right?
+
+If ANY answer is NO - fix it first.
+
 ## Code Conventions
 
 - Path alias: `@/*` maps to `src/*`

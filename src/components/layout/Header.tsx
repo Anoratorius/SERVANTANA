@@ -45,11 +45,11 @@ export function Header() {
     : session?.user?.name?.split(" ").map(n => n[0]).join("") || "U";
 
   return (
-    <header className="border-b bg-white sticky top-0 z-50 w-screen">
-      <div className="relative w-full px-[5vw] py-4 flex items-center justify-between">
+    <header className="border-b bg-white sticky top-0 z-50 w-full max-w-[100vw] overflow-x-hidden">
+      <div className="relative w-full px-2 md:px-6 py-2.5 md:py-4 flex items-center justify-between">
         {/* Left - Logo */}
         <div className="flex-shrink-0">
-          <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
+          <Link href="/" className="text-base md:text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
             {t("common.appName")}
           </Link>
         </div>
@@ -60,7 +60,7 @@ export function Header() {
         </div>
 
         {/* Right - Actions */}
-        <div className="flex-shrink-0 flex items-center gap-[2vw]">
+        <div className="flex-shrink-0 flex items-center gap-1.5 md:gap-3">
           {isLoading ? (
             <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
           ) : isAuthenticated ? (

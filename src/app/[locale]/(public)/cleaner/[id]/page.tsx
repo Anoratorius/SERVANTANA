@@ -237,13 +237,13 @@ export default function CleanerProfilePage({
                     {cleaner.firstName} {cleaner.lastName}
                   </h1>
                   {profile.verified && (
-                    <Badge className="bg-green-500 hover:bg-green-600">
+                    <Badge className="bg-blue-500 hover:bg-blue-600">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       {t("cleaner.profile.verified")}
                     </Badge>
                   )}
                   {profile.availableNow && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">
                       Available Now
                     </Badge>
                   )}
