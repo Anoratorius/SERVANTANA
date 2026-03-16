@@ -23,6 +23,7 @@ import {
   Share2,
   ArrowLeft,
   Loader2,
+  PlayCircle,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
@@ -62,6 +63,7 @@ interface Review {
 interface CleanerProfile {
   id: string;
   bio: string | null;
+  introVideoUrl: string | null;
   hourlyRate: number;
   currency: string;
   experienceYears: number;
@@ -357,7 +359,32 @@ export default function CleanerProfilePage({
               </TabsList>
 
               {/* About Tab */}
-              <TabsContent value="about">
+              <TabsContent value="about" className="space-y-4">
+                {/* Intro Video */}
+                {profile.introVideoUrl && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <PlayCircle className="h-5 w-5 text-blue-500" />
+                        {t("cleaner.profile.introVideo")}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
+                        <video
+                          src={profile.introVideoUrl}
+                          controls
+                          className="w-full h-full object-contain"
+                          poster={profile.introVideoUrl.replace(/\.[^.]+$/, ".jpg")}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Bio */}
                 <Card>
                   <CardHeader>
                     <CardTitle>{t("cleaner.profile.about")}</CardTitle>

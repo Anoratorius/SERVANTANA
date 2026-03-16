@@ -270,6 +270,8 @@ model CleanerProfile {
   id              String   @id @default(cuid())
   userId          String   @unique
   bio             String?
+  introVideoUrl   String?  // Short intro video URL
+  introVideoId    String?  // Cloudinary public ID for deletion
   hourlyRate      Float
   currency        String   @default("USD")
   experienceYears Int      @default(0)

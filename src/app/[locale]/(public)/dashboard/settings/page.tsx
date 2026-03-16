@@ -23,6 +23,9 @@ import {
   Loader2,
   ArrowLeft,
   CheckCircle,
+  Video,
+  Upload,
+  Trash2,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
@@ -107,6 +110,11 @@ export default function SettingsPage() {
     Map<number, { enabled: boolean; startTime: string; endTime: string }>
   >(new Map());
 
+  // Video state
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [isDeletingVideo, setIsDeletingVideo] = useState(false);
+
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login?callbackUrl=/dashboard/settings");
@@ -122,10 +130,17 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [profileRes, servicesRes] = await Promise.all([
+        const [profileRes, servicesRes, videoRes] = await Promise.all([
           fetch("/api/cleaner/profile"),
           fetch("/api/cleaner/services"),
+          fetch("/api/cleaner/video"),
         ]);
+
+        // Load video
+        if (videoRes.ok) {
+          const videoData = await videoRes.json();
+          setVideoUrl(videoData.videoUrl);
+        }
 
         if (profileRes.ok) {
           const profileData = await profileRes.json();
@@ -393,6 +408,122 @@ export default function SettingsPage() {
                         {formData.bio.length}/1000
                       </p>
                     </div>
+                  </CardContent>
+                </Card>
+
+                {/* Intro Video */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Video className="h-5 w-5" />
+                      Intro Video
+                    </CardTitle>
+                    <CardDescription>
+                      Record a short video to introduce yourself to customers (max 50MB)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {videoUrl ? (
+                      <div className="space-y-4">
+                        <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
+                          <video
+                            src={videoUrl}
+                            controls
+                            className="w-full h-full object-contain"
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          onClick={async () => {
+                            setIsDeletingVideo(true);
+                            try {
+                              const res = await fetch("/api/cleaner/video", { method: "DELETE" });
+                              if (res.ok) {
+                                setVideoUrl(null);
+                                toast.success("Video deleted");
+                              } else {
+                                toast.error("Failed to delete video");
+                              }
+                            } catch {
+                              toast.error("Failed to delete video");
+                            } finally {
+                              setIsDeletingVideo(false);
+                            }
+                          }}
+                          disabled={isDeletingVideo}
+                        >
+                          {isDeletingVideo ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 mr-2" />
+                          )}
+                          Delete Video
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                        <Video className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground mb-4">
+                          No intro video uploaded yet
+                        </p>
+                        <input
+                          type="file"
+                          accept="video/mp4,video/webm,video/quicktime"
+                          className="hidden"
+                          id="video-upload"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+
+                            if (file.size > 50 * 1024 * 1024) {
+                              toast.error("Video must be less than 50MB");
+                              return;
+                            }
+
+                            setIsUploadingVideo(true);
+                            try {
+                              const formData = new FormData();
+                              formData.append("video", file);
+
+                              const res = await fetch("/api/cleaner/video", {
+                                method: "POST",
+                                body: formData,
+                              });
+
+                              if (res.ok) {
+                                const data = await res.json();
+                                setVideoUrl(data.videoUrl);
+                                toast.success("Video uploaded successfully");
+                              } else {
+                                const error = await res.json();
+                                toast.error(error.error || "Failed to upload video");
+                              }
+                            } catch {
+                              toast.error("Failed to upload video");
+                            } finally {
+                              setIsUploadingVideo(false);
+                              e.target.value = "";
+                            }
+                          }}
+                        />
+                        <Button
+                          onClick={() => document.getElementById("video-upload")?.click()}
+                          disabled={isUploadingVideo}
+                        >
+                          {isUploadingVideo ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          {isUploadingVideo ? "Uploading..." : "Upload Video"}
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          MP4, WebM, or MOV up to 50MB
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 

@@ -181,7 +181,8 @@
       "responseTime": "Antwortzeit",
       "bookNow": "Jetzt buchen",
       "ecoFriendly": "Umweltfreundlich",
-      "petFriendly": "Haustierfreundlich"
+      "petFriendly": "Haustierfreundlich",
+      "introVideo": "Vorstellungsvideo"
     },
     "dashboard": {
       "title": "Fachkraft-Dashboard",

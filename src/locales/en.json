@@ -181,7 +181,8 @@
       "responseTime": "Response Time",
       "bookNow": "Book Now",
       "ecoFriendly": "Eco-Friendly",
-      "petFriendly": "Pet-Friendly"
+      "petFriendly": "Pet-Friendly",
+      "introVideo": "Introduction Video"
     },
     "dashboard": {
       "title": "Worker Dashboard",
