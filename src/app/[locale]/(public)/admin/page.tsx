@@ -30,6 +30,9 @@ import {
   AlertTriangle,
   Trash2,
   FolderPlus,
+  FileText,
+  AlertCircle,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -137,6 +140,88 @@ interface Category {
   createdAt: string;
 }
 
+interface Dispute {
+  id: string;
+  type: string;
+  subject: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  booking: {
+    scheduledDate: string;
+    totalPrice: number;
+    service: { name: string };
+  };
+  customer: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  cleaner: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  _count: {
+    messages: number;
+    evidence: number;
+  };
+}
+
+interface Document {
+  id: string;
+  type: string;
+  fileUrl: string;
+  status: string;
+  rejectionNote: string | null;
+  createdAt: string;
+  verifiedAt: string | null;
+  cleaner: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar: string | null;
+  };
+  verifiedBy: {
+    firstName: string;
+    lastName: string;
+  } | null;
+}
+
+interface AdminBooking {
+  id: string;
+  scheduledDate: string;
+  scheduledTime: string;
+  status: string;
+  totalPrice: number;
+  address: string;
+  customer: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar: string | null;
+  };
+  cleaner: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar: string | null;
+  };
+  service: {
+    id: string;
+    name: string;
+  };
+  review: {
+    id: string;
+    rating: number;
+  } | null;
+}
+
 const SERVICE_NAMES: Record<string, string> = {
   regular: "Regular Cleaning",
   deep: "Deep Cleaning",
@@ -185,6 +270,29 @@ export default function AdminPage() {
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categoriesFilter, setCategoriesFilter] = useState("PENDING");
   const [processingCategoryId, setProcessingCategoryId] = useState<string | null>(null);
+
+  // Disputes state
+  const [disputes, setDisputes] = useState<Dispute[]>([]);
+  const [disputesPage, setDisputesPage] = useState(1);
+  const [disputesTotalPages, setDisputesTotalPages] = useState(1);
+  const [disputesFilter, setDisputesFilter] = useState("OPEN");
+  const [loadingDisputes, setLoadingDisputes] = useState(false);
+  const [disputeCounts, setDisputeCounts] = useState({ open: 0, inReview: 0, resolved: 0, closed: 0 });
+
+  // Documents state
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documentsPage, setDocumentsPage] = useState(1);
+  const [documentsTotalPages, setDocumentsTotalPages] = useState(1);
+  const [documentsFilter, setDocumentsFilter] = useState("PENDING");
+  const [loadingDocuments, setLoadingDocuments] = useState(false);
+  const [processingDocId, setProcessingDocId] = useState<string | null>(null);
+
+  // Bookings state
+  const [bookings, setBookings] = useState<AdminBooking[]>([]);
+  const [bookingsPage, setBookingsPage] = useState(1);
+  const [bookingsTotalPages, setBookingsTotalPages] = useState(1);
+  const [bookingsFilter, setBookingsFilter] = useState("all");
+  const [loadingBookings, setLoadingBookings] = useState(false);
 
   useEffect(() => {
     if (authStatus === "unauthenticated") {
@@ -300,6 +408,75 @@ export default function AdminPage() {
     }
   }, [categoriesFilter]);
 
+  const fetchDisputes = useCallback(async () => {
+    setLoadingDisputes(true);
+    try {
+      const params = new URLSearchParams({
+        page: disputesPage.toString(),
+        limit: "10",
+        status: disputesFilter,
+      });
+
+      const response = await fetch(`/api/admin/disputes?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setDisputes(data.disputes);
+        setDisputesTotalPages(data.pagination.totalPages);
+        setDisputeCounts(data.counts);
+      }
+    } catch (error) {
+      console.error("Error fetching disputes:", error);
+    } finally {
+      setLoadingDisputes(false);
+    }
+  }, [disputesPage, disputesFilter]);
+
+  const fetchDocuments = useCallback(async () => {
+    setLoadingDocuments(true);
+    try {
+      const params = new URLSearchParams({
+        page: documentsPage.toString(),
+        limit: "10",
+        status: documentsFilter,
+      });
+
+      const response = await fetch(`/api/admin/documents?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setDocuments(data.documents);
+        setDocumentsTotalPages(data.pagination.totalPages);
+      }
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+    } finally {
+      setLoadingDocuments(false);
+    }
+  }, [documentsPage, documentsFilter]);
+
+  const fetchBookings = useCallback(async () => {
+    setLoadingBookings(true);
+    try {
+      const params = new URLSearchParams({
+        page: bookingsPage.toString(),
+        limit: "10",
+      });
+      if (bookingsFilter !== "all") {
+        params.set("status", bookingsFilter);
+      }
+
+      const response = await fetch(`/api/admin/bookings?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setBookings(data.bookings);
+        setBookingsTotalPages(data.pagination.totalPages);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
+      setLoadingBookings(false);
+    }
+  }, [bookingsPage, bookingsFilter]);
+
   useEffect(() => {
     if (activeTab === "users" && authStatus === "authenticated") {
       fetchUsers();
@@ -323,6 +500,24 @@ export default function AdminPage() {
       fetchCategories();
     }
   }, [activeTab, fetchCategories, authStatus]);
+
+  useEffect(() => {
+    if (activeTab === "disputes" && authStatus === "authenticated") {
+      fetchDisputes();
+    }
+  }, [activeTab, fetchDisputes, authStatus]);
+
+  useEffect(() => {
+    if (activeTab === "documents" && authStatus === "authenticated") {
+      fetchDocuments();
+    }
+  }, [activeTab, fetchDocuments, authStatus]);
+
+  useEffect(() => {
+    if (activeTab === "bookings" && authStatus === "authenticated") {
+      fetchBookings();
+    }
+  }, [activeTab, fetchBookings, authStatus]);
 
   const handleVerifyCleaner = async (userId: string, verified: boolean) => {
     setVerifyingId(userId);
@@ -392,6 +587,28 @@ export default function AdminPage() {
     }
   };
 
+  const handleDocumentAction = async (docId: string, action: "verify" | "reject") => {
+    setProcessingDocId(docId);
+    try {
+      const response = await fetch(`/api/admin/documents/${docId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+
+      if (response.ok) {
+        toast.success(action === "verify" ? t("admin.documentVerified") : t("admin.documentRejected"));
+        fetchDocuments();
+      } else {
+        toast.error(t("admin.failedDocumentAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedDocumentAction"));
+    } finally {
+      setProcessingDocId(null);
+    }
+  };
+
   if (authStatus === "loading" || isLoading) {
     return <AdminSkeleton />;
   }
@@ -415,7 +632,7 @@ export default function AdminPage() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6 w-full justify-center">
+            <TabsList className="mb-6 w-full justify-center flex-wrap gap-1">
               <TabsTrigger value="overview" className="gap-2">
                 <TrendingUp className="h-4 w-4" />
                 {t("admin.overview")}
@@ -424,9 +641,26 @@ export default function AdminPage() {
                 <Users className="h-4 w-4" />
                 {t("admin.users")}
               </TabsTrigger>
+              <TabsTrigger value="bookings" className="gap-2">
+                <Calendar className="h-4 w-4" />
+                {t("admin.bookings")}
+              </TabsTrigger>
               <TabsTrigger value="cleaners" className="gap-2">
                 <UserCheck className="h-4 w-4" />
                 {t("admin.verification")}
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="gap-2">
+                <FileText className="h-4 w-4" />
+                {t("admin.documentsTab")}
+              </TabsTrigger>
+              <TabsTrigger value="disputes" className="gap-2">
+                <AlertCircle className="h-4 w-4" />
+                {t("admin.disputesTab")}
+                {disputeCounts.open > 0 && (
+                  <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 justify-center">
+                    {disputeCounts.open}
+                  </Badge>
+                )}
               </TabsTrigger>
               <TabsTrigger value="reviews" className="gap-2">
                 <Star className="h-4 w-4" />
@@ -1040,6 +1274,393 @@ export default function AdminPage() {
                         </div>
                       ))}
                     </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Bookings Tab */}
+            <TabsContent value="bookings">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{t("admin.bookingsManagement")}</CardTitle>
+                    <select
+                      value={bookingsFilter}
+                      onChange={(e) => setBookingsFilter(e.target.value)}
+                      className="border rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="all">{t("admin.allBookings")}</option>
+                      <option value="PENDING">{t("booking.status.pending")}</option>
+                      <option value="CONFIRMED">{t("booking.status.confirmed")}</option>
+                      <option value="IN_PROGRESS">{t("booking.status.inProgress")}</option>
+                      <option value="COMPLETED">{t("booking.status.completed")}</option>
+                      <option value="CANCELLED">{t("booking.status.cancelled")}</option>
+                    </select>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loadingBookings ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : bookings.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      {t("admin.noBookings")}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-3">
+                        {bookings.map((booking) => (
+                          <div
+                            key={booking.id}
+                            className="p-4 border rounded-lg"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="flex -space-x-2">
+                                  <Avatar className="border-2 border-white">
+                                    <AvatarImage src={booking.customer.avatar || undefined} />
+                                    <AvatarFallback className="text-xs">
+                                      {booking.customer.firstName[0]}{booking.customer.lastName[0]}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <Avatar className="border-2 border-white">
+                                    <AvatarImage src={booking.cleaner.avatar || undefined} />
+                                    <AvatarFallback className="text-xs">
+                                      {booking.cleaner.firstName[0]}{booking.cleaner.lastName[0]}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </div>
+                                <div>
+                                  <p className="font-medium">
+                                    {SERVICE_NAMES[booking.service.name] || booking.service.name}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {booking.customer.firstName} → {booking.cleaner.firstName}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {new Date(booking.scheduledDate).toLocaleDateString()} at {booking.scheduledTime}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-medium text-green-600">${booking.totalPrice}</p>
+                                <Badge
+                                  variant="outline"
+                                  className={
+                                    booking.status === "COMPLETED"
+                                      ? "text-green-600 border-green-600"
+                                      : booking.status === "CANCELLED"
+                                      ? "text-red-600 border-red-600"
+                                      : booking.status === "IN_PROGRESS"
+                                      ? "text-purple-600 border-purple-600"
+                                      : "text-blue-600 border-blue-600"
+                                  }
+                                >
+                                  {booking.status}
+                                </Badge>
+                                {booking.review && (
+                                  <div className="flex items-center gap-1 mt-1 justify-end">
+                                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                    <span className="text-sm">{booking.review.rating}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="flex items-center justify-between mt-4">
+                        <p className="text-sm text-muted-foreground">
+                          {t("admin.page")} {bookingsPage} {t("admin.of")} {bookingsTotalPages}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setBookingsPage((p) => Math.max(1, p - 1))}
+                            disabled={bookingsPage === 1}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setBookingsPage((p) => Math.min(bookingsTotalPages, p + 1))}
+                            disabled={bookingsPage === bookingsTotalPages}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Documents Tab */}
+            <TabsContent value="documents">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{t("admin.documentVerification")}</CardTitle>
+                    <select
+                      value={documentsFilter}
+                      onChange={(e) => setDocumentsFilter(e.target.value)}
+                      className="border rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="PENDING">{t("documents.status.pending")}</option>
+                      <option value="VERIFIED">{t("documents.status.approved")}</option>
+                      <option value="REJECTED">{t("documents.status.rejected")}</option>
+                    </select>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loadingDocuments ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : documents.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      {t("admin.noDocuments")}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-4">
+                        {documents.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="p-4 border rounded-lg"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-center gap-3">
+                                <Avatar>
+                                  <AvatarImage src={doc.cleaner.avatar || undefined} />
+                                  <AvatarFallback>
+                                    {doc.cleaner.firstName[0]}{doc.cleaner.lastName[0]}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="font-medium">
+                                    {doc.cleaner.firstName} {doc.cleaner.lastName}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">{doc.cleaner.email}</p>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <Badge variant="secondary">{doc.type}</Badge>
+                                    <span className="text-xs text-muted-foreground">
+                                      {new Date(doc.createdAt).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => window.open(doc.fileUrl, "_blank")}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  {t("admin.viewDocument")}
+                                </Button>
+                                {doc.status === "PENDING" && (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      className="bg-green-500 hover:bg-green-600"
+                                      onClick={() => handleDocumentAction(doc.id, "verify")}
+                                      disabled={processingDocId === doc.id}
+                                    >
+                                      {processingDocId === doc.id ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                        <CheckCircle className="h-4 w-4 mr-1" />
+                                      )}
+                                      {t("admin.verify")}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-red-600"
+                                      onClick={() => handleDocumentAction(doc.id, "reject")}
+                                      disabled={processingDocId === doc.id}
+                                    >
+                                      {processingDocId === doc.id ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                        <XCircle className="h-4 w-4 mr-1" />
+                                      )}
+                                      {t("admin.reject")}
+                                    </Button>
+                                  </>
+                                )}
+                                {doc.status !== "PENDING" && (
+                                  <Badge variant={doc.status === "VERIFIED" ? "default" : "destructive"}>
+                                    {doc.status}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            {doc.rejectionNote && (
+                              <p className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded">
+                                {doc.rejectionNote}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="flex items-center justify-between mt-4">
+                        <p className="text-sm text-muted-foreground">
+                          {t("admin.page")} {documentsPage} {t("admin.of")} {documentsTotalPages}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDocumentsPage((p) => Math.max(1, p - 1))}
+                            disabled={documentsPage === 1}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDocumentsPage((p) => Math.min(documentsTotalPages, p + 1))}
+                            disabled={documentsPage === documentsTotalPages}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Disputes Tab */}
+            <TabsContent value="disputes">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{t("admin.disputeManagement")}</CardTitle>
+                    <div className="flex items-center gap-4">
+                      <div className="flex gap-2 text-sm">
+                        <Badge variant="destructive">{disputeCounts.open} Open</Badge>
+                        <Badge variant="secondary">{disputeCounts.inReview} In Review</Badge>
+                        <Badge variant="default">{disputeCounts.resolved} Resolved</Badge>
+                      </div>
+                      <select
+                        value={disputesFilter}
+                        onChange={(e) => setDisputesFilter(e.target.value)}
+                        className="border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="OPEN">{t("support.dispute.status.open")}</option>
+                        <option value="IN_REVIEW">{t("support.dispute.status.inProgress")}</option>
+                        <option value="RESOLVED">{t("support.dispute.status.resolved")}</option>
+                        <option value="CLOSED">{t("support.dispute.status.closed")}</option>
+                      </select>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loadingDisputes ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : disputes.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      {t("admin.noDisputes")}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-4">
+                        {disputes.map((dispute) => (
+                          <div
+                            key={dispute.id}
+                            className="p-4 border rounded-lg"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="outline">{dispute.type}</Badge>
+                                  <Badge
+                                    variant={
+                                      dispute.status === "OPEN"
+                                        ? "destructive"
+                                        : dispute.status === "IN_REVIEW"
+                                        ? "secondary"
+                                        : "default"
+                                    }
+                                  >
+                                    {dispute.status}
+                                  </Badge>
+                                </div>
+                                <p className="font-medium">{dispute.subject}</p>
+                                <p className="text-sm text-muted-foreground line-clamp-2">
+                                  {dispute.description}
+                                </p>
+                                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                  <span>
+                                    {dispute.customer.firstName} vs {dispute.cleaner.firstName}
+                                  </span>
+                                  <span>•</span>
+                                  <span>${dispute.booking.totalPrice}</span>
+                                  <span>•</span>
+                                  <span>{dispute._count.messages} messages</span>
+                                  <span>•</span>
+                                  <span>{dispute._count.evidence} evidence</span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm text-muted-foreground">
+                                  {new Date(dispute.createdAt).toLocaleDateString()}
+                                </p>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="mt-2"
+                                  onClick={() => window.open(`/support/disputes/${dispute.id}`, "_blank")}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  {t("admin.viewDetails")}
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="flex items-center justify-between mt-4">
+                        <p className="text-sm text-muted-foreground">
+                          {t("admin.page")} {disputesPage} {t("admin.of")} {disputesTotalPages}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDisputesPage((p) => Math.max(1, p - 1))}
+                            disabled={disputesPage === 1}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDisputesPage((p) => Math.min(disputesTotalPages, p + 1))}
+                            disabled={disputesPage === disputesTotalPages}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>

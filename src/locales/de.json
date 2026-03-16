@@ -530,7 +530,21 @@
     "reject": "Ablehnen",
     "categoryApproved": "Kategorie genehmigt!",
     "categoryRejected": "Kategorie abgelehnt",
-    "failedCategoryAction": "Kategorie konnte nicht aktualisiert werden"
+    "failedCategoryAction": "Kategorie konnte nicht aktualisiert werden",
+    "documentsTab": "Dokumente",
+    "disputesTab": "Streitfälle",
+    "bookingsManagement": "Buchungsverwaltung",
+    "allBookings": "Alle Buchungen",
+    "noBookings": "Keine Buchungen gefunden",
+    "documentVerification": "Dokumentenprüfung",
+    "noDocuments": "Keine Dokumente zur Prüfung",
+    "viewDocument": "Anzeigen",
+    "documentVerified": "Dokument verifiziert!",
+    "documentRejected": "Dokument abgelehnt",
+    "failedDocumentAction": "Dokument konnte nicht aktualisiert werden",
+    "disputeManagement": "Streitfallverwaltung",
+    "noDisputes": "Keine Streitfälle gefunden",
+    "viewDetails": "Details anzeigen"
   },
   "legal": {
     "terms": {

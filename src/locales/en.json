@@ -530,7 +530,21 @@
     "reject": "Reject",
     "categoryApproved": "Category approved!",
     "categoryRejected": "Category rejected",
-    "failedCategoryAction": "Failed to update category"
+    "failedCategoryAction": "Failed to update category",
+    "documentsTab": "Documents",
+    "disputesTab": "Disputes",
+    "bookingsManagement": "Bookings Management",
+    "allBookings": "All Bookings",
+    "noBookings": "No bookings found",
+    "documentVerification": "Document Verification",
+    "noDocuments": "No documents to review",
+    "viewDocument": "View",
+    "documentVerified": "Document verified!",
+    "documentRejected": "Document rejected",
+    "failedDocumentAction": "Failed to update document",
+    "disputeManagement": "Dispute Management",
+    "noDisputes": "No disputes found",
+    "viewDetails": "View Details"
   },
   "legal": {
     "terms": {
