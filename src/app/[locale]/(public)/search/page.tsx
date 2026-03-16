@@ -238,7 +238,7 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
   const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-[3px] md:border-t-4 border-t-blue-500 w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[200px] md:h-[320px]">
+    <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-[3px] md:border-t-4 border-t-blue-500 w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[240px] md:h-[360px]">
       <CardContent className="p-2 md:p-5 h-full flex flex-col">
         <div className="flex flex-col items-center text-center">
           <Avatar className="h-9 w-9 md:h-14 md:w-14 ring-2 ring-blue-100">
@@ -307,7 +307,7 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
 
 function CleanerCardSkeleton() {
   return (
-    <Card className="w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[200px] md:h-[320px]">
+    <Card className="w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[240px] md:h-[360px]">
       <CardContent className="p-2 md:p-5 h-full flex flex-col">
         <div className="flex flex-col items-center">
           <Skeleton className="h-9 w-9 md:h-14 md:w-14 rounded-full" />
