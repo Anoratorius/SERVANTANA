@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Printer, FileText } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 interface Invoice {

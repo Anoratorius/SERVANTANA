@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { BookingChat } from "@/components/bookings/BookingChat";
 import { BookingTeam } from "@/components/bookings/BookingTeam";
 import { TipDialog } from "@/components/bookings/TipDialog";
+import { CustomerReviewDialog } from "@/components/bookings/CustomerReviewDialog";
 
 interface Booking {
   id: string;
@@ -537,6 +538,28 @@ export default function BookingDetailPage() {
                       }}
                     />
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Customer Review Section - For cleaners on completed bookings */}
+          {booking.status === "COMPLETED" && isCleaner && (
+            <Card className="mt-6">
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-semibold">{t("customerReview.title")}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {t("customerReview.description", {
+                        name: `${booking.customer.firstName} ${booking.customer.lastName}`,
+                      })}
+                    </p>
+                  </div>
+                  <CustomerReviewDialog
+                    bookingId={bookingId}
+                    customerName={`${booking.customer.firstName} ${booking.customer.lastName}`}
+                  />
                 </div>
               </CardContent>
             </Card>

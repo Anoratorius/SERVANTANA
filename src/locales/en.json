@@ -440,6 +440,23 @@
     "submit": "Submit Review",
     "thankYou": "Thank you for your review!"
   },
+  "customerReview": {
+    "title": "Rate Customer",
+    "rateCustomer": "Rate Customer",
+    "description": "How was your experience with {name}?",
+    "punctuality": "Punctuality",
+    "cleanliness": "Home Cleanliness",
+    "communication": "Communication",
+    "overall": "Overall Experience",
+    "commentLabel": "Additional Comments (optional)",
+    "commentPlaceholder": "Share any additional feedback...",
+    "submit": "Submit Rating",
+    "rateAll": "Please rate all categories",
+    "submitted": "Rating submitted successfully!",
+    "failed": "Failed to submit rating",
+    "thankYou": "Thank you for your feedback!",
+    "onlyCleaners": "Only cleaners can see customer ratings"
+  },
   "messages": {
     "title": "Messages",
     "noMessages": "No messages yet",

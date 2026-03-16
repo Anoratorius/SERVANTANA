@@ -221,6 +221,10 @@ model User {
   // Invoice relations
   invoicesAsCustomer Invoice[] @relation("CustomerInvoices")
   invoicesAsCleaner  Invoice[] @relation("CleanerInvoices")
+
+  // Customer review relations (cleaners rating customers)
+  customerReviewsGiven    CustomerReview[] @relation("CustomerReviewsGiven")
+  customerReviewsReceived CustomerReview[] @relation("CustomerReviewsReceived")
 }
 
 // NextAuth.js Account model
@@ -434,6 +438,7 @@ model Booking {
   reminders     BookingReminder[] @relation("BookingReminders")
   teamMembers   BookingTeamMember[]
   invoice       Invoice?
+  customerReview CustomerReview?
 
   @@index([customerId])
   @@index([propertyId])
@@ -460,6 +465,33 @@ model Review {
 
   @@index([revieweeId])
   @@index([reviewerId])
+}
+
+// Customer Review model (cleaner rates customer)
+model CustomerReview {
+  id              String   @id @default(cuid())
+  bookingId       String   @unique
+  cleanerId       String   // Cleaner who left the review
+  customerId      String   // Customer being reviewed
+
+  // Ratings (1-5 scale)
+  punctuality     Int      // Was customer on time / property accessible
+  cleanliness     Int      // Initial state of property
+  communication   Int      // How well did customer communicate
+  overall         Int      // Overall experience
+
+  comment         String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  booking         Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  cleaner         User     @relation("CustomerReviewsGiven", fields: [cleanerId], references: [id])
+  customer        User     @relation("CustomerReviewsReceived", fields: [customerId], references: [id])
+
+  @@index([customerId])
+  @@index([cleanerId])
 }
 
 // Message model for customer-cleaner communication

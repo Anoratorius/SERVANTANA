@@ -440,6 +440,23 @@
     "submit": "Bewertung absenden",
     "thankYou": "Vielen Dank für Ihre Bewertung!"
   },
+  "customerReview": {
+    "title": "Kunde bewerten",
+    "rateCustomer": "Kunde bewerten",
+    "description": "Wie war Ihre Erfahrung mit {name}?",
+    "punctuality": "Pünktlichkeit",
+    "cleanliness": "Sauberkeit des Hauses",
+    "communication": "Kommunikation",
+    "overall": "Gesamterlebnis",
+    "commentLabel": "Zusätzliche Kommentare (optional)",
+    "commentPlaceholder": "Teilen Sie weiteres Feedback...",
+    "submit": "Bewertung abgeben",
+    "rateAll": "Bitte bewerten Sie alle Kategorien",
+    "submitted": "Bewertung erfolgreich abgegeben!",
+    "failed": "Bewertung konnte nicht abgegeben werden",
+    "thankYou": "Vielen Dank für Ihr Feedback!",
+    "onlyCleaners": "Nur Reiniger können Kundenbewertungen sehen"
+  },
   "messages": {
     "title": "Nachrichten",
     "noMessages": "Noch keine Nachrichten",
