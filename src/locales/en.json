@@ -401,6 +401,37 @@
     "failed": "Failed to process tip",
     "goesToCleaner": "100% of your tip goes directly to the cleaner"
   },
+  "invoice": {
+    "title": "Invoices",
+    "subtitle": "View and download your invoices",
+    "invoiceTitle": "INVOICE",
+    "noInvoices": "No invoices yet",
+    "noInvoicesDesc": "Invoices will appear here after your bookings are completed",
+    "view": "View",
+    "print": "Print / Save PDF",
+    "download": "Download",
+    "notFound": "Invoice not found",
+    "from": "From",
+    "to": "Bill To",
+    "serviceDetails": "Service Details",
+    "description": "Description",
+    "date": "Date",
+    "duration": "Duration",
+    "amount": "Amount",
+    "subtotal": "Subtotal",
+    "tipLabel": "Tip",
+    "tax": "Tax",
+    "total": "Total",
+    "issuedOn": "Issued",
+    "thankYou": "Thank you for your business!",
+    "status": {
+      "issued": "Issued",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "generate": "Generate Invoice",
+    "generated": "Invoice generated successfully"
+  },
   "review": {
     "title": "Leave a Review",
     "rating": "Rating",

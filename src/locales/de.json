@@ -401,6 +401,37 @@
     "failed": "Trinkgeld konnte nicht verarbeitet werden",
     "goesToCleaner": "100% Ihres Trinkgeldes geht direkt an den Reiniger"
   },
+  "invoice": {
+    "title": "Rechnungen",
+    "subtitle": "Rechnungen anzeigen und herunterladen",
+    "invoiceTitle": "RECHNUNG",
+    "noInvoices": "Noch keine Rechnungen",
+    "noInvoicesDesc": "Rechnungen erscheinen hier nach Abschluss Ihrer Buchungen",
+    "view": "Anzeigen",
+    "print": "Drucken / PDF speichern",
+    "download": "Herunterladen",
+    "notFound": "Rechnung nicht gefunden",
+    "from": "Von",
+    "to": "Rechnung an",
+    "serviceDetails": "Leistungsdetails",
+    "description": "Beschreibung",
+    "date": "Datum",
+    "duration": "Dauer",
+    "amount": "Betrag",
+    "subtotal": "Zwischensumme",
+    "tipLabel": "Trinkgeld",
+    "tax": "MwSt",
+    "total": "Gesamt",
+    "issuedOn": "Ausgestellt",
+    "thankYou": "Vielen Dank für Ihr Vertrauen!",
+    "status": {
+      "issued": "Ausgestellt",
+      "paid": "Bezahlt",
+      "cancelled": "Storniert"
+    },
+    "generate": "Rechnung erstellen",
+    "generated": "Rechnung erfolgreich erstellt"
+  },
   "review": {
     "title": "Bewertung abgeben",
     "rating": "Bewertung",

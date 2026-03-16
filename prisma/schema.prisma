@@ -217,6 +217,10 @@ model User {
 
   // Team booking relations
   teamBookings BookingTeamMember[] @relation("TeamMemberBookings")
+
+  // Invoice relations
+  invoicesAsCustomer Invoice[] @relation("CustomerInvoices")
+  invoicesAsCleaner  Invoice[] @relation("CleanerInvoices")
 }
 
 // NextAuth.js Account model
@@ -429,6 +433,7 @@ model Booking {
   calendarEvents CalendarEvent[]
   reminders     BookingReminder[] @relation("BookingReminders")
   teamMembers   BookingTeamMember[]
+  invoice       Invoice?
 
   @@index([customerId])
   @@index([propertyId])
@@ -1030,4 +1035,48 @@ model BookingTeamMember {
   @@unique([bookingId, cleanerId])
   @@index([bookingId])
   @@index([cleanerId])
+}
+
+// ============================================
+// INVOICE MODEL
+// ============================================
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique  // INV-2024-0001 format
+  bookingId     String   @unique
+  customerId    String
+  cleanerId     String
+
+  // Invoice details
+  subtotal      Float
+  tipAmount     Float    @default(0)
+  taxRate       Float    @default(0)
+  taxAmount     Float    @default(0)
+  totalAmount   Float
+  currency      String   @default("USD")
+
+  // Service details (snapshot at invoice time)
+  serviceName   String
+  serviceDate   DateTime
+  serviceTime   String
+  duration      Int
+  address       String
+
+  // Status
+  status        String   @default("ISSUED")  // ISSUED, PAID, CANCELLED
+  paidAt        DateTime?
+  sentAt        DateTime?
+  sentTo        String?  // Email address
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  booking       Booking  @relation(fields: [bookingId], references: [id])
+  customer      User     @relation("CustomerInvoices", fields: [customerId], references: [id])
+  cleaner       User     @relation("CleanerInvoices", fields: [cleanerId], references: [id])
+
+  @@index([customerId])
+  @@index([cleanerId])
+  @@index([invoiceNumber])
 }
