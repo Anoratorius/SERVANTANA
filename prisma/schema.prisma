@@ -211,6 +211,9 @@ model User {
 
   // Analytics relations
   analyticsSnapshots AnalyticsSnapshot[] @relation("AnalyticsSnapshots")
+
+  // Property relations
+  properties Property[] @relation("UserProperties")
 }
 
 // NextAuth.js Account model
@@ -360,6 +363,7 @@ model Booking {
   customerId    String
   cleanerId     String
   serviceId     String
+  propertyId    String?  // Optional link to saved property
 
   // Scheduling
   scheduledDate DateTime
@@ -406,6 +410,7 @@ model Booking {
   customer      User     @relation("CustomerBookings", fields: [customerId], references: [id])
   cleaner       User     @relation("CleanerBookings", fields: [cleanerId], references: [id])
   service       Service  @relation(fields: [serviceId], references: [id])
+  property      Property? @relation(fields: [propertyId], references: [id])
   review        Review?
   messages      Message[]
   payment       Payment?
@@ -417,6 +422,7 @@ model Booking {
   reminders     BookingReminder[] @relation("BookingReminders")
 
   @@index([customerId])
+  @@index([propertyId])
   @@index([cleanerId])
   @@index([status])
   @@index([scheduledDate])
@@ -964,4 +970,33 @@ model EmailVerificationToken {
 
   @@index([userId])
   @@index([token])
+}
+
+// ============================================
+// PROPERTY MANAGEMENT MODEL
+// ============================================
+
+model Property {
+  id          String   @id @default(cuid())
+  ownerId     String
+  name        String   // e.g., "Beach House", "Main Apartment"
+  address     String
+  city        String?
+  state       String?
+  postalCode  String?
+  country     String?
+  latitude    Float?
+  longitude   Float?
+  size        Int?     // Square meters
+  rooms       Int?     // Number of rooms
+  bathrooms   Int?     // Number of bathrooms
+  notes       String?  // Special instructions
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner       User     @relation("UserProperties", fields: [ownerId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+
+  @@index([ownerId])
 }
