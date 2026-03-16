@@ -214,6 +214,9 @@ model User {
 
   // Property relations
   properties Property[] @relation("UserProperties")
+
+  // Team booking relations
+  teamBookings BookingTeamMember[] @relation("TeamMemberBookings")
 }
 
 // NextAuth.js Account model
@@ -383,6 +386,7 @@ model Booking {
   status        BookingStatus @default(PENDING)
   totalPrice    Float
   currency      String   @default("USD")
+  teamSize      Int      @default(1)  // Number of cleaners for this job
 
   // Timestamps
   confirmedAt   DateTime?
@@ -420,6 +424,7 @@ model Booking {
   photos        BookingPhoto[]
   calendarEvents CalendarEvent[]
   reminders     BookingReminder[] @relation("BookingReminders")
+  teamMembers   BookingTeamMember[]
 
   @@index([customerId])
   @@index([propertyId])
@@ -999,4 +1004,26 @@ model Property {
   bookings    Booking[]
 
   @@index([ownerId])
+}
+
+// ============================================
+// TEAM BOOKING MODEL
+// ============================================
+
+model BookingTeamMember {
+  id          String   @id @default(cuid())
+  bookingId   String
+  cleanerId   String
+  isLead      Boolean  @default(false)  // Primary cleaner is the lead
+  confirmed   Boolean  @default(false)  // Team member has accepted
+  earnings    Float?   // Individual earnings for this team member
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  cleaner     User     @relation("TeamMemberBookings", fields: [cleanerId], references: [id])
+
+  @@unique([bookingId, cleanerId])
+  @@index([bookingId])
+  @@index([cleanerId])
 }

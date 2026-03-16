@@ -26,6 +26,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { BookingChat } from "@/components/bookings/BookingChat";
+import { BookingTeam } from "@/components/bookings/BookingTeam";
 
 interface Booking {
   id: string;
@@ -36,6 +37,7 @@ interface Booking {
   city: string | null;
   status: string;
   totalPrice: number;
+  teamSize: number;
   notes: string | null;
   customer: {
     id: string;
@@ -496,6 +498,17 @@ export default function BookingDetailPage() {
                 )}
               </CardContent>
             </Card>
+          )}
+
+          {/* Team Section - For team bookings */}
+          {booking.teamSize > 1 && (
+            <div className="mt-6">
+              <BookingTeam
+                bookingId={bookingId}
+                isLeadCleaner={isCleaner}
+                teamSize={booking.teamSize}
+              />
+            </div>
           )}
 
           {/* Chat Section - Only for completed bookings */}
