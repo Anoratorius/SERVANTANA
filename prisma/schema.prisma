@@ -192,6 +192,8 @@ model User {
   notificationPreferences NotificationPreference[] @relation("NotificationPreferences")
   pushSubscriptions       PushSubscription[] @relation("PushSubscriptions")
   notificationLogs        NotificationLog[] @relation("NotificationLogs")
+  reminderPreference      ReminderPreference? @relation("ReminderPreferences")
+  bookingReminders        BookingReminder[] @relation("BookingReminders")
 
   // Booking change relations
   bookingChangeRequests  BookingChange[] @relation("BookingChangeRequester")
@@ -398,6 +400,7 @@ model Booking {
   changes       BookingChange[]
   photos        BookingPhoto[]
   calendarEvents CalendarEvent[]
+  reminders     BookingReminder[] @relation("BookingReminders")
 
   @@index([customerId])
   @@index([cleanerId])
@@ -682,6 +685,33 @@ model NotificationLog {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+model ReminderPreference {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  enabled             Boolean  @default(true)
+  reminderTimes       Int[]    @default([1440, 60]) // Minutes before booking (1440=24hr, 60=1hr)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user                User     @relation("ReminderPreferences", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BookingReminder {
+  id                  String   @id @default(cuid())
+  bookingId           String
+  userId              String
+  reminderMinutes     Int      // Minutes before booking this reminder was for
+  sentAt              DateTime @default(now())
+  channel             NotificationChannel
+
+  booking             Booking  @relation("BookingReminders", fields: [bookingId], references: [id], onDelete: Cascade)
+  user                User     @relation("BookingReminders", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, userId, reminderMinutes, channel])
+  @@index([bookingId])
+  @@index([userId])
 }
 
 // ============================================

@@ -913,7 +913,15 @@
     "pushDisabled": "Push-Benachrichtigungen sind deaktiviert",
     "pushNotSupported": "Push-Benachrichtigungen werden in diesem Browser nicht unterstützt",
     "smsNotice": "SMS-Benachrichtigungen erfordern eine verifizierte Telefonnummer",
-    "addPhone": "Telefonnummer hinzufügen"
+    "addPhone": "Telefonnummer hinzufügen",
+    "reminderTiming": "Buchungserinnerungen - Zeitpunkt",
+    "reminderTimingDesc": "Wählen Sie, wann Sie Erinnerungen vor Ihren Buchungen erhalten möchten",
+    "reminderEnabled": "Erinnerungen sind aktiviert",
+    "reminderDisabled": "Erinnerungen sind deaktiviert",
+    "selectReminderTimes": "Erinnerungszeiten auswählen",
+    "beforeBooking": "vor der Buchung",
+    "addReminderTime": "Erinnerungszeit hinzufügen",
+    "noRemindersSelected": "Keine Erinnerungszeiten ausgewählt"
   },
   "documents": {
     "title": "Meine Dokumente",

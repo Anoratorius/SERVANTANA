@@ -16,13 +16,33 @@ import {
   Loader2,
   CheckCircle,
   AlertCircle,
+  Clock,
+  Plus,
+  X,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface NotificationPreference {
   type: string;
   channel: string;
   enabled: boolean;
+}
+
+interface ReminderPreference {
+  enabled: boolean;
+  reminderTimes: number[];
+}
+
+interface ReminderPreset {
+  label: string;
+  minutes: number;
 }
 
 const NOTIFICATION_TYPES = [
@@ -57,6 +77,12 @@ export default function NotificationsPage() {
   const [isPushEnabled, setIsPushEnabled] = useState(false);
   const [isPushSupported, setIsPushSupported] = useState(false);
   const [isEnablingPush, setIsEnablingPush] = useState(false);
+  const [reminderPreference, setReminderPreference] = useState<ReminderPreference>({
+    enabled: true,
+    reminderTimes: [1440, 60],
+  });
+  const [reminderPresets, setReminderPresets] = useState<ReminderPreset[]>([]);
+  const [isUpdatingReminders, setIsUpdatingReminders] = useState(false);
 
   useEffect(() => {
     if (authStatus === "unauthenticated") {
@@ -67,9 +93,73 @@ export default function NotificationsPage() {
   useEffect(() => {
     if (authStatus === "authenticated") {
       fetchPreferences();
+      fetchReminderPreferences();
       checkPushSupport();
     }
   }, [authStatus]);
+
+  const fetchReminderPreferences = async () => {
+    try {
+      const res = await fetch("/api/user/notifications/reminders");
+      if (res.ok) {
+        const data = await res.json();
+        setReminderPreference(data.preference);
+        setReminderPresets(data.presets || []);
+      }
+    } catch (error) {
+      console.error("Error fetching reminder preferences:", error);
+    }
+  };
+
+  const updateReminderPreferences = async (updates: Partial<ReminderPreference>) => {
+    setIsUpdatingReminders(true);
+    const newPreference = { ...reminderPreference, ...updates };
+    setReminderPreference(newPreference);
+
+    try {
+      const res = await fetch("/api/user/notifications/reminders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+
+      if (!res.ok) {
+        // Revert on error
+        setReminderPreference(reminderPreference);
+        toast.error("Failed to update reminder preferences");
+      } else {
+        toast.success("Reminder preferences updated");
+      }
+    } catch {
+      setReminderPreference(reminderPreference);
+      toast.error("Failed to update reminder preferences");
+    } finally {
+      setIsUpdatingReminders(false);
+    }
+  };
+
+  const addReminderTime = (minutes: number) => {
+    if (!reminderPreference.reminderTimes.includes(minutes)) {
+      const newTimes = [...reminderPreference.reminderTimes, minutes].sort((a, b) => b - a);
+      updateReminderPreferences({ reminderTimes: newTimes });
+    }
+  };
+
+  const removeReminderTime = (minutes: number) => {
+    const newTimes = reminderPreference.reminderTimes.filter((t) => t !== minutes);
+    updateReminderPreferences({ reminderTimes: newTimes });
+  };
+
+  const formatMinutes = (minutes: number): string => {
+    if (minutes >= 1440) {
+      const days = Math.floor(minutes / 1440);
+      return `${days} day${days > 1 ? "s" : ""} before`;
+    } else if (minutes >= 60) {
+      const hours = Math.floor(minutes / 60);
+      return `${hours} hour${hours > 1 ? "s" : ""} before`;
+    }
+    return `${minutes} minute${minutes > 1 ? "s" : ""} before`;
+  };
 
   const fetchPreferences = async () => {
     try {
@@ -296,6 +386,86 @@ export default function NotificationsPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Booking Reminder Timing */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Booking Reminder Timing
+              </CardTitle>
+              <CardDescription>
+                Choose when to receive reminders before your bookings
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Enable booking reminders</p>
+                  <p className="text-sm text-muted-foreground">
+                    Receive reminders before your scheduled bookings
+                  </p>
+                </div>
+                <Switch
+                  checked={reminderPreference.enabled}
+                  onCheckedChange={(checked) =>
+                    updateReminderPreferences({ enabled: checked })
+                  }
+                  disabled={isUpdatingReminders}
+                />
+              </div>
+
+              {reminderPreference.enabled && (
+                <>
+                  <div className="border-t pt-4">
+                    <p className="font-medium mb-3">Remind me:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {reminderPreference.reminderTimes.map((minutes) => (
+                        <div
+                          key={minutes}
+                          className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm"
+                        >
+                          <Clock className="h-3 w-3" />
+                          {formatMinutes(minutes)}
+                          <button
+                            onClick={() => removeReminderTime(minutes)}
+                            className="hover:text-red-600 transition-colors"
+                            disabled={isUpdatingReminders}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Select
+                      onValueChange={(value) => addReminderTime(parseInt(value))}
+                      disabled={isUpdatingReminders}
+                    >
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Add reminder..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {reminderPresets
+                          .filter((p) => !reminderPreference.reminderTimes.includes(p.minutes))
+                          .map((preset) => (
+                            <SelectItem key={preset.minutes} value={preset.minutes.toString()}>
+                              {preset.label}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-muted-foreground">
+                      <Plus className="h-4 w-4 inline mr-1" />
+                      Add another reminder
+                    </span>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Notification Preferences */}
           <Card>
