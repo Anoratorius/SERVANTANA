@@ -60,6 +60,14 @@ export async function POST(request: NextRequest) {
     const currency = booking.currency || "EUR";
     const fees = calculateFees(booking.totalPrice, currency);
 
+    console.log("Checkout fees breakdown:", {
+      bookingPrice: booking.totalPrice,
+      customerTotal: fees.customerTotal,
+      fixedFee: fees.customerFixedFee,
+      percentageFee: fees.customerPercentageFee,
+      currency,
+    });
+
     // Create checkout session - money goes to platform
     const origin = request.headers.get("origin") || process.env.NEXTAUTH_URL;
     const successUrl = `${origin}/bookings/${bookingId}/confirmation?payment=success`;
