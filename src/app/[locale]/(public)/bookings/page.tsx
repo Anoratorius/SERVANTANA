@@ -407,7 +407,10 @@ function BookingCard({
               </div>
               <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4 text-blue-500" />
-                {booking.duration} min
+                {booking.duration >= 60
+                  ? `${Math.floor(booking.duration / 60)}h${booking.duration % 60 > 0 ? ` ${booking.duration % 60}m` : ''}`
+                  : `${booking.duration}m`
+                }
               </div>
             </div>
 

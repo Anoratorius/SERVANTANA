@@ -323,7 +323,10 @@ export default function BookingDetailPage() {
                   <Clock className="h-5 w-5 text-blue-500" />
                   <div>
                     <p className="font-medium">
-                      {booking.scheduledTime} ({booking.duration} min)
+                      {booking.scheduledTime} ({booking.duration >= 60
+                        ? `${Math.floor(booking.duration / 60)} hour${Math.floor(booking.duration / 60) > 1 ? 's' : ''}${booking.duration % 60 > 0 ? ` ${booking.duration % 60} min` : ''}`
+                        : `${booking.duration} min`
+                      })
                     </p>
                     <p className="text-sm text-muted-foreground">{t("booking.time")}</p>
                   </div>
