@@ -2,11 +2,13 @@
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
-// Direct fee calculation (€0.99 fixed + 2.5%)
+// Service fee calculation: €0.99 fixed + 2.5% of base price
+const SERVICE_FEE_FIXED = 0.99;
+const SERVICE_FEE_PERCENT = 0.025;
+
 function calculateTotalWithFees(basePrice: number): number {
-  const fixedFee = 0.99;
-  const percentageFee = Math.round(basePrice * 0.025 * 100) / 100;
-  return Math.round((basePrice + fixedFee + percentageFee) * 100) / 100;
+  const percentageFee = Math.round(basePrice * SERVICE_FEE_PERCENT * 100) / 100;
+  return Math.round((basePrice + SERVICE_FEE_FIXED + percentageFee) * 100) / 100;
 }
 
 import { useEffect, useState, use, useCallback } from "react";
