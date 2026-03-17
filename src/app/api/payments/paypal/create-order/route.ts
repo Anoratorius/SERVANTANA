@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOrdersController } from "@/lib/paypal";
+import { calculateFees } from "@/lib/fees";
 import {
   CheckoutPaymentIntent,
   OrderRequest,
@@ -77,14 +78,26 @@ export async function POST(request: NextRequest) {
 
     const ordersController = getOrdersController();
 
-    // Create PayPal order
+    // Calculate fees (same as Stripe)
+    const currency = booking.currency || "EUR";
+    const fees = calculateFees(booking.totalPrice, currency);
+
+    console.log("PayPal fees breakdown:", {
+      bookingPrice: booking.totalPrice,
+      customerTotal: fees.customerTotal,
+      fixedFee: fees.customerFixedFee,
+      percentageFee: fees.customerPercentageFee,
+      currency,
+    });
+
+    // Create PayPal order with fees included
     const orderRequest: OrderRequest = {
       intent: CheckoutPaymentIntent.Capture,
       purchaseUnits: [
         {
           amount: {
-            currencyCode: booking.currency,
-            value: booking.totalPrice.toFixed(2),
+            currencyCode: currency,
+            value: fees.customerTotal.toFixed(2),
           },
           description: `${booking.service?.name || "Cleaning"} Service with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""}`,
           customId: bookingId,
@@ -107,7 +120,7 @@ export async function POST(request: NextRequest) {
       throw new Error("Failed to create PayPal order");
     }
 
-    // Create or update payment record
+    // Create or update payment record with fee breakdown
     await prisma.payment.upsert({
       where: { bookingId: booking.id },
       update: {
@@ -115,8 +128,13 @@ export async function POST(request: NextRequest) {
         stripeSessionId: null,
         stripePaymentId: null,
         paypalOrderId: result.id,
-        amount: booking.totalPrice,
-        currency: booking.currency,
+        amount: fees.customerTotal,
+        bookingAmount: booking.totalPrice,
+        customerFee: fees.customerFixedFee + fees.customerPercentageFee,
+        cleanerFee: fees.cleanerFixedFee + fees.cleanerPercentageFee,
+        platformFee: fees.platformTotal,
+        cleanerPayout: fees.cleanerReceives,
+        currency,
         status: "PROCESSING",
         paymentMethod: "paypal",
       },
@@ -124,8 +142,13 @@ export async function POST(request: NextRequest) {
         bookingId: booking.id,
         provider: "paypal",
         paypalOrderId: result.id,
-        amount: booking.totalPrice,
-        currency: booking.currency,
+        amount: fees.customerTotal,
+        bookingAmount: booking.totalPrice,
+        customerFee: fees.customerFixedFee + fees.customerPercentageFee,
+        cleanerFee: fees.cleanerFixedFee + fees.cleanerPercentageFee,
+        platformFee: fees.platformTotal,
+        cleanerPayout: fees.cleanerReceives,
+        currency,
         status: "PROCESSING",
         paymentMethod: "paypal",
       },

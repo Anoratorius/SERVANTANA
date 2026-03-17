@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createCryptoCharge } from "@/lib/crypto";
+import { calculateFees } from "@/lib/fees";
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,14 +71,26 @@ export async function POST(request: NextRequest) {
 
     const origin = request.headers.get("origin") || process.env.NEXTAUTH_URL;
 
-    // Create Coinbase Commerce charge
+    // Calculate fees (same as Stripe/PayPal)
+    const currency = booking.currency || "EUR";
+    const fees = calculateFees(booking.totalPrice, currency);
+
+    console.log("Crypto fees breakdown:", {
+      bookingPrice: booking.totalPrice,
+      customerTotal: fees.customerTotal,
+      fixedFee: fees.customerFixedFee,
+      percentageFee: fees.customerPercentageFee,
+      currency,
+    });
+
+    // Create Coinbase Commerce charge with fees included
     const charge = await createCryptoCharge({
       name: `${booking.service?.name || "Cleaning"} Service`,
       description: `Booking with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()}`,
       pricing_type: "fixed_price",
       local_price: {
-        amount: booking.totalPrice.toFixed(2),
-        currency: booking.currency,
+        amount: fees.customerTotal.toFixed(2),
+        currency,
       },
       metadata: {
         bookingId: booking.id,
@@ -88,7 +101,7 @@ export async function POST(request: NextRequest) {
       cancel_url: `${origin}/bookings/${booking.id}/confirmation?payment=cancelled`,
     });
 
-    // Create or update payment record
+    // Create or update payment record with fee breakdown
     await prisma.payment.upsert({
       where: { bookingId: booking.id },
       update: {
@@ -99,8 +112,13 @@ export async function POST(request: NextRequest) {
         paypalCaptureId: null,
         cryptoChargeId: charge.id,
         cryptoChargeCode: charge.code,
-        amount: booking.totalPrice,
-        currency: booking.currency,
+        amount: fees.customerTotal,
+        bookingAmount: booking.totalPrice,
+        customerFee: fees.customerFixedFee + fees.customerPercentageFee,
+        cleanerFee: fees.cleanerFixedFee + fees.cleanerPercentageFee,
+        platformFee: fees.platformTotal,
+        cleanerPayout: fees.cleanerReceives,
+        currency,
         status: "PROCESSING",
         paymentMethod: "crypto",
       },
@@ -109,8 +127,13 @@ export async function POST(request: NextRequest) {
         provider: "crypto",
         cryptoChargeId: charge.id,
         cryptoChargeCode: charge.code,
-        amount: booking.totalPrice,
-        currency: booking.currency,
+        amount: fees.customerTotal,
+        bookingAmount: booking.totalPrice,
+        customerFee: fees.customerFixedFee + fees.customerPercentageFee,
+        cleanerFee: fees.cleanerFixedFee + fees.cleanerPercentageFee,
+        platformFee: fees.platformTotal,
+        cleanerPayout: fees.cleanerReceives,
+        currency,
         status: "PROCESSING",
         paymentMethod: "crypto",
       },
