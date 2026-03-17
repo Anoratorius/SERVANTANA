@@ -4,115 +4,45 @@ import { createTransfer } from "@/lib/stripe";
 import { createSinglePayout } from "@/lib/paypal-payouts";
 
 /**
- * Cron endpoint for processing payouts at 12:01 AM local time on 1st and 15th
+ * Cron endpoint for processing daily payouts at 5:55 AM local time
  *
- * Runs every hour to catch all timezones as they hit midnight.
- *
- * To set up in vercel.json:
- * {
- *   "crons": [{
- *     "path": "/api/cron/payouts",
- *     "schedule": "1 * * * *"
- *   }]
- * }
- *
- * This runs at minute 1 of every hour (XX:01) to catch 00:01 in each timezone.
+ * Runs every 12 hours via external cron service (cron-job.org)
+ * For each cleaner, checks if it's past 5:55 AM in their timezone
+ * and they haven't been paid today - if so, pays them
  */
 
 const CRON_SECRET = process.env.CRON_SECRET;
+const PAYOUT_HOUR = 5;
+const PAYOUT_MINUTE = 55;
 
 /**
- * Get all timezones where it's currently 00:01 on 1st or 15th
+ * Check if it's past 5:55 AM in the given timezone today
  */
-function getPayoutTimezones(): string[] {
-  const now = new Date();
-  const payoutTimezones: string[] = [];
+function isPastPayoutTime(timezone: string): boolean {
+  try {
+    const now = new Date();
+    const localTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+    const hour = localTime.getHours();
+    const minute = localTime.getMinutes();
 
-  // List of common IANA timezones to check
-  const timezones = [
-    // UTC and Europe
-    "UTC",
-    "Europe/London",
-    "Europe/Paris",
-    "Europe/Berlin",
-    "Europe/Rome",
-    "Europe/Madrid",
-    "Europe/Amsterdam",
-    "Europe/Brussels",
-    "Europe/Vienna",
-    "Europe/Warsaw",
-    "Europe/Prague",
-    "Europe/Budapest",
-    "Europe/Bucharest",
-    "Europe/Athens",
-    "Europe/Helsinki",
-    "Europe/Stockholm",
-    "Europe/Oslo",
-    "Europe/Copenhagen",
-    "Europe/Dublin",
-    "Europe/Lisbon",
-    "Europe/Zurich",
-    "Europe/Moscow",
-    "Europe/Istanbul",
-    // Americas
-    "America/New_York",
-    "America/Chicago",
-    "America/Denver",
-    "America/Los_Angeles",
-    "America/Phoenix",
-    "America/Toronto",
-    "America/Vancouver",
-    "America/Mexico_City",
-    "America/Sao_Paulo",
-    "America/Buenos_Aires",
-    "America/Lima",
-    "America/Bogota",
-    // Asia
-    "Asia/Tokyo",
-    "Asia/Seoul",
-    "Asia/Shanghai",
-    "Asia/Hong_Kong",
-    "Asia/Singapore",
-    "Asia/Bangkok",
-    "Asia/Jakarta",
-    "Asia/Manila",
-    "Asia/Kolkata",
-    "Asia/Mumbai",
-    "Asia/Dubai",
-    "Asia/Riyadh",
-    "Asia/Tehran",
-    "Asia/Karachi",
-    // Oceania
-    "Australia/Sydney",
-    "Australia/Melbourne",
-    "Australia/Brisbane",
-    "Australia/Perth",
-    "Pacific/Auckland",
-    // Africa
-    "Africa/Cairo",
-    "Africa/Johannesburg",
-    "Africa/Lagos",
-    "Africa/Nairobi",
-  ];
-
-  for (const tz of timezones) {
-    try {
-      // Get current time in this timezone
-      const localTime = new Date(now.toLocaleString("en-US", { timeZone: tz }));
-      const day = localTime.getDate();
-      const hour = localTime.getHours();
-      const minute = localTime.getMinutes();
-
-      // Check if it's 00:00-00:59 on 1st or 15th (we run at minute 1 of each hour)
-      if ((day === 1 || day === 15) && hour === 0) {
-        payoutTimezones.push(tz);
-      }
-    } catch {
-      // Skip invalid timezones
-    }
+    // Check if current time is past 5:55 AM
+    return hour > PAYOUT_HOUR || (hour === PAYOUT_HOUR && minute >= PAYOUT_MINUTE);
+  } catch {
+    return false;
   }
+}
 
-  return payoutTimezones;
+/**
+ * Get today's date string in the cleaner's timezone (YYYY-MM-DD)
+ */
+function getTodayInTimezone(timezone: string): string {
+  try {
+    const now = new Date();
+    const localTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+    return localTime.toISOString().split("T")[0];
+  } catch {
+    return new Date().toISOString().split("T")[0];
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -129,25 +59,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Find timezones where it's currently payout time (00:01 on 1st or 15th)
-    const payoutTimezones = getPayoutTimezones();
+    console.log(`Daily payout job started at ${new Date().toISOString()}`);
 
-    if (payoutTimezones.length === 0) {
-      return NextResponse.json({
-        message: "No timezones at payout time",
-        processed: 0,
-      });
-    }
-
-    console.log(`Payout time in timezones: ${payoutTimezones.join(", ")}`);
-
-    // Get all cleaners in these timezones with pending earnings
-    const cleanersToPayOut = await prisma.user.findMany({
+    // Get all cleaners with pending earnings that are available
+    const cleanersWithEarnings = await prisma.user.findMany({
       where: {
         role: "CLEANER",
-        cleanerProfile: {
-          timezone: { in: payoutTimezones },
-        },
         earnings: {
           some: {
             status: "PENDING",
@@ -170,13 +87,46 @@ export async function GET(request: NextRequest) {
             availableAt: { lte: new Date() },
           },
         },
+        payouts: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { createdAt: true },
+        },
       },
+    });
+
+    // Filter to only cleaners where:
+    // 1. It's past 5:55 AM in their timezone
+    // 2. They haven't been paid today (in their timezone)
+    const cleanersToPayOut = cleanersWithEarnings.filter((cleaner) => {
+      const timezone = cleaner.cleanerProfile?.timezone || "UTC";
+
+      // Check if it's past 5:55 AM in their timezone
+      if (!isPastPayoutTime(timezone)) {
+        return false;
+      }
+
+      // Check if they were already paid today
+      const todayLocal = getTodayInTimezone(timezone);
+      const lastPayout = cleaner.payouts[0];
+
+      if (lastPayout) {
+        const lastPayoutDate = new Date(
+          lastPayout.createdAt.toLocaleString("en-US", { timeZone: timezone })
+        ).toISOString().split("T")[0];
+
+        if (lastPayoutDate === todayLocal) {
+          return false; // Already paid today
+        }
+      }
+
+      return true;
     });
 
     if (cleanersToPayOut.length === 0) {
       return NextResponse.json({
-        message: "No cleaners with pending payouts in current timezones",
-        timezones: payoutTimezones,
+        message: "No cleaners ready for payout (not past 5:55 AM local time or already paid today)",
+        checked: cleanersWithEarnings.length,
         processed: 0,
       });
     }
@@ -309,8 +259,8 @@ export async function GET(request: NextRequest) {
     console.log(`Payout completed: ${successCount}/${results.length} successful`);
 
     return NextResponse.json({
-      message: `Processed ${successCount}/${results.length} payouts`,
-      timezones: payoutTimezones,
+      message: `Processed ${successCount}/${results.length} payouts at 5:55 AM local time`,
+      date: new Date().toISOString(),
       processed: successCount,
       failed: results.length - successCount,
       totalPaid,
