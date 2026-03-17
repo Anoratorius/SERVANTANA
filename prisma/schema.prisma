@@ -303,6 +303,15 @@ model CleanerProfile {
   latitude        Float?
   longitude       Float?
   serviceRadius   Int      @default(10) // in km
+  timezone        String   @default("Europe/Berlin") // IANA timezone for payout timing
+
+  // Payment
+  paypalEmail     String?  // PayPal email for receiving payouts
+  cryptoWallets   CryptoWallet[]
+
+  // Stripe Connect
+  stripeAccountId         String?  @unique // Stripe Connect Express account ID
+  stripeOnboardingComplete Boolean @default(false)
 
   // Stats
   totalBookings   Int      @default(0)
@@ -316,6 +325,23 @@ model CleanerProfile {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   services        CleanerService[]
   availability    Availability[]
+}
+
+// Crypto wallet for cleaners
+model CryptoWallet {
+  id              String   @id @default(cuid())
+  cleanerProfileId String
+  currency        String   // BTC, ETH, LTC
+  address         String   // Public wallet address
+  derivationIndex Int      // HD wallet derivation index
+  balance         Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  cleanerProfile  CleanerProfile @relation(fields: [cleanerProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([cleanerProfileId, currency])
+  @@index([cleanerProfileId])
 }
 
 // Service types offered
@@ -373,7 +399,7 @@ model Booking {
   id            String   @id @default(cuid())
   customerId    String
   cleanerId     String
-  serviceId     String
+  serviceId     String?
   propertyId    String?  // Optional link to saved property
 
   // Scheduling
@@ -382,7 +408,7 @@ model Booking {
   duration      Int      // in minutes
 
   // Location
-  address       String
+  address       String?
   city          String?
   state         String?
   postalCode    String?
@@ -425,7 +451,7 @@ model Booking {
   // Relations
   customer      User     @relation("CustomerBookings", fields: [customerId], references: [id])
   cleaner       User     @relation("CleanerBookings", fields: [cleanerId], references: [id])
-  service       Service  @relation(fields: [serviceId], references: [id])
+  service       Service?  @relation(fields: [serviceId], references: [id])
   property      Property? @relation(fields: [propertyId], references: [id])
   review        Review?
   messages      Message[]
@@ -541,10 +567,17 @@ model Payment {
   cryptoChargeCode  String?  // Coinbase Commerce Charge Code
   cryptoNetwork     String?  // bitcoin, ethereum, litecoin
   cryptoTxId        String?  // Blockchain transaction ID
-  amount            Float
-  currency          String   @default("USD")
+  amount            Float    // Total amount charged to customer
+  currency          String   @default("EUR")
   status            PaymentStatus @default(PENDING)
   paymentMethod     String?  // card, bank_transfer, paypal, crypto, etc.
+
+  // Fee breakdown
+  bookingAmount     Float?   // Original booking price (cleaner's rate)
+  customerFee       Float?   // Fixed + percentage fee from customer
+  cleanerFee        Float?   // Fixed + percentage fee from cleaner
+  platformFee       Float?   // Total platform fee (customerFee + cleanerFee)
+  cleanerPayout     Float?   // Amount transferred to cleaner
   receiptUrl        String?
   failureReason     String?
   refundedAmount    Float?

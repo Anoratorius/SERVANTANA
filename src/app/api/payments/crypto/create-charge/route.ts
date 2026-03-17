@@ -72,8 +72,8 @@ export async function POST(request: NextRequest) {
 
     // Create Coinbase Commerce charge
     const charge = await createCryptoCharge({
-      name: `${booking.service.name} Cleaning Service`,
-      description: `Booking with ${booking.cleaner.firstName} ${booking.cleaner.lastName} on ${new Date(booking.scheduledDate).toLocaleDateString()}`,
+      name: `${booking.service?.name || "Cleaning"} Service`,
+      description: `Booking with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()}`,
       pricing_type: "fixed_price",
       local_price: {
         amount: booking.totalPrice.toFixed(2),

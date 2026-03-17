@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       : Math.round(payment.amount * 100);
 
     // Create refund in Stripe
-    const refund = await stripe.refunds.create({
+    const refund = await stripe().refunds.create({
       payment_intent: payment.stripePaymentId,
       amount: refundAmount,
       reason: reason as Stripe.RefundCreateParams.Reason || "requested_by_customer",

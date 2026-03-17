@@ -277,10 +277,10 @@ export function BookingTeam({
                             {cleaner.firstName} {cleaner.lastName}
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            {cleaner.cleanerProfile?.averageRating > 0 && (
+                            {(cleaner.cleanerProfile?.averageRating ?? 0) > 0 && (
                               <span className="flex items-center gap-1">
                                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                {cleaner.cleanerProfile.averageRating.toFixed(1)}
+                                {cleaner.cleanerProfile?.averageRating?.toFixed(1)}
                               </span>
                             )}
                             {cleaner.distance !== null && (

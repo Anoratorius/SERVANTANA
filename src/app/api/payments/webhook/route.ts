@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    event = stripe().webhooks.constructEvent(body, signature, webhookSecret);
   } catch (error) {
     console.error("Webhook signature verification failed:", error);
     return NextResponse.json(
@@ -165,7 +165,7 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
 
   if (typeof chargeId === "string") {
     try {
-      const charge = await stripe.charges.retrieve(chargeId);
+      const charge = await stripe().charges.retrieve(chargeId);
       receiptUrl = charge.receipt_url || undefined;
     } catch (error) {
       console.error("Failed to retrieve charge for receipt URL:", error);

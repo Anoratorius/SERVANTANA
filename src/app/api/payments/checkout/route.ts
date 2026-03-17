@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     // Create Stripe Checkout Session
     const origin = request.headers.get("origin") || process.env.NEXTAUTH_URL;
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripe().checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [
@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: booking.currency.toLowerCase(),
             product_data: {
-              name: `${booking.service.name} Cleaning Service`,
-              description: `Booking with ${booking.cleaner.firstName} ${booking.cleaner.lastName} on ${new Date(booking.scheduledDate).toLocaleDateString()} at ${booking.scheduledTime}`,
+              name: `${booking.service?.name || "Cleaning"} Service`,
+              description: `Booking with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()} at ${booking.scheduledTime}`,
             },
             unit_amount: formatAmountForStripe(booking.totalPrice, booking.currency),
           },

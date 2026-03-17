@@ -14,15 +14,20 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@resend.dev>";
 
 interface NotificationData {
+  bookingId?: string;
   customerName?: string;
   cleanerName?: string;
   serviceName?: string;
   bookingDate?: string;
   bookingTime?: string;
+  scheduledDate?: string;
+  scheduledTime?: string;
   amount?: string;
   documentType?: string;
   reason?: string;
   senderName?: string;
+  otherPartyName?: string;
+  minutesUntil?: number;
 }
 
 interface NotificationResult {

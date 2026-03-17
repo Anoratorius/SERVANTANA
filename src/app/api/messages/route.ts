@@ -76,7 +76,7 @@ export async function GET() {
           read: boolean;
         };
         unreadCount: number;
-        booking: { id: string; service: { name: string } } | null;
+        booking: { id: string; service: { name: string } | null } | null;
       }
     >();
 

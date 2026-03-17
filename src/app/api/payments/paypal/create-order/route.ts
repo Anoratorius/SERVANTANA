@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
             currencyCode: booking.currency,
             value: booking.totalPrice.toFixed(2),
           },
-          description: `${booking.service.name} Cleaning Service with ${booking.cleaner.firstName} ${booking.cleaner.lastName}`,
+          description: `${booking.service?.name || "Cleaning"} Service with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""}`,
           customId: bookingId,
           referenceId: bookingId,
         },

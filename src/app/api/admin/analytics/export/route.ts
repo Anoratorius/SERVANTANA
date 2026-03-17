@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
           scheduledTime: b.scheduledTime,
           status: b.status,
           totalPrice: b.totalPrice,
-          serviceName: b.service.name,
+          serviceName: b.service?.name || "N/A",
           customerName: `${b.customer.firstName || ""} ${b.customer.lastName || ""}`.trim() || "N/A",
           cleanerName: b.cleaner
             ? `${b.cleaner.firstName || ""} ${b.cleaner.lastName || ""}`.trim() || "N/A"

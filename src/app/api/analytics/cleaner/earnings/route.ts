@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     // By service
     const byService = new Map<string, { name: string; amount: number; count: number }>();
     for (const earning of earnings) {
-      const name = earning.booking.service.name;
+      const name = earning.booking.service?.name || "Unknown";
       const existing = byService.get(name) || { name, amount: 0, count: 0 };
       existing.amount += earning.amount;
       existing.count++;
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
         platformFee: e.platformFee,
         netAmount: e.amount,
         status: e.status,
-        serviceName: e.booking.service.name,
+        serviceName: e.booking.service?.name || "Unknown",
       })),
     });
   } catch (error) {

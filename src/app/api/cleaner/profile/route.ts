@@ -19,6 +19,8 @@ const updateProfileSchema = z.object({
   country: z.string().max(100).optional(),
   postalCode: z.string().max(20).optional(),
   serviceRadius: z.number().min(1).max(100).optional(),
+  timezone: z.string().max(100).optional(),
+  paypalEmail: z.string().email().max(100).optional().or(z.literal("")),
 });
 
 // Get cleaner's own profile
@@ -135,6 +137,8 @@ export async function PUT(request: NextRequest) {
       country: data.country,
       postalCode: data.postalCode,
       serviceRadius: data.serviceRadius,
+      timezone: data.timezone,
+      paypalEmail: data.paypalEmail || null,
     };
 
     // Remove undefined values

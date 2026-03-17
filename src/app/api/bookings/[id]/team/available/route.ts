@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // GET - Find available cleaners for team booking
@@ -9,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -42,6 +41,10 @@ export async function GET(
         { error: "Only lead cleaner can search for team members" },
         { status: 403 }
       );
+    }
+
+    if (!booking.serviceId) {
+      return NextResponse.json({ error: "Booking has no service" }, { status: 400 });
     }
 
     // Get existing team member IDs

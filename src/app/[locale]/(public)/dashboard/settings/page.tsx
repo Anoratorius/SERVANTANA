@@ -26,8 +26,14 @@ import {
   Video,
   Upload,
   Trash2,
+  Wallet,
+  Copy,
+  CreditCard,
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 interface Service {
@@ -54,6 +60,20 @@ interface Availability {
   isActive: boolean;
 }
 
+interface CryptoWallet {
+  id: string;
+  currency: string;
+  address: string;
+  balance: number;
+}
+
+interface StripeConnectStatus {
+  status: "not_connected" | "pending" | "complete";
+  stripeAccountId: string | null;
+  onboardingComplete: boolean;
+  dashboardUrl: string | null;
+}
+
 const DAYS = [
   { value: 0, label: "Sunday" },
   { value: 1, label: "Monday" },
@@ -77,6 +97,7 @@ const SERVICE_NAMES: Record<string, string> = {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, status: authStatus } = useSession();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +121,10 @@ export default function SettingsPage() {
     country: "",
     postalCode: "",
     serviceRadius: 10,
+    timezone: typeof window !== "undefined"
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone
+      : "UTC",
+    paypalEmail: "",
   });
 
   const [selectedServices, setSelectedServices] = useState<
@@ -115,6 +140,14 @@ export default function SettingsPage() {
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [isDeletingVideo, setIsDeletingVideo] = useState(false);
 
+  // Crypto wallet state
+  const [cryptoWallets, setCryptoWallets] = useState<CryptoWallet[]>([]);
+  const [isCreatingWallets, setIsCreatingWallets] = useState(false);
+
+  // Stripe Connect state
+  const [stripeStatus, setStripeStatus] = useState<StripeConnectStatus | null>(null);
+  const [isConnectingStripe, setIsConnectingStripe] = useState(false);
+
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login?callbackUrl=/dashboard/settings");
@@ -127,19 +160,64 @@ export default function SettingsPage() {
     }
   }, [authStatus, session, router]);
 
+  // Handle Stripe Connect return URL params
+  useEffect(() => {
+    const stripeParam = searchParams.get("stripe");
+    if (stripeParam === "success") {
+      // Check and update Stripe status
+      fetch("/api/stripe/connect", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "check" }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.onboardingComplete) {
+            toast.success("Stripe account connected successfully!");
+            setStripeStatus((prev) => prev ? { ...prev, ...data, status: "complete" } : null);
+          } else {
+            toast.info("Stripe onboarding in progress. Complete all steps to receive payments.");
+            setStripeStatus((prev) => prev ? { ...prev, status: "pending" } : null);
+          }
+        })
+        .catch(() => {
+          toast.error("Failed to verify Stripe connection");
+        });
+      // Clear the URL param
+      window.history.replaceState({}, "", "/dashboard/settings");
+    } else if (stripeParam === "refresh") {
+      toast.info("Stripe onboarding link expired. Click to continue setup.");
+      window.history.replaceState({}, "", "/dashboard/settings");
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const [profileRes, servicesRes, videoRes] = await Promise.all([
+        const [profileRes, servicesRes, videoRes, walletsRes, stripeRes] = await Promise.all([
           fetch("/api/cleaner/profile"),
           fetch("/api/cleaner/services"),
           fetch("/api/cleaner/video"),
+          fetch("/api/cleaner/wallets"),
+          fetch("/api/stripe/connect"),
         ]);
 
         // Load video
         if (videoRes.ok) {
           const videoData = await videoRes.json();
           setVideoUrl(videoData.videoUrl);
+        }
+
+        // Load crypto wallets
+        if (walletsRes.ok) {
+          const walletsData = await walletsRes.json();
+          setCryptoWallets(walletsData.wallets || []);
+        }
+
+        // Load Stripe Connect status
+        if (stripeRes.ok) {
+          const stripeData = await stripeRes.json();
+          setStripeStatus(stripeData);
         }
 
         if (profileRes.ok) {
@@ -169,6 +247,8 @@ export default function SettingsPage() {
               country: profileData.profile.country || "",
               postalCode: profileData.profile.postalCode || "",
               serviceRadius: profileData.profile.serviceRadius || 10,
+              timezone: profileData.profile.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+              paypalEmail: profileData.profile.paypalEmail || "",
             }));
 
             // Set availability
@@ -624,6 +704,275 @@ export default function SettingsPage() {
                   </CardContent>
                 </Card>
 
+                {/* Stripe Connect - Primary Payment Method */}
+                <Card className="border-2 border-purple-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CreditCard className="h-5 w-5 text-purple-500" />
+                      Stripe Connect
+                      {stripeStatus?.status === "complete" && (
+                        <span className="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full">
+                          Connected
+                        </span>
+                      )}
+                    </CardTitle>
+                    <CardDescription>
+                      Accept credit card payments from customers. Required to receive bookings.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {stripeStatus?.status === "complete" ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
+                          <CheckCircle className="h-6 w-6 text-green-600" />
+                          <div>
+                            <p className="font-medium text-green-800">
+                              Your Stripe account is connected
+                            </p>
+                            <p className="text-sm text-green-600">
+                              You can now receive credit card payments from customers
+                            </p>
+                          </div>
+                        </div>
+                        {stripeStatus.dashboardUrl && (
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => window.open(stripeStatus.dashboardUrl!, "_blank")}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Open Stripe Dashboard
+                          </Button>
+                        )}
+                      </div>
+                    ) : stripeStatus?.status === "pending" ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-yellow-50 rounded-lg">
+                          <AlertCircle className="h-6 w-6 text-yellow-600" />
+                          <div>
+                            <p className="font-medium text-yellow-800">
+                              Stripe setup incomplete
+                            </p>
+                            <p className="text-sm text-yellow-600">
+                              Please complete your Stripe onboarding to receive payments
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={async () => {
+                            setIsConnectingStripe(true);
+                            try {
+                              const res = await fetch("/api/stripe/connect", {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ action: "refresh" }),
+                              });
+                              if (res.ok) {
+                                const data = await res.json();
+                                window.location.href = data.url;
+                              } else {
+                                toast.error("Failed to get onboarding link");
+                              }
+                            } catch {
+                              toast.error("Failed to connect with Stripe");
+                            } finally {
+                              setIsConnectingStripe(false);
+                            }
+                          }}
+                          disabled={isConnectingStripe}
+                          className="w-full bg-gradient-to-r from-purple-500 to-purple-600"
+                        >
+                          {isConnectingStripe ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Connecting...
+                            </>
+                          ) : (
+                            <>
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              Continue Stripe Setup
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <CreditCard className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground mb-4">
+                          Connect your Stripe account to accept credit card payments from customers.
+                        </p>
+                        <Button
+                          onClick={async () => {
+                            setIsConnectingStripe(true);
+                            try {
+                              const res = await fetch("/api/stripe/connect", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ country: formData.country || "DE" }),
+                              });
+                              if (res.ok) {
+                                const data = await res.json();
+                                window.location.href = data.url;
+                              } else {
+                                const error = await res.json();
+                                toast.error(error.error || "Failed to start Stripe setup");
+                              }
+                            } catch {
+                              toast.error("Failed to connect with Stripe");
+                            } finally {
+                              setIsConnectingStripe(false);
+                            }
+                          }}
+                          disabled={isConnectingStripe}
+                          className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+                        >
+                          {isConnectingStripe ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Connecting...
+                            </>
+                          ) : (
+                            <>
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              Connect with Stripe
+                            </>
+                          )}
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-4">
+                          Stripe handles all payment processing securely. A small service fee applies to each transaction.
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* PayPal (Alternative) */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <DollarSign className="h-5 w-5 text-blue-500" />
+                      PayPal (Optional)
+                    </CardTitle>
+                    <CardDescription>
+                      Alternative payment method for customers who prefer PayPal
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="paypalEmail">PayPal Email</Label>
+                      <Input
+                        id="paypalEmail"
+                        type="email"
+                        value={formData.paypalEmail}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, paypalEmail: e.target.value }))
+                        }
+                        placeholder="your-email@example.com"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        This is the email linked to your PayPal account where you&apos;ll receive payments
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Crypto Wallets */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Wallet className="h-5 w-5 text-orange-500" />
+                      Crypto Wallets
+                    </CardTitle>
+                    <CardDescription>
+                      Receive cryptocurrency payments from customers
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {cryptoWallets.length > 0 ? (
+                      <div className="space-y-3">
+                        {cryptoWallets.map((wallet) => (
+                          <div
+                            key={wallet.id}
+                            className="p-4 rounded-lg border bg-gradient-to-r from-gray-50 to-gray-100"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-semibold text-lg">
+                                {wallet.currency === "BTC" && "₿ Bitcoin"}
+                                {wallet.currency === "ETH" && "Ξ Ethereum"}
+                                {wallet.currency === "LTC" && "Ł Litecoin"}
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                Balance: {wallet.balance} {wallet.currency}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="flex-1 text-xs bg-white p-2 rounded border font-mono truncate">
+                                {wallet.address}
+                              </code>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(wallet.address);
+                                  toast.success(`${wallet.currency} address copied!`);
+                                }}
+                              >
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                        <p className="text-xs text-muted-foreground text-center">
+                          Share these addresses with customers to receive crypto payments
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <Wallet className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground mb-4">
+                          No crypto wallets yet. Create your wallets to receive cryptocurrency payments.
+                        </p>
+                        <Button
+                          onClick={async () => {
+                            setIsCreatingWallets(true);
+                            try {
+                              const res = await fetch("/api/cleaner/wallets", {
+                                method: "POST",
+                              });
+                              if (res.ok) {
+                                const data = await res.json();
+                                setCryptoWallets(data.wallets);
+                                toast.success("Crypto wallets created successfully!");
+                              } else {
+                                const error = await res.json();
+                                toast.error(error.error || "Failed to create wallets");
+                              }
+                            } catch {
+                              toast.error("Failed to create wallets");
+                            } finally {
+                              setIsCreatingWallets(false);
+                            }
+                          }}
+                          disabled={isCreatingWallets}
+                          className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+                        >
+                          {isCreatingWallets ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Creating Wallets...
+                            </>
+                          ) : (
+                            <>
+                              <Wallet className="h-4 w-4 mr-2" />
+                              Create Crypto Wallets
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 {/* Location */}
                 <Card>
                   <CardHeader>
@@ -703,6 +1052,17 @@ export default function SettingsPage() {
                       />
                       <p className="text-xs text-muted-foreground">
                         How far you&apos;re willing to travel for jobs
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Timezone</Label>
+                      <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border">
+                        <Clock className="h-4 w-4 text-blue-500" />
+                        <span className="font-medium">{formData.timezone.replace(/_/g, " ")}</span>
+                        <span className="text-xs text-muted-foreground">(auto-detected)</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Payouts are processed at 12:01 AM your local time on the 1st and 15th of each month
                       </p>
                     </div>
                   </CardContent>

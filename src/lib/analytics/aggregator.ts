@@ -145,6 +145,7 @@ export async function getCleanerAnalytics(
   // Service stats
   const serviceStatsMap = new Map<string, ServiceStats>();
   for (const booking of completedBookings) {
+    if (!booking.serviceId || !booking.service) continue;
     const key = booking.serviceId;
     const existing = serviceStatsMap.get(key) || {
       serviceId: booking.serviceId,
@@ -290,8 +291,9 @@ export async function getAdminAnalytics(period: string) {
     take: 5,
   });
 
+  const serviceIds = topServices.map((s) => s.serviceId).filter((id): id is string => id !== null);
   const services = await prisma.service.findMany({
-    where: { id: { in: topServices.map((s) => s.serviceId) } },
+    where: { id: { in: serviceIds } },
   });
 
   const topServicesWithNames = topServices.map((s) => ({

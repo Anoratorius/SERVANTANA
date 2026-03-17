@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // Calculate distance between two coordinates using Haversine formula
@@ -33,7 +32,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -63,6 +62,10 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!booking.serviceId) {
+      return NextResponse.json({ error: "Booking has no service" }, { status: 400 });
+    }
+
     // Find cleaners who:
     // 1. Offer the same service
     // 2. Are not the original cleaner
@@ -72,7 +75,7 @@ export async function GET(
     const availableCleaners = await prisma.cleanerProfile.findMany({
       where: {
         userId: { not: booking.cleanerId },
-        isVerified: true,
+        verified: true,
         services: {
           some: {
             serviceId: booking.serviceId,
@@ -127,7 +130,7 @@ export async function GET(
         where: {
           cleanerId: cleaner.id,
           dayOfWeek,
-          isAvailable: true,
+          isActive: true,
         },
       });
 
@@ -199,11 +202,11 @@ export async function GET(
         id: booking.id,
         scheduledDate: booking.scheduledDate,
         scheduledTime: booking.scheduledTime,
-        service: booking.service.name,
-        originalCleaner: {
+        service: booking.service?.name || "Cleaning Service",
+        originalCleaner: booking.cleaner ? {
           firstName: booking.cleaner.firstName,
           lastName: booking.cleaner.lastName,
-        },
+        } : null,
       },
       substitutes: substitutes.slice(0, 10), // Return top 10
     });
@@ -222,7 +225,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -262,6 +265,10 @@ export async function POST(
       );
     }
 
+    if (!booking.serviceId) {
+      return NextResponse.json({ error: "Booking has no service" }, { status: 400 });
+    }
+
     // Verify the substitute cleaner exists and offers this service
     const substituteProfile = await prisma.cleanerProfile.findUnique({
       where: { userId: substituteCleanerId },
@@ -287,7 +294,7 @@ export async function POST(
 
     // Calculate new price
     const cleanerService = substituteProfile.services[0];
-    const newPrice = cleanerService?.customPrice ?? booking.service.basePrice;
+    const newPrice = cleanerService?.customPrice ?? booking.service?.basePrice ?? booking.totalPrice;
 
     // Create a new booking with the substitute cleaner
     const newBooking = await prisma.booking.create({

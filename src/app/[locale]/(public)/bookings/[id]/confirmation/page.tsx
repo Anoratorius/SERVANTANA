@@ -1,5 +1,7 @@
 "use client";
 
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+
 import { useEffect, useState, use, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -30,11 +32,26 @@ interface Payment {
   provider?: string;
 }
 
+interface FeeBreakdown {
+  bookingPrice: number;
+  customerTotal: number;
+  customerFixedFee: number;
+  customerPercentageFee: number;
+  cleanerReceives: number;
+  currency: string;
+  formatted: {
+    bookingPrice: string;
+    customerPays: string;
+    customerFee: string;
+    cleanerReceives: string;
+  };
+}
+
 interface Booking {
   id: string;
   scheduledDate: string;
   scheduledTime: string;
-  address: string;
+  address: string | null;
   city: string | null;
   totalPrice: number;
   currency: string;
@@ -45,7 +62,7 @@ interface Booking {
   };
   service: {
     name: string;
-  };
+  } | null;
   payment?: Payment;
 }
 
@@ -77,6 +94,7 @@ export default function BookingConfirmationPage({
   const [isProcessingCrypto, setIsProcessingCrypto] = useState(false);
   const [paypalReady, setPaypalReady] = useState(false);
   const [showCryptoOptions, setShowCryptoOptions] = useState(false);
+  const [fees, setFees] = useState<FeeBreakdown | null>(null);
 
   const paymentStatus = searchParams.get("payment");
   const paymentMethod = searchParams.get("method");
@@ -90,6 +108,18 @@ export default function BookingConfirmationPage({
       if (response.ok) {
         const data = await response.json();
         setBooking(data.booking);
+
+        // Fetch fee breakdown
+        if (data.booking && data.booking.payment?.status !== "SUCCEEDED") {
+          const feesRes = await fetch(
+            `/api/fees?price=${data.booking.totalPrice}&currency=${data.booking.currency || "EUR"}`
+          );
+          if (feesRes.ok) {
+            const feesData = await feesRes.json();
+            setFees(feesData);
+          }
+        }
+
       }
     } catch (error) {
       console.error("Error fetching booking:", error);
@@ -180,7 +210,7 @@ export default function BookingConfirmationPage({
 
     setIsProcessingPayment(true);
     try {
-      const response = await fetch("/api/payments/checkout", {
+      const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId: booking.id }),
@@ -192,12 +222,13 @@ export default function BookingConfirmationPage({
         throw new Error(data.error || "Failed to create checkout session");
       }
 
-      if (data.url) {
-        window.location.href = data.url;
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
       }
     } catch (error) {
       console.error("Error processing payment:", error);
-      toast.error("Failed to process payment. Please try again.");
+      const message = error instanceof Error ? error.message : "Failed to process payment";
+      toast.error(message);
     } finally {
       setIsProcessingPayment(false);
     }
@@ -237,10 +268,15 @@ export default function BookingConfirmationPage({
       <Header />
 
       {/* PayPal Script */}
-      {process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID && (
+      {PAYPAL_CLIENT_ID && (
         <Script
-          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD`}
-          onLoad={() => setPaypalReady(true)}
+          src={`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`}
+          strategy="afterInteractive"
+          onLoad={() => {
+            console.log("PayPal SDK loaded");
+            setPaypalReady(true);
+          }}
+          onError={(e) => console.error("PayPal SDK failed to load", e)}
         />
       )}
 
@@ -309,28 +345,32 @@ export default function BookingConfirmationPage({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <MapPin className="h-5 w-5 text-blue-600" />
+                  {(booking.address || booking.city) && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <MapPin className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Address</p>
+                        <p className="font-medium">
+                          {booking.address}
+                          {booking.city && `, ${booking.city}`}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Address</p>
-                      <p className="font-medium">
-                        {booking.address}
-                        {booking.city && `, ${booking.city}`}
-                      </p>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                       <Clock className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Service</p>
+                      <p className="text-sm text-muted-foreground">Cleaner</p>
                       <p className="font-medium">
-                        {t(`cleaner.services.${booking.service.name}` as Parameters<typeof t>[0])} with{" "}
                         {booking.cleaner.firstName} {booking.cleaner.lastName}
+                        {booking.service && (
+                          <> - {t(`cleaner.services.${booking.service.name}` as Parameters<typeof t>[0])}</>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -346,6 +386,24 @@ export default function BookingConfirmationPage({
                 {/* Payment Options */}
                 {isPaymentPending && (
                   <div className="pt-4 border-t space-y-4">
+                    {/* Fee Breakdown */}
+                    {fees && (
+                      <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Service price</span>
+                          <span>{fees.formatted.bookingPrice}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Service fee</span>
+                          <span>{fees.formatted.customerFee}</span>
+                        </div>
+                        <div className="flex justify-between font-semibold border-t pt-2">
+                          <span>Total</span>
+                          <span className="text-lg">{fees.formatted.customerPays}</span>
+                        </div>
+                      </div>
+                    )}
+
                     <p className="text-sm font-medium text-center text-muted-foreground">
                       Choose your payment method
                     </p>
@@ -354,7 +412,7 @@ export default function BookingConfirmationPage({
                     <Button
                       onClick={handleStripePayment}
                       disabled={isProcessingPayment}
-                      className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700"
+                      className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
                       size="lg"
                     >
                       {isProcessingPayment ? (
@@ -365,7 +423,7 @@ export default function BookingConfirmationPage({
                       ) : (
                         <>
                           <CreditCard className="mr-2 h-5 w-5" />
-                          Pay with Card - ${booking.totalPrice}
+                          Pay with Card {fees ? `- ${fees.formatted.customerPays}` : ""}
                         </>
                       )}
                     </Button>
@@ -381,14 +439,16 @@ export default function BookingConfirmationPage({
                     </div>
 
                     {/* PayPal Button Container */}
-                    <div id="paypal-button-container" className="min-h-[45px]">
-                      {!paypalReady && (
-                        <div className="flex items-center justify-center py-3">
-                          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground mr-2" />
-                          <span className="text-sm text-muted-foreground">Loading PayPal...</span>
-                        </div>
-                      )}
-                    </div>
+                    {PAYPAL_CLIENT_ID && (
+                      <div id="paypal-button-container" className="min-h-[45px]">
+                        {!paypalReady && (
+                          <div className="flex items-center justify-center py-3">
+                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground mr-2" />
+                            <span className="text-sm text-muted-foreground">Loading PayPal...</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Divider */}
                     <div className="relative">

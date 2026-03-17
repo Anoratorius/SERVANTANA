@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
           try {
             await sendNotification(user.id, "BOOKING_REMINDER", {
               bookingId: booking.id,
-              serviceName: booking.service.name,
+              serviceName: booking.service?.name || "Cleaning Service",
               scheduledDate: formattedDate,
               scheduledTime: formattedTime,
               otherPartyName: `${otherUser.firstName} ${otherUser.lastName}`,

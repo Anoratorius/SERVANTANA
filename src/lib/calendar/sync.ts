@@ -114,12 +114,13 @@ export async function syncBookingToCalendar(
   const endTime = new Date(startTime);
   endTime.setMinutes(endTime.getMinutes() + booking.duration);
 
+  const serviceName = booking.service?.name || "Cleaning Service";
   const eventData: CalendarEventData = {
-    title: `${booking.service.name} - Servantana`,
-    description: `Booking with ${booking.customer.firstName} ${booking.customer.lastName}\nService: ${booking.service.name}\nPrice: $${booking.totalPrice}`,
+    title: `${serviceName} - Servantana`,
+    description: `Booking with ${booking.customer.firstName} ${booking.customer.lastName}\nService: ${serviceName}\nPrice: $${booking.totalPrice}`,
     startTime,
     endTime,
-    location: booking.address,
+    location: booking.address || undefined,
   };
 
   for (const connection of connections) {

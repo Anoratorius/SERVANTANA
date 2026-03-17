@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PayoutStatus, Role } from "@prisma/client";
+import { createTransfer } from "@/lib/stripe";
+import { createSinglePayout } from "@/lib/paypal-payouts";
+
+// Secret key for cron jobs (set in environment)
+const CRON_SECRET = process.env.CRON_SECRET;
 
 // Get all payouts for admin
 export async function GET(request: NextRequest) {
@@ -64,6 +69,16 @@ export async function GET(request: NextRequest) {
       _count: true,
     });
 
+    // Get pending earnings (ready for payout)
+    const pendingEarnings = await prisma.earning.aggregate({
+      where: {
+        status: "PENDING",
+        availableAt: { lte: new Date() },
+      },
+      _sum: { amount: true },
+      _count: true,
+    });
+
     return NextResponse.json({
       payouts,
       pagination: {
@@ -76,11 +91,232 @@ export async function GET(request: NextRequest) {
         acc[s.status] = { count: s._count, total: s._sum.amount || 0 };
         return acc;
       }, {} as Record<string, { count: number; total: number }>),
+      pendingEarnings: {
+        count: pendingEarnings._count,
+        total: pendingEarnings._sum.amount || 0,
+      },
     });
   } catch (error) {
     console.error("Error fetching payouts:", error);
     return NextResponse.json(
       { error: "Failed to fetch payouts" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST: Process payouts (called by cron on 1st and 15th, or manually by admin)
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Verify authorization (either admin session or cron secret)
+    const authHeader = request.headers.get("authorization");
+    const isCronJob = authHeader === `Bearer ${CRON_SECRET}` && CRON_SECRET;
+
+    if (!isCronJob) {
+      const session = await auth();
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      if (user?.role !== "ADMIN") {
+        return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+      }
+    }
+
+    // Get all earnings that are ready for payout
+    const pendingEarnings = await prisma.earning.findMany({
+      where: {
+        status: "PENDING",
+        availableAt: { lte: new Date() },
+      },
+      include: {
+        cleaner: {
+          include: {
+            cleanerProfile: {
+              select: {
+                paypalEmail: true,
+                stripeAccountId: true,
+                stripeOnboardingComplete: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (pendingEarnings.length === 0) {
+      return NextResponse.json({
+        message: "No pending payouts to process",
+        processed: 0,
+      });
+    }
+
+    // Group earnings by cleaner
+    const cleanerEarnings = new Map<
+      string,
+      {
+        cleaner: typeof pendingEarnings[0]["cleaner"];
+        earnings: typeof pendingEarnings;
+        totalAmount: number;
+        currency: string;
+      }
+    >();
+
+    for (const earning of pendingEarnings) {
+      const cleanerId = earning.cleanerId;
+      const existing = cleanerEarnings.get(cleanerId);
+
+      if (existing) {
+        existing.earnings.push(earning);
+        existing.totalAmount += earning.amount;
+      } else {
+        cleanerEarnings.set(cleanerId, {
+          cleaner: earning.cleaner,
+          earnings: [earning],
+          totalAmount: earning.amount,
+          currency: earning.currency,
+        });
+      }
+    }
+
+    const results: Array<{
+      cleanerId: string;
+      cleanerName: string;
+      amount: number;
+      currency: string;
+      method: "stripe" | "paypal" | "skipped";
+      success: boolean;
+      error?: string;
+      payoutId?: string;
+    }> = [];
+
+    // Process each cleaner's payout
+    for (const [cleanerId, data] of cleanerEarnings) {
+      const { cleaner, earnings, totalAmount, currency } = data;
+      const cleanerName = `${cleaner.firstName} ${cleaner.lastName}`;
+
+      try {
+        let payoutMethod: "stripe" | "paypal" | "skipped" = "skipped";
+        let externalPayoutId: string | undefined;
+
+        // Try Stripe first, then PayPal
+        if (
+          cleaner.cleanerProfile?.stripeAccountId &&
+          cleaner.cleanerProfile?.stripeOnboardingComplete
+        ) {
+          // Pay via Stripe
+          const transfer = await createTransfer({
+            amount: totalAmount,
+            currency,
+            destinationAccountId: cleaner.cleanerProfile.stripeAccountId,
+            description: `Servantana earnings payout - ${new Date().toISOString().split("T")[0]}`,
+            metadata: {
+              cleanerId,
+              earningIds: earnings.map((e) => e.id).join(","),
+            },
+          });
+
+          payoutMethod = "stripe";
+          externalPayoutId = transfer.id;
+        } else if (cleaner.cleanerProfile?.paypalEmail) {
+          // Pay via PayPal
+          const payout = await createSinglePayout(
+            cleaner.cleanerProfile.paypalEmail,
+            totalAmount,
+            currency,
+            `payout_${cleanerId}_${Date.now()}`,
+            `Servantana earnings for ${earnings.length} booking(s)`
+          );
+
+          payoutMethod = "paypal";
+          externalPayoutId = payout.batch_header.payout_batch_id;
+        } else {
+          // No payment method configured
+          results.push({
+            cleanerId,
+            cleanerName,
+            amount: totalAmount,
+            currency,
+            method: "skipped",
+            success: false,
+            error: "No payment method configured (need Stripe or PayPal)",
+          });
+          continue;
+        }
+
+        // Create payout record
+        const payout = await prisma.payout.create({
+          data: {
+            cleanerId,
+            amount: totalAmount,
+            currency,
+            status: "PROCESSING",
+            payoutMethod,
+            stripePayoutId: payoutMethod === "stripe" ? externalPayoutId : null,
+            processedAt: new Date(),
+          },
+        });
+
+        // Update earnings to link to payout and mark as paid out
+        await prisma.earning.updateMany({
+          where: { id: { in: earnings.map((e) => e.id) } },
+          data: {
+            status: "PAID_OUT",
+            payoutId: payout.id,
+          },
+        });
+
+        // Mark payout as completed
+        await prisma.payout.update({
+          where: { id: payout.id },
+          data: { status: "COMPLETED" },
+        });
+
+        results.push({
+          cleanerId,
+          cleanerName,
+          amount: totalAmount,
+          currency,
+          method: payoutMethod,
+          success: true,
+          payoutId: payout.id,
+        });
+      } catch (error) {
+        console.error(`Payout failed for cleaner ${cleanerId}:`, error);
+        results.push({
+          cleanerId,
+          cleanerName,
+          amount: totalAmount,
+          currency,
+          method: "skipped",
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    const successCount = results.filter((r) => r.success).length;
+    const totalPaid = results
+      .filter((r) => r.success)
+      .reduce((sum, r) => sum + r.amount, 0);
+
+    return NextResponse.json({
+      message: `Processed ${successCount}/${results.length} payouts`,
+      processed: successCount,
+      failed: results.length - successCount,
+      totalPaid,
+      results,
+    });
+  } catch (error) {
+    console.error("Error processing payouts:", error);
+    return NextResponse.json(
+      { error: "Failed to process payouts" },
       { status: 500 }
     );
   }

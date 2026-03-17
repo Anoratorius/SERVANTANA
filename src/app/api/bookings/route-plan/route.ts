@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 interface BookingWithCoords {
   id: string;
-  address: string;
+  address: string | null;
   city: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -20,7 +19,7 @@ interface BookingWithCoords {
   };
   service: {
     name: string;
-  };
+  } | null;
 }
 
 // Calculate distance between two coordinates using Haversine formula
@@ -108,7 +107,7 @@ function optimizeRoute(
 // GET - Fetch today's bookings optimized for route
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

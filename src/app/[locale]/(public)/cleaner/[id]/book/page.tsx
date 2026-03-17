@@ -82,7 +82,6 @@ export default function BookingPage({
   const [isRebooking, setIsRebooking] = useState(false);
 
   // Form state
-  const [selectedService, setSelectedService] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [selectedDuration, setSelectedDuration] = useState<number>(1);
@@ -108,10 +107,6 @@ export default function BookingPage({
         }
         const data = await response.json();
         setCleaner(data.cleaner);
-        // Auto-select first service
-        if (data.cleaner?.cleanerProfile?.services?.length > 0) {
-          setSelectedService(data.cleaner.cleanerProfile.services[0].service.id);
-        }
       } catch {
         setError("Failed to load cleaner");
       } finally {
@@ -132,7 +127,6 @@ export default function BookingPage({
           const data = await response.json();
           const booking = data.booking;
           if (booking) {
-            setSelectedService(booking.service?.id || "");
             setAddress(booking.address || "");
             setCity(booking.city || "");
             setPostalCode(booking.postalCode || "");
@@ -146,13 +140,7 @@ export default function BookingPage({
     fetchPreviousBooking();
   }, [rebookId]);
 
-  const selectedServiceData = cleaner?.cleanerProfile?.services.find(
-    (s) => s.service.id === selectedService
-  );
-
-  const hourlyRate = selectedServiceData
-    ? selectedServiceData.customPrice ?? selectedServiceData.service.basePrice
-    : 0;
+  const hourlyRate = cleaner?.cleanerProfile?.hourlyRate ?? 0;
 
   const totalPrice = hourlyRate * selectedDuration;
 
@@ -169,7 +157,7 @@ export default function BookingPage({
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!selectedService || !selectedDate || !selectedTime) {
+    if (!selectedDate || !selectedTime) {
       return;
     }
 
@@ -180,7 +168,6 @@ export default function BookingPage({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cleanerId: id,
-          serviceId: selectedService,
           scheduledDate: selectedDate,
           scheduledTime: selectedTime,
           duration: selectedDuration * 60,
@@ -401,7 +388,7 @@ export default function BookingPage({
                     type="submit"
                     size="lg"
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                    disabled={!selectedService || !selectedDate || !selectedTime || isSubmitting}
+                    disabled={!selectedDate || !selectedTime || isSubmitting}
                   >
                     {isSubmitting ? t("common.loading") : t("booking.confirmBooking")}
                   </Button>
@@ -441,53 +428,47 @@ export default function BookingPage({
 
                     {/* Booking Details */}
                     <div className="space-y-3 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t("booking.service")}</span>
-                        <span className="font-medium text-right">
-                          {selectedServiceData
-                            ? t(`cleaner.services.${selectedServiceData.service.name}` as Parameters<typeof t>[0])
-                            : "-"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Date</span>
                         <span className="font-medium">
                           {selectedDate
-                            ? new Date(selectedDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
+                            ? new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
                             : "-"}
                         </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Time</span>
                         <span className="font-medium">
                           {selectedTime || "-"}
                         </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">{t("booking.duration")}</span>
                         <span className="font-medium">
                           {selectedDuration} {selectedDuration === 1 ? "hour" : "hours"}
                         </span>
                       </div>
                       {address && (
-                        <div className="flex justify-between">
+                        <div className="flex flex-col gap-1">
                           <span className="text-muted-foreground">Location</span>
-                          <span className="font-medium text-right max-w-[150px] truncate">
-                            {city ? `${address}, ${city}` : address}
+                          <span className="font-medium">
+                            {address}{city && `, ${city}`}{postalCode && ` ${postalCode}`}
                           </span>
                         </div>
                       )}
                     </div>
 
                     {/* Price Calculation */}
-                    <div className="pt-4 border-t space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          ${hourlyRate}/hr × {selectedDuration} {selectedDuration === 1 ? "hour" : "hours"}
-                        </span>
-                        <span className="font-medium">${totalPrice}</span>
+                    <div className="pt-4 border-t space-y-3">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Rate</span>
+                        <span className="font-medium">${hourlyRate}/hr</span>
                       </div>
-                      <div className="flex justify-between items-center pt-2 border-t">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Duration</span>
+                        <span className="font-medium">{selectedDuration} {selectedDuration === 1 ? "hour" : "hours"}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-3 border-t">
                         <span className="font-semibold text-lg">{t("booking.total")}</span>
                         <span className="text-2xl font-bold text-green-600">
                           ${totalPrice}
@@ -500,7 +481,7 @@ export default function BookingPage({
                       type="button"
                       size="lg"
                       className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hidden lg:flex"
-                      disabled={!selectedService || !selectedDate || !selectedTime || isSubmitting}
+                      disabled={!selectedDate || !selectedTime || isSubmitting}
                       onClick={() => handleSubmit()}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />

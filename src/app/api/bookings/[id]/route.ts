@@ -33,6 +33,12 @@ export async function GET(
             lastName: true,
             avatar: true,
             email: true,
+            cleanerProfile: {
+              select: {
+                stripeAccountId: true,
+                stripeOnboardingComplete: true,
+              },
+            },
           },
         },
         service: {
@@ -65,7 +71,13 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    return NextResponse.json({ booking });
+    // Check if cleaner has Stripe Connect set up
+    const cleanerHasStripe = Boolean(
+      booking.cleaner.cleanerProfile?.stripeAccountId &&
+      booking.cleaner.cleanerProfile?.stripeOnboardingComplete
+    );
+
+    return NextResponse.json({ booking, cleanerHasStripe });
   } catch (error) {
     console.error("Error fetching booking:", error);
     return NextResponse.json(

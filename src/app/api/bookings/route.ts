@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!cleanerId || !serviceId || !scheduledDate || !scheduledTime || !address) {
+    if (!cleanerId || !scheduledDate || !scheduledTime) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -112,16 +112,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify service exists
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-    });
+    // Verify service exists (if provided)
+    let service = null;
+    if (serviceId) {
+      service = await prisma.service.findUnique({
+        where: { id: serviceId },
+      });
 
-    if (!service) {
-      return NextResponse.json(
-        { error: "Service not found" },
-        { status: 404 }
-      );
+      if (!service) {
+        return NextResponse.json(
+          { error: "Service not found" },
+          { status: 404 }
+        );
+      }
     }
 
     // Create booking
@@ -129,15 +132,15 @@ export async function POST(request: NextRequest) {
       data: {
         customerId: session.user.id,
         cleanerId,
-        serviceId,
+        serviceId: serviceId || null,
         scheduledDate: new Date(scheduledDate),
         scheduledTime,
-        duration: duration || service.duration,
-        address,
+        duration: duration || 60,
+        address: address || null,
         city: city || null,
         postalCode: postalCode || null,
         notes: notes || null,
-        totalPrice: totalPrice || service.basePrice,
+        totalPrice: totalPrice || 0,
         status: BookingStatus.PENDING,
       },
       include: {

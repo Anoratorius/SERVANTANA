@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
     }>();
 
     for (const booking of bookings) {
+      if (!booking.serviceId || !booking.service) continue;
       const key = booking.serviceId;
       const existing = serviceStats.get(key) || {
         serviceId: booking.serviceId,
