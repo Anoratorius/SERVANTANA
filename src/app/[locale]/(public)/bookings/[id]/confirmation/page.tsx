@@ -384,13 +384,10 @@ export default function BookingConfirmationPage({
                 </div>
 
                 <div className="pt-4 border-t flex justify-between items-center">
-                  <span className="text-muted-foreground">Total</span>
+                  <span className="text-muted-foreground">Total (incl. service fee)</span>
                   <span className={`text-2xl font-bold ${isPaid ? "text-green-600" : "text-amber-600"}`}>
                     {booking.currency === "EUR" ? "€" : "$"}
-                    {fees
-                      ? fees.customerTotal.toFixed(2)
-                      : calculateTotalWithFees(booking.totalPrice).toFixed(2)
-                    }
+                    {calculateTotalWithFees(booking.totalPrice).toFixed(2)}
                   </span>
                 </div>
 
