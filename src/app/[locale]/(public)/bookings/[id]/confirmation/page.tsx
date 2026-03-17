@@ -379,7 +379,12 @@ export default function BookingConfirmationPage({
                 <div className="pt-4 border-t flex justify-between items-center">
                   <span className="text-muted-foreground">Total</span>
                   <span className={`text-2xl font-bold ${isPaid ? "text-green-600" : "text-amber-600"}`}>
-                    ${booking.totalPrice}
+                    {isPaid && booking.payment
+                      ? `${booking.currency === "EUR" ? "€" : "$"}${booking.payment.amount.toFixed(2)}`
+                      : fees
+                        ? fees.formatted.customerPays
+                        : `${booking.currency === "EUR" ? "€" : "$"}${booking.totalPrice.toFixed(2)}`
+                    }
                   </span>
                 </div>
 
