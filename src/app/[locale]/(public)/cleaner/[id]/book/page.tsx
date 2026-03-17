@@ -141,8 +141,15 @@ export default function BookingPage({
   }, [rebookId]);
 
   const hourlyRate = cleaner?.cleanerProfile?.hourlyRate ?? 0;
+  const currency = cleaner?.cleanerProfile?.currency ?? "EUR";
 
-  const totalPrice = hourlyRate * selectedDuration;
+  const basePrice = hourlyRate * selectedDuration;
+
+  // Platform fees: €0.99 fixed + 2.5% of base price
+  const fixedFee = 0.99;
+  const percentageFee = Math.round(basePrice * 0.025 * 100) / 100;
+  const serviceFee = fixedFee + percentageFee;
+  const totalPrice = Math.round((basePrice + serviceFee) * 100) / 100;
 
   // Generate available time slots
   const timeSlots = [
@@ -175,7 +182,7 @@ export default function BookingPage({
           city,
           postalCode,
           notes,
-          totalPrice: totalPrice,
+          totalPrice: basePrice, // Base price - fees added at checkout
         }),
       });
 
@@ -462,16 +469,24 @@ export default function BookingPage({
                     <div className="pt-4 border-t space-y-3">
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Rate</span>
-                        <span className="font-medium">${hourlyRate}/hr</span>
+                        <span className="font-medium">{currency === "EUR" ? "€" : "$"}{hourlyRate}/hr</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Duration</span>
                         <span className="font-medium">{selectedDuration} {selectedDuration === 1 ? "hour" : "hours"}</span>
                       </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="font-medium">{currency === "EUR" ? "€" : "$"}{basePrice.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Service fee</span>
+                        <span className="font-medium">{currency === "EUR" ? "€" : "$"}{serviceFee.toFixed(2)}</span>
+                      </div>
                       <div className="flex justify-between items-center pt-3 border-t">
                         <span className="font-semibold text-lg">{t("booking.total")}</span>
                         <span className="text-2xl font-bold text-green-600">
-                          ${totalPrice}
+                          {currency === "EUR" ? "€" : "$"}{totalPrice.toFixed(2)}
                         </span>
                       </div>
                     </div>
