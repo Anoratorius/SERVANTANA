@@ -2,6 +2,13 @@
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
+// Direct fee calculation (€0.99 fixed + 2.5%)
+function calculateTotalWithFees(basePrice: number): number {
+  const fixedFee = 0.99;
+  const percentageFee = Math.round(basePrice * 0.025 * 100) / 100;
+  return Math.round((basePrice + fixedFee + percentageFee) * 100) / 100;
+}
+
 import { useEffect, useState, use, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -379,9 +386,10 @@ export default function BookingConfirmationPage({
                 <div className="pt-4 border-t flex justify-between items-center">
                   <span className="text-muted-foreground">Total</span>
                   <span className={`text-2xl font-bold ${isPaid ? "text-green-600" : "text-amber-600"}`}>
+                    {booking.currency === "EUR" ? "€" : "$"}
                     {fees
-                      ? fees.formatted.customerPays
-                      : `${booking.currency === "EUR" ? "€" : "$"}${booking.totalPrice.toFixed(2)}`
+                      ? fees.customerTotal.toFixed(2)
+                      : calculateTotalWithFees(booking.totalPrice).toFixed(2)
                     }
                   </span>
                 </div>
