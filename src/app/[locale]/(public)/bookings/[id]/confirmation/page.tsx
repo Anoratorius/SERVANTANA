@@ -109,8 +109,8 @@ export default function BookingConfirmationPage({
         const data = await response.json();
         setBooking(data.booking);
 
-        // Fetch fee breakdown
-        if (data.booking && data.booking.payment?.status !== "SUCCEEDED") {
+        // Always fetch fee breakdown (for both paid and unpaid)
+        if (data.booking) {
           const feesRes = await fetch(
             `/api/fees?price=${data.booking.totalPrice}&currency=${data.booking.currency || "EUR"}`
           );
@@ -379,11 +379,9 @@ export default function BookingConfirmationPage({
                 <div className="pt-4 border-t flex justify-between items-center">
                   <span className="text-muted-foreground">Total</span>
                   <span className={`text-2xl font-bold ${isPaid ? "text-green-600" : "text-amber-600"}`}>
-                    {isPaid && booking.payment
-                      ? `${booking.currency === "EUR" ? "€" : "$"}${booking.payment.amount.toFixed(2)}`
-                      : fees
-                        ? fees.formatted.customerPays
-                        : `${booking.currency === "EUR" ? "€" : "$"}${booking.totalPrice.toFixed(2)}`
+                    {fees
+                      ? fees.formatted.customerPays
+                      : `${booking.currency === "EUR" ? "€" : "$"}${booking.totalPrice.toFixed(2)}`
                     }
                   </span>
                 </div>
