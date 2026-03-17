@@ -60,6 +60,7 @@ interface Booking {
   id: string;
   scheduledDate: string;
   scheduledTime: string;
+  duration: number;
   address: string | null;
   city: string | null;
   totalPrice: number;
@@ -354,6 +355,21 @@ export default function BookingConfirmationPage({
                     </div>
                   </div>
 
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                      <Clock className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Duration</p>
+                      <p className="font-medium">
+                        {booking.duration >= 60
+                          ? `${Math.floor(booking.duration / 60)} hour${Math.floor(booking.duration / 60) > 1 ? 's' : ''}${booking.duration % 60 > 0 ? ` ${booking.duration % 60} min` : ''}`
+                          : `${booking.duration} minutes`
+                        }
+                      </p>
+                    </div>
+                  </div>
+
                   {(booking.address || booking.city) && (
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -371,7 +387,7 @@ export default function BookingConfirmationPage({
 
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <Clock className="h-5 w-5 text-green-600" />
+                      <CheckCircle className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Cleaner</p>
