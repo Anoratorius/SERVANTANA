@@ -13,9 +13,17 @@ import {
   Sparkles,
   MessageCircle,
   AlertCircle,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // Web Speech API types
 interface SpeechRecognitionEvent extends Event {
@@ -85,12 +93,19 @@ const translations = {
     error: "Sorry, there was an error. Please try again.",
     micNotSupported: "Voice input not supported in this browser. Please use Chrome or Edge.",
     micPermissionDenied: "Microphone permission denied.",
-    micResetInstructions: "Click the lock icon in the address bar to reset permissions.",
     micPermissionGranted: "Microphone access granted!",
     micError: "Could not access microphone. Please try again.",
     searchingText: "Searching for cleaners...",
     speakNow: "Speak now...",
     noSpeechDetected: "No speech detected. Please try again.",
+    permissionNeededTitle: "Microphone Access Needed",
+    permissionNeededDesc: "To use voice input, please allow microphone access in your browser.",
+    permissionStep1: "Click the camera/microphone icon in your browser's address bar",
+    permissionStep2: "Select \"Allow\" for microphone",
+    permissionStep3: "Click the microphone button again",
+    permissionAlt: "Or simply type your request below!",
+    tryAgain: "Try Again",
+    gotIt: "Got it",
   },
   de: {
     title: "KI-Assistent",
@@ -101,12 +116,19 @@ const translations = {
     error: "Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut.",
     micNotSupported: "Spracheingabe wird in diesem Browser nicht unterstützt. Bitte verwenden Sie Chrome oder Edge.",
     micPermissionDenied: "Mikrofonberechtigung verweigert.",
-    micResetInstructions: "Klicken Sie auf das Schloss-Symbol in der Adressleiste, um die Berechtigungen zurückzusetzen.",
     micPermissionGranted: "Mikrofonzugriff gewährt!",
     micError: "Konnte nicht auf das Mikrofon zugreifen. Bitte versuchen Sie es erneut.",
     searchingText: "Suche nach Reinigern...",
     speakNow: "Sprechen Sie jetzt...",
     noSpeechDetected: "Keine Sprache erkannt. Bitte versuchen Sie es erneut.",
+    permissionNeededTitle: "Mikrofonzugriff erforderlich",
+    permissionNeededDesc: "Um die Spracheingabe zu nutzen, erlauben Sie bitte den Mikrofonzugriff in Ihrem Browser.",
+    permissionStep1: "Klicken Sie auf das Kamera-/Mikrofonsymbol in der Adressleiste",
+    permissionStep2: "Wählen Sie \"Zulassen\" für das Mikrofon",
+    permissionStep3: "Klicken Sie erneut auf die Mikrofontaste",
+    permissionAlt: "Oder geben Sie einfach Ihre Anfrage unten ein!",
+    tryAgain: "Erneut versuchen",
+    gotIt: "Verstanden",
   },
 };
 
@@ -119,6 +141,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
   const [isListening, setIsListening] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
 
@@ -152,18 +175,6 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       return;
     }
 
-    // Check current permission status first
-    try {
-      const permissionStatus = await navigator.permissions.query({ name: "microphone" as PermissionName });
-
-      if (permissionStatus.state === "denied") {
-        toast.error(t.micPermissionDenied + " " + t.micResetInstructions);
-        return;
-      }
-    } catch {
-      // permissions.query might not be supported, continue anyway
-    }
-
     // Request microphone permission - this will show the browser popup
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -171,12 +182,13 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       toast.success(t.micPermissionGranted);
     } catch (err) {
       console.error("Microphone permission error:", err);
-      toast.error(t.micPermissionDenied);
+      // Show friendly dialog instead of technical error
+      setShowPermissionDialog(true);
       return;
     }
 
     // Small delay to let user see the success message
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     const recognition = new SpeechRecognitionClass() as SpeechRecognitionInstance;
     recognition.continuous = false;
@@ -201,7 +213,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       setIsListening(false);
 
       if (event.error === "not-allowed") {
-        toast.error(t.micPermissionDenied);
+        setShowPermissionDialog(true);
       } else if (event.error === "no-speech") {
         toast.info(t.noSpeechDetected);
       } else if (event.error === "aborted") {
@@ -413,6 +425,63 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
           )}
         </div>
       </CardContent>
+
+      {/* Permission Help Dialog */}
+      <Dialog open={showPermissionDialog} onOpenChange={setShowPermissionDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mic className="h-5 w-5 text-purple-500" />
+              {t.permissionNeededTitle}
+            </DialogTitle>
+            <DialogDescription>{t.permissionNeededDesc}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-100 text-purple-600 text-sm font-bold shrink-0">
+                  1
+                </div>
+                <p className="text-sm">{t.permissionStep1}</p>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-100 text-purple-600 text-sm font-bold shrink-0">
+                  2
+                </div>
+                <p className="text-sm">{t.permissionStep2}</p>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-100 text-purple-600 text-sm font-bold shrink-0">
+                  3
+                </div>
+                <p className="text-sm">{t.permissionStep3}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg text-blue-700">
+              <Settings className="h-4 w-4 shrink-0" />
+              <p className="text-sm">{t.permissionAlt}</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowPermissionDialog(false)}
+              className="flex-1"
+            >
+              {t.gotIt}
+            </Button>
+            <Button
+              onClick={() => {
+                setShowPermissionDialog(false);
+                startListening();
+              }}
+              className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500"
+            >
+              {t.tryAgain}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
