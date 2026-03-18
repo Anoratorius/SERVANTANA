@@ -9,8 +9,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Mic, Bell, MapPin, Check, X, Sparkles } from "lucide-react";
+import { Mic, Bell, MapPin, Check, X, Sparkles, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const STORAGE_KEY = "servantana-onboarding-complete";
 
@@ -38,6 +39,9 @@ const translations = {
     granted: "Enabled",
     denied: "Blocked",
     later: "Maybe Later",
+    reset: "Reset",
+    resetInstructions: "To enable: tap the lock icon (🔒) in your browser's address bar, then allow the permission.",
+    tryAgain: "Try Again",
   },
   de: {
     welcomeTitle: "Willkommen bei Servantana!",
@@ -54,6 +58,9 @@ const translations = {
     granted: "Aktiviert",
     denied: "Blockiert",
     later: "Vielleicht später",
+    reset: "Zurücksetzen",
+    resetInstructions: "Zum Aktivieren: Tippen Sie auf das Schloss-Symbol (🔒) in der Adressleiste und erlauben Sie die Berechtigung.",
+    tryAgain: "Erneut versuchen",
   },
 };
 
@@ -182,20 +189,24 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     return null;
   };
 
+  const showResetInstructions = () => {
+    toast.info(t.resetInstructions, { duration: 8000 });
+  };
+
   const getButtonState = (status: PermissionStatus, type: string) => {
     if (isLoading === type) {
-      return { disabled: true, text: "..." };
+      return { disabled: true, text: "...", action: () => {} };
     }
     if (status === "granted") {
-      return { disabled: true, text: t.granted };
+      return { disabled: true, text: t.granted, action: () => {} };
     }
     if (status === "denied") {
-      return { disabled: true, text: t.denied };
+      return { disabled: false, text: t.reset, action: showResetInstructions };
     }
     if (status === "unsupported") {
-      return { disabled: true, text: "N/A" };
+      return { disabled: true, text: "N/A", action: () => {} };
     }
-    return { disabled: false, text: t.allow };
+    return { disabled: false, text: t.allow, action: () => {} };
   };
 
   const allHandled =
@@ -232,14 +243,15 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
               {getStatusIcon(permissions.microphone)}
               <Button
                 size="sm"
-                onClick={requestMicrophone}
+                onClick={permissions.microphone === "denied" ? showResetInstructions : requestMicrophone}
                 disabled={getButtonState(permissions.microphone, "microphone").disabled}
                 className={cn(
                   "min-w-[80px]",
                   permissions.microphone === "granted" && "bg-green-500 hover:bg-green-500",
-                  permissions.microphone === "denied" && "bg-red-500 hover:bg-red-500"
+                  permissions.microphone === "denied" && "bg-orange-500 hover:bg-orange-600"
                 )}
               >
+                {permissions.microphone === "denied" && <Settings className="h-3 w-3 mr-1" />}
                 {getButtonState(permissions.microphone, "microphone").text}
               </Button>
             </div>
@@ -260,14 +272,15 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
               {getStatusIcon(permissions.notifications)}
               <Button
                 size="sm"
-                onClick={requestNotifications}
+                onClick={permissions.notifications === "denied" ? showResetInstructions : requestNotifications}
                 disabled={getButtonState(permissions.notifications, "notifications").disabled}
                 className={cn(
                   "min-w-[80px]",
                   permissions.notifications === "granted" && "bg-green-500 hover:bg-green-500",
-                  permissions.notifications === "denied" && "bg-red-500 hover:bg-red-500"
+                  permissions.notifications === "denied" && "bg-orange-500 hover:bg-orange-600"
                 )}
               >
+                {permissions.notifications === "denied" && <Settings className="h-3 w-3 mr-1" />}
                 {getButtonState(permissions.notifications, "notifications").text}
               </Button>
             </div>
@@ -288,14 +301,15 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
               {getStatusIcon(permissions.location)}
               <Button
                 size="sm"
-                onClick={requestLocation}
+                onClick={permissions.location === "denied" ? showResetInstructions : requestLocation}
                 disabled={getButtonState(permissions.location, "location").disabled}
                 className={cn(
                   "min-w-[80px]",
                   permissions.location === "granted" && "bg-green-500 hover:bg-green-500",
-                  permissions.location === "denied" && "bg-red-500 hover:bg-red-500"
+                  permissions.location === "denied" && "bg-orange-500 hover:bg-orange-600"
                 )}
               >
+                {permissions.location === "denied" && <Settings className="h-3 w-3 mr-1" />}
                 {getButtonState(permissions.location, "location").text}
               </Button>
             </div>

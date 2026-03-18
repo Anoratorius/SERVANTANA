@@ -10,16 +10,62 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-function getInitialInstallState() {
+// Check if app is installed as PWA
+function checkIfInstalled(): boolean {
   if (typeof window === "undefined") return false;
-  return window.matchMedia("(display-mode: standalone)").matches;
+
+  // Check standard PWA standalone mode
+  if (window.matchMedia("(display-mode: standalone)").matches) return true;
+
+  // Check iOS Safari standalone mode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((window.navigator as any).standalone === true) return true;
+
+  // Check if launched from home screen (Android TWA)
+  if (document.referrer.includes("android-app://")) return true;
+
+  // Check localStorage flag (set when user installs)
+  if (localStorage.getItem("pwa-installed") === "true") return true;
+
+  return false;
 }
 
 export function InstallPrompt() {
   const t = useTranslations();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(getInitialInstallState);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  // Check installed state on mount and listen for changes
+  useEffect(() => {
+    // Initial check
+    setIsInstalled(checkIfInstalled());
+
+    // Listen for display mode changes
+    const mediaQuery = window.matchMedia("(display-mode: standalone)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        setIsInstalled(true);
+        localStorage.setItem("pwa-installed", "true");
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    // Listen for app installed event
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      localStorage.setItem("pwa-installed", "true");
+      setShowPrompt(false);
+    };
+
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
 
   useEffect(() => {
     // Skip if already installed
@@ -29,8 +75,8 @@ export function InstallPrompt() {
     const dismissed = localStorage.getItem("pwa-install-dismissed");
     if (dismissed) {
       const dismissedTime = parseInt(dismissed, 10);
-      // Don't show for 24 hours after dismissal
-      if (Date.now() - dismissedTime < 24 * 60 * 60 * 1000) {
+      // Don't show for 7 days after dismissal
+      if (Date.now() - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
         return;
       }
     }
@@ -70,6 +116,7 @@ export function InstallPrompt() {
 
     if (outcome === "accepted") {
       setIsInstalled(true);
+      localStorage.setItem("pwa-installed", "true");
     }
 
     setDeferredPrompt(null);
