@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -57,6 +53,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Initialize Anthropic client
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+
     // Get available services for context
     const services = await prisma.service.findMany({
       where: { isActive: true },
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     const serviceNames = services.map((s) => s.name).join(", ");
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 500,
       system: `${SYSTEM_PROMPT}\n\nAvailable services: ${serviceNames}\n\nRespond in ${locale === "de" ? "German" : "English"}.`,
       messages: messages.map((m: Message) => ({
