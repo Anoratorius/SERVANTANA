@@ -159,12 +159,24 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Initialize with greeting when opened
+  // Initialize with greeting and request mic permission when opened
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([{ role: "assistant", content: t.greeting }]);
+
+      // Request microphone permission immediately when chat opens
+      if (isSupported) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            stream.getTracks().forEach(track => track.stop());
+            toast.success(t.micPermissionGranted);
+          })
+          .catch(() => {
+            // Silent fail - user can still type
+          });
+      }
     }
-  }, [isOpen, messages.length, t.greeting]);
+  }, [isOpen, messages.length, t.greeting, isSupported, t.micPermissionGranted]);
 
   const startListening = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
