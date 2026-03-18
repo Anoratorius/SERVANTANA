@@ -53,6 +53,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check API key
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { error: "ANTHROPIC_API_KEY not configured" },
+        { status: 500 }
+      );
+    }
+
     // Initialize Anthropic client
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
@@ -104,8 +112,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("AI Assistant error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to process request" },
+      { error: "Failed to process request", details: errorMessage },
       { status: 500 }
     );
   }
