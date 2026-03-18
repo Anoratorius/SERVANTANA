@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
+import { VoiceAssistant } from "@/components/search/VoiceAssistant";
+import { toast } from "sonner";
 
 interface Service {
   id: string;
@@ -60,6 +62,7 @@ interface Cleaner {
 
 function SearchContent() {
   const t = useTranslations();
+  const locale = useLocale();
   const searchParams = useSearchParams();
 
   const [cleaners, setCleaners] = useState<Cleaner[]>([]);
@@ -74,6 +77,27 @@ function SearchContent() {
   const [maxPrice, setMaxPrice] = useState(searchParams.get("price") || "any");
   const [ecoFriendly, setEcoFriendly] = useState(searchParams.get("eco") === "true");
   const [petFriendly, setPetFriendly] = useState(searchParams.get("pet") === "true");
+
+  // Handle AI assistant search params
+  const handleAISearchParams = (params: {
+    ready: boolean;
+    serviceType?: string;
+    location?: string;
+    date?: string;
+    duration?: number;
+  }) => {
+    if (params.location) {
+      setLocation(params.location);
+    }
+    if (params.serviceType) {
+      setServiceFilter(params.serviceType);
+    }
+    toast.success(
+      locale === "de"
+        ? "Suche wird mit Ihren Kriterien aktualisiert..."
+        : "Updating search with your criteria..."
+    );
+  };
 
   // Auto-detect location via IP on mount
   useEffect(() => {
@@ -227,6 +251,9 @@ function SearchContent() {
       </main>
 
       <Footer />
+
+      {/* AI Voice Assistant */}
+      <VoiceAssistant onSearchParams={handleAISearchParams} locale={locale} />
     </div>
   );
 }

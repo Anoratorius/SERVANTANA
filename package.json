@@ -17,6 +17,7 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.79.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@hookform/resolvers": "^5.2.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
