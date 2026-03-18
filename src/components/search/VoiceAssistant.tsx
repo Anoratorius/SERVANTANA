@@ -84,9 +84,13 @@ const translations = {
     listening: "Listening...",
     error: "Sorry, there was an error. Please try again.",
     micNotSupported: "Voice input not supported in this browser. Please use Chrome or Edge.",
-    micPermissionDenied: "Microphone permission denied. Please allow microphone access.",
+    micPermissionDenied: "Microphone permission denied.",
+    micResetInstructions: "Click the lock icon in the address bar to reset permissions.",
+    micPermissionGranted: "Microphone access granted!",
     micError: "Could not access microphone. Please try again.",
     searchingText: "Searching for cleaners...",
+    speakNow: "Speak now...",
+    noSpeechDetected: "No speech detected. Please try again.",
   },
   de: {
     title: "KI-Assistent",
@@ -96,9 +100,13 @@ const translations = {
     listening: "Ich höre zu...",
     error: "Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut.",
     micNotSupported: "Spracheingabe wird in diesem Browser nicht unterstützt. Bitte verwenden Sie Chrome oder Edge.",
-    micPermissionDenied: "Mikrofonberechtigung verweigert. Bitte erlauben Sie den Mikrofonzugriff.",
+    micPermissionDenied: "Mikrofonberechtigung verweigert.",
+    micResetInstructions: "Klicken Sie auf das Schloss-Symbol in der Adressleiste, um die Berechtigungen zurückzusetzen.",
+    micPermissionGranted: "Mikrofonzugriff gewährt!",
     micError: "Konnte nicht auf das Mikrofon zugreifen. Bitte versuchen Sie es erneut.",
     searchingText: "Suche nach Reinigern...",
+    speakNow: "Sprechen Sie jetzt...",
+    noSpeechDetected: "Keine Sprache erkannt. Bitte versuchen Sie es erneut.",
   },
 };
 
@@ -144,15 +152,31 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       return;
     }
 
-    // Check microphone permission
+    // Check current permission status first
+    try {
+      const permissionStatus = await navigator.permissions.query({ name: "microphone" as PermissionName });
+
+      if (permissionStatus.state === "denied") {
+        toast.error(t.micPermissionDenied + " " + t.micResetInstructions);
+        return;
+      }
+    } catch {
+      // permissions.query might not be supported, continue anyway
+    }
+
+    // Request microphone permission - this will show the browser popup
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(track => track.stop()); // Stop the stream after permission check
+      stream.getTracks().forEach(track => track.stop()); // Stop the stream after permission granted
+      toast.success(t.micPermissionGranted);
     } catch (err) {
       console.error("Microphone permission error:", err);
       toast.error(t.micPermissionDenied);
       return;
     }
+
+    // Small delay to let user see the success message
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     const recognition = new SpeechRecognitionClass() as SpeechRecognitionInstance;
     recognition.continuous = false;
@@ -161,6 +185,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
 
     recognition.onstart = () => {
       setIsListening(true);
+      toast.info(t.speakNow);
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
@@ -178,7 +203,9 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       if (event.error === "not-allowed") {
         toast.error(t.micPermissionDenied);
       } else if (event.error === "no-speech") {
-        // User didn't speak, just silently stop
+        toast.info(t.noSpeechDetected);
+      } else if (event.error === "aborted") {
+        // User stopped, no error needed
       } else {
         toast.error(t.micError);
       }
