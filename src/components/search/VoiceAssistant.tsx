@@ -67,7 +67,6 @@ interface VoiceAssistantProps {
 }
 
 export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) {
-  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
