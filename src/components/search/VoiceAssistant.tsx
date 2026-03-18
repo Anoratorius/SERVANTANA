@@ -12,8 +12,10 @@ import {
   Loader2,
   Sparkles,
   MessageCircle,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 // Web Speech API types
 interface SpeechRecognitionEvent extends Event {
@@ -36,16 +38,22 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
 interface SpeechRecognitionInstance {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
   onstart: (() => void) | null;
   onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onerror: ((event: Event) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
   onend: (() => void) | null;
   start: () => void;
   stop: () => void;
+  abort: () => void;
 }
 
 interface Message {
@@ -66,7 +74,37 @@ interface VoiceAssistantProps {
   locale: string;
 }
 
+// Translations
+const translations = {
+  en: {
+    title: "AI Assistant",
+    subtitle: "Speak or type to find a cleaner",
+    greeting: "Hi! I'll help you find the perfect cleaning service. What are you looking for? You can type or use the microphone.",
+    placeholder: "Describe what you need...",
+    listening: "Listening...",
+    error: "Sorry, there was an error. Please try again.",
+    micNotSupported: "Voice input not supported in this browser. Please use Chrome or Edge.",
+    micPermissionDenied: "Microphone permission denied. Please allow microphone access.",
+    micError: "Could not access microphone. Please try again.",
+    searchingText: "Searching for cleaners...",
+  },
+  de: {
+    title: "KI-Assistent",
+    subtitle: "Sprechen oder tippen Sie, um einen Reiniger zu finden",
+    greeting: "Hallo! Ich helfe Ihnen, den perfekten Reinigungsservice zu finden. Was suchen Sie? Sie können tippen oder das Mikrofon verwenden.",
+    placeholder: "Beschreiben Sie, was Sie brauchen...",
+    listening: "Ich höre zu...",
+    error: "Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut.",
+    micNotSupported: "Spracheingabe wird in diesem Browser nicht unterstützt. Bitte verwenden Sie Chrome oder Edge.",
+    micPermissionDenied: "Mikrofonberechtigung verweigert. Bitte erlauben Sie den Mikrofonzugriff.",
+    micError: "Konnte nicht auf das Mikrofon zugreifen. Bitte versuchen Sie es erneut.",
+    searchingText: "Suche nach Reinigern...",
+  },
+};
+
 export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) {
+  const t = translations[locale as keyof typeof translations] || translations.en;
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
@@ -78,10 +116,10 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
 
   // Check for speech recognition support
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognitionClass) {
-      setIsSupported(false);
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      setIsSupported(!!SpeechRecognitionClass);
     }
   }, []);
 
@@ -93,19 +131,26 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
   // Initialize with greeting when opened
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      const greeting =
-        locale === "de"
-          ? "Hallo! Ich helfe Ihnen, den perfekten Reinigungsservice zu finden. Was suchen Sie? Sie können tippen oder das Mikrofon verwenden."
-          : "Hi! I'll help you find the perfect cleaning service. What are you looking for? You can type or use the microphone.";
-      setMessages([{ role: "assistant", content: greeting }]);
+      setMessages([{ role: "assistant", content: t.greeting }]);
     }
-  }, [isOpen, messages.length, locale]);
+  }, [isOpen, messages.length, t.greeting]);
 
-  const startListening = () => {
+  const startListening = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognitionClass) {
+      toast.error(t.micNotSupported);
+      return;
+    }
+
+    // Check microphone permission
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop()); // Stop the stream after permission check
+    } catch (err) {
+      console.error("Microphone permission error:", err);
+      toast.error(t.micPermissionDenied);
       return;
     }
 
@@ -126,8 +171,17 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       handleSend(transcript);
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error("Speech recognition error:", event.error);
       setIsListening(false);
+
+      if (event.error === "not-allowed") {
+        toast.error(t.micPermissionDenied);
+      } else if (event.error === "no-speech") {
+        // User didn't speak, just silently stop
+      } else {
+        toast.error(t.micError);
+      }
     };
 
     recognition.onend = () => {
@@ -135,12 +189,18 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
+
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error("Failed to start recognition:", err);
+      toast.error(t.micError);
+    }
   };
 
   const stopListening = () => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      recognitionRef.current.abort();
       setIsListening(false);
     }
   };
@@ -177,19 +237,16 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
       // If search params are ready, trigger search
       if (data.searchParams?.ready) {
         setTimeout(() => {
+          toast.success(t.searchingText);
           onSearchParams(data.searchParams);
           setIsOpen(false);
         }, 1500);
       }
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage =
-        locale === "de"
-          ? "Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut."
-          : "Sorry, there was an error. Please try again.";
       setMessages([
         ...newMessages,
-        { role: "assistant", content: errorMessage },
+        { role: "assistant", content: t.error },
       ]);
     } finally {
       setIsLoading(false);
@@ -214,6 +271,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 z-50"
         size="icon"
+        title={t.title}
       >
         <Sparkles className="h-6 w-6" />
       </Button>
@@ -227,9 +285,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            <span className="font-semibold">
-              {locale === "de" ? "KI-Assistent" : "AI Assistant"}
-            </span>
+            <span className="font-semibold">{t.title}</span>
           </div>
           <Button
             variant="ghost"
@@ -240,11 +296,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
             <X className="h-5 w-5" />
           </Button>
         </div>
-        <p className="text-sm text-white/80 mt-1">
-          {locale === "de"
-            ? "Sprechen oder tippen Sie, um einen Reiniger zu finden"
-            : "Speak or type to find a cleaner"}
-        </p>
+        <p className="text-sm text-white/80 mt-1">{t.subtitle}</p>
       </div>
 
       {/* Messages */}
@@ -285,34 +337,36 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
 
         {/* Input */}
         <div className="p-4 border-t bg-white">
+          {!isSupported && (
+            <div className="flex items-center gap-2 text-amber-600 text-sm mb-3 p-2 bg-amber-50 rounded-lg">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{t.micNotSupported}</span>
+            </div>
+          )}
           <div className="flex gap-2">
-            {isSupported && (
-              <Button
-                variant={isListening ? "destructive" : "outline"}
-                size="icon"
-                onClick={isListening ? stopListening : startListening}
-                disabled={isLoading}
-                className={cn(
-                  "shrink-0",
-                  isListening && "animate-pulse"
-                )}
-              >
-                {isListening ? (
-                  <MicOff className="h-5 w-5" />
-                ) : (
-                  <Mic className="h-5 w-5" />
-                )}
-              </Button>
-            )}
+            <Button
+              variant={isListening ? "destructive" : "outline"}
+              size="icon"
+              onClick={isListening ? stopListening : startListening}
+              disabled={isLoading || !isSupported}
+              className={cn(
+                "shrink-0",
+                isListening && "animate-pulse",
+                !isSupported && "opacity-50 cursor-not-allowed"
+              )}
+              title={isSupported ? (isListening ? "Stop" : "Start voice input") : t.micNotSupported}
+            >
+              {isListening ? (
+                <MicOff className="h-5 w-5" />
+              ) : (
+                <Mic className="h-5 w-5" />
+              )}
+            </Button>
             <Input
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={
-                locale === "de"
-                  ? "Beschreiben Sie, was Sie brauchen..."
-                  : "Describe what you need..."
-              }
+              placeholder={t.placeholder}
               disabled={isLoading || isListening}
               className="flex-1"
             />
@@ -327,7 +381,7 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
           </div>
           {isListening && (
             <p className="text-center text-sm text-purple-600 mt-2 animate-pulse">
-              {locale === "de" ? "Ich höre zu..." : "Listening..."}
+              {t.listening}
             </p>
           )}
         </div>
