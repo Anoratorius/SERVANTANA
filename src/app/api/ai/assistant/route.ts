@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     const serviceNames = services.map((s) => s.name).join(", ");
 
     const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-latest",
+      model: "claude-instant-1.2",
       max_tokens: 500,
       system: `${SYSTEM_PROMPT}\n\nAvailable services: ${serviceNames}\n\nRespond in ${locale === "de" ? "German" : "English"}.`,
       messages: messages.map((m: Message) => ({
