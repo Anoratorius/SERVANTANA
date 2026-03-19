@@ -26,6 +26,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 import { toast } from "sonner";
 
 interface Service {
@@ -101,6 +102,7 @@ export default function CleanerProfilePage({
   const { id } = use(params);
   const t = useTranslations();
   const { data: session } = useSession();
+  const { formatPrice, formatPricePerHour } = useCurrency();
   const [cleaner, setCleaner] = useState<Cleaner | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -339,10 +341,8 @@ export default function CleanerProfilePage({
                 <CardContent className="p-6 text-center">
                   <div className="text-muted-foreground text-sm">{t("cleaner.profile.hourlyRate")}</div>
                   <div className="text-4xl font-bold mt-1 text-green-600">
-                    ${profile.hourlyRate}
-                    <span className="text-lg font-normal text-muted-foreground">/hr</span>
+                    {formatPricePerHour(profile.hourlyRate)}
                   </div>
-                  <div className="text-sm text-muted-foreground mt-2">{profile.currency}</div>
                 </CardContent>
               </Card>
             </div>
@@ -428,7 +428,7 @@ export default function CleanerProfilePage({
                                 </p>
                               </div>
                               <div className="text-right">
-                                <div className="font-semibold">${price}</div>
+                                <div className="font-semibold">{formatPrice(price)}</div>
                               </div>
                             </div>
                           );

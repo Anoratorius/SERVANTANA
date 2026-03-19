@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { PermissionsOnboarding } from "@/components/onboarding/PermissionsOnboarding";
@@ -30,10 +31,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <SessionProvider>
       <NextIntlClientProvider messages={messages}>
-        {children}
-        <Toaster />
-        <PermissionsOnboarding locale={locale} />
-        <InstallPrompt />
+        <CurrencyProvider>
+          {children}
+          <Toaster />
+          <PermissionsOnboarding locale={locale} />
+          <InstallPrompt />
+        </CurrencyProvider>
       </NextIntlClientProvider>
     </SessionProvider>
   );

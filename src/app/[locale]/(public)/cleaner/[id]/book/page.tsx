@@ -31,6 +31,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 interface Service {
   id: string;
@@ -73,6 +74,7 @@ export default function BookingPage({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useSession();
+  const { formatPrice, formatPricePerHour } = useCurrency();
   const rebookId = searchParams.get("rebook");
 
   const [cleaner, setCleaner] = useState<Cleaner | null>(null);
@@ -469,7 +471,7 @@ export default function BookingPage({
                     <div className="pt-4 border-t space-y-3">
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Rate</span>
-                        <span className="font-medium">{currency === "EUR" ? "€" : "$"}{hourlyRate}/hr</span>
+                        <span className="font-medium">{formatPricePerHour(hourlyRate)}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Duration</span>
@@ -477,16 +479,16 @@ export default function BookingPage({
                       </div>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Subtotal</span>
-                        <span className="font-medium">{currency === "EUR" ? "€" : "$"}{basePrice.toFixed(2)}</span>
+                        <span className="font-medium">{formatPrice(basePrice)}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Service fee</span>
-                        <span className="font-medium">{currency === "EUR" ? "€" : "$"}{serviceFee.toFixed(2)}</span>
+                        <span className="font-medium">{formatPrice(serviceFee)}</span>
                       </div>
                       <div className="flex justify-between items-center pt-3 border-t">
                         <span className="font-semibold text-lg">{t("booking.total")}</span>
                         <span className="text-2xl font-bold text-green-600">
-                          {currency === "EUR" ? "€" : "$"}{totalPrice.toFixed(2)}
+                          {formatPrice(totalPrice)}
                         </span>
                       </div>
                     </div>

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
 import { VoiceAssistant } from "@/components/search/VoiceAssistant";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 import { toast } from "sonner";
 
 interface Service {
@@ -241,7 +242,7 @@ function SearchContent() {
                 </p>
                 <div className="flex flex-col items-center gap-2.5 w-full md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
                   {cleaners.map((cleaner) => (
-                    <CleanerCard key={cleaner.id} cleaner={cleaner} t={t} />
+                    <CleanerCard key={cleaner.id} cleaner={cleaner} t={t} locale={locale} />
                   ))}
                 </div>
               </>
@@ -258,8 +259,9 @@ function SearchContent() {
   );
 }
 
-function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof useTranslations> }) {
+function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<typeof useTranslations>; locale: string }) {
   const profile = cleaner.cleanerProfile;
+  const { formatPricePerHour } = useCurrency();
   if (!profile) return null;
 
   const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
@@ -318,8 +320,7 @@ function CleanerCard({ cleaner, t }: { cleaner: Cleaner; t: ReturnType<typeof us
         {/* Bottom: Price and button - always visible */}
         <div className="flex-shrink-0">
           <div className="pt-1 md:pt-2 border-t text-center">
-            <span className="text-sm md:text-xl font-bold text-blue-600">${profile.hourlyRate}</span>
-            <span className="text-muted-foreground text-[8px] md:text-sm">/hr</span>
+            <span className="text-sm md:text-xl font-bold text-blue-600">{formatPricePerHour(profile.hourlyRate, locale)}</span>
           </div>
           <Link href={`/cleaner/${cleaner.id}`} className="block mt-1 md:mt-2">
             <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[9px] md:text-sm h-6 md:h-9">{t("cleaner.profile.bookNow")}</Button>
