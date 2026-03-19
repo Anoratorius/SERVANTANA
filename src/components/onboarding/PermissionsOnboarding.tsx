@@ -81,41 +81,55 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
   const [hasBlockedPermissions, setHasBlockedPermissions] = useState(false);
 
   useEffect(() => {
-    const completed = localStorage.getItem(STORAGE_KEY);
-    if (completed) return;
+    // Check if running in browser
+    if (typeof window === "undefined") return;
 
-    const timer = setTimeout(async () => {
-      // Check if any permissions are already blocked
+    const completed = localStorage.getItem(STORAGE_KEY);
+    if (completed) {
+      console.log("[Onboarding] Already completed, skipping");
+      return;
+    }
+
+    console.log("[Onboarding] Starting...");
+
+    const checkPermissions = async () => {
       let blocked = false;
 
-      // Check microphone
-      if (navigator.permissions) {
-        try {
-          const micPerm = await navigator.permissions.query({ name: "microphone" as PermissionName });
-          if (micPerm.state === "denied") blocked = true;
-        } catch {
-          // Permission query not supported
+      try {
+        // Check microphone
+        if (navigator.permissions) {
+          try {
+            const micPerm = await navigator.permissions.query({ name: "microphone" as PermissionName });
+            if (micPerm.state === "denied") blocked = true;
+          } catch (e) {
+            console.log("[Onboarding] Mic permission query not supported");
+          }
         }
-      }
 
-      // Check notifications
-      if ("Notification" in window && Notification.permission === "denied") {
-        blocked = true;
-      }
-
-      // Check location
-      if (navigator.permissions) {
-        try {
-          const geoPerm = await navigator.permissions.query({ name: "geolocation" });
-          if (geoPerm.state === "denied") blocked = true;
-        } catch {
-          // Permission query not supported
+        // Check notifications
+        if ("Notification" in window && Notification.permission === "denied") {
+          blocked = true;
         }
+
+        // Check location
+        if (navigator.permissions) {
+          try {
+            const geoPerm = await navigator.permissions.query({ name: "geolocation" });
+            if (geoPerm.state === "denied") blocked = true;
+          } catch (e) {
+            console.log("[Onboarding] Geo permission query not supported");
+          }
+        }
+      } catch (e) {
+        console.log("[Onboarding] Permission check error:", e);
       }
 
       setHasBlockedPermissions(blocked);
+      console.log("[Onboarding] Opening dialog, blocked:", blocked);
       setIsOpen(true);
-    }, 1000);
+    };
+
+    const timer = setTimeout(checkPermissions, 1000);
 
     return () => clearTimeout(timer);
   }, []);
