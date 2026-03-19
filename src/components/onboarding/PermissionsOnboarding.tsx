@@ -9,13 +9,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Mic, Bell, MapPin, Check, X, Sparkles, Settings } from "lucide-react";
+import { Mic, Bell, MapPin, Check, Sparkles, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 const STORAGE_KEY = "servantana-onboarding-complete";
 
-type PermissionStatus = "prompt" | "granted" | "denied" | "unsupported";
+type PermissionStatus = "pending" | "granted" | "denied";
 
 interface PermissionState {
   microphone: PermissionStatus;
@@ -26,41 +25,31 @@ interface PermissionState {
 const translations = {
   en: {
     welcomeTitle: "Welcome to Servantana!",
-    welcomeDesc: "Let's set up a few things to give you the best experience.",
-    micTitle: "Voice Search",
-    micDesc: "Speak to find cleaners faster",
-    notifTitle: "Notifications",
-    notifDesc: "Get updates on your bookings",
-    locationTitle: "Location",
-    locationDesc: "Find cleaners near you",
-    allow: "Allow",
-    skip: "Skip",
-    done: "Get Started",
-    granted: "Enabled",
-    denied: "Blocked",
-    later: "Maybe Later",
-    reset: "Reset",
-    resetInstructions: "To enable: tap the lock icon (🔒) in your browser's address bar, then allow the permission.",
-    tryAgain: "Try Again",
+    welcomeDesc: "Enable features for the best experience",
+    enableAll: "Enable All Features",
+    skipForNow: "Skip for Now",
+    enablingFeatures: "Enabling...",
+    allEnabled: "All Set!",
+    continueBtn: "Continue",
+    permissionsList: "This will enable:",
+    micFeature: "Voice Search - find cleaners by speaking",
+    notifFeature: "Notifications - booking updates & reminders",
+    locationFeature: "Location - find cleaners near you",
+    someBlocked: "Some features couldn't be enabled. You can still use the app!",
   },
   de: {
     welcomeTitle: "Willkommen bei Servantana!",
-    welcomeDesc: "Lassen Sie uns einige Dinge einrichten, um Ihnen das beste Erlebnis zu bieten.",
-    micTitle: "Sprachsuche",
-    micDesc: "Sprechen Sie, um schneller Reiniger zu finden",
-    notifTitle: "Benachrichtigungen",
-    notifDesc: "Erhalten Sie Updates zu Ihren Buchungen",
-    locationTitle: "Standort",
-    locationDesc: "Finden Sie Reiniger in Ihrer Nähe",
-    allow: "Erlauben",
-    skip: "Überspringen",
-    done: "Loslegen",
-    granted: "Aktiviert",
-    denied: "Blockiert",
-    later: "Vielleicht später",
-    reset: "Zurücksetzen",
-    resetInstructions: "Zum Aktivieren: Tippen Sie auf das Schloss-Symbol (🔒) in der Adressleiste und erlauben Sie die Berechtigung.",
-    tryAgain: "Erneut versuchen",
+    welcomeDesc: "Aktivieren Sie Funktionen für das beste Erlebnis",
+    enableAll: "Alle Funktionen aktivieren",
+    skipForNow: "Jetzt überspringen",
+    enablingFeatures: "Aktiviere...",
+    allEnabled: "Alles bereit!",
+    continueBtn: "Weiter",
+    permissionsList: "Dies aktiviert:",
+    micFeature: "Sprachsuche - Reiniger per Sprache finden",
+    notifFeature: "Benachrichtigungen - Buchungsupdates & Erinnerungen",
+    locationFeature: "Standort - Reiniger in Ihrer Nähe finden",
+    someBlocked: "Einige Funktionen konnten nicht aktiviert werden. Sie können die App trotzdem nutzen!",
   },
 };
 
@@ -73,100 +62,64 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [permissions, setPermissions] = useState<PermissionState>({
-    microphone: "prompt",
-    notifications: "prompt",
-    location: "prompt",
+    microphone: "pending",
+    notifications: "pending",
+    location: "pending",
   });
-  const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [isEnabling, setIsEnabling] = useState(false);
+  const [isDone, setIsDone] = useState(false);
 
   useEffect(() => {
-    // Check if already completed onboarding on this device
     const completed = localStorage.getItem(STORAGE_KEY);
     if (completed) return;
 
-    // Check if running as installed PWA - still show onboarding for permissions
-    // but we won't show install prompt
-
-    // Small delay to let page load first
     const timer = setTimeout(() => {
-      checkCurrentPermissions();
       setIsOpen(true);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const checkCurrentPermissions = async () => {
-    const newState: PermissionState = {
-      microphone: "prompt",
-      notifications: "prompt",
-      location: "prompt",
-    };
+  const enableAllFeatures = async () => {
+    setIsEnabling(true);
+    const newPermissions: PermissionState = { ...permissions };
 
-    // Check microphone
-    if (navigator.permissions) {
-      try {
-        const micPermission = await navigator.permissions.query({ name: "microphone" as PermissionName });
-        newState.microphone = micPermission.state as PermissionStatus;
-      } catch {
-        // Microphone permission query not supported
-      }
-    }
-
-    // Check notifications
-    if ("Notification" in window) {
-      newState.notifications = Notification.permission as PermissionStatus;
-    } else {
-      newState.notifications = "unsupported";
-    }
-
-    // Check location
-    if (navigator.permissions) {
-      try {
-        const geoPermission = await navigator.permissions.query({ name: "geolocation" });
-        newState.location = geoPermission.state as PermissionStatus;
-      } catch {
-        // Geolocation permission query not supported
-      }
-    }
-
-    setPermissions(newState);
-  };
-
-  const requestMicrophone = async () => {
-    setIsLoading("microphone");
+    // Request microphone
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach(track => track.stop());
-      setPermissions(prev => ({ ...prev, microphone: "granted" }));
+      newPermissions.microphone = "granted";
     } catch {
-      setPermissions(prev => ({ ...prev, microphone: "denied" }));
+      newPermissions.microphone = "denied";
     }
-    setIsLoading(null);
-  };
+    setPermissions({ ...newPermissions });
 
-  const requestNotifications = async () => {
-    setIsLoading("notifications");
-    try {
-      const result = await Notification.requestPermission();
-      setPermissions(prev => ({ ...prev, notifications: result as PermissionStatus }));
-    } catch {
-      setPermissions(prev => ({ ...prev, notifications: "denied" }));
+    // Request notifications
+    if ("Notification" in window) {
+      try {
+        const result = await Notification.requestPermission();
+        newPermissions.notifications = result === "granted" ? "granted" : "denied";
+      } catch {
+        newPermissions.notifications = "denied";
+      }
+    } else {
+      newPermissions.notifications = "denied";
     }
-    setIsLoading(null);
-  };
+    setPermissions({ ...newPermissions });
 
-  const requestLocation = async () => {
-    setIsLoading("location");
+    // Request location
     try {
       await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
       });
-      setPermissions(prev => ({ ...prev, location: "granted" }));
+      newPermissions.location = "granted";
     } catch {
-      setPermissions(prev => ({ ...prev, location: "denied" }));
+      newPermissions.location = "denied";
     }
-    setIsLoading(null);
+    setPermissions({ ...newPermissions });
+
+    setIsEnabling(false);
+    setIsDone(true);
   };
 
   const handleComplete = () => {
@@ -174,162 +127,149 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     setIsOpen(false);
   };
 
-  const handleSkipAll = () => {
+  const handleSkip = () => {
     localStorage.setItem(STORAGE_KEY, Date.now().toString());
     setIsOpen(false);
   };
 
-  const getStatusIcon = (status: PermissionStatus) => {
+  const getIcon = (status: PermissionStatus) => {
     if (status === "granted") {
       return <Check className="h-5 w-5 text-green-500" />;
     }
     if (status === "denied") {
-      return <X className="h-5 w-5 text-red-500" />;
+      return <div className="h-5 w-5 rounded-full bg-gray-300" />;
     }
-    return null;
+    return <div className="h-5 w-5 rounded-full bg-gray-200 animate-pulse" />;
   };
 
-  const showResetInstructions = () => {
-    toast.info(t.resetInstructions, { duration: 8000 });
-  };
+  const allGranted =
+    permissions.microphone === "granted" &&
+    permissions.notifications === "granted" &&
+    permissions.location === "granted";
 
-  const getButtonState = (status: PermissionStatus, type: string) => {
-    if (isLoading === type) {
-      return { disabled: true, text: "...", action: () => {} };
-    }
-    if (status === "granted") {
-      return { disabled: true, text: t.granted, action: () => {} };
-    }
-    if (status === "denied") {
-      return { disabled: false, text: t.reset, action: showResetInstructions };
-    }
-    if (status === "unsupported") {
-      return { disabled: true, text: "N/A", action: () => {} };
-    }
-    return { disabled: false, text: t.allow, action: () => {} };
-  };
-
-  const allHandled =
-    permissions.microphone !== "prompt" &&
-    permissions.notifications !== "prompt" &&
-    permissions.location !== "prompt";
+  const someGranted =
+    permissions.microphone === "granted" ||
+    permissions.notifications === "granted" ||
+    permissions.location === "granted";
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleSkipAll()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleSkip()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
-            <Sparkles className="h-8 w-8 text-white" />
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
+            {isDone ? (
+              <Check className="h-10 w-10 text-white" />
+            ) : (
+              <Sparkles className="h-10 w-10 text-white" />
+            )}
           </div>
-          <DialogTitle className="text-2xl">{t.welcomeTitle}</DialogTitle>
+          <DialogTitle className="text-2xl">
+            {isDone ? t.allEnabled : t.welcomeTitle}
+          </DialogTitle>
           <DialogDescription className="text-base">
-            {t.welcomeDesc}
+            {isDone && !allGranted ? t.someBlocked : t.welcomeDesc}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 py-4">
-          {/* Microphone Permission */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-                <Mic className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="font-medium">{t.micTitle}</p>
-                <p className="text-sm text-gray-500">{t.micDesc}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {getStatusIcon(permissions.microphone)}
-              <Button
-                size="sm"
-                onClick={permissions.microphone === "denied" ? showResetInstructions : requestMicrophone}
-                disabled={getButtonState(permissions.microphone, "microphone").disabled}
-                className={cn(
-                  "min-w-[80px]",
-                  permissions.microphone === "granted" && "bg-green-500 hover:bg-green-500",
-                  permissions.microphone === "denied" && "bg-orange-500 hover:bg-orange-600"
-                )}
-              >
-                {permissions.microphone === "denied" && <Settings className="h-3 w-3 mr-1" />}
-                {getButtonState(permissions.microphone, "microphone").text}
-              </Button>
-            </div>
-          </div>
+        {/* Features List */}
+        <div className="py-4">
+          {!isDone && (
+            <p className="text-sm text-gray-500 mb-3 text-center">{t.permissionsList}</p>
+          )}
 
-          {/* Notifications Permission */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                <Bell className="h-5 w-5 text-blue-600" />
+          <div className="space-y-3">
+            {/* Microphone */}
+            <div className={cn(
+              "flex items-center gap-3 p-3 rounded-xl transition-all",
+              permissions.microphone === "granted" ? "bg-green-50" : "bg-gray-50"
+            )}>
+              <div className={cn(
+                "flex h-10 w-10 items-center justify-center rounded-full",
+                permissions.microphone === "granted" ? "bg-green-100" : "bg-purple-100"
+              )}>
+                <Mic className={cn(
+                  "h-5 w-5",
+                  permissions.microphone === "granted" ? "text-green-600" : "text-purple-600"
+                )} />
               </div>
-              <div>
-                <p className="font-medium">{t.notifTitle}</p>
-                <p className="text-sm text-gray-500">{t.notifDesc}</p>
-              </div>
+              <p className="flex-1 text-sm">{t.micFeature}</p>
+              {isDone && getIcon(permissions.microphone)}
             </div>
-            <div className="flex items-center gap-2">
-              {getStatusIcon(permissions.notifications)}
-              <Button
-                size="sm"
-                onClick={permissions.notifications === "denied" ? showResetInstructions : requestNotifications}
-                disabled={getButtonState(permissions.notifications, "notifications").disabled}
-                className={cn(
-                  "min-w-[80px]",
-                  permissions.notifications === "granted" && "bg-green-500 hover:bg-green-500",
-                  permissions.notifications === "denied" && "bg-orange-500 hover:bg-orange-600"
-                )}
-              >
-                {permissions.notifications === "denied" && <Settings className="h-3 w-3 mr-1" />}
-                {getButtonState(permissions.notifications, "notifications").text}
-              </Button>
-            </div>
-          </div>
 
-          {/* Location Permission */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                <MapPin className="h-5 w-5 text-green-600" />
+            {/* Notifications */}
+            <div className={cn(
+              "flex items-center gap-3 p-3 rounded-xl transition-all",
+              permissions.notifications === "granted" ? "bg-green-50" : "bg-gray-50"
+            )}>
+              <div className={cn(
+                "flex h-10 w-10 items-center justify-center rounded-full",
+                permissions.notifications === "granted" ? "bg-green-100" : "bg-blue-100"
+              )}>
+                <Bell className={cn(
+                  "h-5 w-5",
+                  permissions.notifications === "granted" ? "text-green-600" : "text-blue-600"
+                )} />
               </div>
-              <div>
-                <p className="font-medium">{t.locationTitle}</p>
-                <p className="text-sm text-gray-500">{t.locationDesc}</p>
-              </div>
+              <p className="flex-1 text-sm">{t.notifFeature}</p>
+              {isDone && getIcon(permissions.notifications)}
             </div>
-            <div className="flex items-center gap-2">
-              {getStatusIcon(permissions.location)}
-              <Button
-                size="sm"
-                onClick={permissions.location === "denied" ? showResetInstructions : requestLocation}
-                disabled={getButtonState(permissions.location, "location").disabled}
-                className={cn(
-                  "min-w-[80px]",
-                  permissions.location === "granted" && "bg-green-500 hover:bg-green-500",
-                  permissions.location === "denied" && "bg-orange-500 hover:bg-orange-600"
-                )}
-              >
-                {permissions.location === "denied" && <Settings className="h-3 w-3 mr-1" />}
-                {getButtonState(permissions.location, "location").text}
-              </Button>
+
+            {/* Location */}
+            <div className={cn(
+              "flex items-center gap-3 p-3 rounded-xl transition-all",
+              permissions.location === "granted" ? "bg-green-50" : "bg-gray-50"
+            )}>
+              <div className={cn(
+                "flex h-10 w-10 items-center justify-center rounded-full",
+                permissions.location === "granted" ? "bg-green-100" : "bg-green-100"
+              )}>
+                <MapPin className={cn(
+                  "h-5 w-5",
+                  permissions.location === "granted" ? "text-green-600" : "text-green-600"
+                )} />
+              </div>
+              <p className="flex-1 text-sm">{t.locationFeature}</p>
+              {isDone && getIcon(permissions.location)}
             </div>
           </div>
         </div>
 
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={handleSkipAll}
-            className="flex-1"
-          >
-            {t.later}
-          </Button>
-          <Button
-            onClick={handleComplete}
-            className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-          >
-            {allHandled ? t.done : t.skip}
-          </Button>
+        {/* Security Note */}
+        {!isDone && (
+          <div className="flex items-center gap-2 text-xs text-gray-400 justify-center mb-2">
+            <Shield className="h-3 w-3" />
+            <span>Your data stays private and secure</span>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-2">
+          {!isDone ? (
+            <>
+              <Button
+                onClick={enableAllFeatures}
+                disabled={isEnabling}
+                className="w-full h-12 text-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+              >
+                {isEnabling ? t.enablingFeatures : t.enableAll}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleSkip}
+                disabled={isEnabling}
+                className="w-full text-gray-500"
+              >
+                {t.skipForNow}
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={handleComplete}
+              className="w-full h-12 text-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            >
+              {t.continueBtn}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
