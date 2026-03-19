@@ -112,6 +112,13 @@ export function VoiceAssistant({ onSearchParams, locale }: VoiceAssistantProps) 
   const t = translations[locale as keyof typeof translations] || translations.en;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  // Log when component mounts for debugging
+  useEffect(() => {
+    console.log("[VoiceAssistant] Component mounted");
+    return () => console.log("[VoiceAssistant] Component unmounted");
+  }, []);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isListening, setIsListening] = useState(false);

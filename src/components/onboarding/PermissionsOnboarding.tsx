@@ -84,6 +84,17 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     // Check if running in browser
     if (typeof window === "undefined") return;
 
+    // Check for reset parameter (for testing)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("reset") === "1") {
+      localStorage.removeItem(STORAGE_KEY);
+      console.log("[Onboarding] Reset triggered via URL param");
+      // Remove the param from URL without reload
+      urlParams.delete("reset");
+      const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
+      window.history.replaceState({}, "", newUrl);
+    }
+
     const completed = localStorage.getItem(STORAGE_KEY);
     if (completed) {
       console.log("[Onboarding] Already completed, skipping");
