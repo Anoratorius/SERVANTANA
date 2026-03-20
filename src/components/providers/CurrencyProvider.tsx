@@ -60,27 +60,11 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function detectCurrency() {
-      // Check if user manually set currency (don't override)
-      const manuallySet = localStorage.getItem(STORAGE_KEY + "-manual");
-      if (manuallySet === "true") {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          try {
-            setCurrencyState(JSON.parse(stored));
-            setIsLoading(false);
-            return;
-          } catch {
-            // Continue with detection
-          }
-        }
-      }
-
-      // Detect country from IP
+      // Always detect from IP (fresh detection every session)
       const country = await detectCountryFromIP();
       if (country) {
         const detected = getCurrencyForCountry(country);
         setCurrencyState(detected);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(detected));
         localStorage.setItem(COUNTRY_KEY, country);
       }
       setIsLoading(false);
