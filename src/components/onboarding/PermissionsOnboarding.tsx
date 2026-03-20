@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Bell, MapPin, Check, Sparkles } from "lucide-react";
+import { Bell, MapPin, Check, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "servantana-onboarding-complete";
@@ -110,42 +103,45 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     setIsOpen(false);
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-sm mx-4 p-5 [&>button]:hidden">
-        <DialogHeader className="text-center pb-2">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
-            {isDone ? (
-              <Check className="h-8 w-8 text-white" />
-            ) : (
-              <Sparkles className="h-8 w-8 text-white" />
-            )}
-          </div>
-          <DialogTitle className="text-xl">
-            {isDone ? t.allEnabled : t.welcomeTitle}
-          </DialogTitle>
-          <DialogDescription className="text-sm">
-            {t.welcomeDesc}
-          </DialogDescription>
-        </DialogHeader>
+  if (!isOpen) return null;
 
-        {/* Features - Compact */}
-        <div className="flex justify-center gap-6 py-3">
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-[280px] p-4 text-center">
+        {/* Icon */}
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
+          {isDone ? (
+            <Check className="h-7 w-7 text-white" />
+          ) : (
+            <Sparkles className="h-7 w-7 text-white" />
+          )}
+        </div>
+
+        {/* Title */}
+        <h2 className="text-lg font-semibold mb-1">
+          {isDone ? t.allEnabled : t.welcomeTitle}
+        </h2>
+        <p className="text-sm text-gray-500 mb-4">
+          {t.welcomeDesc}
+        </p>
+
+        {/* Features */}
+        <div className="flex justify-center gap-8 mb-4">
           <div className={cn(
             "flex flex-col items-center gap-1",
             permissions.notifications === "granted" && "text-green-600"
           )}>
             <div className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-full",
+              "flex h-10 w-10 items-center justify-center rounded-full",
               permissions.notifications === "granted" ? "bg-green-100" : "bg-blue-100"
             )}>
               {permissions.notifications === "granted" ? (
-                <Check className="h-6 w-6 text-green-600" />
+                <Check className="h-5 w-5 text-green-600" />
               ) : (
-                <Bell className="h-6 w-6 text-blue-600" />
+                <Bell className="h-5 w-5 text-blue-600" />
               )}
             </div>
-            <span className="text-xs font-medium">{t.notifFeature}</span>
+            <span className="text-xs">{t.notifFeature}</span>
           </div>
 
           <div className={cn(
@@ -153,16 +149,16 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
             permissions.location === "granted" && "text-green-600"
           )}>
             <div className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-full",
+              "flex h-10 w-10 items-center justify-center rounded-full",
               permissions.location === "granted" ? "bg-green-100" : "bg-green-100"
             )}>
               {permissions.location === "granted" ? (
-                <Check className="h-6 w-6 text-green-600" />
+                <Check className="h-5 w-5 text-green-600" />
               ) : (
-                <MapPin className="h-6 w-6 text-green-600" />
+                <MapPin className="h-5 w-5 text-green-600" />
               )}
             </div>
-            <span className="text-xs font-medium">{t.locationFeature}</span>
+            <span className="text-xs">{t.locationFeature}</span>
           </div>
         </div>
 
@@ -170,11 +166,11 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
         <Button
           onClick={isDone ? handleComplete : enableAllFeatures}
           disabled={isEnabling}
-          className="w-full h-11 text-base bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+          className="w-full h-10 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
         >
           {isEnabling ? t.enablingFeatures : isDone ? t.continueBtn : t.enableAll}
         </Button>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
