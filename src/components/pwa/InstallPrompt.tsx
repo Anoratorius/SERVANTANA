@@ -1,46 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Download, Share } from "lucide-react";
+import { X, Download } from "lucide-react";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
 
 export function InstallPrompt() {
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(true);
-  const [showIOSModal, setShowIOSModal] = useState(false);
 
-  const handleInstall = () => {
-    setShowIOSModal(true);
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setShowBanner(false);
+      }
+      setDeferredPrompt(null);
+    }
   };
 
   const handleDismiss = () => {
     setShowBanner(false);
-    setShowIOSModal(false);
   };
 
-  if (!showBanner) return null;
-
-  if (showIOSModal) {
-    return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
-        <div className="bg-white rounded-2xl w-full max-w-sm p-5 text-center">
-          <h3 className="text-lg font-bold mb-3">Install Servantana</h3>
-          <div className="space-y-3 text-sm text-gray-600 mb-4">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <Share className="h-6 w-6 text-blue-500 flex-shrink-0" />
-              <span className="text-left">1. Tap browser menu (3 dots)</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <Download className="h-6 w-6 text-green-500 flex-shrink-0" />
-              <span className="text-left">2. Select <strong>Add to Home Screen</strong></span>
-            </div>
-          </div>
-          <Button onClick={handleDismiss} className="w-full">
-            Got it
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  if (!showBanner || !deferredPrompt) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg">
