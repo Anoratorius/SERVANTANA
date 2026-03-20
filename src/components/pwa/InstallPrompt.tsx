@@ -1,70 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Download, Share } from "lucide-react";
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-}
-
 export function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showBanner, setShowBanner] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
   const [showIOSModal, setShowIOSModal] = useState(false);
 
-  useEffect(() => {
-    // Check if already installed
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      return;
-    }
-
-    // Check if dismissed recently
-    const dismissed = localStorage.getItem("pwa-dismissed");
-    if (dismissed) {
-      const dismissedTime = parseInt(dismissed, 10);
-      if (Date.now() - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
-        return;
-      }
-    }
-
-    // Listen for install prompt
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-
-    // Show banner after 2 seconds
-    const timer = setTimeout(() => setShowBanner(true), 2000);
-
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-      clearTimeout(timer);
-    };
-  }, []);
-
-  const handleInstall = async () => {
-    // Check if iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS || !deferredPrompt) {
-      setShowIOSModal(true);
-      return;
-    }
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") {
-      setShowBanner(false);
-    }
-    setDeferredPrompt(null);
+  const handleInstall = () => {
+    setShowIOSModal(true);
   };
 
   const handleDismiss = () => {
     setShowBanner(false);
     setShowIOSModal(false);
-    localStorage.setItem("pwa-dismissed", Date.now().toString());
   };
 
   if (!showBanner) return null;
@@ -77,7 +27,7 @@ export function InstallPrompt() {
           <div className="space-y-3 text-sm text-gray-600 mb-4">
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <Share className="h-6 w-6 text-blue-500 flex-shrink-0" />
-              <span className="text-left">1. Tap the <strong>Share</strong> button</span>
+              <span className="text-left">1. Tap browser menu (3 dots)</span>
             </div>
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <Download className="h-6 w-6 text-green-500 flex-shrink-0" />
