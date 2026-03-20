@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Mic, Bell, MapPin, Check, Sparkles, Shield, AlertCircle } from "lucide-react";
+import { Bell, MapPin, Check, Sparkles, Shield, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PermissionResetGuide } from "./PermissionResetGuide";
 
@@ -18,7 +18,6 @@ const STORAGE_KEY = "servantana-onboarding-complete";
 type PermissionStatus = "pending" | "granted" | "denied";
 
 interface PermissionState {
-  microphone: PermissionStatus;
   notifications: PermissionStatus;
   location: PermissionStatus;
 }
@@ -33,7 +32,6 @@ const translations = {
     allEnabled: "All Set!",
     continueBtn: "Continue",
     permissionsList: "This will enable:",
-    micFeature: "Voice Search - find cleaners by speaking",
     notifFeature: "Notifications - booking updates & reminders",
     locationFeature: "Location - find cleaners near you",
     someBlocked: "Some features couldn't be enabled. You can still use the app!",
@@ -51,7 +49,6 @@ const translations = {
     allEnabled: "Alles bereit!",
     continueBtn: "Weiter",
     permissionsList: "Dies aktiviert:",
-    micFeature: "Sprachsuche - Reiniger per Sprache finden",
     notifFeature: "Benachrichtigungen - Buchungsupdates & Erinnerungen",
     locationFeature: "Standort - Reiniger in Ihrer Nähe finden",
     someBlocked: "Einige Funktionen konnten nicht aktiviert werden. Sie können die App trotzdem nutzen!",
@@ -71,7 +68,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [permissions, setPermissions] = useState<PermissionState>({
-    microphone: "pending",
     notifications: "pending",
     location: "pending",
   });
@@ -81,7 +77,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
   const [hasBlockedPermissions, setHasBlockedPermissions] = useState(false);
 
   useEffect(() => {
-    // Check if running in browser
     if (typeof window === "undefined") return;
 
     // Check for reset parameter (for testing)
@@ -89,7 +84,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     if (urlParams.get("reset") === "1") {
       localStorage.removeItem(STORAGE_KEY);
       console.log("[Onboarding] Reset triggered via URL param");
-      // Remove the param from URL without reload
       urlParams.delete("reset");
       const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
       window.history.replaceState({}, "", newUrl);
@@ -107,16 +101,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
       let blocked = false;
 
       try {
-        // Check microphone
-        if (navigator.permissions) {
-          try {
-            const micPerm = await navigator.permissions.query({ name: "microphone" as PermissionName });
-            if (micPerm.state === "denied") blocked = true;
-          } catch (e) {
-            console.log("[Onboarding] Mic permission query not supported");
-          }
-        }
-
         // Check notifications
         if ("Notification" in window && Notification.permission === "denied") {
           blocked = true;
@@ -148,16 +132,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
   const enableAllFeatures = async () => {
     setIsEnabling(true);
     const newPermissions: PermissionState = { ...permissions };
-
-    // Request microphone
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(track => track.stop());
-      newPermissions.microphone = "granted";
-    } catch {
-      newPermissions.microphone = "denied";
-    }
-    setPermissions({ ...newPermissions });
 
     // Request notifications
     if ("Notification" in window) {
@@ -208,13 +182,7 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
   };
 
   const allGranted =
-    permissions.microphone === "granted" &&
     permissions.notifications === "granted" &&
-    permissions.location === "granted";
-
-  const someGranted =
-    permissions.microphone === "granted" ||
-    permissions.notifications === "granted" ||
     permissions.location === "granted";
 
   return (
@@ -250,24 +218,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
           )}
 
           <div className="space-y-3">
-            {/* Microphone */}
-            <div className={cn(
-              "flex items-center gap-3 p-3 rounded-xl transition-all",
-              permissions.microphone === "granted" ? "bg-green-50" : "bg-gray-50"
-            )}>
-              <div className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-full",
-                permissions.microphone === "granted" ? "bg-green-100" : "bg-purple-100"
-              )}>
-                <Mic className={cn(
-                  "h-5 w-5",
-                  permissions.microphone === "granted" ? "text-green-600" : "text-purple-600"
-                )} />
-              </div>
-              <p className="flex-1 text-sm">{t.micFeature}</p>
-              {isDone && getIcon(permissions.microphone)}
-            </div>
-
             {/* Notifications */}
             <div className={cn(
               "flex items-center gap-3 p-3 rounded-xl transition-all",
