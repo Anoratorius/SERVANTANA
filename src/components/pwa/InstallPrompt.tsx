@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Download } from "lucide-react";
 
@@ -10,57 +10,44 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     // Check if already installed
     if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true);
       return;
     }
 
-    // Listen for install prompt
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      deferredPromptRef.current = e as BeforeInstallPromptEvent;
       setShowBanner(true);
     };
+
     window.addEventListener("beforeinstallprompt", handler);
 
-    // Also show banner after delay even without the event
-    const timer = setTimeout(() => {
-      if (!isInstalled) setShowBanner(true);
-    }, 2000);
-
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-      clearTimeout(timer);
-    };
-  }, [isInstalled]);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
 
   const handleInstall = async () => {
-    if (deferredPrompt) {
-      // Native install available
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        setShowBanner(false);
-        setIsInstalled(true);
-      }
-      setDeferredPrompt(null);
-    } else {
-      // Fallback - tell user to use browser menu
-      alert("To install: tap the browser menu (3 dots) and select 'Add to Home Screen'");
+    const prompt = deferredPromptRef.current;
+    if (!prompt) return;
+
+    prompt.prompt();
+    const { outcome } = await prompt.userChoice;
+
+    if (outcome === "accepted") {
+      setShowBanner(false);
     }
+    deferredPromptRef.current = null;
   };
 
   const handleDismiss = () => {
     setShowBanner(false);
   };
 
-  if (!showBanner || isInstalled) return null;
+  if (!showBanner) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg">
