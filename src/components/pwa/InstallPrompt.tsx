@@ -119,7 +119,14 @@ export function InstallPrompt() {
     localStorage.setItem("pwa-install-dismissed", Date.now().toString());
   };
 
-  if (!showPrompt) return null;
+  // DEBUG: Always render something visible
+  if (!showPrompt) {
+    return (
+      <div className="fixed top-0 left-0 right-0 z-[9999] p-4 bg-red-600 text-white text-center font-bold">
+        DEBUG: showPrompt is FALSE
+      </div>
+    );
+  }
 
   // iOS Instructions Modal
   if (showIOSInstructions) {
@@ -146,7 +153,7 @@ export function InstallPrompt() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg animate-in slide-in-from-bottom duration-300">
+    <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg">
       <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Download className="h-6 w-6 flex-shrink-0" />
