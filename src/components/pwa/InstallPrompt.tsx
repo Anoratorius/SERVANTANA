@@ -11,25 +11,48 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showBanner, setShowBanner] = useState(true);
+  const [showBanner, setShowBanner] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    // Check if already installed
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setIsInstalled(true);
+      return;
+    }
+
+    // Listen for install prompt
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
+      setShowBanner(true);
     };
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+
+    // Also show banner after delay even without the event
+    const timer = setTimeout(() => {
+      if (!isInstalled) setShowBanner(true);
+    }, 2000);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      clearTimeout(timer);
+    };
+  }, [isInstalled]);
 
   const handleInstall = async () => {
     if (deferredPrompt) {
+      // Native install available
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === "accepted") {
         setShowBanner(false);
+        setIsInstalled(true);
       }
       setDeferredPrompt(null);
+    } else {
+      // Fallback - tell user to use browser menu
+      alert("To install: tap the browser menu (3 dots) and select 'Add to Home Screen'");
     }
   };
 
@@ -37,7 +60,7 @@ export function InstallPrompt() {
     setShowBanner(false);
   };
 
-  if (!showBanner || !deferredPrompt) return null;
+  if (!showBanner || isInstalled) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg">
