@@ -68,31 +68,20 @@ export function InstallPrompt() {
   }, []);
 
   useEffect(() => {
-    if (isInstalled) return;
-
-    const dismissed = localStorage.getItem("pwa-install-dismissed");
-    if (dismissed) {
-      const dismissedTime = parseInt(dismissed, 10);
-      if (Date.now() - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
-        return;
-      }
-    }
-
+    // Show prompt immediately for testing, skip all checks
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
 
-    const timer = setTimeout(() => {
-      setShowPrompt(true);
-    }, 3000);
+    // Show immediately
+    setShowPrompt(true);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
-      clearTimeout(timer);
     };
-  }, [isInstalled]);
+  }, []);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -132,7 +121,7 @@ export function InstallPrompt() {
     localStorage.setItem("pwa-install-dismissed", Date.now().toString());
   };
 
-  if (!showPrompt || isInstalled) return null;
+  if (!showPrompt) return null;
 
   // iOS Instructions Modal
   if (showIOSInstructions) {
