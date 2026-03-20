@@ -9,9 +9,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Bell, MapPin, Check, Sparkles, Shield, AlertCircle } from "lucide-react";
+import { Bell, MapPin, Check, Sparkles, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PermissionResetGuide } from "./PermissionResetGuide";
 
 const STORAGE_KEY = "servantana-onboarding-complete";
 
@@ -27,35 +26,23 @@ const translations = {
     welcomeTitle: "Welcome to Servantana!",
     welcomeDesc: "Enable features for the best experience",
     enableAll: "Enable All Features",
-    skipForNow: "Skip for Now",
     enablingFeatures: "Enabling...",
     allEnabled: "All Set!",
     continueBtn: "Continue",
     permissionsList: "This will enable:",
     notifFeature: "Notifications - booking updates & reminders",
     locationFeature: "Location - find cleaners near you",
-    someBlocked: "Some features couldn't be enabled. You can still use the app!",
-    blockedTitle: "Some features need your attention",
-    blockedDesc: "A few features were previously blocked. Let's fix that!",
-    fixBlocked: "Show Me How",
-    tryAgain: "Try Again",
   },
   de: {
     welcomeTitle: "Willkommen bei Servantana!",
     welcomeDesc: "Aktivieren Sie Funktionen für das beste Erlebnis",
     enableAll: "Alle Funktionen aktivieren",
-    skipForNow: "Jetzt überspringen",
     enablingFeatures: "Aktiviere...",
     allEnabled: "Alles bereit!",
     continueBtn: "Weiter",
     permissionsList: "Dies aktiviert:",
     notifFeature: "Benachrichtigungen - Buchungsupdates & Erinnerungen",
     locationFeature: "Standort - Reiniger in Ihrer Nähe finden",
-    someBlocked: "Einige Funktionen konnten nicht aktiviert werden. Sie können die App trotzdem nutzen!",
-    blockedTitle: "Einige Funktionen brauchen Ihre Aufmerksamkeit",
-    blockedDesc: "Einige Funktionen wurden zuvor blockiert. Lassen Sie uns das beheben!",
-    fixBlocked: "Zeig mir wie",
-    tryAgain: "Erneut versuchen",
   },
 };
 
@@ -73,8 +60,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
   });
   const [isEnabling, setIsEnabling] = useState(false);
   const [isDone, setIsDone] = useState(false);
-  const [showResetGuide, setShowResetGuide] = useState(false);
-  const [hasBlockedPermissions, setHasBlockedPermissions] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -83,49 +68,15 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("reset") === "1") {
       localStorage.removeItem(STORAGE_KEY);
-      console.log("[Onboarding] Reset triggered via URL param");
       urlParams.delete("reset");
       const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
       window.history.replaceState({}, "", newUrl);
     }
 
     const completed = localStorage.getItem(STORAGE_KEY);
-    if (completed) {
-      console.log("[Onboarding] Already completed, skipping");
-      return;
-    }
+    if (completed) return;
 
-    console.log("[Onboarding] Starting...");
-
-    const checkPermissions = async () => {
-      let blocked = false;
-
-      try {
-        // Check notifications
-        if ("Notification" in window && Notification.permission === "denied") {
-          blocked = true;
-        }
-
-        // Check location
-        if (navigator.permissions) {
-          try {
-            const geoPerm = await navigator.permissions.query({ name: "geolocation" });
-            if (geoPerm.state === "denied") blocked = true;
-          } catch (e) {
-            console.log("[Onboarding] Geo permission query not supported");
-          }
-        }
-      } catch (e) {
-        console.log("[Onboarding] Permission check error:", e);
-      }
-
-      setHasBlockedPermissions(blocked);
-      console.log("[Onboarding] Opening dialog, blocked:", blocked);
-      setIsOpen(true);
-    };
-
-    const timer = setTimeout(checkPermissions, 1000);
-
+    const timer = setTimeout(() => setIsOpen(true), 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -141,8 +92,6 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
       } catch {
         newPermissions.notifications = "denied";
       }
-    } else {
-      newPermissions.notifications = "denied";
     }
     setPermissions({ ...newPermissions });
 
@@ -166,48 +115,29 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     setIsOpen(false);
   };
 
-  const handleSkip = () => {
-    localStorage.setItem(STORAGE_KEY, Date.now().toString());
-    setIsOpen(false);
-  };
-
   const getIcon = (status: PermissionStatus) => {
     if (status === "granted") {
       return <Check className="h-5 w-5 text-green-500" />;
     }
-    if (status === "denied") {
-      return <div className="h-5 w-5 rounded-full bg-gray-300" />;
-    }
-    return <div className="h-5 w-5 rounded-full bg-gray-200 animate-pulse" />;
+    return <div className="h-5 w-5 rounded-full bg-gray-300" />;
   };
 
-  const allGranted =
-    permissions.notifications === "granted" &&
-    permissions.location === "granted";
-
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleSkip()}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={isOpen} onOpenChange={() => {}}>
+      <DialogContent className="sm:max-w-md [&>button]:hidden">
         <DialogHeader className="text-center">
-          <div className={cn(
-            "mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full",
-            hasBlockedPermissions && !isDone
-              ? "bg-gradient-to-r from-orange-500 to-red-500"
-              : "bg-gradient-to-r from-purple-500 to-blue-500"
-          )}>
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
             {isDone ? (
               <Check className="h-10 w-10 text-white" />
-            ) : hasBlockedPermissions ? (
-              <AlertCircle className="h-10 w-10 text-white" />
             ) : (
               <Sparkles className="h-10 w-10 text-white" />
             )}
           </div>
           <DialogTitle className="text-2xl">
-            {isDone ? t.allEnabled : hasBlockedPermissions ? t.blockedTitle : t.welcomeTitle}
+            {isDone ? t.allEnabled : t.welcomeTitle}
           </DialogTitle>
           <DialogDescription className="text-base">
-            {isDone && !allGranted ? t.someBlocked : hasBlockedPermissions ? t.blockedDesc : t.welcomeDesc}
+            {t.welcomeDesc}
           </DialogDescription>
         </DialogHeader>
 
@@ -264,63 +194,15 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-2">
-          {!isDone ? (
-            <>
-              {hasBlockedPermissions ? (
-                <>
-                  <Button
-                    onClick={() => setShowResetGuide(true)}
-                    className="w-full h-12 text-lg bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
-                  >
-                    {t.fixBlocked}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={enableAllFeatures}
-                    disabled={isEnabling}
-                    className="w-full"
-                  >
-                    {isEnabling ? t.enablingFeatures : t.tryAgain}
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={enableAllFeatures}
-                  disabled={isEnabling}
-                  className="w-full h-12 text-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                >
-                  {isEnabling ? t.enablingFeatures : t.enableAll}
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                onClick={handleSkip}
-                disabled={isEnabling}
-                className="w-full text-gray-500"
-              >
-                {t.skipForNow}
-              </Button>
-            </>
-          ) : (
-            <Button
-              onClick={handleComplete}
-              className="w-full h-12 text-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-            >
-              {t.continueBtn}
-            </Button>
-          )}
-        </div>
+        {/* Single Action Button */}
+        <Button
+          onClick={isDone ? handleComplete : enableAllFeatures}
+          disabled={isEnabling}
+          className="w-full h-12 text-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+        >
+          {isEnabling ? t.enablingFeatures : isDone ? t.continueBtn : t.enableAll}
+        </Button>
       </DialogContent>
-
-      {/* Visual Reset Guide Overlay */}
-      {showResetGuide && (
-        <PermissionResetGuide
-          locale={locale}
-          onClose={() => setShowResetGuide(false)}
-        />
-      )}
     </Dialog>
   );
 }
