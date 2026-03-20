@@ -170,6 +170,49 @@ Before EVERY code change, verify:
 
 If any check fails, do NOT proceed.
 
+### ⏳ NO FAST SOLUTIONS - RESULTS OVER SPEED ⏳
+
+**Speed is NOT a virtue. Working solutions are.**
+
+Before presenting ANY solution or saying "Done":
+
+1. **ANALYZE THOROUGHLY**
+   - Consider ALL possible failure points
+   - Check browser compatibility for APIs used
+   - Verify error handling covers all cases
+   - Think about edge cases (mobile, older browsers, slow networks)
+
+2. **VERIFY BEFORE IMPLEMENTING**
+   - Read documentation for APIs/features you plan to use
+   - Check that your solution actually addresses the root cause
+   - Don't assume something works - confirm it
+
+3. **TEST BEFORE CLAIMING SUCCESS**
+   - Add console.log/debugging to verify behavior
+   - Check browser console for errors after deployment
+   - If you can't test directly, tell the user how to verify
+
+4. **NEVER SAY "DONE" PREMATURELY**
+   - "Done" means it ACTUALLY works, not "I made changes"
+   - If untested, say "Changes deployed - please verify by..."
+   - If uncertain, say "This should work, but check X to confirm"
+
+**Examples of what NOT to do:**
+- ❌ "Fixed!" without verifying the fix works
+- ❌ Using APIs without checking browser support
+- ❌ Silent error handling that hides failures
+- ❌ Assuming code works because it looks correct
+
+**The cost of rushing:**
+- User wastes time testing broken solutions
+- Multiple back-and-forth iterations
+- User loses trust
+- Problems compound instead of getting solved
+
+**Take your time. Analyze from every edge. Test before presenting.**
+
+---
+
 ## Layout Standards
 
 ### Centering and Symmetry
