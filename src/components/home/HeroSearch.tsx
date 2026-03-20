@@ -65,8 +65,8 @@ export function HeroSearch() {
 
   return (
     <div className="flex flex-col gap-3 w-full max-w-xs sm:max-w-md mx-auto px-4 sm:px-0">
-      {/* Location Input */}
-      <div className="relative">
+      {/* Location Input - Mobile Only */}
+      <div className="relative md:hidden">
         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500">
           {isDetecting ? (
             <Loader2 className="h-5 w-5 animate-spin" />

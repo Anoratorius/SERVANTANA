@@ -213,6 +213,36 @@ Before presenting ANY solution or saying "Done":
 
 ---
 
+### 🎯 SCOPE PRECISION - MOBILE vs DESKTOP 🎯
+
+**If user says "mobile" - change ONLY mobile. If user says "desktop" - change ONLY desktop.**
+
+When the user specifies a platform:
+- "Fix this on mobile" → Use `md:hidden` or similar to affect ONLY mobile
+- "Change desktop version" → Use `hidden md:block` or similar to affect ONLY desktop
+- "Add this to mobile" → Do NOT touch the desktop layout
+
+**NEVER assume:**
+- That a mobile change should also apply to desktop
+- That a desktop change should also apply to mobile
+- That "improving" both is helpful
+
+**How to implement platform-specific changes:**
+- Mobile only: `className="block md:hidden"` or `className="md:hidden"`
+- Desktop only: `className="hidden md:block"`
+- Different on each: Use responsive variants `className="text-sm md:text-lg"`
+
+**If the user doesn't specify a platform:**
+- ASK: "Should this apply to mobile, desktop, or both?"
+- Do NOT assume and implement for both
+
+**Violation consequences:**
+- User has to undo unwanted changes
+- Desktop/mobile experiences get unintentionally coupled
+- Time wasted on fixing what wasn't broken
+
+---
+
 ## Layout Standards
 
 ### Centering and Symmetry
