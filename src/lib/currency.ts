@@ -22,6 +22,13 @@ export const COUNTRY_CURRENCIES: Record<string, CurrencyConfig> = {
   FI: { code: "EUR", symbol: "€", name: "Euro", locale: "fi-FI" },
   GR: { code: "EUR", symbol: "€", name: "Euro", locale: "el-GR" },
   LU: { code: "EUR", symbol: "€", name: "Euro", locale: "fr-LU" },
+  SK: { code: "EUR", symbol: "€", name: "Euro", locale: "sk-SK" },
+  SI: { code: "EUR", symbol: "€", name: "Euro", locale: "sl-SI" },
+  EE: { code: "EUR", symbol: "€", name: "Euro", locale: "et-EE" },
+  LV: { code: "EUR", symbol: "€", name: "Euro", locale: "lv-LV" },
+  LT: { code: "EUR", symbol: "€", name: "Euro", locale: "lt-LT" },
+  MT: { code: "EUR", symbol: "€", name: "Euro", locale: "mt-MT" },
+  CY: { code: "EUR", symbol: "€", name: "Euro", locale: "el-CY" },
 
   // Non-Euro Europe
   GB: { code: "GBP", symbol: "£", name: "British Pound", locale: "en-GB" },
@@ -34,19 +41,76 @@ export const COUNTRY_CURRENCIES: Record<string, CurrencyConfig> = {
   DK: { code: "DKK", symbol: "kr", name: "Danish Krone", locale: "da-DK" },
   HU: { code: "HUF", symbol: "Ft", name: "Hungarian Forint", locale: "hu-HU" },
   RO: { code: "RON", symbol: "lei", name: "Romanian Leu", locale: "ro-RO" },
+  BG: { code: "BGN", symbol: "лв", name: "Bulgarian Lev", locale: "bg-BG" },
+  HR: { code: "EUR", symbol: "€", name: "Euro", locale: "hr-HR" },
+  IS: { code: "ISK", symbol: "kr", name: "Icelandic Króna", locale: "is-IS" },
+  UA: { code: "UAH", symbol: "₴", name: "Ukrainian Hryvnia", locale: "uk-UA" },
+  RU: { code: "RUB", symbol: "₽", name: "Russian Ruble", locale: "ru-RU" },
+  BY: { code: "BYN", symbol: "Br", name: "Belarusian Ruble", locale: "be-BY" },
+  MD: { code: "MDL", symbol: "L", name: "Moldovan Leu", locale: "ro-MD" },
+  RS: { code: "RSD", symbol: "дин.", name: "Serbian Dinar", locale: "sr-RS" },
+  BA: { code: "BAM", symbol: "KM", name: "Bosnia Mark", locale: "bs-BA" },
+  MK: { code: "MKD", symbol: "ден", name: "Macedonian Denar", locale: "mk-MK" },
+  AL: { code: "ALL", symbol: "L", name: "Albanian Lek", locale: "sq-AL" },
+  ME: { code: "EUR", symbol: "€", name: "Euro", locale: "sr-ME" },
+  XK: { code: "EUR", symbol: "€", name: "Euro", locale: "sq-XK" },
+
+  // Caucasus
+  GE: { code: "GEL", symbol: "₾", name: "Georgian Lari", locale: "ka-GE" },
+  AM: { code: "AMD", symbol: "֏", name: "Armenian Dram", locale: "hy-AM" },
+  AZ: { code: "AZN", symbol: "₼", name: "Azerbaijani Manat", locale: "az-AZ" },
+
+  // Central Asia
+  KZ: { code: "KZT", symbol: "₸", name: "Kazakhstani Tenge", locale: "kk-KZ" },
+  UZ: { code: "UZS", symbol: "soʻm", name: "Uzbekistani Som", locale: "uz-UZ" },
+  KG: { code: "KGS", symbol: "с", name: "Kyrgyzstani Som", locale: "ky-KG" },
+  TJ: { code: "TJS", symbol: "SM", name: "Tajikistani Somoni", locale: "tg-TJ" },
+  TM: { code: "TMT", symbol: "m", name: "Turkmenistani Manat", locale: "tk-TM" },
+
+  // Middle East
+  TR: { code: "TRY", symbol: "₺", name: "Turkish Lira", locale: "tr-TR" },
+  IL: { code: "ILS", symbol: "₪", name: "Israeli Shekel", locale: "he-IL" },
+  AE: { code: "AED", symbol: "د.إ", name: "UAE Dirham", locale: "ar-AE" },
+  SA: { code: "SAR", symbol: "﷼", name: "Saudi Riyal", locale: "ar-SA" },
+  QA: { code: "QAR", symbol: "﷼", name: "Qatari Riyal", locale: "ar-QA" },
+  KW: { code: "KWD", symbol: "د.ك", name: "Kuwaiti Dinar", locale: "ar-KW" },
+  BH: { code: "BHD", symbol: "د.ب", name: "Bahraini Dinar", locale: "ar-BH" },
+  OM: { code: "OMR", symbol: "ر.ع.", name: "Omani Rial", locale: "ar-OM" },
+  JO: { code: "JOD", symbol: "د.ا", name: "Jordanian Dinar", locale: "ar-JO" },
+  LB: { code: "LBP", symbol: "ل.ل", name: "Lebanese Pound", locale: "ar-LB" },
+  EG: { code: "EGP", symbol: "ج.م", name: "Egyptian Pound", locale: "ar-EG" },
 
   // Americas
   US: { code: "USD", symbol: "$", name: "US Dollar", locale: "en-US" },
   CA: { code: "CAD", symbol: "C$", name: "Canadian Dollar", locale: "en-CA" },
   MX: { code: "MXN", symbol: "$", name: "Mexican Peso", locale: "es-MX" },
   BR: { code: "BRL", symbol: "R$", name: "Brazilian Real", locale: "pt-BR" },
+  AR: { code: "ARS", symbol: "$", name: "Argentine Peso", locale: "es-AR" },
+  CL: { code: "CLP", symbol: "$", name: "Chilean Peso", locale: "es-CL" },
+  CO: { code: "COP", symbol: "$", name: "Colombian Peso", locale: "es-CO" },
+  PE: { code: "PEN", symbol: "S/", name: "Peruvian Sol", locale: "es-PE" },
 
   // Asia-Pacific
   AU: { code: "AUD", symbol: "A$", name: "Australian Dollar", locale: "en-AU" },
   NZ: { code: "NZD", symbol: "NZ$", name: "New Zealand Dollar", locale: "en-NZ" },
   JP: { code: "JPY", symbol: "¥", name: "Japanese Yen", locale: "ja-JP" },
+  CN: { code: "CNY", symbol: "¥", name: "Chinese Yuan", locale: "zh-CN" },
+  KR: { code: "KRW", symbol: "₩", name: "South Korean Won", locale: "ko-KR" },
+  IN: { code: "INR", symbol: "₹", name: "Indian Rupee", locale: "en-IN" },
   SG: { code: "SGD", symbol: "S$", name: "Singapore Dollar", locale: "en-SG" },
   HK: { code: "HKD", symbol: "HK$", name: "Hong Kong Dollar", locale: "zh-HK" },
+  TW: { code: "TWD", symbol: "NT$", name: "Taiwan Dollar", locale: "zh-TW" },
+  TH: { code: "THB", symbol: "฿", name: "Thai Baht", locale: "th-TH" },
+  MY: { code: "MYR", symbol: "RM", name: "Malaysian Ringgit", locale: "ms-MY" },
+  ID: { code: "IDR", symbol: "Rp", name: "Indonesian Rupiah", locale: "id-ID" },
+  PH: { code: "PHP", symbol: "₱", name: "Philippine Peso", locale: "en-PH" },
+  VN: { code: "VND", symbol: "₫", name: "Vietnamese Dong", locale: "vi-VN" },
+
+  // Africa
+  ZA: { code: "ZAR", symbol: "R", name: "South African Rand", locale: "en-ZA" },
+  NG: { code: "NGN", symbol: "₦", name: "Nigerian Naira", locale: "en-NG" },
+  KE: { code: "KES", symbol: "KSh", name: "Kenyan Shilling", locale: "en-KE" },
+  MA: { code: "MAD", symbol: "د.م.", name: "Moroccan Dirham", locale: "ar-MA" },
 };
 
 // Default currency (fallback)
