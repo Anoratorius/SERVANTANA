@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
-// Allowed IPs (add your IP here after seeing it on the coming-soon page)
+// Allowed IPs
 const ALLOWED_IPS: string[] = [
-  // Your IP will be added here
+  '212.58.102.31',
 ];
 
 // Set to true to enable IP restriction
