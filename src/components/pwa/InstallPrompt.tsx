@@ -33,6 +33,16 @@ export function InstallPrompt() {
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
 
   useEffect(() => {
+    // Check for reset parameter first
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("reset") === "1") {
+      localStorage.removeItem("pwa-install-dismissed");
+      localStorage.removeItem("pwa-installed");
+      urlParams.delete("reset");
+      const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
+      window.history.replaceState({}, "", newUrl);
+    }
+
     setIsInstalled(checkIfInstalled());
 
     const mediaQuery = window.matchMedia("(display-mode: standalone)");
@@ -76,7 +86,7 @@ export function InstallPrompt() {
 
     const timer = setTimeout(() => {
       setShowPrompt(true);
-    }, 10000);
+    }, 3000);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
