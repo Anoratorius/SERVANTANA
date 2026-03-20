@@ -259,7 +259,7 @@
     "rebookingInfo": "Erneute Buchung aus Ihrer vorherigen Bestellung - Adresse und Service vorausgefüllt",
     "noUpcoming": "Keine anstehenden Buchungen",
     "noUpcomingDesc": "Sie haben noch keine anstehenden Buchungen.",
-    "findCleaner": "Fachkraft finden",
+    "findWorker": "Fachkraft finden",
     "noPast": "Keine vergangenen Buchungen",
     "noPastDesc": "Ihre abgeschlossenen und stornierten Buchungen werden hier angezeigt.",
     "status": {
@@ -274,12 +274,12 @@
     "time": "Uhrzeit",
     "location": "Standort",
     "customer": "Kunde",
-    "cleaner": "Reiniger",
+    "worker": "Fachkraft",
     "notFound": "Buchung nicht gefunden"
   },
   "tracking": {
     "title": "Live-Tracking",
-    "cleanerDescription": "Teilen Sie Ihren Standort, damit der Kunde sehen kann, wann Sie ankommen",
+    "workerDescription": "Teilen Sie Ihren Standort, damit der Kunde sehen kann, wann Sie ankommen",
     "startSharing": "Standort teilen",
     "stopSharing": "Teilen beenden",
     "sharingActive": "Standortfreigabe aktiv",
@@ -295,7 +295,7 @@
     "eta": "Voraussichtliche Ankunft",
     "lastUpdate": "Zuletzt aktualisiert",
     "notStarted": "Tracking nicht gestartet",
-    "notStartedDesc": "Der Reiniger wird seinen Standort teilen, wenn er unterwegs ist"
+    "notStartedDesc": "Die Fachkraft wird ihren Standort teilen, wenn sie unterwegs ist"
   },
   "chat": {
     "title": "Chat",
@@ -362,8 +362,8 @@
     "confirmed": "Bestätigt",
     "pending": "Ausstehend",
     "addMember": "Mitglied hinzufügen",
-    "findCleaners": "Verfügbare Reiniger finden",
-    "noAvailable": "Keine Reiniger für diesen Zeitraum verfügbar",
+    "findWorkers": "Verfügbare Fachkräfte finden",
+    "noAvailable": "Keine Fachkräfte für diesen Zeitraum verfügbar",
     "memberAdded": "Teammitglied hinzugefügt",
     "memberRemoved": "Teammitglied entfernt",
     "addFailed": "Teammitglied konnte nicht hinzugefügt werden",
@@ -375,11 +375,11 @@
     "declineFailed": "Ablehnung fehlgeschlagen",
     "spotsRemaining": "{count} Platz/Plätze verbleibend",
     "teamSize": "Teamgröße",
-    "selectTeamSize": "Wie viele Reiniger benötigen Sie?",
-    "solo": "1 Reiniger",
-    "duo": "2 Reiniger",
-    "trio": "3 Reiniger",
-    "quad": "4 Reiniger",
+    "selectTeamSize": "Wie viele Fachkräfte benötigen Sie?",
+    "solo": "1 Fachkraft",
+    "duo": "2 Fachkräfte",
+    "trio": "3 Fachkräfte",
+    "quad": "4 Fachkräfte",
     "teamBooking": "Team-Buchung",
     "largeJobNote": "Empfohlen für große Immobilien oder Grundreinigung"
   },
@@ -397,9 +397,9 @@
     "selectToTip": "Betrag auswählen",
     "sendTip": "${amount} Trinkgeld senden",
     "sent": "Trinkgeld von ${amount} gesendet!",
-    "thankYou": "Danke! ${amount} Trinkgeld an Ihren Reiniger gesendet",
+    "thankYou": "Danke! ${amount} Trinkgeld an Ihre Fachkraft gesendet",
     "failed": "Trinkgeld konnte nicht verarbeitet werden",
-    "goesToCleaner": "100% Ihres Trinkgeldes geht direkt an den Reiniger"
+    "goesToWorker": "100% Ihres Trinkgeldes geht direkt an die Fachkraft"
   },
   "invoice": {
     "title": "Rechnungen",
@@ -445,7 +445,7 @@
     "keylessEntry": "Schlüsselloser Zugang",
     "addLock": "Schloss hinzufügen",
     "addNewLock": "Neues Smart Lock hinzufügen",
-    "addLockDescription": "Verbinden Sie ein Smart Lock, um Reinigern schlüssellosen Zugang zu ermöglichen.",
+    "addLockDescription": "Verbinden Sie ein Smart Lock, um Fachkräften schlüssellosen Zugang zu ermöglichen.",
     "lockName": "Schlossname",
     "lockNamePlaceholder": "z.B. Haustür, Hintertür",
     "provider": "Anbieter",
@@ -459,7 +459,7 @@
     "deleteFailed": "Smart Lock konnte nicht entfernt werden",
     "confirmDelete": "Möchten Sie dieses Smart Lock wirklich entfernen?",
     "noLocks": "Keine Smart Locks konfiguriert",
-    "addFirstLock": "Fügen Sie ein Smart Lock hinzu, um Reinigern schlüssellosen Zugang zu ermöglichen",
+    "addFirstLock": "Fügen Sie ein Smart Lock hinzu, um Fachkräften schlüssellosen Zugang zu ermöglichen",
     "active": "Aktiv",
     "inactive": "Inaktiv",
     "viewCodes": "Codes",
@@ -489,7 +489,7 @@
     "submitted": "Bewertung erfolgreich abgegeben!",
     "failed": "Bewertung konnte nicht abgegeben werden",
     "thankYou": "Vielen Dank für Ihr Feedback!",
-    "onlyCleaners": "Nur Reiniger können Kundenbewertungen sehen"
+    "onlyWorkers": "Nur Fachkräfte können Kundenbewertungen sehen"
   },
   "messages": {
     "title": "Nachrichten",
@@ -531,16 +531,16 @@
     "searchUsers": "Benutzer suchen...",
     "allRoles": "Alle Rollen",
     "customers": "Kunden",
-    "cleaners": "Fachkräfte",
+    "workers": "Fachkräfte",
     "admins": "Admins",
     "bookings": "Buchungen",
     "page": "Seite",
     "of": "von",
-    "cleanerVerification": "Fachkraft-Verifizierung",
+    "workerVerification": "Fachkraft-Verifizierung",
     "pendingVerificationFilter": "Ausstehende Verifizierung",
     "verifiedFilter": "Verifiziert",
-    "noCleanersPending": "Keine Fachkräfte zur Verifizierung ausstehend",
-    "noCleanersVerified": "Keine verifizierten Fachkräfte",
+    "noWorkersPending": "Keine Fachkräfte zur Verifizierung ausstehend",
+    "noWorkersVerified": "Keine verifizierten Fachkräfte",
     "revoke": "Widerrufen",
     "verify": "Verifizieren",
     "reviewModeration": "Bewertungsmoderation",
@@ -548,7 +548,7 @@
     "reviewed": "bewertet",
     "delete": "Löschen",
     "accessDenied": "Zugriff verweigert. Nur für Admins.",
-    "cleanerVerified": "Fachkraft verifiziert!",
+    "workerVerified": "Fachkraft verifiziert!",
     "verificationRevoked": "Verifizierung widerrufen",
     "failedVerification": "Verifizierung konnte nicht aktualisiert werden",
     "reviewDeleted": "Bewertung gelöscht",
@@ -1048,15 +1048,15 @@
   },
   "substitutes": {
     "title": "Ersatz finden",
-    "subtitle": "Wählen Sie einen verfügbaren Reiniger als Ersatz für Ihre stornierte Buchung",
+    "subtitle": "Wählen Sie eine verfügbare Fachkraft als Ersatz für Ihre stornierte Buchung",
     "originalCancelled": "{name} hat Ihre Buchung storniert",
-    "availableCount": "{count} Reiniger verfügbar",
+    "availableCount": "{count} Fachkräfte verfügbar",
     "bookings": "Buchungen",
     "accept": "Akzeptieren",
     "accepted": "Ersatz akzeptiert! Neue Buchung erstellt.",
     "noAvailable": "Keine Ersatzkräfte verfügbar",
-    "noAvailableDesc": "Leider sind für diesen Zeitraum keine Reiniger verfügbar",
-    "findNewCleaner": "Neuen Reiniger finden",
+    "noAvailableDesc": "Leider sind für diesen Zeitraum keine Fachkräfte verfügbar",
+    "findNewWorker": "Neue Fachkraft finden",
     "skipForNow": "Jetzt überspringen"
   },
   "faq": {
@@ -1340,6 +1340,6 @@
     "rescheduleSuccess": "Buchung erfolgreich umgebucht",
     "cancelSuccess": "Buchung erfolgreich storniert",
     "pendingApproval": "Genehmigung ausstehend",
-    "awaitingCleanerApproval": "Warte auf Bestätigung des Reinigers"
+    "awaitingWorkerApproval": "Warte auf Bestätigung der Fachkraft"
   }
 }

@@ -529,7 +529,7 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        toast.success(verified ? t("admin.cleanerVerified") : t("admin.verificationRevoked"));
+        toast.success(verified ? t("admin.workerVerified") : t("admin.verificationRevoked"));
         fetchCleaners();
         fetchStats();
       } else {

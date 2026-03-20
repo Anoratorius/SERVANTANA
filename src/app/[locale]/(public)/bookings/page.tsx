@@ -230,7 +230,7 @@ export default function BookingsPage() {
                 <EmptyState
                   title={t("booking.noUpcoming")}
                   description={t("booking.noUpcomingDesc")}
-                  actionLabel={t("booking.findCleaner")}
+                  actionLabel={t("booking.findWorker")}
                   actionHref="/search"
                 />
               ) : (

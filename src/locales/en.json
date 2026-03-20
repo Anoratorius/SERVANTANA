@@ -259,7 +259,7 @@
     "rebookingInfo": "Rebooking from your previous order - address and service pre-filled",
     "noUpcoming": "No upcoming bookings",
     "noUpcomingDesc": "You don't have any upcoming bookings yet.",
-    "findCleaner": "Find a Cleaner",
+    "findWorker": "Find a Worker",
     "noPast": "No past bookings",
     "noPastDesc": "Your completed and cancelled bookings will appear here.",
     "status": {
@@ -274,12 +274,12 @@
     "time": "Time",
     "location": "Location",
     "customer": "Customer",
-    "cleaner": "Cleaner",
+    "worker": "Worker",
     "notFound": "Booking not found"
   },
   "tracking": {
     "title": "Live Tracking",
-    "cleanerDescription": "Share your location so the customer can see when you'll arrive",
+    "workerDescription": "Share your location so the customer can see when you'll arrive",
     "startSharing": "Start Sharing Location",
     "stopSharing": "Stop Sharing",
     "sharingActive": "Location sharing active",
@@ -295,7 +295,7 @@
     "eta": "Estimated Arrival",
     "lastUpdate": "Last updated",
     "notStarted": "Tracking not started",
-    "notStartedDesc": "The cleaner will share their location when they're on their way"
+    "notStartedDesc": "The worker will share their location when they're on their way"
   },
   "chat": {
     "title": "Chat",
@@ -362,8 +362,8 @@
     "confirmed": "Confirmed",
     "pending": "Pending",
     "addMember": "Add Member",
-    "findCleaners": "Find Available Cleaners",
-    "noAvailable": "No cleaners available for this time slot",
+    "findWorkers": "Find Available Workers",
+    "noAvailable": "No workers available for this time slot",
     "memberAdded": "Team member added",
     "memberRemoved": "Team member removed",
     "addFailed": "Failed to add team member",
@@ -375,11 +375,11 @@
     "declineFailed": "Failed to decline",
     "spotsRemaining": "{count} spot(s) remaining",
     "teamSize": "Team Size",
-    "selectTeamSize": "How many cleaners do you need?",
-    "solo": "1 Cleaner",
-    "duo": "2 Cleaners",
-    "trio": "3 Cleaners",
-    "quad": "4 Cleaners",
+    "selectTeamSize": "How many workers do you need?",
+    "solo": "1 Worker",
+    "duo": "2 Workers",
+    "trio": "3 Workers",
+    "quad": "4 Workers",
     "teamBooking": "Team Booking",
     "largeJobNote": "Recommended for large properties or deep cleaning"
   },
@@ -397,9 +397,9 @@
     "selectToTip": "Select amount to tip",
     "sendTip": "Send ${amount} Tip",
     "sent": "Tip of ${amount} sent!",
-    "thankYou": "Thank you! ${amount} tip sent to your cleaner",
+    "thankYou": "Thank you! ${amount} tip sent to your worker",
     "failed": "Failed to process tip",
-    "goesToCleaner": "100% of your tip goes directly to the cleaner"
+    "goesToWorker": "100% of your tip goes directly to the worker"
   },
   "invoice": {
     "title": "Invoices",
@@ -445,7 +445,7 @@
     "keylessEntry": "Keyless Entry",
     "addLock": "Add Lock",
     "addNewLock": "Add New Smart Lock",
-    "addLockDescription": "Connect a smart lock to enable keyless entry for cleaners.",
+    "addLockDescription": "Connect a smart lock to enable keyless entry for workers.",
     "lockName": "Lock Name",
     "lockNamePlaceholder": "e.g., Front Door, Back Door",
     "provider": "Provider",
@@ -459,7 +459,7 @@
     "deleteFailed": "Failed to remove smart lock",
     "confirmDelete": "Are you sure you want to remove this smart lock?",
     "noLocks": "No smart locks configured",
-    "addFirstLock": "Add a smart lock to enable keyless entry for cleaners",
+    "addFirstLock": "Add a smart lock to enable keyless entry for workers",
     "active": "Active",
     "inactive": "Inactive",
     "viewCodes": "Codes",
@@ -489,7 +489,7 @@
     "submitted": "Rating submitted successfully!",
     "failed": "Failed to submit rating",
     "thankYou": "Thank you for your feedback!",
-    "onlyCleaners": "Only cleaners can see customer ratings"
+    "onlyWorkers": "Only workers can see customer ratings"
   },
   "messages": {
     "title": "Messages",
@@ -515,7 +515,7 @@
     "verification": "Verification",
     "reviews": "Reviews",
     "totalUsers": "Total Users",
-    "totalCleaners": "Total Cleaners",
+    "totalWorkers": "Total Workers",
     "verified": "verified",
     "totalBookings": "Total Bookings",
     "completed": "completed",
@@ -531,16 +531,16 @@
     "searchUsers": "Search users...",
     "allRoles": "All Roles",
     "customers": "Customers",
-    "cleaners": "Cleaners",
+    "workers": "Workers",
     "admins": "Admins",
     "bookings": "bookings",
     "page": "Page",
     "of": "of",
-    "cleanerVerification": "Cleaner Verification",
+    "workerVerification": "Worker Verification",
     "pendingVerificationFilter": "Pending Verification",
     "verifiedFilter": "Verified",
-    "noCleanersPending": "No cleaners pending verification",
-    "noCleanersVerified": "No verified cleaners",
+    "noWorkersPending": "No workers pending verification",
+    "noWorkersVerified": "No verified workers",
     "revoke": "Revoke",
     "verify": "Verify",
     "reviewModeration": "Review Moderation",
@@ -548,7 +548,7 @@
     "reviewed": "reviewed",
     "delete": "Delete",
     "accessDenied": "Access denied. Admin only.",
-    "cleanerVerified": "Cleaner verified!",
+    "workerVerified": "Worker verified!",
     "verificationRevoked": "Verification revoked",
     "failedVerification": "Failed to update verification",
     "reviewDeleted": "Review deleted",
@@ -1048,15 +1048,15 @@
   },
   "substitutes": {
     "title": "Find a Substitute",
-    "subtitle": "Choose an available cleaner to replace your cancelled booking",
+    "subtitle": "Choose an available worker to replace your cancelled booking",
     "originalCancelled": "{name} cancelled your booking",
-    "availableCount": "{count} cleaners available",
+    "availableCount": "{count} workers available",
     "bookings": "bookings",
     "accept": "Accept",
     "accepted": "Substitute accepted! New booking created.",
     "noAvailable": "No substitutes available",
     "noAvailableDesc": "Unfortunately, no cleaners are available for this time slot",
-    "findNewCleaner": "Find a New Cleaner",
+    "findNewWorker": "Find a New Worker",
     "skipForNow": "Skip for now"
   },
   "faq": {
@@ -1340,6 +1340,6 @@
     "rescheduleSuccess": "Booking rescheduled successfully",
     "cancelSuccess": "Booking cancelled successfully",
     "pendingApproval": "Pending Approval",
-    "awaitingCleanerApproval": "Awaiting cleaner approval"
+    "awaitingWorkerApproval": "Awaiting worker approval"
   }
 }

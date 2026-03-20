@@ -171,7 +171,7 @@ export function CustomerReviewDialog({
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              {t("onlyCleaners")}
+              {t("onlyWorkers")}
             </p>
           </div>
         )}

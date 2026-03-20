@@ -354,7 +354,7 @@ export default function BookingDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {isCleaner ? t("booking.customer") : t("booking.cleaner")}
+                  {isCleaner ? t("booking.customer") : t("booking.worker")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -397,7 +397,7 @@ export default function BookingDetailPage() {
                 {isCleaner && (
                   <div className="space-y-4">
                     <p className="text-muted-foreground">
-                      {t("tracking.cleanerDescription")}
+                      {t("tracking.workerDescription")}
                     </p>
                     <div className="flex flex-wrap gap-4">
                       {tracking?.trackingActive ? (

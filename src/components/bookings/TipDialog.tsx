@@ -190,7 +190,7 @@ export function TipDialog({
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              {t("goesToCleaner")}
+              {t("goesToWorker")}
             </p>
           </div>
         )}

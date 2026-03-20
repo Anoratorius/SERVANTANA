@@ -278,7 +278,7 @@ export default function SubstitutesPage() {
                 </p>
                 <Link href="/search">
                   <Button className="bg-gradient-to-r from-blue-500 to-green-500">
-                    {t("substitutes.findNewCleaner")}
+                    {t("substitutes.findNewWorker")}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
