@@ -19,9 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
-import { VoiceAssistant } from "@/components/search/VoiceAssistant";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
-import { toast } from "sonner";
 
 interface Service {
   id: string;
@@ -78,27 +76,6 @@ function SearchContent() {
   const [maxPrice, setMaxPrice] = useState(searchParams.get("price") || "any");
   const [ecoFriendly, setEcoFriendly] = useState(searchParams.get("eco") === "true");
   const [petFriendly, setPetFriendly] = useState(searchParams.get("pet") === "true");
-
-  // Handle AI assistant search params
-  const handleAISearchParams = (params: {
-    ready: boolean;
-    serviceType?: string;
-    location?: string;
-    date?: string;
-    duration?: number;
-  }) => {
-    if (params.location) {
-      setLocation(params.location);
-    }
-    if (params.serviceType) {
-      setServiceFilter(params.serviceType);
-    }
-    toast.success(
-      locale === "de"
-        ? "Suche wird mit Ihren Kriterien aktualisiert..."
-        : "Updating search with your criteria..."
-    );
-  };
 
   // Auto-detect location via IP on mount
   useEffect(() => {
@@ -252,9 +229,6 @@ function SearchContent() {
       </main>
 
       <Footer />
-
-      {/* AI Voice Assistant */}
-      <VoiceAssistant onSearchParams={handleAISearchParams} locale={locale} />
     </div>
   );
 }
