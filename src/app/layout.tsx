@@ -23,6 +23,10 @@ export const metadata: Metadata = {
   title: "Servantana - Find Trusted Cleaners",
   description: "Book professional cleaning services in minutes. Verified cleaners, transparent pricing, and hassle-free booking.",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
