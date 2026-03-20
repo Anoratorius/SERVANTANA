@@ -3,30 +3,25 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { X, Download } from "lucide-react";
+import { X, Download, Share } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-// Check if app is installed as PWA
+function isIOS(): boolean {
+  if (typeof window === "undefined") return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
 function checkIfInstalled(): boolean {
   if (typeof window === "undefined") return false;
-
-  // Check standard PWA standalone mode
   if (window.matchMedia("(display-mode: standalone)").matches) return true;
-
-  // Check iOS Safari standalone mode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((window.navigator as any).standalone === true) return true;
-
-  // Check if launched from home screen (Android TWA)
   if (document.referrer.includes("android-app://")) return true;
-
-  // Check localStorage flag (set when user installs)
   if (localStorage.getItem("pwa-installed") === "true") return true;
-
   return false;
 }
 
@@ -35,13 +30,11 @@ export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
 
-  // Check installed state on mount and listen for changes
   useEffect(() => {
-    // Initial check
     setIsInstalled(checkIfInstalled());
 
-    // Listen for display mode changes
     const mediaQuery = window.matchMedia("(display-mode: standalone)");
     const handleChange = (e: MediaQueryListEvent) => {
       if (e.matches) {
@@ -49,16 +42,13 @@ export function InstallPrompt() {
         localStorage.setItem("pwa-installed", "true");
       }
     };
-
     mediaQuery.addEventListener("change", handleChange);
 
-    // Listen for app installed event
     const handleAppInstalled = () => {
       setIsInstalled(true);
       localStorage.setItem("pwa-installed", "true");
       setShowPrompt(false);
     };
-
     window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
@@ -68,14 +58,11 @@ export function InstallPrompt() {
   }, []);
 
   useEffect(() => {
-    // Skip if already installed
     if (isInstalled) return;
 
-    // Check if dismissed recently
     const dismissed = localStorage.getItem("pwa-install-dismissed");
     if (dismissed) {
       const dismissedTime = parseInt(dismissed, 10);
-      // Don't show for 7 days after dismissal
       if (Date.now() - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
         return;
       }
@@ -85,10 +72,8 @@ export function InstallPrompt() {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
-
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
 
-    // Show prompt after 10 seconds
     const timer = setTimeout(() => {
       setShowPrompt(true);
     }, 10000);
@@ -100,7 +85,6 @@ export function InstallPrompt() {
   }, [isInstalled]);
 
   useEffect(() => {
-    // Register service worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch((err) => {
         console.error("Service worker registration failed:", err);
@@ -109,7 +93,16 @@ export function InstallPrompt() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (isIOS()) {
+      setShowIOSInstructions(true);
+      return;
+    }
+
+    if (!deferredPrompt) {
+      // Try to show native install prompt anyway
+      setShowIOSInstructions(true);
+      return;
+    }
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
@@ -125,10 +118,35 @@ export function InstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    setShowIOSInstructions(false);
     localStorage.setItem("pwa-install-dismissed", Date.now().toString());
   };
 
   if (!showPrompt || isInstalled) return null;
+
+  // iOS Instructions Modal
+  if (showIOSInstructions) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-t-2xl w-full max-w-md p-5 text-center animate-in slide-in-from-bottom">
+          <h3 className="text-lg font-bold mb-3">Install Servantana</h3>
+          <div className="space-y-3 text-sm text-gray-600 mb-4">
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <Share className="h-6 w-6 text-blue-500" />
+              <span>1. Tap the <strong>Share</strong> button in your browser</span>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <Download className="h-6 w-6 text-green-500" />
+              <span>2. Select <strong>"Add to Home Screen"</strong></span>
+            </div>
+          </div>
+          <Button onClick={handleDismiss} className="w-full">
+            Got it
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg animate-in slide-in-from-bottom duration-300">
