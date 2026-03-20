@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Header, Footer } from "@/components/layout";
+import { HeaderLocation } from "@/components/layout/HeaderLocation";
 import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
@@ -115,6 +116,10 @@ function HomeContent() {
         {/* Features Section */}
         <section id="features" className="py-20 bg-white w-full">
           <div className="w-full px-4 flex flex-col items-center">
+            {/* Mobile Location - Only visible on mobile */}
+            <div className="md:hidden mb-8">
+              <HeaderLocation />
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto justify-items-center">
               <FeatureCard
                 icon={<Shield className="h-10 w-10" />}
