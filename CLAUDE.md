@@ -18,6 +18,24 @@ npm run db:seed          # Seed database with initial data
 npm run db:studio        # Open Prisma Studio GUI
 ```
 
+## Deployment
+
+**Production deployment happens automatically via git push to main.**
+
+After committing changes:
+```bash
+git push   # Vercel auto-deploys, always fresh build
+```
+
+If manual deploy needed (rare):
+```bash
+npx vercel --prod --force   # Force fresh build, skip cache
+```
+
+**Live URLs:**
+- Production: https://servantana.com (pending DNS)
+- Vercel: https://servantana-five.vercel.app
+
 ## Architecture
 
 ### Tech Stack
