@@ -5,7 +5,7 @@ export const runtime = 'edge';
 const middleware = createMiddleware({
   locales: ['en', 'de'],
   defaultLocale: 'en',
-  localePrefix: 'always',
+  localePrefix: 'as-needed',
 });
 
 export default middleware;
