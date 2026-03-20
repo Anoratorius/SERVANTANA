@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { X, Download, Share } from "lucide-react";
 
@@ -26,7 +25,6 @@ function checkIfInstalled(): boolean {
 }
 
 export function InstallPrompt() {
-  const t = useTranslations();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -154,10 +152,10 @@ export function InstallPrompt() {
           <Download className="h-6 w-6 flex-shrink-0" />
           <div>
             <p className="font-bold text-lg" style={{ fontFamily: 'var(--font-logo)' }}>
-              {t("pwa.installTitle")}
+              Install Servantana
             </p>
             <p className="text-sm text-white/90">
-              {t("pwa.installDescription")}
+              Add to your home screen for the best experience
             </p>
           </div>
         </div>
@@ -167,7 +165,7 @@ export function InstallPrompt() {
             variant="secondary"
             className="bg-white text-blue-600 hover:bg-white/90 font-bold"
           >
-            {t("pwa.installButton")}
+            Install
           </Button>
           <Button
             onClick={handleDismiss}
