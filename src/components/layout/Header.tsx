@@ -62,7 +62,7 @@ export function Header() {
         {/* Right - Actions */}
         <div className="flex-shrink-0 flex items-center gap-1.5 md:gap-3">
           {isLoading ? (
-            <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
+            <div className="w-20 h-9" />
           ) : isAuthenticated ? (
             <>
             <NotificationBell />
