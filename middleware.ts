@@ -3,21 +3,27 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
-// Allowed IPs
-const ALLOWED_IPS: string[] = [
-  '212.58.102.31',
-  '185.70.55.21',
-];
+// Allowed IPs from environment variable (comma-separated)
+// Fallback to hardcoded for now, but env var takes precedence
+const ALLOWED_IPS: string[] = (process.env.ALLOWED_IPS || '212.58.102.31,185.115.5.210,205.147.17.23,31.18.27.68')
+  .split(',')
+  .map(ip => ip.trim())
+  .filter(Boolean);
 
 // Set to true to enable IP restriction
-const IP_RESTRICTION_ENABLED = true;
+const IP_RESTRICTION_ENABLED = process.env.IP_RESTRICTION_ENABLED !== 'false';
 
 function getClientIP(request: NextRequest): string {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  const realIp = request.headers.get('x-real-ip');
-  const cfConnectingIp = request.headers.get('cf-connecting-ip');
+  // SECURITY: On Vercel, ONLY trust x-vercel-forwarded-for
+  // Other headers can be spoofed by attackers
+  const vercelForwardedFor = request.headers.get('x-vercel-forwarded-for');
 
-  return cfConnectingIp || realIp || forwardedFor?.split(',')[0]?.trim() || 'unknown';
+  if (vercelForwardedFor) {
+    return vercelForwardedFor.split(',')[0].trim();
+  }
+
+  // Fallback for non-Vercel environments (local dev)
+  return 'unknown';
 }
 
 const intlMiddleware = createMiddleware({
@@ -26,28 +32,50 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'as-needed',
 });
 
+// Static file extensions that bypass IP check
+const STATIC_EXTENSIONS = /\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf|eot|json|xml|txt|webp|mp4|webm|mp3|wav|pdf)$/i;
+
+// Public API routes that don't need IP restriction
+const PUBLIC_API_ROUTES = ['/api/ip'];
+
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Always allow these paths (no IP check)
-  if (
-    pathname === '/coming-soon' ||
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/_next/') ||
-    pathname.includes('.')
-  ) {
-    // For coming-soon, just return the page without i18n processing
-    if (pathname === '/coming-soon') {
+  // Always allow coming-soon page
+  if (pathname === '/coming-soon') {
+    return NextResponse.next();
+  }
+
+  // Allow Next.js internals
+  if (pathname.startsWith('/_next/')) {
+    return NextResponse.next();
+  }
+
+  // Allow static files (specific extensions only)
+  if (STATIC_EXTENSIONS.test(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Handle API routes
+  if (pathname.startsWith('/api/')) {
+    // Public API routes bypass IP check
+    if (PUBLIC_API_ROUTES.includes(pathname)) {
       return NextResponse.next();
+    }
+    // Protected API routes get IP check
+    if (IP_RESTRICTION_ENABLED) {
+      const clientIP = getClientIP(request);
+      if (ALLOWED_IPS.length === 0 || !ALLOWED_IPS.includes(clientIP)) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
     }
     return NextResponse.next();
   }
 
-  // Check IP restriction
+  // Check IP restriction for all other routes
   if (IP_RESTRICTION_ENABLED) {
     const clientIP = getClientIP(request);
 
-    // If no IPs in allowlist OR client IP not in allowlist, redirect to coming-soon
     if (ALLOWED_IPS.length === 0 || !ALLOWED_IPS.includes(clientIP)) {
       const url = request.nextUrl.clone();
       url.pathname = '/coming-soon';
@@ -55,7 +83,7 @@ export default function middleware(request: NextRequest) {
     }
   }
 
-  // If IP is allowed (or no IPs in list), continue with normal i18n middleware
+  // If IP is allowed, continue with normal i18n middleware
   return intlMiddleware(request);
 }
 

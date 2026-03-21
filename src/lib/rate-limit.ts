@@ -81,27 +81,29 @@ export function checkRateLimit(
 
 /**
  * Get client IP from request headers
+ * SECURITY: On Vercel, ONLY trust x-vercel-forwarded-for - other headers can be spoofed
  */
 export function getClientIP(request: Request): string {
-  // Check various headers for client IP
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    // x-forwarded-for can contain multiple IPs, take the first one
-    return forwarded.split(",")[0].trim();
-  }
-
-  const realIP = request.headers.get("x-real-ip");
-  if (realIP) {
-    return realIP;
-  }
-
-  // Vercel-specific
+  // Vercel-specific - MUST check first, cannot be spoofed on Vercel
   const vercelIP = request.headers.get("x-vercel-forwarded-for");
   if (vercelIP) {
     return vercelIP.split(",")[0].trim();
   }
 
-  // Fallback
+  // Fallback for local development only
+  // These headers CAN be spoofed in production - only use for dev
+  if (process.env.NODE_ENV === "development") {
+    const forwarded = request.headers.get("x-forwarded-for");
+    if (forwarded) {
+      return forwarded.split(",")[0].trim();
+    }
+
+    const realIP = request.headers.get("x-real-ip");
+    if (realIP) {
+      return realIP;
+    }
+  }
+
   return "unknown";
 }
 

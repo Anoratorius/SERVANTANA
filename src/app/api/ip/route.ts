@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  // Get IP from various headers (Vercel/Cloudflare)
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const realIp = request.headers.get("x-real-ip");
-  const cfConnectingIp = request.headers.get("cf-connecting-ip");
+  // Get IP from Vercel's trusted header only
+  const vercelForwardedFor = request.headers.get("x-vercel-forwarded-for");
+  const ip = vercelForwardedFor?.split(",")[0]?.trim() || "unknown";
 
-  // x-forwarded-for can contain multiple IPs, take the first one
-  const ip = cfConnectingIp || realIp || forwardedFor?.split(",")[0]?.trim() || "unknown";
-
-  return NextResponse.json({
-    ip,
-    headers: {
-      "x-forwarded-for": forwardedFor,
-      "x-real-ip": realIp,
-      "cf-connecting-ip": cfConnectingIp,
-    }
-  });
+  // Only return IP, no debug headers (security)
+  return NextResponse.json({ ip });
 }

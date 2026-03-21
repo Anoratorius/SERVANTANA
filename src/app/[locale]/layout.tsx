@@ -7,6 +7,7 @@ import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { PermissionsOnboarding } from "@/components/onboarding/PermissionsOnboarding";
+import { SplashController } from "@/components/layout/SplashController";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -32,6 +33,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <SessionProvider>
       <NextIntlClientProvider messages={messages}>
         <CurrencyProvider>
+          <SplashController />
           {children}
           <Toaster />
           <PermissionsOnboarding locale={locale} />
