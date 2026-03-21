@@ -5,7 +5,7 @@ export const runtime = 'edge';
 
 // Allowed IPs from environment variable (comma-separated)
 // Fallback to hardcoded for now, but env var takes precedence
-const ALLOWED_IPS: string[] = (process.env.ALLOWED_IPS || '212.58.102.31,185.115.5.210,205.147.17.23,31.18.27.68')
+const ALLOWED_IPS: string[] = (process.env.ALLOWED_IPS || '212.58.102.31,185.115.5.210,205.147.17.23')
   .split(',')
   .map(ip => ip.trim())
   .filter(Boolean);
