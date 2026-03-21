@@ -114,10 +114,10 @@ function HomeContent() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 bg-white w-full">
+        <section id="features" className="pt-8 pb-20 md:py-20 bg-white w-full">
           <div className="w-full px-4 flex flex-col items-center">
             {/* Mobile Location - Only visible on mobile */}
-            <div className="md:hidden mb-8">
+            <div className="md:hidden mb-6">
               <HeaderLocation />
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto justify-items-center">
