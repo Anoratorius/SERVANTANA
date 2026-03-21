@@ -6,7 +6,7 @@ export const runtime = 'edge';
 // Allowed IPs
 const ALLOWED_IPS: string[] = [
   '212.58.102.31',
-  '185.132.133.196',
+  '185.70.55.21',
 ];
 
 // Set to true to enable IP restriction
