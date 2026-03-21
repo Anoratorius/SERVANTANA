@@ -14,15 +14,23 @@ const ALLOWED_IPS: string[] = (process.env.ALLOWED_IPS || '212.58.102.31,185.115
 const IP_RESTRICTION_ENABLED = process.env.IP_RESTRICTION_ENABLED !== 'false';
 
 function getClientIP(request: NextRequest): string {
-  // SECURITY: On Vercel, ONLY trust x-vercel-forwarded-for
-  // Other headers can be spoofed by attackers
+  // On Vercel Edge, x-vercel-forwarded-for may not be set
+  // Fall back to x-forwarded-for which Vercel also sets
   const vercelForwardedFor = request.headers.get('x-vercel-forwarded-for');
-
   if (vercelForwardedFor) {
     return vercelForwardedFor.split(',')[0].trim();
   }
 
-  // Fallback for non-Vercel environments (local dev)
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim();
+  }
+
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp;
+  }
+
   return 'unknown';
 }
 
