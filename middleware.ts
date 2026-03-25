@@ -19,7 +19,7 @@ const ALLOWED_IPS: string[] = (process.env.ALLOWED_IPS || '212.58.102.31,185.115
   .filter(Boolean);
 
 // Set to true to enable IP restriction
-const IP_RESTRICTION_ENABLED = process.env.IP_RESTRICTION_ENABLED !== 'false';
+const IP_RESTRICTION_ENABLED = false;
 
 function getClientIP(request: NextRequest): string {
   // On Vercel Edge, x-vercel-forwarded-for may not be set
