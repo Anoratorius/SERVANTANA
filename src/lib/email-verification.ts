@@ -9,7 +9,7 @@ import { randomBytes } from "crypto";
 import { writeAuditLog } from "./audit-log";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@resend.dev>";
+const FROM_EMAIL = "Servantana <noreply@servantana.com>";
 const APP_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 // Token expiration: 24 hours
@@ -65,7 +65,7 @@ export async function sendVerificationEmail(
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="background: linear-gradient(to right, #2563eb, #16a34a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; margin: 0;">SERVANTANA</h1>
+            <img src="https://servantana.com/email-logo.svg" alt="SERVANTANA" width="200" height="45" style="display: block; margin: 0 auto;" />
           </div>
 
           <h2 style="color: #333; margin-bottom: 20px;">Welcome, ${firstName}!</h2>

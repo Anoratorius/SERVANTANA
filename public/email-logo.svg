@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="60" viewBox="0 0 280 60">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2563eb"/>
+      <stop offset="100%" style="stop-color:#16a34a"/>
+    </linearGradient>
+  </defs>
+  <rect width="280" height="60" fill="white"/>
+  <text x="140" y="42" font-family="Arial Black, Arial, sans-serif" font-size="32" font-weight="900" text-anchor="middle" letter-spacing="3">
+    <tspan fill="#2563eb">SERV</tspan><tspan fill="#16a34a">ANTANA</tspan>
+  </text>
+</svg>
