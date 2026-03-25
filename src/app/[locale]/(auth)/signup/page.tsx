@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
 import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 
@@ -34,6 +34,17 @@ function SignupForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const generatePassword = () => {
+    const chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let password = "";
+    for (let i = 0; i < 10; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setFormData(prev => ({ ...prev, password, confirmPassword: password }));
+    setShowPassword(true);
+    setShowConfirmPassword(true);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -181,7 +192,17 @@ function SignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">{t("auth.signup.password")}</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t("auth.signup.password")}</Label>
+              <button
+                type="button"
+                onClick={generatePassword}
+                className="text-xs text-primary hover:underline flex items-center gap-1"
+              >
+                <Sparkles className="h-3 w-3" />
+                Generate
+              </button>
+            </div>
             <div className="relative">
               <Input
                 id="password"

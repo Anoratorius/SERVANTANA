@@ -17,6 +17,7 @@ import {
   Shield,
   Eye,
   EyeOff,
+  Sparkles,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
@@ -35,6 +36,18 @@ export default function ForgotPasswordPage() {
   const [maskedEmail, setMaskedEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const generatePassword = () => {
+    const chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let newPassword = "";
+    for (let i = 0; i < 10; i++) {
+      newPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setPassword(newPassword);
+    setConfirmPassword(newPassword);
+    setShowPassword(true);
+    setShowConfirmPassword(true);
+  };
 
   const handleRequestCode = async () => {
     if (!email.trim()) {
@@ -330,7 +343,17 @@ export default function ForgotPasswordPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="password">New Password</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">New Password</Label>
+                      <button
+                        type="button"
+                        onClick={generatePassword}
+                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        Generate
+                      </button>
+                    </div>
                     <div className="relative">
                       <Input
                         id="password"
