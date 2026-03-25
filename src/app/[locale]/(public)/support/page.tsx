@@ -76,7 +76,7 @@ export default function SupportPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Have a question about a booking? Message your cleaner directly through the app.
+                    Have a question about a booking? Message your worker directly through the app.
                   </p>
                   <Link href="/messages">
                     <Button variant="outline">Go to Messages</Button>
@@ -135,7 +135,7 @@ export default function SupportPage() {
                   <ul className="list-disc list-inside text-muted-foreground space-y-1">
                     <li>How do I cancel a booking?</li>
                     <li>What is the refund policy?</li>
-                    <li>How do I become a cleaner?</li>
+                    <li>How do I become a worker?</li>
                     <li>How are payments processed?</li>
                   </ul>
                 </div>

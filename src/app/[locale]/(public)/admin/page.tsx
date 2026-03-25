@@ -834,7 +834,7 @@ export default function AdminPage() {
                       >
                         <option value="all">All Roles</option>
                         <option value="CUSTOMER">Customers</option>
-                        <option value="CLEANER">Cleaners</option>
+                        <option value="CLEANER">Workers</option>
                         <option value="ADMIN">Admins</option>
                       </select>
                     </div>
@@ -928,12 +928,12 @@ export default function AdminPage() {
               </Card>
             </TabsContent>
 
-            {/* Cleaners Verification Tab */}
+            {/* Workers Verification Tab */}
             <TabsContent value="cleaners">
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Cleaner Verification</CardTitle>
+                    <CardTitle>Worker Verification</CardTitle>
                     <select
                       value={cleanersFilter}
                       onChange={(e) => setCleanersFilter(e.target.value)}

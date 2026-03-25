@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     if (!cleaner) {
       return NextResponse.json(
-        { error: "Cleaner not found" },
+        { error: "Worker not found" },
         { status: 404 }
       );
     }

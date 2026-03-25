@@ -31,7 +31,7 @@ export async function GET() {
 
     if (!user.cleanerProfile) {
       return NextResponse.json(
-        { error: "Cleaner profile not found" },
+        { error: "Worker profile not found" },
         { status: 404 }
       );
     }
@@ -69,14 +69,14 @@ export async function POST() {
 
     if (!user || user.role !== "CLEANER") {
       return NextResponse.json(
-        { error: "Only cleaners can create wallets" },
+        { error: "Only workers can create wallets" },
         { status: 403 }
       );
     }
 
     if (!user.cleanerProfile) {
       return NextResponse.json(
-        { error: "Cleaner profile not found. Please complete your profile first." },
+        { error: "Worker profile not found. Please complete your profile first." },
         { status: 404 }
       );
     }

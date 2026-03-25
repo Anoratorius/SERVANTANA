@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     if (!cleanerProfile) {
       return NextResponse.json(
-        { error: "Cleaner not found" },
+        { error: "Worker not found" },
         { status: 404 }
       );
     }

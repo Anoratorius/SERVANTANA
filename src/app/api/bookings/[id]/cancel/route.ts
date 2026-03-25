@@ -56,7 +56,7 @@ export async function POST(
     // Calculate refund (only applies if customer cancels)
     const refund = isCustomer
       ? calculateRefundAmount(booking.totalPrice, hoursUntilBooking)
-      : { amount: booking.totalPrice, percent: 100, reason: "Cleaner cancelled - full refund" };
+      : { amount: booking.totalPrice, percent: 100, reason: "Worker cancelled - full refund" };
 
     // If cleaner cancels, always full refund to customer
     // If customer cancels, refund based on policy

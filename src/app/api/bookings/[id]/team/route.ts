@@ -181,7 +181,7 @@ export async function POST(
 
       if (!cleaner) {
         return NextResponse.json(
-          { error: "Cleaner not found" },
+          { error: "Worker not found" },
           { status: 404 }
         );
       }
@@ -190,7 +190,7 @@ export async function POST(
       const existing = booking.teamMembers.find((m) => m.cleanerId === cleanerId);
       if (existing || cleanerId === booking.cleanerId) {
         return NextResponse.json(
-          { error: "Cleaner is already on the team" },
+          { error: "Worker is already on the team" },
           { status: 400 }
         );
       }

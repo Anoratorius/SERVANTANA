@@ -47,7 +47,7 @@ export async function PATCH(
 
     if (!cleanerProfile) {
       return NextResponse.json(
-        { error: "Cleaner profile not found" },
+        { error: "Worker profile not found" },
         { status: 404 }
       );
     }
@@ -72,12 +72,12 @@ export async function PATCH(
     });
 
     // Determine message
-    let message = "Cleaner updated successfully";
+    let message = "Worker updated successfully";
     if (verified !== undefined) {
-      message = verified ? "Cleaner verified successfully" : "Cleaner verification revoked";
+      message = verified ? "Worker verified successfully" : "Worker verification revoked";
     }
     if (isActive !== undefined) {
-      message = isActive ? "Cleaner reactivated successfully" : "Cleaner deactivated successfully";
+      message = isActive ? "Worker reactivated successfully" : "Worker deactivated successfully";
     }
 
     return NextResponse.json({

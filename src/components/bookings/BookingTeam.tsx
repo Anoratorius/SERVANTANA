@@ -254,7 +254,7 @@ export function BookingTeam({
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>{t("findCleaners")}</DialogTitle>
+                  <DialogTitle>{t("findWorkers")}</DialogTitle>
                 </DialogHeader>
                 <div className="max-h-96 overflow-y-auto space-y-3">
                   {isLoadingAvailable ? (

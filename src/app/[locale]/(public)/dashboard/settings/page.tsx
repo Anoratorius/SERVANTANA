@@ -405,7 +405,7 @@ export default function SettingsPage() {
                 Profile Settings
               </h1>
               <p className="text-muted-foreground">
-                Manage your cleaner profile, services, and availability
+                Manage your worker profile, services, and availability
               </p>
             </div>
           </div>

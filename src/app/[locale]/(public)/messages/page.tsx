@@ -234,7 +234,7 @@ export default function MessagesPage() {
 
                             {partner.role === "CLEANER" && (
                               <Badge variant="secondary" className="mt-2 text-xs">
-                                Cleaner
+                                Worker
                               </Badge>
                             )}
                           </div>

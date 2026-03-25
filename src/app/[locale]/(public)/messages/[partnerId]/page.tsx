@@ -222,7 +222,7 @@ export default function ConversationPage({
                 </div>
                 {partner.role === "CLEANER" && partner.cleanerProfile && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Badge variant="secondary" className="text-xs">Cleaner</Badge>
+                    <Badge variant="secondary" className="text-xs">Worker</Badge>
                     <span className="flex items-center gap-1">
                       <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                       {partner.cleanerProfile.averageRating.toFixed(1)}

@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!cleaner) {
-      return NextResponse.json({ error: "Cleaner not found" }, { status: 404 });
+      return NextResponse.json({ error: "Worker not found" }, { status: 404 });
     }
 
     // Check if already favorited

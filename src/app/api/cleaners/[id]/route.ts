@@ -86,7 +86,7 @@ export async function GET(
 
     if (!cleaner || !cleaner.cleanerProfile) {
       return NextResponse.json(
-        { error: "Cleaner not found" },
+        { error: "Worker not found" },
         { status: 404 }
       );
     }

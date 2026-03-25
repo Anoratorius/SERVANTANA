@@ -23,14 +23,14 @@ export async function GET() {
 
     if (!user || user.role !== "CLEANER") {
       return NextResponse.json(
-        { error: "Only cleaners can access Stripe Connect" },
+        { error: "Only workers can access Stripe Connect" },
         { status: 403 }
       );
     }
 
     if (!user.cleanerProfile) {
       return NextResponse.json(
-        { error: "Cleaner profile not found" },
+        { error: "Worker profile not found" },
         { status: 404 }
       );
     }
@@ -82,14 +82,14 @@ export async function POST(request: NextRequest) {
 
     if (!user || user.role !== "CLEANER") {
       return NextResponse.json(
-        { error: "Only cleaners can connect with Stripe" },
+        { error: "Only workers can connect with Stripe" },
         { status: 403 }
       );
     }
 
     if (!user.cleanerProfile) {
       return NextResponse.json(
-        { error: "Please complete your cleaner profile first" },
+        { error: "Please complete your worker profile first" },
         { status: 400 }
       );
     }

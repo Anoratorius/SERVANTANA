@@ -163,7 +163,7 @@ export default function ReviewPage({
             <AlertCircle className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold mb-4">Cannot Review</h1>
             <p className="text-muted-foreground mb-6">
-              Only customers can leave reviews for cleaners.
+              Only customers can leave reviews for workers.
             </p>
             <Link href="/bookings">
               <Button>Back to Bookings</Button>
@@ -213,7 +213,7 @@ export default function ReviewPage({
                 {t("review.thankYou")}
               </h1>
               <p className="text-muted-foreground">
-                Your feedback helps other customers find great cleaners.
+                Your feedback helps other customers find great workers.
               </p>
             </div>
 
@@ -263,7 +263,7 @@ export default function ReviewPage({
               </Link>
               <Link href={`/cleaner/${booking.cleaner.id}`}>
                 <Button size="lg" variant="outline">
-                  View Cleaner Profile
+                  View Worker Profile
                 </Button>
               </Link>
             </div>
@@ -292,7 +292,7 @@ export default function ReviewPage({
               <CardTitle className="text-2xl">{t("review.title")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Cleaner Info */}
+              {/* Worker Info */}
               <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={booking.cleaner.avatar || undefined} />

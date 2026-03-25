@@ -390,7 +390,7 @@ export default function BookingConfirmationPage({
                       <CheckCircle className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Cleaner</p>
+                      <p className="text-sm text-muted-foreground">Worker</p>
                       <p className="font-medium">
                         {booking.cleaner.firstName} {booking.cleaner.lastName}
                         {booking.service && (
@@ -583,7 +583,7 @@ export default function BookingConfirmationPage({
             </Link>
             <Link href="/search">
               <Button size="lg" variant="outline">
-                Book Another Cleaner
+                Book Another Worker
               </Button>
             </Link>
           </div>
