@@ -759,7 +759,7 @@ export default function AdminPage() {
                                 </div>
                               </div>
                               <Badge variant={user.role === "CLEANER" ? "default" : "secondary"}>
-                                {user.role}
+                                {user.role === "CLEANER" ? "WORKER" : user.role}
                               </Badge>
                             </div>
                           ))}
@@ -888,7 +888,7 @@ export default function AdminPage() {
                                     : "secondary"
                                 }
                               >
-                                {user.role}
+                                {user.role === "CLEANER" ? "WORKER" : user.role}
                               </Badge>
                               {user.role === "CLEANER" && user.cleanerProfile?.verified && (
                                 <CheckCircle className="h-4 w-4 text-green-500" />
