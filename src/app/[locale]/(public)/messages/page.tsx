@@ -166,11 +166,11 @@ export default function MessagesPage() {
               <MessageCircle className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
               <h2 className="text-xl font-semibold mb-2">{t("messages.noMessages")}</h2>
               <p className="text-muted-foreground mb-6">
-                Start a conversation by messaging a cleaner from their profile
+                Start a conversation by messaging a worker from their profile
               </p>
               <Link href="/search">
                 <Button className="bg-gradient-to-r from-blue-500 to-blue-600">
-                  Find Cleaners
+                  Find Workers
                 </Button>
               </Link>
             </div>
