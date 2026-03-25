@@ -70,8 +70,8 @@ export default function ForgotPasswordPage() {
   };
 
   const handleVerifyCode = async () => {
-    if (code.length !== 6) {
-      toast.error("Please enter the 6-digit code");
+    if (code.length !== 3) {
+      toast.error("Please enter the 3-digit code");
       return;
     }
 
@@ -269,13 +269,13 @@ export default function ForgotPasswordPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="code">6-Digit Code</Label>
+                    <Label htmlFor="code">3-Digit Code</Label>
                     <Input
                       id="code"
                       type="text"
                       inputMode="numeric"
-                      maxLength={6}
-                      placeholder="000000"
+                      maxLength={3}
+                      placeholder="000"
                       value={code}
                       onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                       onKeyDown={(e) => e.key === "Enter" && handleVerifyCode()}
@@ -285,7 +285,7 @@ export default function ForgotPasswordPage() {
 
                   <Button
                     onClick={handleVerifyCode}
-                    disabled={isLoading || code.length !== 6}
+                    disabled={isLoading || code.length !== 3}
                     className="w-full bg-gradient-to-r from-purple-500 to-purple-600"
                   >
                     {isLoading ? (

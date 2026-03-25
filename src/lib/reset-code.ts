@@ -7,9 +7,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Use environment variable for from email, fallback to Resend's test domain for development
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@resend.dev>";
 
-// Generate a cryptographically secure 6-digit code
+// Generate a cryptographically secure 3-digit code
 export function generateResetCode(): string {
-  return randomInt(100000, 1000000).toString();
+  return randomInt(100, 1000).toString();
 }
 
 // Create a password reset token
@@ -106,7 +106,9 @@ export async function sendResetEmail(
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="background: linear-gradient(to right, #2563eb, #16a34a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; margin: 0;">SERVANTANA</h1>
+            <h1 style="font-size: 28px; margin: 0; font-weight: bold; letter-spacing: 2px;">
+              <span style="color: #2563eb;">SERV</span><span style="color: #16a34a;">ANTANA</span>
+            </h1>
           </div>
 
           <h2 style="color: #333; margin-bottom: 20px;">Password Reset Request</h2>
