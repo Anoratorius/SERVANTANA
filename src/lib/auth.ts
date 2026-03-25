@@ -2,7 +2,6 @@ import NextAuth, { NextAuthConfig } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 import { checkRateLimit, rateLimiters } from "./rate-limit";
 import { recordIPViolation, randomDelay } from "./security";
@@ -74,6 +73,7 @@ export const authOptions: NextAuthConfig = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        rememberMe: { label: "Remember Me", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -135,6 +135,7 @@ export const authOptions: NextAuthConfig = {
           name: `${user.firstName} ${user.lastName}`,
           image: user.avatar,
           emailVerified: user.emailVerified,
+          rememberMe: credentials.rememberMe === "true",
         };
       },
     }),
@@ -158,15 +159,10 @@ export const authOptions: NextAuthConfig = {
 
         // Check remember me preference on initial sign in
         if (trigger === "signIn") {
-          try {
-            const cookieStore = await cookies();
-            const rememberMe = cookieStore.get("remember-me")?.value === "true";
-            // Set expiration: 30 days if remember me, otherwise 1 day
-            token.exp = Math.floor(Date.now() / 1000) + (rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60);
-          } catch {
-            // Default to 1 day if cookie read fails
-            token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
-          }
+          // @ts-expect-error rememberMe is added in authorize
+          const rememberMe = user.rememberMe === true;
+          // Set expiration: 30 days if remember me, otherwise 1 day
+          token.exp = Math.floor(Date.now() / 1000) + (rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60);
         }
       } else if (token.id) {
         // On subsequent requests, verify tokenVersion hasn't changed (password reset)

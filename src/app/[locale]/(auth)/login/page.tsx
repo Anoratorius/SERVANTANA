@@ -33,16 +33,10 @@ function LoginForm() {
     setErrorMessage("");
 
     try {
-      // Store remember me preference in cookie before signing in
-      if (rememberMe) {
-        document.cookie = "remember-me=true; path=/; max-age=2592000"; // 30 days
-      } else {
-        document.cookie = "remember-me=; path=/; max-age=0";
-      }
-
       const result = await signIn("credentials", {
         email,
         password,
+        rememberMe: rememberMe ? "true" : "false",
         redirect: false,
       });
 
