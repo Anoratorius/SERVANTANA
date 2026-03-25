@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Mail,
-  Phone,
   ArrowLeft,
   ArrowRight,
   Loader2,
@@ -22,28 +20,25 @@ import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 
 type Step = "identifier" | "verify" | "reset" | "success";
-type ResetType = "email" | "phone";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
 
   const [step, setStep] = useState<Step>("identifier");
-  const [resetType, setResetType] = useState<ResetType>("email");
-  const [identifier, setIdentifier] = useState("");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [maskedIdentifier, setMaskedIdentifier] = useState("");
+  const [maskedEmail, setMaskedEmail] = useState("");
 
   const handleRequestCode = async () => {
-    if (!identifier.trim()) {
-      toast.error(resetType === "email" ? "Please enter your email" : "Please enter your phone number");
+    if (!email.trim()) {
+      toast.error("Please enter your email");
       return;
     }
 
-    // Basic validation
-    if (resetType === "email" && !identifier.includes("@")) {
+    if (!email.includes("@")) {
       toast.error("Please enter a valid email address");
       return;
     }
@@ -54,15 +49,14 @@ export default function ForgotPasswordPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          identifier: identifier.trim(),
-          type: resetType,
+          email: email.trim().toLowerCase(),
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMaskedIdentifier(data.message);
+        setMaskedEmail(data.message);
         setStep("verify");
         toast.success("Verification code sent!");
       } else {
@@ -87,7 +81,7 @@ export default function ForgotPasswordPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          identifier: identifier.trim(),
+          email: email.trim().toLowerCase(),
           code,
         }),
       });
@@ -129,7 +123,7 @@ export default function ForgotPasswordPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          identifier: identifier.trim(),
+          email: email.trim().toLowerCase(),
           code,
           password,
         }),
@@ -157,8 +151,7 @@ export default function ForgotPasswordPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          identifier: identifier.trim(),
-          type: resetType,
+          email: email.trim().toLowerCase(),
         }),
       });
 
@@ -214,7 +207,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           <Card>
-            {/* Step 1: Enter Email or Phone */}
+            {/* Step 1: Enter Email */}
             {step === "identifier" && (
               <>
                 <CardHeader className="text-center">
@@ -223,33 +216,18 @@ export default function ForgotPasswordPage() {
                   </div>
                   <CardTitle className="text-2xl">Forgot Password?</CardTitle>
                   <CardDescription>
-                    No worries! Enter your email or phone number and we&apos;ll send you a reset code.
+                    No worries! Enter your email and we&apos;ll send you a reset code.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <Tabs value={resetType} onValueChange={(v) => setResetType(v as ResetType)}>
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="email" className="gap-2">
-                        <Mail className="h-4 w-4" />
-                        Email
-                      </TabsTrigger>
-                      <TabsTrigger value="phone" className="gap-2">
-                        <Phone className="h-4 w-4" />
-                        Phone
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-
                   <div className="space-y-2">
-                    <Label htmlFor="identifier">
-                      {resetType === "email" ? "Email Address" : "Phone Number"}
-                    </Label>
+                    <Label htmlFor="email">Email Address</Label>
                     <Input
-                      id="identifier"
-                      type={resetType === "email" ? "email" : "tel"}
-                      placeholder={resetType === "email" ? "john@example.com" : "+1234567890"}
-                      value={identifier}
-                      onChange={(e) => setIdentifier(e.target.value)}
+                      id="email"
+                      type="email"
+                      placeholder="john@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleRequestCode()}
                     />
                   </div>
@@ -262,7 +240,7 @@ export default function ForgotPasswordPage() {
                     {isLoading ? (
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     ) : (
-                      <ArrowRight className="h-4 w-4 mr-2" />
+                      <Mail className="h-4 w-4 mr-2" />
                     )}
                     Send Reset Code
                   </Button>
@@ -287,7 +265,7 @@ export default function ForgotPasswordPage() {
                     <Shield className="h-8 w-8 text-purple-500" />
                   </div>
                   <CardTitle className="text-2xl">Enter Verification Code</CardTitle>
-                  <CardDescription>{maskedIdentifier}</CardDescription>
+                  <CardDescription>{maskedEmail}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
@@ -325,7 +303,7 @@ export default function ForgotPasswordPage() {
                       onClick={() => setStep("identifier")}
                     >
                       <ArrowLeft className="h-4 w-4 mr-1" />
-                      Change {resetType}
+                      Change email
                     </Button>
                     <button
                       onClick={handleResendCode}

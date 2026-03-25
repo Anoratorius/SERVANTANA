@@ -16,7 +16,7 @@ import {
 import { writeAuditLog } from "@/lib/audit-log";
 
 const resetPasswordSchema = z.object({
-  identifier: z.string().min(1, "Email or phone is required"),
+  email: z.string().email("Valid email is required"),
   code: z.string().length(6, "Code must be 6 digits"),
   password: z
     .string()
@@ -53,15 +53,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { identifier, code, password } = validationResult.data;
+    const { email, code, password } = validationResult.data;
 
-    // Normalize identifier
-    const normalizedIdentifier = identifier.includes("@")
-      ? identifier.toLowerCase()
-      : identifier;
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
 
     // Verify the token is still valid
-    const isValid = await verifyResetToken(normalizedIdentifier, code);
+    const isValid = await verifyResetToken(normalizedEmail, code);
 
     if (!isValid) {
       return NextResponse.json(
@@ -71,11 +69,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the user
-    const isEmail = normalizedIdentifier.includes("@");
     const user = await prisma.user.findUnique({
-      where: isEmail
-        ? { email: normalizedIdentifier }
-        : { phone: normalizedIdentifier },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -95,12 +90,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Mark the token as used
-    await markTokenUsed(normalizedIdentifier, code);
+    await markTokenUsed(normalizedEmail, code);
 
     // Delete all other unused tokens for this user
     await prisma.passwordResetToken.deleteMany({
       where: {
-        identifier: normalizedIdentifier,
+        identifier: normalizedEmail,
         used: false,
       },
     });

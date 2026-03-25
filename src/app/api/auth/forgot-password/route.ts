@@ -4,7 +4,6 @@ import { z } from "zod";
 import {
   createResetToken,
   sendResetEmail,
-  sendResetSMS,
 } from "@/lib/reset-code";
 import {
   checkRateLimit,
@@ -20,8 +19,7 @@ import {
 import { writeAuditLog } from "@/lib/audit-log";
 
 const forgotPasswordSchema = z.object({
-  identifier: z.string().min(1, "Email or phone is required"),
-  type: z.enum(["email", "phone"]),
+  email: z.string().email("Valid email is required"),
 });
 
 export async function POST(request: NextRequest) {
@@ -50,21 +48,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { identifier, type } = validationResult.data;
+    const { email } = validationResult.data;
 
-    // Find user by email or phone
-    let user;
-    if (type === "email") {
-      user = await prisma.user.findUnique({
-        where: { email: identifier.toLowerCase() },
-        select: { id: true, email: true, password: true },
-      });
-    } else {
-      user = await prisma.user.findUnique({
-        where: { phone: identifier },
-        select: { id: true, phone: true, password: true },
-      });
-    }
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: { id: true, email: true, password: true },
+    });
 
     // Always return success to prevent user enumeration
     // But only actually send code if user exists and has a password
@@ -73,10 +63,7 @@ export async function POST(request: NextRequest) {
       await randomDelay(300, 600);
       return NextResponse.json({
         success: true,
-        message:
-          type === "email"
-            ? "If an account exists with this email, a reset code has been sent."
-            : "If an account exists with this phone number, a reset code has been sent.",
+        message: "If an account exists with this email, a reset code has been sent.",
       });
     }
 
@@ -91,17 +78,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Create reset token
-    const normalizedIdentifier =
-      type === "email" ? identifier.toLowerCase() : identifier;
-    const { code } = await createResetToken(normalizedIdentifier, type);
+    const normalizedEmail = email.toLowerCase();
+    const { code } = await createResetToken(normalizedEmail, "email");
 
-    // Send the code
-    let result;
-    if (type === "email") {
-      result = await sendResetEmail(normalizedIdentifier, code);
-    } else {
-      result = await sendResetSMS(normalizedIdentifier, code);
-    }
+    // Send the code via email
+    const result = await sendResetEmail(normalizedEmail, code);
 
     if (!result.success) {
       return NextResponse.json(
@@ -114,10 +95,10 @@ export async function POST(request: NextRequest) {
     await writeAuditLog({
       action: "PASSWORD_RESET_REQUESTED",
       actorId: user.id,
-      actorEmail: type === "email" ? identifier : undefined,
+      actorEmail: email,
       ip: clientIP,
       userAgent: request.headers.get("user-agent") || undefined,
-      details: { type },
+      details: { type: "email" },
     });
 
     return NextResponse.json({

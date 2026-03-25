@@ -13,7 +13,7 @@ import {
 import { writeAuditLog } from "@/lib/audit-log";
 
 const verifyCodeSchema = z.object({
-  identifier: z.string().min(1, "Email or phone is required"),
+  email: z.string().email("Valid email is required"),
   code: z.string().length(6, "Code must be 6 digits"),
 });
 
@@ -53,15 +53,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { identifier, code } = validationResult.data;
+    const { email, code } = validationResult.data;
 
-    // Normalize identifier (lowercase for email)
-    const normalizedIdentifier = identifier.includes("@")
-      ? identifier.toLowerCase()
-      : identifier;
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
 
-    // Check failed attempts for this identifier
-    const attemptKey = `verify:${normalizedIdentifier}`;
+    // Check failed attempts for this email
+    const attemptKey = `verify:${normalizedEmail}`;
     const attempts = failedAttempts.get(attemptKey);
     const now = Date.now();
 
@@ -71,13 +69,13 @@ export async function POST(request: NextRequest) {
         failedAttempts.delete(attemptKey);
       } else if (attempts.count >= MAX_ATTEMPTS) {
         // Too many failed attempts - invalidate the token
-        await invalidateToken(normalizedIdentifier);
+        await invalidateToken(normalizedEmail);
         failedAttempts.delete(attemptKey);
 
         // Security violation - audit log (database-persisted)
         await writeAuditLog({
           action: "SECURITY_VIOLATION",
-          actorEmail: normalizedIdentifier,
+          actorEmail: normalizedEmail,
           ip: clientIP,
           details: { reason: "Too many failed reset code attempts", attempts: attempts.count },
         });
@@ -90,7 +88,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const isValid = await verifyResetToken(normalizedIdentifier, code);
+    const isValid = await verifyResetToken(normalizedEmail, code);
 
     if (!isValid) {
       // Track failed attempt
