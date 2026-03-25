@@ -1316,6 +1316,17 @@
     "uploadSuccess": "Photo uploaded successfully",
     "uploadError": "Failed to upload photo"
   },
+  "emailVerification": {
+    "title": "Verify Your Email",
+    "subtitle": "Please verify your email address to continue",
+    "description": "We've sent a verification link to your email address. Click the link to verify your account.",
+    "resendButton": "Resend Verification Email",
+    "checkButton": "I've Verified, Continue",
+    "resendSuccess": "Verification email sent! Check your inbox.",
+    "resendFailed": "Failed to send verification email. Please try again.",
+    "emailSent": "Verification email sent! Please check your inbox and spam folder.",
+    "wrongAccount": "Signed in to the wrong account?"
+  },
   "bookingChanges": {
     "reschedule": "Reschedule",
     "cancel": "Cancel Booking",

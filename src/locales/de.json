@@ -1316,6 +1316,17 @@
     "uploadSuccess": "Foto erfolgreich hochgeladen",
     "uploadError": "Foto konnte nicht hochgeladen werden"
   },
+  "emailVerification": {
+    "title": "E-Mail bestätigen",
+    "subtitle": "Bitte bestätigen Sie Ihre E-Mail-Adresse, um fortzufahren",
+    "description": "Wir haben einen Bestätigungslink an Ihre E-Mail-Adresse gesendet. Klicken Sie auf den Link, um Ihr Konto zu verifizieren.",
+    "resendButton": "Bestätigungs-E-Mail erneut senden",
+    "checkButton": "Ich habe bestätigt, weiter",
+    "resendSuccess": "Bestätigungs-E-Mail gesendet! Prüfen Sie Ihren Posteingang.",
+    "resendFailed": "Fehler beim Senden der Bestätigungs-E-Mail. Bitte versuchen Sie es erneut.",
+    "emailSent": "Bestätigungs-E-Mail gesendet! Bitte prüfen Sie Ihren Posteingang und Spam-Ordner.",
+    "wrongAccount": "Mit dem falschen Konto angemeldet?"
+  },
   "bookingChanges": {
     "reschedule": "Umbuchen",
     "cancel": "Buchung stornieren",

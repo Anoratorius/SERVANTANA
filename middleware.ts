@@ -1,7 +1,15 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
+import { jwtDecode } from 'jwt-decode';
 
 export const runtime = 'edge';
+
+// JWT token structure from NextAuth
+interface SessionToken {
+  id?: string;
+  isEmailVerified?: boolean;
+  exp?: number;
+}
 
 // Allowed IPs from environment variable (comma-separated)
 // Fallback to hardcoded for now, but env var takes precedence
@@ -46,6 +54,54 @@ const STATIC_EXTENSIONS = /\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf|eot
 // Public API routes that don't need IP restriction
 const PUBLIC_API_ROUTES = ['/api/ip'];
 
+// Paths that bypass email verification check
+const EMAIL_VERIFICATION_BYPASS_PATHS = [
+  '/coming-soon',
+  '/email-verification-required',
+  '/verify-email',
+  '/login',
+  '/signup',
+  '/forgot-password',
+];
+
+// Check if path should bypass email verification
+function shouldBypassEmailVerification(pathname: string): boolean {
+  // Remove locale prefix if present
+  const pathWithoutLocale = pathname.replace(/^\/(en|de)/, '') || '/';
+
+  // Check exact matches and prefixes
+  for (const bypassPath of EMAIL_VERIFICATION_BYPASS_PATHS) {
+    if (pathWithoutLocale === bypassPath || pathWithoutLocale.startsWith(bypassPath + '/')) {
+      return true;
+    }
+  }
+
+  // All API auth routes bypass
+  if (pathWithoutLocale.startsWith('/api/auth')) {
+    return true;
+  }
+
+  return false;
+}
+
+// Get session token from cookie and decode it
+function getSessionToken(request: NextRequest): SessionToken | null {
+  // NextAuth stores session in authjs.session-token (production) or next-auth.session-token (dev)
+  const tokenCookie = request.cookies.get('authjs.session-token')
+    || request.cookies.get('next-auth.session-token')
+    || request.cookies.get('__Secure-authjs.session-token');
+
+  if (!tokenCookie?.value) {
+    return null;
+  }
+
+  try {
+    return jwtDecode<SessionToken>(tokenCookie.value);
+  } catch {
+    return null;
+  }
+}
+
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -87,6 +143,21 @@ export default function middleware(request: NextRequest) {
     if (ALLOWED_IPS.length === 0 || !ALLOWED_IPS.includes(clientIP)) {
       const url = request.nextUrl.clone();
       url.pathname = '/coming-soon';
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Check email verification for authenticated users
+  if (!shouldBypassEmailVerification(pathname)) {
+    const token = getSessionToken(request);
+
+    // If user is logged in but email not verified, redirect to verification page
+    if (token?.id && token.isEmailVerified === false) {
+      const url = request.nextUrl.clone();
+      // Preserve locale if present
+      const localeMatch = pathname.match(/^\/(en|de)/);
+      const locale = localeMatch ? localeMatch[1] : 'en';
+      url.pathname = `/${locale}/email-verification-required`;
       return NextResponse.redirect(url);
     }
   }
