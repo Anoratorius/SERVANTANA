@@ -4,8 +4,8 @@ import { randomInt } from "crypto";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Use environment variable for from email, fallback to Resend's test domain for development
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@resend.dev>";
+// From email for sending - using verified domain
+const FROM_EMAIL = "Servantana <noreply@servantana.com>";
 
 // Generate a cryptographically secure 3-digit code
 export function generateResetCode(): string {
