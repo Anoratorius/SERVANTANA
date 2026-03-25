@@ -52,8 +52,8 @@ function SignupForm() {
       return;
     }
 
-    if (formData.password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters");
+    if (!formData.password) {
+      setErrorMessage("Password is required");
       setIsLoading(false);
       return;
     }

@@ -102,13 +102,8 @@ export default function ForgotPasswordPage() {
   };
 
   const handleResetPassword = async () => {
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters");
-      return;
-    }
-
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-      toast.error("Password must contain uppercase, lowercase, and a number");
+    if (!password) {
+      toast.error("Please enter a password");
       return;
     }
 
@@ -339,9 +334,6 @@ export default function ForgotPasswordPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Must contain uppercase, lowercase, and a number
-                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -355,41 +347,6 @@ export default function ForgotPasswordPage() {
                       onKeyDown={(e) => e.key === "Enter" && handleResetPassword()}
                     />
                   </div>
-
-                  {/* Password strength indicator */}
-                  {password && (
-                    <div className="space-y-2">
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4].map((i) => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded ${
-                              password.length >= i * 3 &&
-                              (i < 3 || /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password))
-                                ? i <= 2
-                                  ? "bg-yellow-500"
-                                  : "bg-green-500"
-                                : "bg-gray-200"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-2 text-xs">
-                        <span className={password.length >= 8 ? "text-green-600" : "text-gray-400"}>
-                          ✓ 8+ characters
-                        </span>
-                        <span className={/[A-Z]/.test(password) ? "text-green-600" : "text-gray-400"}>
-                          ✓ Uppercase
-                        </span>
-                        <span className={/[a-z]/.test(password) ? "text-green-600" : "text-gray-400"}>
-                          ✓ Lowercase
-                        </span>
-                        <span className={/\d/.test(password) ? "text-green-600" : "text-gray-400"}>
-                          ✓ Number
-                        </span>
-                      </div>
-                    </div>
-                  )}
 
                   <Button
                     onClick={handleResetPassword}

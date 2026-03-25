@@ -18,13 +18,7 @@ import { writeAuditLog } from "@/lib/audit-log";
 const resetPasswordSchema = z.object({
   email: z.string().email("Valid email is required"),
   code: z.string().length(3, "Code must be 3 digits"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    ),
+  password: z.string().min(1, "Password is required"),
 });
 
 export async function POST(request: NextRequest) {
