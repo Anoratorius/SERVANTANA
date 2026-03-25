@@ -480,7 +480,7 @@ export default function SettingsPage() {
                         onChange={(e) =>
                           setFormData((prev) => ({ ...prev, bio: e.target.value }))
                         }
-                        placeholder="Tell customers about yourself, your experience, and what makes you a great cleaner..."
+                        placeholder="Tell customers about yourself, your experience, and what makes you great at your job..."
                         rows={4}
                         maxLength={1000}
                       />

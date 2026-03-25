@@ -590,7 +590,7 @@
       },
       "service": {
         "title": "2. Service Description",
-        "content": "Servantana is a marketplace connecting customers with independent cleaning professionals. We do not employ cleaners directly and are not responsible for the quality of services provided."
+        "content": "Servantana is a marketplace connecting customers with independent professionals. We do not employ workers directly and are not responsible for the quality of services provided."
       },
       "accounts": {
         "title": "3. User Accounts",
@@ -598,7 +598,7 @@
       },
       "payments": {
         "title": "4. Payments",
-        "content": "All payments are processed through third-party providers. Fees are non-refundable except as required by law. Cleaners set their own rates and are responsible for their own taxes."
+        "content": "All payments are processed through third-party providers. Fees are non-refundable except as required by law. Workers set their own rates and are responsible for their own taxes."
       },
       "liability": {
         "title": "5. Limitation of Liability",
@@ -1055,7 +1055,7 @@
     "accept": "Accept",
     "accepted": "Substitute accepted! New booking created.",
     "noAvailable": "No substitutes available",
-    "noAvailableDesc": "Unfortunately, no cleaners are available for this time slot",
+    "noAvailableDesc": "Unfortunately, no workers are available for this time slot",
     "findNewWorker": "Find a New Worker",
     "skipForNow": "Skip for now"
   },

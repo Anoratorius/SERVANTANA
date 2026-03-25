@@ -686,7 +686,7 @@ export default function AdminPage() {
                     />
                     <StatCard
                       icon={<Briefcase className="h-5 w-5" />}
-                      label="Total Cleaners"
+                      label="Total Workers"
                       value={stats.overview.totalCleaners}
                       color="green"
                       subtext={`${stats.overview.verifiedCleaners} verified`}
@@ -952,8 +952,8 @@ export default function AdminPage() {
                   ) : cleaners.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
                       {cleanersFilter === "false"
-                        ? "No cleaners pending verification"
-                        : "No verified cleaners"}
+                        ? "No workers pending verification"
+                        : "No verified workers"}
                     </div>
                   ) : (
                     <>

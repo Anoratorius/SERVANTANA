@@ -107,20 +107,20 @@ export default function FavoritesPage() {
           <div className="text-center mb-8">
             <Heart className="h-12 w-12 mx-auto text-red-500 fill-red-500 mb-4" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
-              {t("customer.dashboard.favoriteCleaners")}
+              {t("customer.dashboard.favoriteWorkers")}
             </h1>
           </div>
 
           {favorites.length === 0 ? (
             <div className="text-center py-16">
               <Heart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h2 className="text-xl font-semibold mb-2">No favorite cleaners yet</h2>
+              <h2 className="text-xl font-semibold mb-2">No favorite workers yet</h2>
               <p className="text-muted-foreground mb-6">
-                Save cleaners you like to easily find them later
+                Save workers you like to easily find them later
               </p>
               <Link href="/search">
                 <Button className="bg-gradient-to-r from-blue-500 to-blue-600">
-                  Find Cleaners
+                  Find Workers
                 </Button>
               </Link>
             </div>

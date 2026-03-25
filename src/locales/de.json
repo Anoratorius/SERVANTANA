@@ -515,7 +515,7 @@
     "verification": "Verifizierung",
     "reviews": "Bewertungen",
     "totalUsers": "Gesamte Benutzer",
-    "totalCleaners": "Gesamte Fachkräfte",
+    "totalWorkers": "Gesamte Fachkräfte",
     "verified": "verifiziert",
     "totalBookings": "Gesamte Buchungen",
     "completed": "abgeschlossen",
@@ -590,7 +590,7 @@
       },
       "service": {
         "title": "2. Servicebeschreibung",
-        "content": "Servantana ist ein Marktplatz, der Kunden mit selbstständigen Reinigungsfachkräften verbindet. Wir beschäftigen keine Reinigungskräfte direkt und sind nicht für die Qualität der erbrachten Dienstleistungen verantwortlich."
+        "content": "Servantana ist ein Marktplatz, der Kunden mit selbstständigen Fachkräften verbindet. Wir beschäftigen keine Fachkräfte direkt und sind nicht für die Qualität der erbrachten Dienstleistungen verantwortlich."
       },
       "accounts": {
         "title": "3. Benutzerkonten",

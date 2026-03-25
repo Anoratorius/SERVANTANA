@@ -115,16 +115,16 @@ export default function CleanerProfilePage({
         const response = await fetch(`/api/cleaners/${id}`);
         if (!response.ok) {
           if (response.status === 404) {
-            setError("Cleaner not found");
+            setError("Worker not found");
           } else {
-            setError("Failed to load cleaner profile");
+            setError("Failed to load worker profile");
           }
           return;
         }
         const data = await response.json();
         setCleaner(data.cleaner);
       } catch {
-        setError("Failed to load cleaner profile");
+        setError("Failed to load worker profile");
       } finally {
         setIsLoading(false);
       }
@@ -192,7 +192,7 @@ export default function CleanerProfilePage({
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">{error || "Cleaner not found"}</h1>
+            <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
             <Link href="/search">
               <Button>
                 <ArrowLeft className="mr-2 h-4 w-4" />

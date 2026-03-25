@@ -34,7 +34,7 @@ interface Booking {
 const DISPUTE_TYPES = [
   { value: "SERVICE_QUALITY", label: "Service Quality Issue", description: "The service did not meet expectations" },
   { value: "PAYMENT_ISSUE", label: "Payment Issue", description: "Problem with payment or charges" },
-  { value: "NO_SHOW", label: "No Show", description: "The cleaner did not arrive" },
+  { value: "NO_SHOW", label: "No Show", description: "The worker did not arrive" },
   { value: "PROPERTY_DAMAGE", label: "Property Damage", description: "Damage caused during service" },
   { value: "UNPROFESSIONAL_BEHAVIOR", label: "Unprofessional Behavior", description: "Inappropriate conduct" },
   { value: "OTHER", label: "Other", description: "Other issues not listed above" },

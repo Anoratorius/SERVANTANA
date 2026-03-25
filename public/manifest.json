@@ -1,7 +1,7 @@
 {
   "name": "Servantana",
   "short_name": "Servantana",
-  "description": "Find trusted cleaners. Book professional cleaning services in minutes.",
+  "description": "Find trusted workers. Book professional services in minutes.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -179,7 +179,7 @@ export function RescheduleDialog({
               <Label>Select New Date</Label>
               {availableDates.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No available dates found. The cleaner may not have set their availability.
+                  No available dates found. The worker may not have set their availability.
                 </p>
               ) : (
                 <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
@@ -231,7 +231,7 @@ export function RescheduleDialog({
               <Label htmlFor="reason">Reason for rescheduling (optional)</Label>
               <Textarea
                 id="reason"
-                placeholder="Let the cleaner know why you're rescheduling..."
+                placeholder="Let the worker know why you're rescheduling..."
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={2}

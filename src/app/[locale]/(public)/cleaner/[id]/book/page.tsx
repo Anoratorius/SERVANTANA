@@ -104,13 +104,13 @@ export default function BookingPage({
       try {
         const response = await fetch(`/api/cleaners/${id}`);
         if (!response.ok) {
-          setError("Cleaner not found");
+          setError("Worker not found");
           return;
         }
         const data = await response.json();
         setCleaner(data.cleaner);
       } catch {
-        setError("Failed to load cleaner");
+        setError("Failed to load worker");
       } finally {
         setIsLoading(false);
       }
@@ -212,7 +212,7 @@ export default function BookingPage({
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">{error || "Cleaner not found"}</h1>
+            <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
             <Link href="/search">
               <Button>
                 <ArrowLeft className="mr-2 h-4 w-4" />

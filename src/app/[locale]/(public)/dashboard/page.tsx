@@ -174,7 +174,7 @@ export default function DashboardPage() {
               <>
                 <StatCard
                   icon={<Users className="h-6 w-6" />}
-                  label={t("customer.dashboard.favoriteCleaners")}
+                  label={t("customer.dashboard.favoriteWorkers")}
                   value={0}
                   color="purple"
                 />
@@ -209,7 +209,7 @@ export default function DashboardPage() {
                   {!isCleaner && (
                     <Link href="/search">
                       <Button className="mt-4 bg-gradient-to-r from-blue-500 to-blue-600">
-                        Find a Cleaner
+                        {t("booking.findWorker")}
                       </Button>
                     </Link>
                   )}

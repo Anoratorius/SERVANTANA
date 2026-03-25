@@ -101,7 +101,7 @@ export default function RoutePlannerPage() {
     if (authStatus === "authenticated" && session?.user?.role === "CLEANER") {
       fetchRoute();
     } else if (authStatus === "authenticated" && session?.user?.role !== "CLEANER") {
-      setError("Only cleaners can access route planning");
+      setError("Only workers can access route planning");
       setIsLoading(false);
     }
   }, [authStatus, session?.user?.role]);
