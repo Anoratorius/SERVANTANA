@@ -10,7 +10,7 @@ import { writeAuditLog } from "./audit-log";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = "Servantana <noreply@servantana.com>";
-const APP_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+const APP_URL = "https://servantana.com";
 
 // Token expiration: 24 hours
 const TOKEN_EXPIRY_HOURS = 24;
