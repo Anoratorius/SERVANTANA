@@ -81,18 +81,13 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase();
     const { code } = await createResetToken(normalizedEmail, "email");
 
-    // Send the code via email
-    const result = await sendResetEmail(normalizedEmail, code);
+    // Send the code via email (non-blocking - don't wait for delivery)
+    sendResetEmail(normalizedEmail, code).catch((err) => {
+      console.error("Failed to send reset email:", err);
+    });
 
-    if (!result.success) {
-      return NextResponse.json(
-        { error: "Failed to send reset code. Please try again." },
-        { status: 500 }
-      );
-    }
-
-    // Audit log (database-persisted)
-    await writeAuditLog({
+    // Audit log (non-blocking)
+    writeAuditLog({
       action: "PASSWORD_RESET_REQUESTED",
       actorId: user.id,
       actorEmail: email,
@@ -101,9 +96,10 @@ export async function POST(request: NextRequest) {
       details: { type: "email" },
     });
 
+    // Respond immediately - email sends in background
     return NextResponse.json({
       success: true,
-      message: result.message,
+      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***@${normalizedEmail.split("@")[1]}`,
     });
   } catch (error) {
     console.error("Error in forgot password:", error);
