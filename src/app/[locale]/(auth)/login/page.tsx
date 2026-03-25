@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -14,6 +14,8 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 
+const REMEMBERED_EMAIL_KEY = "servantana_remembered_email";
+
 function LoginForm() {
   const t = useTranslations();
   const searchParams = useSearchParams();
@@ -26,6 +28,15 @@ function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(error ? "Invalid credentials" : "");
+
+  // Load remembered email on mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +54,12 @@ function LoginForm() {
       if (result?.error) {
         setErrorMessage("Invalid email or password");
       } else {
+        // Save or clear remembered email based on checkbox
+        if (rememberMe) {
+          localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+        } else {
+          localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+        }
         // Force full page reload to ensure session cookies are properly set
         window.location.href = callbackUrl;
       }
@@ -71,7 +88,7 @@ function LoginForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="nope">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
           <div className="space-y-2">
             <Label htmlFor="email">{t("auth.login.email")}</Label>
             <Input
@@ -81,7 +98,7 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isLoading}
-              autoComplete="nope"
+              autoComplete="email"
             />
           </div>
 
@@ -95,7 +112,7 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
-                autoComplete="new-password"
+                autoComplete="current-password"
                 className="pr-10"
               />
               <button
