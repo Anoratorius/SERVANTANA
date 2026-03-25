@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const verifySchema = z.object({
-  verified: z.boolean(),
+  verified: z.boolean().optional(),
+  isActive: z.boolean().optional(),
 });
 
 export async function PATCH(
@@ -37,7 +38,7 @@ export async function PATCH(
       );
     }
 
-    const { verified } = validationResult.data;
+    const { verified, isActive } = validationResult.data;
 
     // Find cleaner profile by user ID
     const cleanerProfile = await prisma.cleanerProfile.findUnique({
@@ -51,9 +52,14 @@ export async function PATCH(
       );
     }
 
+    // Build update data
+    const updateData: Record<string, boolean> = {};
+    if (verified !== undefined) updateData.verified = verified;
+    if (isActive !== undefined) updateData.isActive = isActive;
+
     const updated = await prisma.cleanerProfile.update({
       where: { userId: id },
-      data: { verified },
+      data: updateData,
       include: {
         user: {
           select: {
@@ -65,10 +71,17 @@ export async function PATCH(
       },
     });
 
+    // Determine message
+    let message = "Cleaner updated successfully";
+    if (verified !== undefined) {
+      message = verified ? "Cleaner verified successfully" : "Cleaner verification revoked";
+    }
+    if (isActive !== undefined) {
+      message = isActive ? "Cleaner reactivated successfully" : "Cleaner deactivated successfully";
+    }
+
     return NextResponse.json({
-      message: verified
-        ? "Cleaner verified successfully"
-        : "Cleaner verification revoked",
+      message,
       cleaner: updated,
     });
   } catch (error) {

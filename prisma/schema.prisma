@@ -18,6 +18,12 @@ enum Role {
   ADMIN
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
 enum BookingStatus {
   PENDING
   CONFIRMED
@@ -155,9 +161,12 @@ model User {
   firstName         String
   lastName          String
   avatar            String?
-  role              Role      @default(CUSTOMER)
-  preferredLanguage String    @default("en")
-  tokenVersion      Int       @default(0) // Incremented on password change to invalidate sessions
+  role              Role       @default(CUSTOMER)
+  status            UserStatus @default(ACTIVE)
+  suspendedUntil    DateTime?  // For temporary suspensions
+  suspendedReason   String?    // Reason for suspension/ban
+  preferredLanguage String     @default("en")
+  tokenVersion      Int        @default(0) // Incremented on password change to invalidate sessions
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -290,6 +299,7 @@ model CleanerProfile {
   currency        String   @default("USD")
   experienceYears Int      @default(0)
   verified        Boolean  @default(false)
+  isActive        Boolean  @default(true)  // Admin can deactivate without deleting
   availableNow    Boolean  @default(false)
   ecoFriendly     Boolean  @default(false)
   petFriendly     Boolean  @default(false)

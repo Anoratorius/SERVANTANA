@@ -145,7 +145,7 @@ export const authOptions: NextAuthConfig = {
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
-          select: { id: true, role: true, firstName: true, lastName: true, tokenVersion: true, emailVerified: true },
+          select: { id: true, role: true, firstName: true, lastName: true, tokenVersion: true, emailVerified: true, status: true, suspendedUntil: true },
         });
 
         if (dbUser) {
@@ -155,6 +155,8 @@ export const authOptions: NextAuthConfig = {
           token.lastName = dbUser.lastName;
           token.tokenVersion = dbUser.tokenVersion;
           token.isEmailVerified = !!dbUser.emailVerified;
+          token.status = dbUser.status;
+          token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
         }
 
         // Check remember me preference on initial sign in
@@ -165,14 +167,28 @@ export const authOptions: NextAuthConfig = {
           token.exp = Math.floor(Date.now() / 1000) + (rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60);
         }
       } else if (token.id) {
-        // On subsequent requests, verify tokenVersion hasn't changed (password reset)
+        // On subsequent requests, verify tokenVersion hasn't changed (password reset) and check status
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { tokenVersion: true },
+          select: { tokenVersion: true, status: true, suspendedUntil: true },
         });
 
         if (!dbUser || dbUser.tokenVersion !== token.tokenVersion) {
           // Token version changed (password was reset) - invalidate session
+          return {} as typeof token;
+        }
+
+        // Update status in token (in case admin changed it)
+        token.status = dbUser.status;
+        token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
+
+        // If user is banned, invalidate session
+        if (dbUser.status === "BANNED") {
+          return {} as typeof token;
+        }
+
+        // If user is suspended and suspension hasn't expired, invalidate session
+        if (dbUser.status === "SUSPENDED" && dbUser.suspendedUntil && new Date(dbUser.suspendedUntil) > new Date()) {
           return {} as typeof token;
         }
       }

@@ -7,6 +7,9 @@ import { getClientIP } from "@/lib/rate-limit";
 
 const updateUserSchema = z.object({
   role: z.enum(["CUSTOMER", "CLEANER", "ADMIN"]).optional(),
+  status: z.enum(["ACTIVE", "SUSPENDED", "BANNED"]).optional(),
+  suspendedUntil: z.string().datetime().nullable().optional(),
+  suspendedReason: z.string().max(500).nullable().optional(),
   firstName: z.string().min(1).max(50).optional(),
   lastName: z.string().min(1).max(50).optional(),
 });
@@ -121,15 +124,47 @@ export async function PATCH(
       );
     }
 
+    // Prevent admin from banning/suspending themselves
+    if (id === session.user.id && body.status && body.status !== "ACTIVE") {
+      return NextResponse.json(
+        { error: "Cannot suspend or ban your own account" },
+        { status: 400 }
+      );
+    }
+
+    // Prepare update data
+    const updateData: Record<string, unknown> = { ...validationResult.data };
+
+    // Handle suspendedUntil date conversion
+    if (body.suspendedUntil) {
+      updateData.suspendedUntil = new Date(body.suspendedUntil);
+    } else if (body.suspendedUntil === null) {
+      updateData.suspendedUntil = null;
+    }
+
+    // If status is ACTIVE, clear suspension fields
+    if (body.status === "ACTIVE") {
+      updateData.suspendedUntil = null;
+      updateData.suspendedReason = null;
+    }
+
+    // If banning/suspending, increment tokenVersion to invalidate all sessions
+    if (body.status && body.status !== "ACTIVE") {
+      updateData.tokenVersion = { increment: 1 };
+    }
+
     const user = await prisma.user.update({
       where: { id },
-      data: validationResult.data,
+      data: updateData,
       select: {
         id: true,
         email: true,
         firstName: true,
         lastName: true,
         role: true,
+        status: true,
+        suspendedUntil: true,
+        suspendedReason: true,
       },
     });
 
@@ -160,6 +195,30 @@ export async function PATCH(
         details: { newRole: body.role, previousRole: "unknown" },
         ip: getClientIP(request),
         userAgent: request.headers.get("user-agent") || undefined,
+      });
+    }
+
+    // Audit log for status changes (suspend/ban)
+    if (body.status) {
+      const actionMap: Record<string, string> = {
+        SUSPENDED: "USER_SUSPENDED",
+        BANNED: "USER_BANNED",
+        ACTIVE: "USER_REACTIVATED",
+      };
+      writeAuditLog({
+        action: actionMap[body.status] || "USER_STATUS_CHANGED",
+        actorId: session.user.id,
+        actorEmail: session.user.email,
+        targetId: id,
+        targetType: "User",
+        details: {
+          newStatus: body.status,
+          reason: body.suspendedReason || null,
+          suspendedUntil: body.suspendedUntil || null,
+        },
+        ip: getClientIP(request),
+        userAgent: request.headers.get("user-agent") || undefined,
+        severity: body.status === "BANNED" ? "high" : "medium",
       });
     }
 
