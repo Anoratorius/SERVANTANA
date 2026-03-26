@@ -75,7 +75,7 @@ export async function sendVerificationEmail(
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <img src="cid:logo" alt="SERVANTANA" width="200" style="display: block; margin: 0 auto;" />
+            <img src="cid:logo" alt="SERVANTANA" width="248" height="44" style="display: block; margin: 0 auto;" />
           </div>
 
           <h2 style="color: #333; margin-bottom: 20px;">Welcome, ${firstName}!</h2>
