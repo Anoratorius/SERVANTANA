@@ -21,10 +21,10 @@ const ethnocentric = localFont({
 
 export const metadata: Metadata = {
   title: "Servantana - Find Trusted Workers",
-  description: "Book professional services in minutes. Verified workers, transparent pricing, and hassle-free booking.",
+  description: "Book professional services in minutes. Verified workers, transparent pricing and hassle-free booking.",
   openGraph: {
     title: "Servantana - Find Trusted Workers",
-    description: "Book professional services in minutes. Verified workers, transparent pricing, and hassle-free booking.",
+    description: "Book professional services in minutes. Verified workers, transparent pricing and hassle-free booking.",
     url: "https://servantana.com",
     siteName: "Servantana",
     type: "website",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Servantana - Find Trusted Workers",
-    description: "Book professional services in minutes. Verified workers, transparent pricing, and hassle-free booking.",
+    description: "Book professional services in minutes. Verified workers, transparent pricing and hassle-free booking.",
   },
   manifest: "/manifest.json",
   icons: {
