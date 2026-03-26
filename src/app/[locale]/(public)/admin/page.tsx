@@ -1158,10 +1158,10 @@ export default function AdminPage() {
                             <div key={booking.id} className="flex items-center justify-between">
                               <div>
                                 <p className="text-sm font-medium">
-                                  {SERVICE_NAMES[booking.service.name] || booking.service.name}
+                                  {booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {booking.customer.firstName} → {booking.cleaner.firstName}
+                                  {booking.customer?.firstName || "N/A"} → {booking.cleaner?.firstName || "N/A"}
                                 </p>
                               </div>
                               <div className="text-right">
@@ -1500,7 +1500,7 @@ export default function AdminPage() {
                             <div className="flex flex-wrap gap-2">
                               {cleaner.services.map((s, i) => (
                                 <Badge key={i} variant="secondary">
-                                  {SERVICE_NAMES[s.service.name] || s.service.name}
+                                  {s.service ? (SERVICE_NAMES[s.service.name] || s.service.name) : "N/A"}
                                 </Badge>
                               ))}
                             </div>
@@ -1827,18 +1827,18 @@ export default function AdminPage() {
                                     </AvatarFallback>
                                   </Avatar>
                                   <Avatar className="border-2 border-white">
-                                    <AvatarImage src={booking.cleaner.avatar || undefined} />
+                                    <AvatarImage src={booking.cleaner?.avatar || undefined} />
                                     <AvatarFallback className="text-xs">
-                                      {booking.cleaner.firstName[0]}{booking.cleaner.lastName[0]}
+                                      {booking.cleaner?.firstName?.[0] || "?"}{booking.cleaner?.lastName?.[0] || "?"}
                                     </AvatarFallback>
                                   </Avatar>
                                 </div>
                                 <div>
                                   <p className="font-medium">
-                                    {SERVICE_NAMES[booking.service.name] || booking.service.name}
+                                    {booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {booking.customer.firstName} → {booking.cleaner.firstName}
+                                    {booking.customer?.firstName || "N/A"} → {booking.cleaner?.firstName || "N/A"}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
                                     {new Date(booking.scheduledDate).toLocaleDateString()} at {booking.scheduledTime}
@@ -2440,7 +2440,7 @@ export default function AdminPage() {
                       .slice(0, 5)
                       .map((booking) => (
                         <div key={booking.id} className="flex justify-between text-sm">
-                          <span>{SERVICE_NAMES[booking.service.name] || booking.service.name}</span>
+                          <span>{booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}</span>
                           <span className="text-muted-foreground">
                             ${booking.totalPrice} - {booking.status}
                           </span>
