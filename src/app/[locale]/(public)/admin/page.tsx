@@ -1213,10 +1213,10 @@ export default function AdminPage() {
                         onChange={(e) => setUsersRoleFilter(e.target.value)}
                         className="border rounded-md px-3 py-2 text-sm"
                       >
-                        <option value="all">{t("admin.allRoles")}</option>
-                        <option value="CUSTOMER">{t("admin.customers")}</option>
-                        <option value="CLEANER">{t("admin.workers")}</option>
-                        <option value="ADMIN">{t("admin.admins")}</option>
+                        <option value="all">All Roles</option>
+                        <option value="CUSTOMER">Customers</option>
+                        <option value="CLEANER">Workers</option>
+                        <option value="ADMIN">Admins</option>
                       </select>
                       <select
                         value={usersStatusFilter}
