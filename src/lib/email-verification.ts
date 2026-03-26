@@ -115,13 +115,13 @@ export async function sendVerificationEmail(
       return { success: false, message: "Failed to send verification email" };
     }
 
-    // Audit log
-    await writeAuditLog({
+    // Audit log (non-blocking)
+    writeAuditLog({
       action: "EMAIL_VERIFICATION_SENT",
       actorId: userId,
       actorEmail: email,
       details: { expiresAt: expires.toISOString() },
-    });
+    }).catch(() => {});
 
     return { success: true, message: "Verification email sent" };
   } catch (error) {
@@ -168,13 +168,13 @@ export async function verifyEmail(
       }),
     ]);
 
-    // Audit log
-    await writeAuditLog({
+    // Audit log (non-blocking)
+    writeAuditLog({
       action: "EMAIL_VERIFIED",
       actorId: verificationToken.userId,
       actorEmail: verificationToken.user.email,
       ip,
-    });
+    }).catch(() => {});
 
     return {
       success: true,

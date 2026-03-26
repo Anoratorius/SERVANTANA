@@ -78,8 +78,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    // Hash password (cost 10 = secure + fast)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
     const user = await prisma.user.create({
@@ -108,8 +108,8 @@ export async function POST(request: Request) {
       console.error("Failed to send verification email:", err);
     });
 
-    // Audit log (database-persisted)
-    await writeAuditLog({
+    // Audit log (non-blocking)
+    writeAuditLog({
       action: "USER_CREATED",
       actorId: user.id,
       actorEmail: user.email,
@@ -118,7 +118,7 @@ export async function POST(request: Request) {
       details: { role: user.role },
       ip: clientIP,
       userAgent: request.headers.get("user-agent") || undefined,
-    });
+    }).catch(() => {});
 
     return NextResponse.json(
       {
