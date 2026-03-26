@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   description: "Book professional services in minutes. Verified workers, transparent pricing, and hassle-free booking.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon-192.svg",
-    apple: "/icons/icon-192.svg",
+    icon: "/favicon.png",
+    apple: "/icons/icon-192.png",
   },
   appleWebApp: {
     capable: true,
