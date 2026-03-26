@@ -271,8 +271,75 @@ export async function DELETE(
       select: { email: true },
     });
 
-    await prisma.user.delete({
-      where: { id },
+    if (!userToDelete) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Use a transaction to delete all related records
+    // Many relations don't have onDelete: Cascade, so we must manually delete them
+    await prisma.$transaction(async (tx) => {
+      // Get all bookings where user is customer or cleaner
+      const userBookings = await tx.booking.findMany({
+        where: { OR: [{ customerId: id }, { cleanerId: id }] },
+        select: { id: true },
+      });
+      const bookingIds = userBookings.map((b) => b.id);
+
+      // Get all disputes where user is involved
+      const userDisputes = await tx.dispute.findMany({
+        where: { OR: [{ customerId: id }, { cleanerId: id }] },
+        select: { id: true },
+      });
+      const disputeIds = userDisputes.map((d) => d.id);
+
+      // Delete dispute-related records
+      if (disputeIds.length > 0) {
+        await tx.disputeMessage.deleteMany({ where: { disputeId: { in: disputeIds } } });
+        await tx.disputeEvidence.deleteMany({ where: { disputeId: { in: disputeIds } } });
+        await tx.dispute.deleteMany({ where: { id: { in: disputeIds } } });
+      }
+
+      // Delete booking-related records
+      if (bookingIds.length > 0) {
+        await tx.bookingReminder.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.bookingChange.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.bookingPhoto.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.bookingTeamMember.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.review.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.customerReview.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.payment.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.earning.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.invoice.deleteMany({ where: { bookingId: { in: bookingIds } } });
+        await tx.calendarEvent.deleteMany({ where: { bookingId: { in: bookingIds } } });
+      }
+
+      // Delete messages where user is sender or receiver
+      await tx.message.deleteMany({ where: { OR: [{ senderId: id }, { receiverId: id }] } });
+
+      // Delete bookings
+      if (bookingIds.length > 0) {
+        await tx.booking.deleteMany({ where: { id: { in: bookingIds } } });
+      }
+
+      // Delete user-specific records
+      await tx.payout.deleteMany({ where: { cleanerId: id } });
+      await tx.earning.deleteMany({ where: { cleanerId: id } });
+      await tx.cleanerDocument.deleteMany({ where: { cleanerId: id } });
+
+      // Clear verified documents where this user was the verifier
+      await tx.cleanerDocument.updateMany({
+        where: { verifiedById: id },
+        data: { verifiedById: null },
+      });
+
+      // Clear resolved disputes where this user was the resolver
+      await tx.dispute.updateMany({
+        where: { resolvedById: id },
+        data: { resolvedById: null },
+      });
+
+      // Delete the user (remaining relations have onDelete: Cascade)
+      await tx.user.delete({ where: { id } });
     });
 
     // Audit log user deletion
@@ -285,6 +352,7 @@ export async function DELETE(
       details: { deletedUserEmail: userToDelete?.email },
       ip: getClientIP(request),
       userAgent: request.headers.get("user-agent") || undefined,
+      severity: "CRITICAL",
     });
 
     return NextResponse.json({
