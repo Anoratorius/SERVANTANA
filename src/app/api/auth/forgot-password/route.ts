@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     // Respond immediately - email sends in background
     return NextResponse.json({
       success: true,
-      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***@${normalizedEmail.split("@")[1]}`,
+      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***${normalizedEmail.split("@")[0].slice(-1)}@${normalizedEmail.split("@")[1]}`,
     });
   } catch (error) {
     console.error("Error in forgot password:", error);
