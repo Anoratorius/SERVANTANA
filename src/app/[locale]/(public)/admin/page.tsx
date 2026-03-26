@@ -33,7 +33,52 @@ import {
   FileText,
   AlertCircle,
   Eye,
+  MoreHorizontal,
+  UserCog,
+  Ban,
+  Clock,
+  RefreshCw,
+  History,
+  Download,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface Stats {
@@ -79,12 +124,55 @@ interface User {
   phone: string | null;
   avatar: string | null;
   role: string;
+  status: "ACTIVE" | "SUSPENDED" | "BANNED";
+  suspendedUntil: string | null;
+  suspendedReason: string | null;
   createdAt: string;
   cleanerProfile?: {
     verified: boolean;
     averageRating: number;
     totalBookings: number;
   } | null;
+}
+
+interface UserDetails extends User {
+  bookingsAsCustomer: Array<{
+    id: string;
+    scheduledDate: string;
+    status: string;
+    totalPrice: number;
+    cleaner: { firstName: string; lastName: string };
+    service: { name: string };
+  }>;
+  bookingsAsCleaner: Array<{
+    id: string;
+    scheduledDate: string;
+    status: string;
+    totalPrice: number;
+    customer: { firstName: string; lastName: string };
+    service: { name: string };
+  }>;
+  reviewsReceived: Array<{
+    id: string;
+    rating: number;
+    comment: string | null;
+    createdAt: string;
+    reviewer: { firstName: string; lastName: string };
+  }>;
+}
+
+interface AuditLog {
+  id: string;
+  action: string;
+  actorId: string;
+  actorEmail: string;
+  targetId: string | null;
+  targetType: string | null;
+  details: Record<string, unknown>;
+  ip: string | null;
+  userAgent: string | null;
+  severity: "low" | "medium" | "high" | "critical";
+  createdAt: string;
 }
 
 interface Cleaner {
@@ -294,6 +382,28 @@ export default function AdminPage() {
   const [bookingsFilter, setBookingsFilter] = useState("all");
   const [loadingBookings, setLoadingBookings] = useState(false);
 
+  // User actions state
+  const [usersStatusFilter, setUsersStatusFilter] = useState("all");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [loadingUserDetails, setLoadingUserDetails] = useState(false);
+  const [userDetailsOpen, setUserDetailsOpen] = useState(false);
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [banDialogOpen, setBanDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [suspendDuration, setSuspendDuration] = useState("7d");
+  const [suspendReason, setSuspendReason] = useState("");
+  const [banReason, setBanReason] = useState("");
+  const [processingAction, setProcessingAction] = useState(false);
+
+  // Audit logs state
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [auditLogsPage, setAuditLogsPage] = useState(0);
+  const [auditLogsTotal, setAuditLogsTotal] = useState(0);
+  const [auditLogsFilter, setAuditLogsFilter] = useState("all");
+  const [auditLogsSeverity, setAuditLogsSeverity] = useState("all");
+  const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login?callbackUrl=/admin");
@@ -336,6 +446,7 @@ export default function AdminPage() {
         role: usersRoleFilter,
       });
       if (usersSearch) params.set("search", usersSearch);
+      if (usersStatusFilter !== "all") params.set("status", usersStatusFilter);
 
       const response = await fetch(`/api/admin/users?${params}`);
       if (response.ok) {
@@ -348,7 +459,7 @@ export default function AdminPage() {
     } finally {
       setLoadingUsers(false);
     }
-  }, [usersPage, usersRoleFilter, usersSearch]);
+  }, [usersPage, usersRoleFilter, usersSearch, usersStatusFilter]);
 
   const fetchCleaners = useCallback(async () => {
     setLoadingCleaners(true);
@@ -477,6 +588,48 @@ export default function AdminPage() {
     }
   }, [bookingsPage, bookingsFilter]);
 
+  const fetchUserDetails = async (userId: string) => {
+    setLoadingUserDetails(true);
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUserDetails(data.user);
+        setUserDetailsOpen(true);
+      } else {
+        toast.error(t("admin.failedFetchUser"));
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      toast.error(t("admin.failedFetchUser"));
+    } finally {
+      setLoadingUserDetails(false);
+    }
+  };
+
+  const fetchAuditLogs = useCallback(async () => {
+    setLoadingAuditLogs(true);
+    try {
+      const params = new URLSearchParams({
+        limit: "20",
+        offset: (auditLogsPage * 20).toString(),
+      });
+      if (auditLogsFilter !== "all") params.set("action", auditLogsFilter);
+      if (auditLogsSeverity !== "all") params.set("severity", auditLogsSeverity);
+
+      const response = await fetch(`/api/admin/audit-logs?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setAuditLogs(data.logs);
+        setAuditLogsTotal(data.total);
+      }
+    } catch (error) {
+      console.error("Error fetching audit logs:", error);
+    } finally {
+      setLoadingAuditLogs(false);
+    }
+  }, [auditLogsPage, auditLogsFilter, auditLogsSeverity]);
+
   useEffect(() => {
     if (activeTab === "users" && authStatus === "authenticated") {
       fetchUsers();
@@ -518,6 +671,12 @@ export default function AdminPage() {
       fetchBookings();
     }
   }, [activeTab, fetchBookings, authStatus]);
+
+  useEffect(() => {
+    if (activeTab === "auditLogs" && authStatus === "authenticated") {
+      fetchAuditLogs();
+    }
+  }, [activeTab, fetchAuditLogs, authStatus]);
 
   const handleVerifyCleaner = async (userId: string, verified: boolean) => {
     setVerifyingId(userId);
@@ -609,6 +768,220 @@ export default function AdminPage() {
     }
   };
 
+  const handleSuspendUser = async () => {
+    if (!selectedUser) return;
+    setProcessingAction(true);
+    try {
+      // Calculate suspension end date
+      let suspendedUntil: string | null = null;
+      if (suspendDuration !== "indefinite") {
+        const now = new Date();
+        const durationMap: Record<string, number> = {
+          "1d": 1,
+          "3d": 3,
+          "7d": 7,
+          "14d": 14,
+          "30d": 30,
+          "90d": 90,
+        };
+        now.setDate(now.getDate() + (durationMap[suspendDuration] || 7));
+        suspendedUntil = now.toISOString();
+      }
+
+      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "SUSPENDED",
+          suspendedReason: suspendReason || null,
+          suspendedUntil,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t("admin.userSuspended"));
+        setSuspendDialogOpen(false);
+        setSuspendReason("");
+        setSuspendDuration("7d");
+        setSelectedUser(null);
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("admin.failedUserAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedUserAction"));
+    } finally {
+      setProcessingAction(false);
+    }
+  };
+
+  const handleBanUser = async () => {
+    if (!selectedUser) return;
+    setProcessingAction(true);
+    try {
+      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "BANNED",
+          suspendedReason: banReason || null,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t("admin.userBanned"));
+        setBanDialogOpen(false);
+        setBanReason("");
+        setSelectedUser(null);
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("admin.failedUserAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedUserAction"));
+    } finally {
+      setProcessingAction(false);
+    }
+  };
+
+  const handleReactivateUser = async (user: User) => {
+    setProcessingAction(true);
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "ACTIVE" }),
+      });
+
+      if (response.ok) {
+        toast.success(t("admin.userReactivated"));
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("admin.failedUserAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedUserAction"));
+    } finally {
+      setProcessingAction(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setProcessingAction(true);
+    try {
+      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success(t("admin.userDeleted"));
+        setDeleteDialogOpen(false);
+        setSelectedUser(null);
+        fetchUsers();
+        fetchStats();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("admin.failedUserAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedUserAction"));
+    } finally {
+      setProcessingAction(false);
+    }
+  };
+
+  const handleChangeRole = async (user: User, newRole: string) => {
+    setProcessingAction(true);
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+
+      if (response.ok) {
+        toast.success(t("admin.roleChanged"));
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("admin.failedUserAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedUserAction"));
+    } finally {
+      setProcessingAction(false);
+    }
+  };
+
+  const exportAuditLogs = async () => {
+    try {
+      const params = new URLSearchParams({ limit: "1000", offset: "0" });
+      if (auditLogsFilter !== "all") params.set("action", auditLogsFilter);
+      if (auditLogsSeverity !== "all") params.set("severity", auditLogsSeverity);
+
+      const response = await fetch(`/api/admin/audit-logs?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        const csv = [
+          ["Date", "Action", "Actor", "Target", "Details", "Severity", "IP"].join(","),
+          ...data.logs.map((log: AuditLog) =>
+            [
+              new Date(log.createdAt).toISOString(),
+              log.action,
+              log.actorEmail,
+              log.targetId || "",
+              JSON.stringify(log.details).replace(/,/g, ";"),
+              log.severity,
+              log.ip || "",
+            ].join(",")
+          ),
+        ].join("\n");
+
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `audit-logs-${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success(t("admin.exportSuccess"));
+      }
+    } catch {
+      toast.error(t("admin.exportFailed"));
+    }
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case "ACTIVE":
+        return "default";
+      case "SUSPENDED":
+        return "secondary";
+      case "BANNED":
+        return "destructive";
+      default:
+        return "outline";
+    }
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case "critical":
+        return "text-red-600 bg-red-50";
+      case "high":
+        return "text-orange-600 bg-orange-50";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50";
+      case "low":
+      default:
+        return "text-gray-600 bg-gray-50";
+    }
+  };
+
   if (authStatus === "loading" || isLoading) {
     return <AdminSkeleton />;
   }
@@ -669,6 +1042,14 @@ export default function AdminPage() {
               <TabsTrigger value="categories" className="gap-2">
                 <FolderPlus className="h-4 w-4" />
                 {t("admin.categories")}
+              </TabsTrigger>
+              <TabsTrigger value="auditLogs" className="gap-2">
+                <History className="h-4 w-4" />
+                {t("admin.auditLogs")}
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-2">
+                <UserCog className="h-4 w-4" />
+                {t("admin.settingsTab")}
               </TabsTrigger>
             </TabsList>
 
@@ -815,12 +1196,12 @@ export default function AdminPage() {
               <Card>
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <CardTitle>User Management</CardTitle>
-                    <div className="flex gap-2">
+                    <CardTitle>{t("admin.userManagement")}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
-                          placeholder="Search users..."
+                          placeholder={t("admin.searchUsers")}
                           value={usersSearch}
                           onChange={(e) => setUsersSearch(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && fetchUsers()}
@@ -832,10 +1213,20 @@ export default function AdminPage() {
                         onChange={(e) => setUsersRoleFilter(e.target.value)}
                         className="border rounded-md px-3 py-2 text-sm"
                       >
-                        <option value="all">All Roles</option>
-                        <option value="CUSTOMER">Customers</option>
-                        <option value="CLEANER">Workers</option>
-                        <option value="ADMIN">Admins</option>
+                        <option value="all">{t("admin.allRoles")}</option>
+                        <option value="CUSTOMER">{t("admin.customers")}</option>
+                        <option value="CLEANER">{t("admin.workers")}</option>
+                        <option value="ADMIN">{t("admin.admins")}</option>
+                      </select>
+                      <select
+                        value={usersStatusFilter}
+                        onChange={(e) => setUsersStatusFilter(e.target.value)}
+                        className="border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="all">{t("admin.allStatuses")}</option>
+                        <option value="ACTIVE">{t("admin.statusActive")}</option>
+                        <option value="SUSPENDED">{t("admin.statusSuspended")}</option>
+                        <option value="BANNED">{t("admin.statusBanned")}</option>
                       </select>
                     </div>
                   </div>
@@ -865,20 +1256,30 @@ export default function AdminPage() {
                                   {user.firstName} {user.lastName}
                                 </p>
                                 <p className="text-sm text-muted-foreground">{user.email}</p>
+                                {user.status !== "ACTIVE" && user.suspendedUntil && (
+                                  <p className="text-xs text-orange-600">
+                                    {t("admin.suspendedUntil")}: {new Date(user.suspendedUntil).toLocaleDateString()}
+                                  </p>
+                                )}
                               </div>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
                               {user.role === "CLEANER" && user.cleanerProfile && (
-                                <div className="text-right text-sm">
+                                <div className="text-right text-sm hidden sm:block">
                                   <div className="flex items-center gap-1">
                                     <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                                     {user.cleanerProfile.averageRating.toFixed(1)}
                                   </div>
                                   <span className="text-muted-foreground">
-                                    {user.cleanerProfile.totalBookings} bookings
+                                    {user.cleanerProfile.totalBookings} {t("admin.bookings")}
                                   </span>
                                 </div>
                               )}
+                              <Badge variant={getStatusBadgeVariant(user.status)}>
+                                {user.status === "ACTIVE" ? t("admin.statusActive") :
+                                 user.status === "SUSPENDED" ? t("admin.statusSuspended") :
+                                 t("admin.statusBanned")}
+                              </Badge>
                               <Badge
                                 variant={
                                   user.role === "ADMIN"
@@ -893,6 +1294,106 @@ export default function AdminPage() {
                               {user.role === "CLEANER" && user.cleanerProfile?.verified && (
                                 <CheckCircle className="h-4 w-4 text-green-500" />
                               )}
+
+                              {/* Actions Dropdown */}
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>{t("admin.actions")}</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => fetchUserDetails(user.id)}
+                                    disabled={loadingUserDetails}
+                                  >
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    {t("admin.viewDetails")}
+                                  </DropdownMenuItem>
+
+                                  {/* Change Role Submenu */}
+                                  <DropdownMenuSub>
+                                    <DropdownMenuSubTrigger>
+                                      <UserCog className="h-4 w-4 mr-2" />
+                                      {t("admin.changeRole")}
+                                    </DropdownMenuSubTrigger>
+                                    <DropdownMenuSubContent>
+                                      <DropdownMenuItem
+                                        onClick={() => handleChangeRole(user, "CUSTOMER")}
+                                        disabled={user.role === "CUSTOMER" || processingAction}
+                                      >
+                                        {t("admin.customers")}
+                                        {user.role === "CUSTOMER" && <CheckCircle className="h-4 w-4 ml-2" />}
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => handleChangeRole(user, "CLEANER")}
+                                        disabled={user.role === "CLEANER" || processingAction}
+                                      >
+                                        {t("admin.workers")}
+                                        {user.role === "CLEANER" && <CheckCircle className="h-4 w-4 ml-2" />}
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => handleChangeRole(user, "ADMIN")}
+                                        disabled={user.role === "ADMIN" || processingAction}
+                                      >
+                                        {t("admin.admins")}
+                                        {user.role === "ADMIN" && <CheckCircle className="h-4 w-4 ml-2" />}
+                                      </DropdownMenuItem>
+                                    </DropdownMenuSubContent>
+                                  </DropdownMenuSub>
+
+                                  <DropdownMenuSeparator />
+
+                                  {user.status === "ACTIVE" ? (
+                                    <>
+                                      <DropdownMenuItem
+                                        onClick={() => {
+                                          setSelectedUser(user);
+                                          setSuspendDialogOpen(true);
+                                        }}
+                                        disabled={user.id === session?.user?.id}
+                                      >
+                                        <Clock className="h-4 w-4 mr-2" />
+                                        {t("admin.suspend")}
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => {
+                                          setSelectedUser(user);
+                                          setBanDialogOpen(true);
+                                        }}
+                                        disabled={user.id === session?.user?.id}
+                                        className="text-red-600"
+                                      >
+                                        <Ban className="h-4 w-4 mr-2" />
+                                        {t("admin.ban")}
+                                      </DropdownMenuItem>
+                                    </>
+                                  ) : (
+                                    <DropdownMenuItem
+                                      onClick={() => handleReactivateUser(user)}
+                                      disabled={processingAction}
+                                    >
+                                      <RefreshCw className="h-4 w-4 mr-2" />
+                                      {t("admin.reactivate")}
+                                    </DropdownMenuItem>
+                                  )}
+
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setSelectedUser(user);
+                                      setDeleteDialogOpen(true);
+                                    }}
+                                    disabled={user.id === session?.user?.id}
+                                    className="text-red-600"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    {t("admin.delete")}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                           </div>
                         ))}
@@ -901,7 +1402,7 @@ export default function AdminPage() {
                       {/* Pagination */}
                       <div className="flex items-center justify-between mt-4">
                         <p className="text-sm text-muted-foreground">
-                          Page {usersPage} of {usersTotalPages}
+                          {t("admin.page")} {usersPage} {t("admin.of")} {usersTotalPages}
                         </p>
                         <div className="flex gap-2">
                           <Button
@@ -1665,9 +2166,448 @@ export default function AdminPage() {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Audit Logs Tab */}
+            <TabsContent value="auditLogs">
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <CardTitle>{t("admin.auditLogsTitle")}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
+                      <select
+                        value={auditLogsFilter}
+                        onChange={(e) => {
+                          setAuditLogsFilter(e.target.value);
+                          setAuditLogsPage(0);
+                        }}
+                        className="border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="all">{t("admin.allActions")}</option>
+                        <option value="USER_SUSPENDED">{t("admin.actionSuspend")}</option>
+                        <option value="USER_BANNED">{t("admin.actionBan")}</option>
+                        <option value="USER_REACTIVATED">{t("admin.actionReactivate")}</option>
+                        <option value="USER_DELETED">{t("admin.actionDelete")}</option>
+                        <option value="USER_ROLE_CHANGED">{t("admin.actionRoleChange")}</option>
+                        <option value="CLEANER_VERIFIED">{t("admin.actionVerify")}</option>
+                        <option value="DOCUMENT_VERIFIED">{t("admin.actionDocVerify")}</option>
+                      </select>
+                      <select
+                        value={auditLogsSeverity}
+                        onChange={(e) => {
+                          setAuditLogsSeverity(e.target.value);
+                          setAuditLogsPage(0);
+                        }}
+                        className="border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="all">{t("admin.allSeverities")}</option>
+                        <option value="low">{t("admin.severityLow")}</option>
+                        <option value="medium">{t("admin.severityMedium")}</option>
+                        <option value="high">{t("admin.severityHigh")}</option>
+                        <option value="critical">{t("admin.severityCritical")}</option>
+                      </select>
+                      <Button variant="outline" size="sm" onClick={exportAuditLogs}>
+                        <Download className="h-4 w-4 mr-2" />
+                        {t("admin.exportCsv")}
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loadingAuditLogs ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : auditLogs.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      {t("admin.noAuditLogs")}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-3">
+                        {auditLogs.map((log) => (
+                          <div
+                            key={log.id}
+                            className="p-4 border rounded-lg"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="outline">{log.action.replace(/_/g, " ")}</Badge>
+                                  <Badge className={getSeverityColor(log.severity)}>
+                                    {log.severity.toUpperCase()}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm">
+                                  <span className="font-medium">{log.actorEmail}</span>
+                                  {log.targetId && (
+                                    <span className="text-muted-foreground">
+                                      {" → "}{log.targetType}: {log.targetId.slice(0, 8)}...
+                                    </span>
+                                  )}
+                                </p>
+                                {log.details && Object.keys(log.details).length > 0 && (
+                                  <p className="text-xs text-muted-foreground mt-1 bg-gray-50 p-2 rounded">
+                                    {JSON.stringify(log.details, null, 2)}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="text-right text-sm text-muted-foreground">
+                                <p>{new Date(log.createdAt).toLocaleDateString()}</p>
+                                <p>{new Date(log.createdAt).toLocaleTimeString()}</p>
+                                {log.ip && <p className="text-xs">{log.ip}</p>}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="flex items-center justify-between mt-4">
+                        <p className="text-sm text-muted-foreground">
+                          {t("admin.showing")} {auditLogsPage * 20 + 1}-{Math.min((auditLogsPage + 1) * 20, auditLogsTotal)} {t("admin.of")} {auditLogsTotal}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setAuditLogsPage((p) => Math.max(0, p - 1))}
+                            disabled={auditLogsPage === 0}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setAuditLogsPage((p) => p + 1)}
+                            disabled={(auditLogsPage + 1) * 20 >= auditLogsTotal}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Settings Tab */}
+            <TabsContent value="settings">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("admin.systemSettings")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Platform Fees */}
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-semibold mb-3">{t("admin.platformFees")}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.customerFee")}</span>
+                          <span className="font-medium">€2.00 + 5%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.cleanerFee")}</span>
+                          <span className="font-medium">€1.00 + 15%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Booking Settings */}
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-semibold mb-3">{t("admin.bookingSettings")}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.minBookingValue")}</span>
+                          <span className="font-medium">€25.00</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.defaultCurrency")}</span>
+                          <span className="font-medium">EUR</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Cancellation Policy */}
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-semibold mb-3">{t("admin.cancellationPolicy")}</h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.freeCancel24h")}</span>
+                          <Badge variant="default">100%</Badge>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.cancel12to24h")}</span>
+                          <Badge variant="secondary">50%</Badge>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.cancelUnder12h")}</span>
+                          <Badge variant="destructive">0%</Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* System Status */}
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-semibold mb-3">{t("admin.systemStatus")}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.maintenanceMode")}</span>
+                          <Badge variant="default" className="bg-green-500">{t("admin.off")}</Badge>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <span className="text-sm">{t("admin.newRegistrations")}</span>
+                          <Badge variant="default" className="bg-green-500">{t("admin.enabled")}</Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground text-center">
+                      {t("admin.settingsReadOnly")}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
         </div>
       </main>
+
+      {/* User Details Modal */}
+      <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t("admin.userDetails")}</DialogTitle>
+            <DialogDescription>
+              {t("admin.userDetailsDesc")}
+            </DialogDescription>
+          </DialogHeader>
+          {userDetails && (
+            <div className="space-y-4">
+              {/* User Info */}
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={userDetails.avatar || undefined} />
+                  <AvatarFallback className="text-lg">
+                    {userDetails.firstName[0]}{userDetails.lastName[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    {userDetails.firstName} {userDetails.lastName}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{userDetails.email}</p>
+                  {userDetails.phone && (
+                    <p className="text-sm text-muted-foreground">{userDetails.phone}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Status & Role */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 border rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">{t("admin.status")}</p>
+                  <Badge variant={getStatusBadgeVariant(userDetails.status)}>
+                    {userDetails.status}
+                  </Badge>
+                  {userDetails.suspendedReason && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t("admin.reason")}: {userDetails.suspendedReason}
+                    </p>
+                  )}
+                </div>
+                <div className="p-3 border rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">{t("admin.role")}</p>
+                  <Badge variant={userDetails.role === "ADMIN" ? "destructive" : "default"}>
+                    {userDetails.role === "CLEANER" ? "WORKER" : userDetails.role}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Registration Date */}
+              <div className="p-3 border rounded-lg">
+                <p className="text-xs text-muted-foreground mb-1">{t("admin.registeredOn")}</p>
+                <p className="font-medium">{new Date(userDetails.createdAt).toLocaleDateString()}</p>
+              </div>
+
+              {/* Recent Bookings */}
+              {(userDetails.bookingsAsCustomer.length > 0 || userDetails.bookingsAsCleaner.length > 0) && (
+                <div className="p-3 border rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-2">{t("admin.recentBookings")}</p>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {[...userDetails.bookingsAsCustomer, ...userDetails.bookingsAsCleaner]
+                      .slice(0, 5)
+                      .map((booking) => (
+                        <div key={booking.id} className="flex justify-between text-sm">
+                          <span>{SERVICE_NAMES[booking.service.name] || booking.service.name}</span>
+                          <span className="text-muted-foreground">
+                            ${booking.totalPrice} - {booking.status}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Reviews */}
+              {userDetails.reviewsReceived.length > 0 && (
+                <div className="p-3 border rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-2">{t("admin.recentReviews")}</p>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {userDetails.reviewsReceived.map((review) => (
+                      <div key={review.id} className="text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3 w-3 ${
+                                  i < review.rating
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-muted-foreground">
+                            {review.reviewer.firstName} {review.reviewer.lastName}
+                          </span>
+                        </div>
+                        {review.comment && (
+                          <p className="text-xs text-muted-foreground mt-1">{review.comment}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setUserDetailsOpen(false)}>
+              {t("common.close")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suspend User Dialog */}
+      <Dialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("admin.suspendUser")}</DialogTitle>
+            <DialogDescription>
+              {t("admin.suspendUserDesc", { name: `${selectedUser?.firstName} ${selectedUser?.lastName}` })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("admin.suspendDuration")}</Label>
+              <Select value={suspendDuration} onValueChange={setSuspendDuration}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1d">1 {t("admin.day")}</SelectItem>
+                  <SelectItem value="3d">3 {t("admin.days")}</SelectItem>
+                  <SelectItem value="7d">7 {t("admin.days")}</SelectItem>
+                  <SelectItem value="14d">14 {t("admin.days")}</SelectItem>
+                  <SelectItem value="30d">30 {t("admin.days")}</SelectItem>
+                  <SelectItem value="90d">90 {t("admin.days")}</SelectItem>
+                  <SelectItem value="indefinite">{t("admin.indefinite")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>{t("admin.reason")} ({t("admin.optional")})</Label>
+              <Textarea
+                value={suspendReason}
+                onChange={(e) => setSuspendReason(e.target.value)}
+                placeholder={t("admin.reasonPlaceholder")}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSuspendDialogOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleSuspendUser}
+              disabled={processingAction}
+            >
+              {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {t("admin.suspend")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Ban User Dialog */}
+      <Dialog open={banDialogOpen} onOpenChange={setBanDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("admin.banUser")}</DialogTitle>
+            <DialogDescription>
+              {t("admin.banUserDesc", { name: `${selectedUser?.firstName} ${selectedUser?.lastName}` })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+              {t("admin.banWarning")}
+            </div>
+            <div className="space-y-2">
+              <Label>{t("admin.reason")} ({t("admin.optional")})</Label>
+              <Textarea
+                value={banReason}
+                onChange={(e) => setBanReason(e.target.value)}
+                placeholder={t("admin.reasonPlaceholder")}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBanDialogOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBanUser}
+              disabled={processingAction}
+            >
+              {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {t("admin.ban")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("admin.deleteUser")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("admin.deleteUserDesc", { name: `${selectedUser?.firstName} ${selectedUser?.lastName}` })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            {t("admin.deleteWarning")}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {t("admin.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

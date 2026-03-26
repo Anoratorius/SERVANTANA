@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const role = searchParams.get("role");
+    const status = searchParams.get("status");
     const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
@@ -30,6 +31,10 @@ export async function GET(request: NextRequest) {
 
     if (role && role !== "all") {
       where.role = role;
+    }
+
+    if (status && status !== "all") {
+      where.status = status;
     }
 
     if (search) {
@@ -51,6 +56,9 @@ export async function GET(request: NextRequest) {
           phone: true,
           avatar: true,
           role: true,
+          status: true,
+          suspendedUntil: true,
+          suspendedReason: true,
           createdAt: true,
           emailVerified: true,
           cleanerProfile: {

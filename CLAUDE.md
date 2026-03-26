@@ -40,7 +40,7 @@ npx vercel --prod --force   # Force fresh build, skip cache
 
 ### Tech Stack
 - **Framework:** Next.js 16 with App Router
-- **Auth:** NextAuth.js v5 (JWT strategy, OAuth + credentials providers)
+- **Auth:** NextAuth.js v5 (JWT strategy, credentials provider)
 - **Database:** Prisma ORM with Neon PostgreSQL
 - **Styling:** Tailwind CSS 4 + shadcn/ui components
 - **i18n:** next-intl v4 (en, de)
@@ -61,7 +61,6 @@ npx vercel --prod --force   # Force fresh build, skip cache
 
 ### Authentication Flow
 NextAuth.js configured in `src/lib/auth.ts`:
-- OAuth providers: Google, Facebook, Apple
 - Credentials provider with bcrypt password validation
 - User roles: CUSTOMER, CLEANER, ADMIN
 - Session extended with role, firstName, lastName
@@ -309,4 +308,3 @@ Required in `.env`:
 - `POSTGRES_URL_NON_POOLING` - PostgreSQL direct connection string
 - `NEXTAUTH_URL` - Auth callback URL
 - `NEXTAUTH_SECRET` - JWT secret
-- OAuth credentials: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, etc.
