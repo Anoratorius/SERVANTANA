@@ -1,8 +1,6 @@
 import { prisma } from "./prisma";
 import { Resend } from "resend";
 import { randomInt } from "crypto";
-import * as fs from "fs";
-import * as path from "path";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
