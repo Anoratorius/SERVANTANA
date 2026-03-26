@@ -109,7 +109,7 @@ export async function sendResetEmail(
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <img src="${EMAIL_LOGO_BASE64}" alt="SERVANTANA" width="200" style="display: block; margin: 0 auto;" />
+            <img src="${EMAIL_LOGO_BASE64}" alt="SERVANTANA" width="248" height="44" style="display: block; margin: 0 auto; max-width: 100%;" />
           </div>
 
           <h2 style="color: #333; margin-bottom: 20px;">Password Reset Request</h2>
