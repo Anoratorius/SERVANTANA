@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { writeAuditLog } from "@/lib/audit-log";
+import { writeAuditLog, AuditAction } from "@/lib/audit-log";
 import { getClientIP } from "@/lib/rate-limit";
 
 const updateUserSchema = z.object({
@@ -200,13 +200,13 @@ export async function PATCH(
 
     // Audit log for status changes (suspend/ban)
     if (body.status) {
-      const actionMap: Record<string, string> = {
+      const actionMap: Record<string, AuditAction> = {
         SUSPENDED: "USER_SUSPENDED",
         BANNED: "USER_BANNED",
         ACTIVE: "USER_REACTIVATED",
       };
       writeAuditLog({
-        action: actionMap[body.status] || "USER_STATUS_CHANGED",
+        action: actionMap[body.status] || "USER_UPDATED",
         actorId: session.user.id,
         actorEmail: session.user.email,
         targetId: id,
@@ -218,7 +218,7 @@ export async function PATCH(
         },
         ip: getClientIP(request),
         userAgent: request.headers.get("user-agent") || undefined,
-        severity: body.status === "BANNED" ? "high" : "medium",
+        severity: body.status === "BANNED" ? "CRITICAL" : "WARNING",
       });
     }
 

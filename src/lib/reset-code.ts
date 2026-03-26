@@ -112,7 +112,7 @@ export async function sendResetEmail(
         {
           filename: "logo.png",
           content: EMAIL_LOGO_BASE64,
-          content_id: "logo",
+          contentId: "logo",
         },
       ],
       html: `
