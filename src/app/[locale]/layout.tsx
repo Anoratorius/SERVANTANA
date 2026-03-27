@@ -9,6 +9,7 @@ import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { PermissionsOnboarding } from "@/components/onboarding/PermissionsOnboarding";
 import { SplashController } from "@/components/layout/SplashController";
 import LocationVerificationProvider from "@/components/location/LocationVerificationProvider";
+import ProfessionOnboardingProvider from "@/components/onboarding/ProfessionOnboardingProvider";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -35,11 +36,13 @@ export default async function LocaleLayout({ children, params }: Props) {
       <NextIntlClientProvider messages={messages}>
         <CurrencyProvider>
           <LocationVerificationProvider>
-            <SplashController />
-            {children}
-            <Toaster />
-            <PermissionsOnboarding locale={locale} />
-            <InstallPrompt />
+            <ProfessionOnboardingProvider>
+              <SplashController />
+              {children}
+              <Toaster />
+              <PermissionsOnboarding locale={locale} />
+              <InstallPrompt />
+            </ProfessionOnboardingProvider>
           </LocationVerificationProvider>
         </CurrencyProvider>
       </NextIntlClientProvider>

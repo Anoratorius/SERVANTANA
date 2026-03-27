@@ -19,6 +19,26 @@
     "confirm": "Confirm",
     "close": "Close"
   },
+  "professionOnboarding": {
+    "title": "What do you do?",
+    "description": "Select the professions that describe your work. This helps customers find you. You can select multiple professions.",
+    "searchProfessions": "Search professions...",
+    "selected": "selected",
+    "clickToSetPrimary": "Double-click to set as primary",
+    "primary": "Primary",
+    "selectAtLeastOne": "Please select at least one profession",
+    "saved": "Professions saved successfully!",
+    "saveFailed": "Failed to save professions",
+    "suggestNew": "Don't see your profession? Suggest one",
+    "newProfessionName": "Profession name",
+    "enterProfessionName": "Enter the profession name",
+    "suggestionSubmitted": "Suggestion submitted! It will be reviewed by admin.",
+    "suggestionFailed": "Failed to submit suggestion",
+    "suggestionNote": "Your suggestion will be reviewed by our team and added if approved.",
+    "continue": "Continue",
+    "noResults": "No professions found matching your search",
+    "noProfessions": "No professions available yet"
+  },
   "location": {
     "verifyYourLocation": "Verify Your Location",
     "verificationExplanation": "To ensure accurate service matching and protect our community, we need to verify your location. This helps connect you with nearby workers and customers.",

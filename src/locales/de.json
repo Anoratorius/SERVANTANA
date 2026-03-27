@@ -19,6 +19,26 @@
     "confirm": "Bestätigen",
     "close": "Schließen"
   },
+  "professionOnboarding": {
+    "title": "Was machen Sie beruflich?",
+    "description": "Wählen Sie die Berufe aus, die Ihre Arbeit beschreiben. Dies hilft Kunden, Sie zu finden. Sie können mehrere Berufe auswählen.",
+    "searchProfessions": "Berufe suchen...",
+    "selected": "ausgewählt",
+    "clickToSetPrimary": "Doppelklick zum Festlegen als Hauptberuf",
+    "primary": "Hauptberuf",
+    "selectAtLeastOne": "Bitte wählen Sie mindestens einen Beruf aus",
+    "saved": "Berufe erfolgreich gespeichert!",
+    "saveFailed": "Berufe konnten nicht gespeichert werden",
+    "suggestNew": "Ihren Beruf nicht gefunden? Vorschlagen",
+    "newProfessionName": "Berufsbezeichnung",
+    "enterProfessionName": "Geben Sie die Berufsbezeichnung ein",
+    "suggestionSubmitted": "Vorschlag eingereicht! Er wird vom Admin überprüft.",
+    "suggestionFailed": "Vorschlag konnte nicht eingereicht werden",
+    "suggestionNote": "Ihr Vorschlag wird von unserem Team überprüft und bei Genehmigung hinzugefügt.",
+    "continue": "Weiter",
+    "noResults": "Keine Berufe gefunden, die Ihrer Suche entsprechen",
+    "noProfessions": "Noch keine Berufe verfügbar"
+  },
   "location": {
     "verifyYourLocation": "Standort bestätigen",
     "verificationExplanation": "Um eine genaue Service-Zuordnung zu gewährleisten und unsere Community zu schützen, müssen wir Ihren Standort verifizieren. Dies hilft, Sie mit Arbeitern und Kunden in Ihrer Nähe zu verbinden.",
