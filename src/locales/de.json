@@ -837,6 +837,10 @@
     "noWorkersYet": "Noch keine Arbeiter",
     "beFirstWorker": "Sei der erste Fachmann in dieser Kategorie!",
     "becomeWorker": "Arbeiter werden",
+    "workerTitle": "Wählen Sie Ihre Kategorien",
+    "workerSubtitle": "Wählen Sie die Kategorien, die zu Ihren Fähigkeiten passen. Sie können mehrere Kategorien auswählen, wenn Sie verschiedene Dienstleistungen anbieten.",
+    "categoriesSelected": "Kategorien ausgewählt",
+    "continueToSetup": "Weiter zur Profilkonfiguration",
     "suggest": {
       "title": "Kategorie vorschlagen",
       "subtitle": "Helfen Sie uns, neue Kategorien hinzuzufügen",
@@ -1461,6 +1465,18 @@
     "resendFailed": "Fehler beim Senden der Bestätigungs-E-Mail. Bitte versuchen Sie es erneut.",
     "emailSent": "Bestätigungs-E-Mail gesendet! Bitte prüfen Sie Ihren Posteingang und Spam-Ordner.",
     "wrongAccount": "Mit dem falschen Konto angemeldet?"
+  },
+  "workerSetup": {
+    "selectProfessions": "Wählen Sie Ihre Berufe",
+    "selectProfessionsDesc": "Wählen Sie die Berufe aus, die Ihre Arbeit beschreiben. Sie können mehrere Berufe auswählen.",
+    "doubleClickPrimary": "Doppelklicken Sie auf einen ausgewählten Beruf, um ihn als Hauptberuf festzulegen",
+    "completeProfile": "Vervollständigen Sie Ihr Profil",
+    "completeProfileDesc": "Legen Sie Ihre Preise fest und erzählen Sie Kunden von sich",
+    "basicInfo": "Grundlegende Informationen",
+    "basicInfoDesc": "Diese Informationen sind für Kunden sichtbar",
+    "bioPlaceholder": "Erzählen Sie Kunden von Ihrer Erfahrung und Ihren Fähigkeiten...",
+    "finishSetup": "Einrichtung abschließen",
+    "invalidRate": "Bitte geben Sie einen gültigen Stundensatz ein"
   },
   "bookingChanges": {
     "reschedule": "Umbuchen",

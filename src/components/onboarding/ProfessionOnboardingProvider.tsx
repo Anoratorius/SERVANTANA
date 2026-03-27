@@ -2,16 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import dynamic from "next/dynamic";
+import { usePathname, useRouter } from "next/navigation";
 
-// Dynamic import to avoid SSR issues
-const ProfessionOnboardingModal = dynamic(
-  () => import("./ProfessionOnboardingModal"),
-  { ssr: false }
-);
-
-// Pages where profession onboarding should NOT appear
+// Pages where profession onboarding redirect should NOT happen
 const EXCLUDED_PATHS = [
   "/login",
   "/signup",
@@ -21,6 +14,8 @@ const EXCLUDED_PATHS = [
   "/email-verification-required",
   "/auth",
   "/admin",
+  "/categories", // Don't redirect from categories page
+  "/worker/setup", // Don't redirect from setup page
 ];
 
 export default function ProfessionOnboardingProvider({
@@ -30,7 +25,7 @@ export default function ProfessionOnboardingProvider({
 }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
   const [locationVerified, setLocationVerified] = useState<boolean | null>(null);
 
@@ -47,7 +42,7 @@ export default function ProfessionOnboardingProvider({
       return;
     }
 
-    // Don't show on excluded paths
+    // Don't redirect on excluded paths
     const isExcludedPath = EXCLUDED_PATHS.some((path) =>
       pathname.includes(path)
     );
@@ -57,13 +52,13 @@ export default function ProfessionOnboardingProvider({
     }
 
     try {
-      // First check if location is verified - don't show profession modal until location is done
+      // First check if location is verified - don't redirect until location is done
       const locationResponse = await fetch("/api/user/location");
       if (locationResponse.ok) {
         const locationData = await locationResponse.json();
         setLocationVerified(locationData.isVerified);
         if (!locationData.isVerified) {
-          // Location not verified yet, don't show profession modal
+          // Location not verified yet, don't redirect
           setIsChecking(false);
           return;
         }
@@ -73,15 +68,18 @@ export default function ProfessionOnboardingProvider({
       const response = await fetch("/api/cleaner/professions");
       if (response.ok) {
         const professions = await response.json();
-        // If no professions, show onboarding
-        setNeedsOnboarding(professions.length === 0);
+        // If no professions, redirect to categories page for onboarding
+        if (professions.length === 0) {
+          router.push("/categories");
+          return;
+        }
       }
     } catch (error) {
       console.error("Error checking professions:", error);
     } finally {
       setIsChecking(false);
     }
-  }, [session, status, pathname]);
+  }, [session, status, pathname, router]);
 
   useEffect(() => {
     checkProfessionOnboarding();
@@ -111,24 +109,10 @@ export default function ProfessionOnboardingProvider({
     }
   }, [locationVerified, status, session?.user?.role, checkProfessionOnboarding]);
 
-  const handleComplete = () => {
-    setNeedsOnboarding(false);
-  };
-
-  // Don't render modal while checking or if not a worker
+  // While checking, just render children
   if (isChecking || status !== "authenticated") {
     return <>{children}</>;
   }
 
-  return (
-    <>
-      {children}
-      {needsOnboarding && (
-        <ProfessionOnboardingModal
-          isOpen={needsOnboarding}
-          onComplete={handleComplete}
-        />
-      )}
-    </>
-  );
+  return <>{children}</>;
 }
