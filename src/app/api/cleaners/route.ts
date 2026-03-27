@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
+// Haversine formula to calculate distance between two points in km
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -14,6 +27,11 @@ export async function GET(request: NextRequest) {
     const specialtyServices = searchParams.get("specialty");
     const categoryId = searchParams.get("categoryId");
     const professionId = searchParams.get("professionId");
+
+    // Location-based search parameters
+    const userLat = searchParams.get("lat");
+    const userLng = searchParams.get("lng");
+    const maxDistance = searchParams.get("maxDistance"); // in km
 
     // Build cleaner profile filter conditions
     const profileFilters: Prisma.CleanerProfileWhereInput = {};
@@ -122,6 +140,9 @@ export async function GET(request: NextRequest) {
             petFriendly: true,
             city: true,
             state: true,
+            latitude: true,
+            longitude: true,
+            serviceRadius: true,
             averageRating: true,
             totalBookings: true,
             services: {
@@ -175,7 +196,60 @@ export async function GET(request: NextRequest) {
     });
 
     // Filter out null profiles (should already be filtered but be safe)
-    const filteredCleaners = cleaners.filter((c) => c.cleanerProfile !== null);
+    let filteredCleaners = cleaners.filter((c) => c.cleanerProfile !== null);
+
+    // If user coordinates provided, calculate distances and filter
+    if (userLat && userLng) {
+      const lat = parseFloat(userLat);
+      const lng = parseFloat(userLng);
+      const maxDist = maxDistance ? parseFloat(maxDistance) : null;
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        // Add distance to each cleaner
+        const cleanersWithDistance = filteredCleaners.map((cleaner) => {
+          const profile = cleaner.cleanerProfile!;
+          let distance: number | null = null;
+
+          if (profile.latitude && profile.longitude) {
+            distance = calculateDistance(lat, lng, profile.latitude, profile.longitude);
+          }
+
+          return {
+            ...cleaner,
+            cleanerProfile: {
+              ...profile,
+              distance: distance ? Math.round(distance * 10) / 10 : null, // Round to 1 decimal
+            },
+          };
+        });
+
+        // Filter by max distance if provided
+        if (maxDist) {
+          filteredCleaners = cleanersWithDistance.filter((c) => {
+            const distance = c.cleanerProfile.distance;
+            const serviceRadius = c.cleanerProfile.serviceRadius || 10;
+            // Include if within max distance AND within worker's service radius
+            return distance !== null && distance <= maxDist && distance <= serviceRadius;
+          });
+        } else {
+          // Filter only by worker's service radius
+          filteredCleaners = cleanersWithDistance.filter((c) => {
+            const distance = c.cleanerProfile.distance;
+            const serviceRadius = c.cleanerProfile.serviceRadius || 10;
+            return distance === null || distance <= serviceRadius;
+          });
+        }
+
+        // Sort by distance (closest first)
+        filteredCleaners.sort((a, b) => {
+          const profileA = a.cleanerProfile as { distance?: number | null };
+          const profileB = b.cleanerProfile as { distance?: number | null };
+          const distA = profileA?.distance ?? Infinity;
+          const distB = profileB?.distance ?? Infinity;
+          return distA - distB;
+        });
+      }
+    }
 
     return NextResponse.json({ cleaners: filteredCleaners }, {
       headers: {

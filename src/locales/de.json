@@ -19,6 +19,22 @@
     "confirm": "Bestätigen",
     "close": "Schließen"
   },
+  "location": {
+    "verifyYourLocation": "Standort bestätigen",
+    "verificationExplanation": "Um eine genaue Service-Zuordnung zu gewährleisten und unsere Community zu schützen, müssen wir Ihren Standort verifizieren. Dies hilft, Sie mit Arbeitern und Kunden in Ihrer Nähe zu verbinden.",
+    "whyRequired": "Warum ist das erforderlich?",
+    "reason1": "Verbindung mit Arbeitern/Kunden in Ihrer Nähe",
+    "reason2": "Betrug verhindern und Servicequalität sicherstellen",
+    "reason3": "Genaue Entfernungsschätzungen bereitstellen",
+    "selectedLocation": "Ausgewählter Standort",
+    "confirmLocation": "Standort bestätigen",
+    "pleaseSelectLocation": "Bitte wählen Sie Ihren Standort auf der Karte",
+    "locationVerified": "Standort erfolgreich verifiziert!",
+    "verificationFailed": "Standortverifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "updateLocation": "Standort aktualisieren",
+    "currentLocation": "Aktueller Standort",
+    "notVerified": "Nicht verifiziert"
+  },
   "nav": {
     "home": "Startseite",
     "findWorkers": "Fachkräfte finden",

@@ -19,6 +19,22 @@
     "confirm": "Confirm",
     "close": "Close"
   },
+  "location": {
+    "verifyYourLocation": "Verify Your Location",
+    "verificationExplanation": "To ensure accurate service matching and protect our community, we need to verify your location. This helps connect you with nearby workers and customers.",
+    "whyRequired": "Why is this required?",
+    "reason1": "Match you with workers/customers in your area",
+    "reason2": "Prevent fraud and ensure service quality",
+    "reason3": "Provide accurate distance estimates",
+    "selectedLocation": "Selected location",
+    "confirmLocation": "Confirm My Location",
+    "pleaseSelectLocation": "Please select your location on the map",
+    "locationVerified": "Location verified successfully!",
+    "verificationFailed": "Failed to verify location. Please try again.",
+    "updateLocation": "Update Location",
+    "currentLocation": "Current Location",
+    "notVerified": "Not verified"
+  },
   "nav": {
     "home": "Home",
     "findWorkers": "Find Workers",

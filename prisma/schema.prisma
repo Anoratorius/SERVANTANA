@@ -167,6 +167,15 @@ model User {
   suspendedReason   String?    // Reason for suspension/ban
   preferredLanguage String     @default("en")
   tokenVersion      Int        @default(0) // Incremented on password change to invalidate sessions
+
+  // Location verification (required for all users)
+  latitude          Float?     // Verified location
+  longitude         Float?
+  locationCity      String?    // Reverse geocoded city
+  locationCountry   String?    // Reverse geocoded country
+  locationVerifiedAt DateTime? // When location was verified
+  lastKnownIp       String?    // Last known IP for fraud detection
+
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
