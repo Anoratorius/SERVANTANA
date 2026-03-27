@@ -40,6 +40,8 @@ import {
   RefreshCw,
   History,
   Download,
+  Plus,
+  Pencil,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -358,6 +360,19 @@ export default function AdminPage() {
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categoriesFilter, setCategoriesFilter] = useState("PENDING");
   const [processingCategoryId, setProcessingCategoryId] = useState<string | null>(null);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deleteCategoryDialogOpen, setDeleteCategoryDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [categoryForm, setCategoryForm] = useState({
+    name: "",
+    nameDE: "",
+    description: "",
+    emoji: "📁",
+    gradient: "from-blue-400 to-blue-600",
+    status: "APPROVED" as "PENDING" | "APPROVED" | "REJECTED",
+  });
+  const [savingCategory, setSavingCategory] = useState(false);
 
   // Disputes state
   const [disputes, setDisputes] = useState<Dispute[]>([]);
@@ -741,6 +756,97 @@ export default function AdminPage() {
       }
     } catch {
       toast.error(t("admin.failedCategoryAction"));
+    } finally {
+      setProcessingCategoryId(null);
+    }
+  };
+
+  const openCreateCategoryModal = () => {
+    setEditingCategory(null);
+    setCategoryForm({
+      name: "",
+      nameDE: "",
+      description: "",
+      emoji: "📁",
+      gradient: "from-blue-400 to-blue-600",
+      status: "APPROVED",
+    });
+    setCategoryModalOpen(true);
+  };
+
+  const openEditCategoryModal = (category: Category) => {
+    setEditingCategory(category);
+    setCategoryForm({
+      name: category.name,
+      nameDE: category.nameDE || "",
+      description: category.description || "",
+      emoji: category.emoji,
+      gradient: category.gradient,
+      status: category.status as "PENDING" | "APPROVED" | "REJECTED",
+    });
+    setCategoryModalOpen(true);
+  };
+
+  const handleSaveCategory = async () => {
+    if (!categoryForm.name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+
+    setSavingCategory(true);
+    try {
+      const url = editingCategory
+        ? `/api/admin/categories/${editingCategory.id}`
+        : "/api/admin/categories";
+      const method = editingCategory ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: categoryForm.name.trim(),
+          nameDE: categoryForm.nameDE.trim() || null,
+          description: categoryForm.description.trim() || null,
+          emoji: categoryForm.emoji,
+          gradient: categoryForm.gradient,
+          status: categoryForm.status,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(editingCategory ? "Category updated" : "Category created");
+        setCategoryModalOpen(false);
+        fetchCategories();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to save category");
+      }
+    } catch {
+      toast.error("Failed to save category");
+    } finally {
+      setSavingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+
+    setProcessingCategoryId(categoryToDelete.id);
+    try {
+      const response = await fetch(`/api/admin/categories/${categoryToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success("Category deleted");
+        setDeleteCategoryDialogOpen(false);
+        setCategoryToDelete(null);
+        fetchCategories();
+      } else {
+        toast.error("Failed to delete category");
+      }
+    } catch {
+      toast.error("Failed to delete category");
     } finally {
       setProcessingCategoryId(null);
     }
@@ -1688,17 +1794,23 @@ export default function AdminPage() {
             <TabsContent value="categories">
               <Card>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
                     <CardTitle>{t("admin.categoryManagement")}</CardTitle>
-                    <select
-                      value={categoriesFilter}
-                      onChange={(e) => setCategoriesFilter(e.target.value)}
-                      className="border rounded-md px-3 py-2 text-sm"
-                    >
-                      <option value="PENDING">{t("admin.pendingCategories")}</option>
-                      <option value="APPROVED">{t("admin.approvedCategories")}</option>
-                      <option value="REJECTED">{t("admin.rejectedCategories")}</option>
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={categoriesFilter}
+                        onChange={(e) => setCategoriesFilter(e.target.value)}
+                        className="border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="PENDING">{t("admin.pendingCategories")}</option>
+                        <option value="APPROVED">{t("admin.approvedCategories")}</option>
+                        <option value="REJECTED">{t("admin.rejectedCategories")}</option>
+                      </select>
+                      <Button onClick={openCreateCategoryModal} className="bg-blue-600 hover:bg-blue-700">
+                        <Plus className="h-4 w-4 mr-1" />
+                        Create Category
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1735,42 +1847,62 @@ export default function AdminPage() {
                                 </p>
                               </div>
                             </div>
-                            {category.status === "PENDING" && (
-                              <div className="flex gap-2">
-                                <Button
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600"
-                                  onClick={() => handleCategoryAction(category.id, "APPROVED")}
-                                  disabled={processingCategoryId === category.id}
-                                >
-                                  {processingCategoryId === category.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <CheckCircle className="h-4 w-4 mr-1" />
-                                  )}
-                                  {t("admin.approve")}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-600"
-                                  onClick={() => handleCategoryAction(category.id, "REJECTED")}
-                                  disabled={processingCategoryId === category.id}
-                                >
-                                  {processingCategoryId === category.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <XCircle className="h-4 w-4 mr-1" />
-                                  )}
-                                  {t("admin.reject")}
-                                </Button>
-                              </div>
-                            )}
-                            {category.status !== "PENDING" && (
-                              <Badge variant={category.status === "APPROVED" ? "default" : "destructive"}>
-                                {category.status}
-                              </Badge>
-                            )}
+                            <div className="flex items-center gap-2">
+                              {category.status === "PENDING" && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    className="bg-green-500 hover:bg-green-600"
+                                    onClick={() => handleCategoryAction(category.id, "APPROVED")}
+                                    disabled={processingCategoryId === category.id}
+                                  >
+                                    {processingCategoryId === category.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <CheckCircle className="h-4 w-4 mr-1" />
+                                    )}
+                                    {t("admin.approve")}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-red-600"
+                                    onClick={() => handleCategoryAction(category.id, "REJECTED")}
+                                    disabled={processingCategoryId === category.id}
+                                  >
+                                    {processingCategoryId === category.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <XCircle className="h-4 w-4 mr-1" />
+                                    )}
+                                    {t("admin.reject")}
+                                  </Button>
+                                </>
+                              )}
+                              {category.status !== "PENDING" && (
+                                <Badge variant={category.status === "APPROVED" ? "default" : "destructive"}>
+                                  {category.status}
+                                </Badge>
+                              )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditCategoryModal(category)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                                onClick={() => {
+                                  setCategoryToDelete(category);
+                                  setDeleteCategoryDialogOpen(true);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -1778,6 +1910,144 @@ export default function AdminPage() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Create/Edit Category Modal */}
+              <Dialog open={categoryModalOpen} onOpenChange={setCategoryModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingCategory ? "Edit Category" : "Create Category"}
+                    </DialogTitle>
+                    <DialogDescription>
+                      {editingCategory
+                        ? "Update the category details below."
+                        : "Fill in the details to create a new category."}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cat-name">Name (English) *</Label>
+                      <Input
+                        id="cat-name"
+                        value={categoryForm.name}
+                        onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
+                        placeholder="e.g., House Cleaning"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cat-nameDE">Name (German)</Label>
+                      <Input
+                        id="cat-nameDE"
+                        value={categoryForm.nameDE}
+                        onChange={(e) => setCategoryForm({ ...categoryForm, nameDE: e.target.value })}
+                        placeholder="e.g., Hausreinigung"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cat-description">Description</Label>
+                      <Textarea
+                        id="cat-description"
+                        value={categoryForm.description}
+                        onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
+                        placeholder="Brief description of this category..."
+                        rows={3}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="cat-emoji">Emoji</Label>
+                        <Input
+                          id="cat-emoji"
+                          value={categoryForm.emoji}
+                          onChange={(e) => setCategoryForm({ ...categoryForm, emoji: e.target.value })}
+                          placeholder="📁"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="cat-status">Status</Label>
+                        <select
+                          id="cat-status"
+                          value={categoryForm.status}
+                          onChange={(e) => setCategoryForm({ ...categoryForm, status: e.target.value as "PENDING" | "APPROVED" | "REJECTED" })}
+                          className="w-full border rounded-md px-3 py-2 text-sm"
+                        >
+                          <option value="APPROVED">Approved</option>
+                          <option value="PENDING">Pending</option>
+                          <option value="REJECTED">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Gradient Color</Label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[
+                          "from-blue-400 to-blue-600",
+                          "from-green-400 to-green-600",
+                          "from-purple-400 to-purple-600",
+                          "from-orange-400 to-orange-600",
+                          "from-pink-400 to-pink-600",
+                          "from-teal-400 to-teal-600",
+                          "from-red-400 to-red-600",
+                          "from-yellow-400 to-yellow-600",
+                        ].map((gradient) => (
+                          <button
+                            key={gradient}
+                            type="button"
+                            onClick={() => setCategoryForm({ ...categoryForm, gradient })}
+                            className={`h-10 rounded-lg bg-gradient-to-br ${gradient} ${
+                              categoryForm.gradient === gradient
+                                ? "ring-2 ring-offset-2 ring-blue-500"
+                                : ""
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 pt-2">
+                      <Label>Preview:</Label>
+                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${categoryForm.gradient} flex items-center justify-center shadow-md`}>
+                        <span className="text-2xl">{categoryForm.emoji}</span>
+                      </div>
+                      <span className="font-semibold">{categoryForm.name || "Category Name"}</span>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setCategoryModalOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveCategory} disabled={savingCategory}>
+                      {savingCategory ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      {editingCategory ? "Save Changes" : "Create Category"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              {/* Delete Category Confirmation */}
+              <AlertDialog open={deleteCategoryDialogOpen} onOpenChange={setDeleteCategoryDialogOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Category</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete &quot;{categoryToDelete?.name}&quot;? This action cannot be undone and will also delete all associated professions.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteCategory}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      {processingCategoryId === categoryToDelete?.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </TabsContent>
 
             {/* Bookings Tab */}
