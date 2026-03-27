@@ -78,6 +78,82 @@ export async function GET() {
   }
 }
 
+// Complete onboarding - marks profile as ready to be visible
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: {
+        cleanerProfile: {
+          include: {
+            professions: true,
+            availability: true,
+          },
+        },
+      },
+    });
+
+    if (!user || user.role !== "CLEANER") {
+      return NextResponse.json(
+        { error: "Only workers can complete onboarding" },
+        { status: 403 }
+      );
+    }
+
+    if (!user.cleanerProfile) {
+      return NextResponse.json(
+        { error: "Please create your profile first" },
+        { status: 400 }
+      );
+    }
+
+    // Validate onboarding requirements
+    const profile = user.cleanerProfile;
+    const errors: string[] = [];
+
+    if (profile.professions.length === 0) {
+      errors.push("Please select at least one profession");
+    }
+
+    if (!profile.hourlyRate || profile.hourlyRate <= 0) {
+      errors.push("Please set your hourly rate");
+    }
+
+    if (profile.availability.length === 0) {
+      errors.push("Please set your availability");
+    }
+
+    if (errors.length > 0) {
+      return NextResponse.json(
+        { error: "Onboarding incomplete", details: errors },
+        { status: 400 }
+      );
+    }
+
+    // Mark onboarding as complete
+    await prisma.cleanerProfile.update({
+      where: { id: profile.id },
+      data: { onboardingComplete: true },
+    });
+
+    return NextResponse.json({
+      message: "Onboarding completed successfully",
+      onboardingComplete: true,
+    });
+  } catch (error) {
+    console.error("Error completing onboarding:", error);
+    return NextResponse.json(
+      { error: "Failed to complete onboarding" },
+      { status: 500 }
+    );
+  }
+}
+
 // Update cleaner's profile
 export async function PUT(request: NextRequest) {
   try {

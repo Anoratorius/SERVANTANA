@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
-// Pages where profession onboarding redirect should NOT happen
+// Pages where worker onboarding redirect should NOT happen
 const EXCLUDED_PATHS = [
   "/login",
   "/signup",
@@ -14,8 +14,7 @@ const EXCLUDED_PATHS = [
   "/email-verification-required",
   "/auth",
   "/admin",
-  "/categories", // Don't redirect from categories page
-  "/worker/setup", // Don't redirect from setup page
+  "/worker/onboarding", // Don't redirect from onboarding page
 ];
 
 export default function ProfessionOnboardingProvider({
@@ -64,15 +63,19 @@ export default function ProfessionOnboardingProvider({
         }
       }
 
-      // Check if worker has any professions
-      const response = await fetch("/api/cleaner/professions");
+      // Check if worker has completed onboarding
+      const response = await fetch("/api/cleaner/profile");
       if (response.ok) {
-        const professions = await response.json();
-        // If no professions, redirect to categories page for onboarding
-        if (professions.length === 0) {
-          router.push("/categories");
+        const data = await response.json();
+        // If onboarding not complete, redirect to onboarding wizard
+        if (!data.profile?.onboardingComplete) {
+          router.push("/worker/onboarding");
           return;
         }
+      } else if (response.status === 404) {
+        // No profile yet, needs onboarding
+        router.push("/worker/onboarding");
+        return;
       }
     } catch (error) {
       console.error("Error checking professions:", error);

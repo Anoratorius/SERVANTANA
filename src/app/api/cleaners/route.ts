@@ -34,7 +34,11 @@ export async function GET(request: NextRequest) {
     const maxDistance = searchParams.get("maxDistance"); // in km
 
     // Build cleaner profile filter conditions
-    const profileFilters: Prisma.CleanerProfileWhereInput = {};
+    // Only show workers who completed onboarding and are active
+    const profileFilters: Prisma.CleanerProfileWhereInput = {
+      onboardingComplete: true,
+      isActive: true,
+    };
 
     // Filter by category - workers who have professions in this category
     if (categoryId) {

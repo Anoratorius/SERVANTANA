@@ -309,6 +309,7 @@ model CleanerProfile {
   experienceYears Int      @default(0)
   verified        Boolean  @default(false)
   isActive        Boolean  @default(true)  // Admin can deactivate without deleting
+  onboardingComplete Boolean @default(false) // Profile only visible after onboarding
   availableNow    Boolean  @default(false)
   ecoFriendly     Boolean  @default(false)
   petFriendly     Boolean  @default(false)
