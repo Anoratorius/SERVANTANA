@@ -81,16 +81,18 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase();
     const { code } = await createResetToken(normalizedEmail, "email");
 
-    // Send the code via email (await to ensure it's sent)
-    const emailResult = await sendResetEmail(normalizedEmail, code);
+    // Respond immediately - don't wait for email
+    const response = NextResponse.json({
+      success: true,
+      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***${normalizedEmail.split("@")[0].slice(-1)}@${normalizedEmail.split("@")[1]}`,
+    });
 
-    if (!emailResult.success) {
-      console.error("Email send failed:", emailResult.message);
-      return NextResponse.json(
-        { error: "Failed to send reset email. Please try again." },
-        { status: 500 }
-      );
-    }
+    // Send email in background (non-blocking)
+    sendResetEmail(normalizedEmail, code).then((result) => {
+      if (!result.success) {
+        console.error("Email send failed:", result.message);
+      }
+    });
 
     // Audit log (non-blocking)
     writeAuditLog({
@@ -102,10 +104,7 @@ export async function POST(request: NextRequest) {
       details: { type: "email" },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***${normalizedEmail.split("@")[0].slice(-1)}@${normalizedEmail.split("@")[1]}`,
-    });
+    return response;
   } catch (error) {
     console.error("Error in forgot password:", error);
     return NextResponse.json(
