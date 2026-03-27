@@ -20,17 +20,18 @@ export async function createResetToken(
   identifier: string,
   type: "email" | "phone"
 ): Promise<{ code: string; expires: Date }> {
-  // Delete any existing unused tokens for this identifier
-  await prisma.passwordResetToken.deleteMany({
+  const code = generateResetCode();
+  const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+  // Delete old tokens in background (non-blocking) - they'll expire anyway
+  prisma.passwordResetToken.deleteMany({
     where: {
       identifier,
       used: false,
     },
-  });
+  }).catch(() => {});
 
-  const code = generateResetCode();
-  const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-
+  // Only await the create - this is the critical operation
   await prisma.passwordResetToken.create({
     data: {
       identifier,
