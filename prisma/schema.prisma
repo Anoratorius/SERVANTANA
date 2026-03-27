@@ -335,6 +335,7 @@ model CleanerProfile {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   services        CleanerService[]
   availability    Availability[]
+  professions     CleanerProfession[]
 }
 
 // Crypto wallet for cleaners
@@ -641,20 +642,42 @@ model Category {
   @@index([status])
 }
 
-// Professions within a category
+// Professions within a category (what workers do)
 model Profession {
   id          String   @id @default(cuid())
-  categoryId  String
-  name        String
+  categoryId  String?  // Optional - can be assigned later by admin
+  name        String   @unique
   nameDE      String?  // German translation
   emoji       String   @default("👤")
+  status      CategoryStatus @default(PENDING)  // PENDING until admin approves
+  submittedBy String?  // userId of worker who suggested it
+  reviewedBy  String?  // admin who approved/rejected
+  reviewedAt  DateTime?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  cleaners    CleanerProfession[]
 
   @@index([categoryId])
+  @@index([status])
+}
+
+// Junction table: Workers can have multiple professions
+model CleanerProfession {
+  id           String   @id @default(cuid())
+  cleanerId    String
+  professionId String
+  isPrimary    Boolean  @default(false)  // Main profession shown first
+  createdAt    DateTime @default(now())
+
+  cleaner      CleanerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  profession   Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+
+  @@unique([cleanerId, professionId])
+  @@index([cleanerId])
+  @@index([professionId])
 }
 
 // Payout model for tracking cleaner payouts

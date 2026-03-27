@@ -1,0 +1,202 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { z } from "zod";
+
+// GET - get current worker's professions
+export async function GET() {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+      where: { userId: session.user.id },
+      include: {
+        professions: {
+          include: {
+            profession: {
+              include: {
+                category: {
+                  select: { id: true, name: true, nameDE: true, emoji: true },
+                },
+              },
+            },
+          },
+          orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
+        },
+      },
+    });
+
+    if (!cleanerProfile) {
+      return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(cleanerProfile.professions);
+  } catch (error) {
+    console.error("Failed to fetch worker professions:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch professions" },
+      { status: 500 }
+    );
+  }
+}
+
+const addProfessionSchema = z.object({
+  professionId: z.string(),
+  isPrimary: z.boolean().default(false),
+});
+
+// POST - add a profession to worker's profile
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const validation = addProfessionSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: validation.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { professionId, isPrimary } = validation.data;
+
+    // Get worker profile
+    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (!cleanerProfile) {
+      return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
+    }
+
+    // Check if profession exists and is approved
+    const profession = await prisma.profession.findUnique({
+      where: { id: professionId },
+    });
+
+    if (!profession) {
+      return NextResponse.json({ error: "Profession not found" }, { status: 404 });
+    }
+
+    if (profession.status !== "APPROVED") {
+      return NextResponse.json(
+        { error: "This profession is not yet approved" },
+        { status: 400 }
+      );
+    }
+
+    // Check if already added
+    const existing = await prisma.cleanerProfession.findUnique({
+      where: {
+        cleanerId_professionId: {
+          cleanerId: cleanerProfile.id,
+          professionId,
+        },
+      },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "Profession already added to your profile" },
+        { status: 400 }
+      );
+    }
+
+    // If setting as primary, unset other primaries
+    if (isPrimary) {
+      await prisma.cleanerProfession.updateMany({
+        where: { cleanerId: cleanerProfile.id },
+        data: { isPrimary: false },
+      });
+    }
+
+    // Add profession to worker
+    const cleanerProfession = await prisma.cleanerProfession.create({
+      data: {
+        cleanerId: cleanerProfile.id,
+        professionId,
+        isPrimary,
+      },
+      include: {
+        profession: {
+          include: {
+            category: {
+              select: { id: true, name: true, nameDE: true, emoji: true },
+            },
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(cleanerProfession, { status: 201 });
+  } catch (error) {
+    console.error("Failed to add profession:", error);
+    return NextResponse.json(
+      { error: "Failed to add profession" },
+      { status: 500 }
+    );
+  }
+}
+
+const removeProfessionSchema = z.object({
+  professionId: z.string(),
+});
+
+// DELETE - remove a profession from worker's profile
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const validation = removeProfessionSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: validation.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { professionId } = validation.data;
+
+    // Get worker profile
+    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (!cleanerProfile) {
+      return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
+    }
+
+    await prisma.cleanerProfession.delete({
+      where: {
+        cleanerId_professionId: {
+          cleanerId: cleanerProfile.id,
+          professionId,
+        },
+      },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Failed to remove profession:", error);
+    return NextResponse.json(
+      { error: "Failed to remove profession" },
+      { status: 500 }
+    );
+  }
+}

@@ -773,6 +773,11 @@
     "security": "Security",
     "agriculture": "Agriculture",
     "suggest_new": "Create Yours",
+    "workersAvailable": "workers available",
+    "findWorkers": "Find professionals in this category",
+    "noWorkersYet": "No workers yet",
+    "beFirstWorker": "Be the first professional in this category!",
+    "becomeWorker": "Become a Worker",
     "suggest": {
       "title": "Suggest a Category",
       "subtitle": "Help us grow by suggesting new categories",

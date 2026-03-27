@@ -773,6 +773,11 @@
     "security": "Sicherheit",
     "agriculture": "Landwirtschaft",
     "suggest_new": "Eigene erstellen",
+    "workersAvailable": "Arbeiter verfügbar",
+    "findWorkers": "Finden Sie Fachleute in dieser Kategorie",
+    "noWorkersYet": "Noch keine Arbeiter",
+    "beFirstWorker": "Sei der erste Fachmann in dieser Kategorie!",
+    "becomeWorker": "Arbeiter werden",
     "suggest": {
       "title": "Kategorie vorschlagen",
       "subtitle": "Helfen Sie uns, neue Kategorien hinzuzufügen",

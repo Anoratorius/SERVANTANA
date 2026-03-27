@@ -12,9 +12,35 @@ export async function GET(request: NextRequest) {
     const ecoFriendly = searchParams.get("ecoFriendly");
     const petFriendly = searchParams.get("petFriendly");
     const specialtyServices = searchParams.get("specialty");
+    const categoryId = searchParams.get("categoryId");
+    const professionId = searchParams.get("professionId");
 
     // Build cleaner profile filter conditions
     const profileFilters: Prisma.CleanerProfileWhereInput = {};
+
+    // Filter by category - workers who have professions in this category
+    if (categoryId) {
+      profileFilters.professions = {
+        some: {
+          profession: {
+            categoryId,
+            status: "APPROVED",
+          },
+        },
+      };
+    }
+
+    // Filter by specific profession
+    if (professionId) {
+      profileFilters.professions = {
+        some: {
+          professionId,
+          profession: {
+            status: "APPROVED",
+          },
+        },
+      };
+    }
 
     // Filter by minimum rating at database level
     if (minRating) {
@@ -112,6 +138,30 @@ export async function GET(request: NextRequest) {
                   },
                 },
               },
+            },
+            professions: {
+              where: {
+                profession: { status: "APPROVED" },
+              },
+              select: {
+                isPrimary: true,
+                profession: {
+                  select: {
+                    id: true,
+                    name: true,
+                    nameDE: true,
+                    emoji: true,
+                    category: {
+                      select: {
+                        id: true,
+                        name: true,
+                        nameDE: true,
+                      },
+                    },
+                  },
+                },
+              },
+              orderBy: [{ isPrimary: "desc" }],
             },
           },
         },
