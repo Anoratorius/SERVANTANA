@@ -18,6 +18,7 @@ const EXCLUDED_PATHS = [
   "/forgot-password",
   "/reset-password",
   "/verify-email",
+  "/email-verification-required",
   "/auth",
 ];
 
