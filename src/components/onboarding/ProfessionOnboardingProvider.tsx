@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -14,7 +14,7 @@ const EXCLUDED_PATHS = [
   "/email-verification-required",
   "/auth",
   "/admin",
-  "/worker/onboarding", // Don't redirect from onboarding page
+  "/worker/onboarding",
 ];
 
 export default function ProfessionOnboardingProvider({
@@ -25,97 +25,116 @@ export default function ProfessionOnboardingProvider({
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
-  const [locationVerified, setLocationVerified] = useState<boolean | null>(null);
+  const [hasChecked, setHasChecked] = useState(false);
+  const isRedirecting = useRef(false);
 
-  const checkProfessionOnboarding = useCallback(async () => {
-    // Don't check if not authenticated or still loading
-    if (status !== "authenticated" || !session?.user) {
-      setIsChecking(false);
-      return;
-    }
+  useEffect(() => {
+    async function checkWorkerOnboarding() {
+      // Don't check if already redirecting
+      if (isRedirecting.current) return;
 
-    // Only check for workers (CLEANER role)
-    if (session.user.role !== "CLEANER") {
-      setIsChecking(false);
-      return;
-    }
+      // Wait for session to load
+      if (status === "loading") return;
 
-    // Don't redirect on excluded paths
-    const isExcludedPath = EXCLUDED_PATHS.some((path) =>
-      pathname.includes(path)
-    );
-    if (isExcludedPath) {
-      setIsChecking(false);
-      return;
-    }
-
-    try {
-      // First check if location is verified - don't redirect until location is done
-      const locationResponse = await fetch("/api/user/location");
-      if (locationResponse.ok) {
-        const locationData = await locationResponse.json();
-        setLocationVerified(locationData.isVerified);
-        if (!locationData.isVerified) {
-          // Location not verified yet, don't redirect
-          setIsChecking(false);
-          return;
-        }
+      // Not authenticated - nothing to check
+      if (status !== "authenticated" || !session?.user) {
+        setHasChecked(true);
+        return;
       }
 
-      // Check if worker has completed onboarding
-      const response = await fetch("/api/cleaner/profile");
-      if (response.ok) {
-        const data = await response.json();
-        // If onboarding not complete, redirect to onboarding wizard
-        if (!data.profile?.onboardingComplete) {
+      // Only check for workers (CLEANER role)
+      if (session.user.role !== "CLEANER") {
+        setHasChecked(true);
+        return;
+      }
+
+      // Don't redirect on excluded paths
+      const isExcludedPath = EXCLUDED_PATHS.some((path) =>
+        pathname.includes(path)
+      );
+      if (isExcludedPath) {
+        setHasChecked(true);
+        return;
+      }
+
+      try {
+        // First check if location is verified
+        const locationResponse = await fetch("/api/user/location");
+        if (locationResponse.ok) {
+          const locationData = await locationResponse.json();
+          if (!locationData.isVerified) {
+            // Location modal will handle this, don't redirect yet
+            setHasChecked(true);
+            return;
+          }
+        }
+
+        // Check if worker has completed onboarding
+        const response = await fetch("/api/cleaner/profile");
+        if (response.ok) {
+          const data = await response.json();
+          // If no profile or onboarding not complete, redirect
+          if (!data.profile || data.profile.onboardingComplete !== true) {
+            isRedirecting.current = true;
+            router.push("/worker/onboarding");
+            return;
+          }
+        } else {
+          // Any error (403, 404, 500) - assume needs onboarding
+          isRedirecting.current = true;
           router.push("/worker/onboarding");
           return;
         }
-      } else if (response.status === 404) {
-        // No profile yet, needs onboarding
-        router.push("/worker/onboarding");
-        return;
+      } catch (error) {
+        console.error("Error checking worker onboarding:", error);
       }
-    } catch (error) {
-      console.error("Error checking professions:", error);
-    } finally {
-      setIsChecking(false);
+
+      setHasChecked(true);
     }
+
+    checkWorkerOnboarding();
   }, [session, status, pathname, router]);
 
+  // Poll for location verification if worker hasn't completed onboarding
   useEffect(() => {
-    checkProfessionOnboarding();
-  }, [checkProfessionOnboarding]);
+    if (
+      status !== "authenticated" ||
+      session?.user?.role !== "CLEANER" ||
+      hasChecked
+    ) {
+      return;
+    }
 
-  // Re-check when location becomes verified (polling while location modal is open)
-  useEffect(() => {
-    if (locationVerified === false && status === "authenticated" && session?.user?.role === "CLEANER") {
-      // Location not verified, poll for changes
-      const interval = setInterval(async () => {
-        try {
-          const response = await fetch("/api/user/location");
-          if (response.ok) {
-            const data = await response.json();
-            if (data.isVerified) {
-              setLocationVerified(true);
-              // Re-run the full check
-              checkProfessionOnboarding();
+    const interval = setInterval(async () => {
+      if (isRedirecting.current) {
+        clearInterval(interval);
+        return;
+      }
+
+      try {
+        const locationResponse = await fetch("/api/user/location");
+        if (locationResponse.ok) {
+          const locationData = await locationResponse.json();
+          if (locationData.isVerified) {
+            // Location now verified, check onboarding status
+            const profileResponse = await fetch("/api/cleaner/profile");
+            if (profileResponse.ok) {
+              const data = await profileResponse.json();
+              if (!data.profile || data.profile.onboardingComplete !== true) {
+                isRedirecting.current = true;
+                router.push("/worker/onboarding");
+                clearInterval(interval);
+              }
             }
           }
-        } catch {
-          // Ignore errors
         }
-      }, 2000); // Check every 2 seconds
+      } catch {
+        // Ignore errors
+      }
+    }, 2000);
 
-      return () => clearInterval(interval);
-    }
-  }, [locationVerified, status, session?.user?.role, checkProfessionOnboarding]);
-
-  // While checking, just render children
-  if (isChecking || status !== "authenticated") {
-    return <>{children}</>;
-  }
+    return () => clearInterval(interval);
+  }, [status, session?.user?.role, hasChecked, router]);
 
   return <>{children}</>;
 }
