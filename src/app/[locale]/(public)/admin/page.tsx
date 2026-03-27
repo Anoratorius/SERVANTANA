@@ -230,6 +230,30 @@ interface Category {
   createdAt: string;
 }
 
+interface Profession {
+  id: string;
+  name: string;
+  nameDE: string | null;
+  emoji: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  categoryId: string | null;
+  category: {
+    id: string;
+    name: string;
+    nameDE: string | null;
+  } | null;
+  submittedBy: string | null;
+  submittedByUser?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null;
+  _count?: {
+    cleaners: number;
+  };
+  createdAt: string;
+}
+
 interface Dispute {
   id: string;
   type: string;
@@ -373,6 +397,25 @@ export default function AdminPage() {
     status: "APPROVED" as "PENDING" | "APPROVED" | "REJECTED",
   });
   const [savingCategory, setSavingCategory] = useState(false);
+
+  // Professions state
+  const [professions, setProfessions] = useState<Profession[]>([]);
+  const [loadingProfessions, setLoadingProfessions] = useState(false);
+  const [professionsFilter, setProfessionsFilter] = useState("PENDING");
+  const [processingProfessionId, setProcessingProfessionId] = useState<string | null>(null);
+  const [professionModalOpen, setProfessionModalOpen] = useState(false);
+  const [editingProfession, setEditingProfession] = useState<Profession | null>(null);
+  const [deleteProfessionDialogOpen, setDeleteProfessionDialogOpen] = useState(false);
+  const [professionToDelete, setProfessionToDelete] = useState<Profession | null>(null);
+  const [professionForm, setProfessionForm] = useState({
+    name: "",
+    nameDE: "",
+    emoji: "👤",
+    categoryId: "",
+    status: "APPROVED" as "PENDING" | "APPROVED" | "REJECTED",
+  });
+  const [savingProfession, setSavingProfession] = useState(false);
+  const [availableCategories, setAvailableCategories] = useState<Category[]>([]);
 
   // Disputes state
   const [disputes, setDisputes] = useState<Dispute[]>([]);
@@ -534,6 +577,33 @@ export default function AdminPage() {
     }
   }, [categoriesFilter]);
 
+  const fetchProfessions = useCallback(async () => {
+    setLoadingProfessions(true);
+    try {
+      const response = await fetch(`/api/admin/professions?status=${professionsFilter}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProfessions(data);
+      }
+    } catch (error) {
+      console.error("Error fetching professions:", error);
+    } finally {
+      setLoadingProfessions(false);
+    }
+  }, [professionsFilter]);
+
+  const fetchAvailableCategories = async () => {
+    try {
+      const response = await fetch("/api/admin/categories?status=APPROVED");
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableCategories(data);
+      }
+    } catch (error) {
+      console.error("Error fetching available categories:", error);
+    }
+  };
+
   const fetchDisputes = useCallback(async () => {
     setLoadingDisputes(true);
     try {
@@ -668,6 +738,13 @@ export default function AdminPage() {
       fetchCategories();
     }
   }, [activeTab, fetchCategories, authStatus]);
+
+  useEffect(() => {
+    if (activeTab === "professions" && authStatus === "authenticated") {
+      fetchProfessions();
+      fetchAvailableCategories();
+    }
+  }, [activeTab, fetchProfessions, authStatus]);
 
   useEffect(() => {
     if (activeTab === "disputes" && authStatus === "authenticated") {
@@ -849,6 +926,117 @@ export default function AdminPage() {
       toast.error("Failed to delete category");
     } finally {
       setProcessingCategoryId(null);
+    }
+  };
+
+  const handleProfessionAction = async (professionId: string, status: "APPROVED" | "REJECTED") => {
+    setProcessingProfessionId(professionId);
+    try {
+      const response = await fetch(`/api/admin/professions/${professionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        toast.success(status === "APPROVED" ? t("admin.professionApproved") : t("admin.professionRejected"));
+        fetchProfessions();
+      } else {
+        toast.error(t("admin.failedProfessionAction"));
+      }
+    } catch {
+      toast.error(t("admin.failedProfessionAction"));
+    } finally {
+      setProcessingProfessionId(null);
+    }
+  };
+
+  const openCreateProfessionModal = () => {
+    setEditingProfession(null);
+    setProfessionForm({
+      name: "",
+      nameDE: "",
+      emoji: "👤",
+      categoryId: "",
+      status: "APPROVED",
+    });
+    setProfessionModalOpen(true);
+  };
+
+  const openEditProfessionModal = (profession: Profession) => {
+    setEditingProfession(profession);
+    setProfessionForm({
+      name: profession.name,
+      nameDE: profession.nameDE || "",
+      emoji: profession.emoji,
+      categoryId: profession.categoryId || "",
+      status: profession.status,
+    });
+    setProfessionModalOpen(true);
+  };
+
+  const handleSaveProfession = async () => {
+    if (!professionForm.name.trim()) {
+      toast.error("Profession name is required");
+      return;
+    }
+
+    setSavingProfession(true);
+    try {
+      const url = editingProfession
+        ? `/api/admin/professions/${editingProfession.id}`
+        : "/api/admin/professions";
+      const method = editingProfession ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: professionForm.name.trim(),
+          nameDE: professionForm.nameDE.trim() || null,
+          emoji: professionForm.emoji,
+          categoryId: professionForm.categoryId || null,
+          status: professionForm.status,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(editingProfession ? t("admin.professionUpdated") : t("admin.professionCreated"));
+        setProfessionModalOpen(false);
+        fetchProfessions();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to save profession");
+      }
+    } catch {
+      toast.error("Failed to save profession");
+    } finally {
+      setSavingProfession(false);
+    }
+  };
+
+  const handleDeleteProfession = async () => {
+    if (!professionToDelete) return;
+
+    setProcessingProfessionId(professionToDelete.id);
+    try {
+      const response = await fetch(`/api/admin/professions/${professionToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success(t("admin.professionDeleted"));
+        setDeleteProfessionDialogOpen(false);
+        setProfessionToDelete(null);
+        fetchProfessions();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to delete profession");
+      }
+    } catch {
+      toast.error("Failed to delete profession");
+    } finally {
+      setProcessingProfessionId(null);
     }
   };
 
@@ -1148,6 +1336,10 @@ export default function AdminPage() {
               <TabsTrigger value="categories" className="gap-2">
                 <FolderPlus className="h-4 w-4" />
                 {t("admin.categories")}
+              </TabsTrigger>
+              <TabsTrigger value="professions" className="gap-2">
+                <Briefcase className="h-4 w-4" />
+                {t("admin.professions")}
               </TabsTrigger>
               <TabsTrigger value="auditLogs" className="gap-2">
                 <History className="h-4 w-4" />
@@ -2044,6 +2236,261 @@ export default function AdminPage() {
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       ) : null}
                       Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </TabsContent>
+
+            {/* Professions Tab */}
+            <TabsContent value="professions">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <CardTitle>{t("admin.professionManagement")}</CardTitle>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={professionsFilter}
+                        onChange={(e) => setProfessionsFilter(e.target.value)}
+                        className="border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="PENDING">{t("admin.pendingCategories")}</option>
+                        <option value="APPROVED">{t("admin.approvedCategories")}</option>
+                        <option value="REJECTED">{t("admin.rejectedCategories")}</option>
+                      </select>
+                      <Button onClick={openCreateProfessionModal} className="bg-blue-600 hover:bg-blue-700">
+                        <Plus className="h-4 w-4 mr-1" />
+                        {t("admin.createProfession")}
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loadingProfessions ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : professions.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      {t("admin.noProfessions")}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {professions.map((profession) => (
+                        <div
+                          key={profession.id}
+                          className="p-4 border rounded-lg"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-md">
+                                <span className="text-xl">{profession.emoji}</span>
+                              </div>
+                              <div>
+                                <p className="font-semibold text-lg">{profession.name}</p>
+                                {profession.nameDE && (
+                                  <p className="text-sm text-muted-foreground">DE: {profession.nameDE}</p>
+                                )}
+                                <div className="flex items-center gap-2 mt-1">
+                                  {profession.category && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {profession.category.name}
+                                    </Badge>
+                                  )}
+                                  {profession._count && profession._count.cleaners > 0 && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {profession._count.cleaners} {t("admin.workersAssigned")}
+                                    </span>
+                                  )}
+                                </div>
+                                {profession.submittedByUser && (
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {t("admin.suggestedBy")}: {profession.submittedByUser.firstName} {profession.submittedByUser.lastName}
+                                  </p>
+                                )}
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {new Date(profession.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {profession.status === "PENDING" && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    className="bg-green-500 hover:bg-green-600"
+                                    onClick={() => handleProfessionAction(profession.id, "APPROVED")}
+                                    disabled={processingProfessionId === profession.id}
+                                  >
+                                    {processingProfessionId === profession.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <CheckCircle className="h-4 w-4 mr-1" />
+                                    )}
+                                    {t("admin.approve")}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-red-600"
+                                    onClick={() => handleProfessionAction(profession.id, "REJECTED")}
+                                    disabled={processingProfessionId === profession.id}
+                                  >
+                                    {processingProfessionId === profession.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <XCircle className="h-4 w-4 mr-1" />
+                                    )}
+                                    {t("admin.reject")}
+                                  </Button>
+                                </>
+                              )}
+                              {profession.status !== "PENDING" && (
+                                <Badge variant={profession.status === "APPROVED" ? "default" : "destructive"}>
+                                  {profession.status}
+                                </Badge>
+                              )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditProfessionModal(profession)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                                onClick={() => {
+                                  setProfessionToDelete(profession);
+                                  setDeleteProfessionDialogOpen(true);
+                                }}
+                                disabled={profession._count && profession._count.cleaners > 0}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Create/Edit Profession Modal */}
+              <Dialog open={professionModalOpen} onOpenChange={setProfessionModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingProfession ? t("admin.editProfession") : t("admin.createProfession")}
+                    </DialogTitle>
+                    <DialogDescription>
+                      {editingProfession
+                        ? t("admin.editProfessionDesc")
+                        : t("admin.createProfessionDesc")}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="prof-name">{t("admin.professionName")} *</Label>
+                      <Input
+                        id="prof-name"
+                        value={professionForm.name}
+                        onChange={(e) => setProfessionForm({ ...professionForm, name: e.target.value })}
+                        placeholder="e.g., Plumber"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="prof-nameDE">{t("admin.professionNameDE")}</Label>
+                      <Input
+                        id="prof-nameDE"
+                        value={professionForm.nameDE}
+                        onChange={(e) => setProfessionForm({ ...professionForm, nameDE: e.target.value })}
+                        placeholder="e.g., Klempner"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="prof-emoji">{t("admin.professionEmoji")}</Label>
+                        <Input
+                          id="prof-emoji"
+                          value={professionForm.emoji}
+                          onChange={(e) => setProfessionForm({ ...professionForm, emoji: e.target.value })}
+                          placeholder="👤"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="prof-status">{t("admin.status")}</Label>
+                        <select
+                          id="prof-status"
+                          value={professionForm.status}
+                          onChange={(e) => setProfessionForm({ ...professionForm, status: e.target.value as "PENDING" | "APPROVED" | "REJECTED" })}
+                          className="w-full border rounded-md px-3 py-2 text-sm"
+                        >
+                          <option value="APPROVED">{t("admin.approvedCategories")}</option>
+                          <option value="PENDING">{t("admin.pendingCategories")}</option>
+                          <option value="REJECTED">{t("admin.rejectedCategories")}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="prof-category">{t("admin.assignToCategory")}</Label>
+                      <select
+                        id="prof-category"
+                        value={professionForm.categoryId}
+                        onChange={(e) => setProfessionForm({ ...professionForm, categoryId: e.target.value })}
+                        className="w-full border rounded-md px-3 py-2 text-sm"
+                      >
+                        <option value="">{t("admin.noCategory")}</option>
+                        {availableCategories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.emoji} {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-4 pt-2">
+                      <Label>{t("admin.preview")}:</Label>
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-md">
+                        <span className="text-xl">{professionForm.emoji}</span>
+                      </div>
+                      <span className="font-semibold">{professionForm.name || "Profession Name"}</span>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setProfessionModalOpen(false)}>
+                      {t("common.cancel")}
+                    </Button>
+                    <Button onClick={handleSaveProfession} disabled={savingProfession}>
+                      {savingProfession ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      {editingProfession ? t("common.save") : t("admin.createProfession")}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              {/* Delete Profession Confirmation */}
+              <AlertDialog open={deleteProfessionDialogOpen} onOpenChange={setDeleteProfessionDialogOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t("admin.deleteProfession")}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t("admin.deleteProfessionDesc", { name: professionToDelete?.name || "" })}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteProfession}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      {processingProfessionId === professionToDelete?.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      {t("common.delete")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
