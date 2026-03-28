@@ -67,6 +67,9 @@ export default function LocationVerificationProvider({
 
   const handleLocationVerified = () => {
     setNeedsVerification(false);
+    // Force page reload to refresh JWT token with updated locationVerified status
+    // This triggers middleware to redirect workers to onboarding
+    window.location.reload();
   };
 
   // Don't render modal while checking or on excluded paths
