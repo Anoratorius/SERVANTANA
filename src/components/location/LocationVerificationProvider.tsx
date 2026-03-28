@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
 // Dynamic import to avoid SSR issues
@@ -29,6 +29,7 @@ export default function LocationVerificationProvider({
 }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const [needsVerification, setNeedsVerification] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
@@ -65,10 +66,33 @@ export default function LocationVerificationProvider({
     checkLocationVerification();
   }, [session, status, pathname]);
 
-  const handleLocationVerified = () => {
+  const handleLocationVerified = async () => {
     setNeedsVerification(false);
-    // Force page reload to refresh JWT token with updated locationVerified status
-    // This triggers middleware to redirect workers to onboarding
+
+    // For workers, check if they need onboarding and redirect directly
+    if (session?.user?.role === "CLEANER") {
+      try {
+        const response = await fetch("/api/cleaner/profile");
+        if (response.ok) {
+          const data = await response.json();
+          if (!data.profile || data.profile.onboardingComplete !== true) {
+            // Worker needs onboarding - redirect directly
+            router.push("/worker/onboarding");
+            return;
+          }
+        } else {
+          // No profile or error - redirect to onboarding
+          router.push("/worker/onboarding");
+          return;
+        }
+      } catch {
+        // On error, redirect to onboarding to be safe
+        router.push("/worker/onboarding");
+        return;
+      }
+    }
+
+    // For customers or workers with completed onboarding, just reload
     window.location.reload();
   };
 
