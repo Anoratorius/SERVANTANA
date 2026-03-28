@@ -25,7 +25,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: { availability: true },
         },
       },
@@ -39,7 +39,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      availability: user.cleanerProfile?.availability || [],
+      availability: user.workerProfile?.availability || [],
     });
   } catch (error) {
     console.error("Error fetching availability:", error);
@@ -60,7 +60,7 @@ export async function PUT(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { cleanerProfile: true },
+      include: { workerProfile: true },
     });
 
     if (!user || user.role !== "CLEANER") {
@@ -70,7 +70,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Please complete your profile first" },
         { status: 400 }
@@ -88,7 +88,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const { availability } = validationResult.data;
-    const cleanerId = user.cleanerProfile.id;
+    const cleanerId = user.workerProfile.id;
 
     // Validate time ranges
     for (const slot of availability) {

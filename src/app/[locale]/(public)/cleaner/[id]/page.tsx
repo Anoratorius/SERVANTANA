@@ -88,7 +88,7 @@ interface Cleaner {
   lastName: string;
   avatar: string | null;
   createdAt: string;
-  cleanerProfile: CleanerProfile | null;
+  workerProfile: CleanerProfile | null;
   reviewsReceived: Review[];
 }
 
@@ -186,7 +186,7 @@ export default function CleanerProfilePage({
     return <CleanerProfileSkeleton />;
   }
 
-  if (error || !cleaner || !cleaner.cleanerProfile) {
+  if (error || !cleaner || !cleaner.workerProfile) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -206,7 +206,7 @@ export default function CleanerProfilePage({
     );
   }
 
-  const profile = cleaner.cleanerProfile;
+  const profile = cleaner.workerProfile;
   const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
 
   return (

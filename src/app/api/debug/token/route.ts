@@ -33,7 +33,7 @@ export async function GET() {
           id: true,
           role: true,
           locationVerifiedAt: true,
-          cleanerProfile: {
+          workerProfile: {
             select: { onboardingComplete: true }
           }
         }
@@ -42,7 +42,7 @@ export async function GET() {
         role: user?.role,
         locationVerifiedAt: user?.locationVerifiedAt,
         locationVerified: !!user?.locationVerifiedAt,
-        onboardingComplete: user?.cleanerProfile?.onboardingComplete ?? false,
+        onboardingComplete: user?.workerProfile?.onboardingComplete ?? false,
       };
     }
 

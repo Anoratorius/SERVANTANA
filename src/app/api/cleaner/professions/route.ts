@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
       include: {
         professions: {
@@ -30,11 +30,11 @@ export async function GET() {
       },
     });
 
-    if (!cleanerProfile) {
+    if (!workerProfile) {
       return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
     }
 
-    return NextResponse.json(cleanerProfile.professions);
+    return NextResponse.json(workerProfile.professions);
   } catch (error) {
     console.error("Failed to fetch worker professions:", error);
     return NextResponse.json(
@@ -72,11 +72,11 @@ export async function POST(request: NextRequest) {
     const { professionId, isPrimary, hourlyRate } = validation.data;
 
     // Get worker profile
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
     });
 
-    if (!cleanerProfile) {
+    if (!workerProfile) {
       return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
     }
 
@@ -97,10 +97,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already added
-    const existing = await prisma.cleanerProfession.findUnique({
+    const existing = await prisma.workerProfession.findUnique({
       where: {
         cleanerId_professionId: {
-          cleanerId: cleanerProfile.id,
+          cleanerId: workerProfile.id,
           professionId,
         },
       },
@@ -115,16 +115,16 @@ export async function POST(request: NextRequest) {
 
     // If setting as primary, unset other primaries
     if (isPrimary) {
-      await prisma.cleanerProfession.updateMany({
-        where: { cleanerId: cleanerProfile.id },
+      await prisma.workerProfession.updateMany({
+        where: { cleanerId: workerProfile.id },
         data: { isPrimary: false },
       });
     }
 
     // Add profession to worker
-    const cleanerProfession = await prisma.cleanerProfession.create({
+    const workerProfession = await prisma.workerProfession.create({
       data: {
-        cleanerId: cleanerProfile.id,
+        cleanerId: workerProfile.id,
         professionId,
         isPrimary,
         hourlyRate,
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(cleanerProfession, { status: 201 });
+    return NextResponse.json(workerProfession, { status: 201 });
   } catch (error) {
     console.error("Failed to add profession:", error);
     return NextResponse.json(
@@ -176,18 +176,18 @@ export async function DELETE(request: NextRequest) {
     const { professionId } = validation.data;
 
     // Get worker profile
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
     });
 
-    if (!cleanerProfile) {
+    if (!workerProfile) {
       return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
     }
 
-    await prisma.cleanerProfession.delete({
+    await prisma.workerProfession.delete({
       where: {
         cleanerId_professionId: {
-          cleanerId: cleanerProfile.id,
+          cleanerId: workerProfile.id,
           professionId,
         },
       },

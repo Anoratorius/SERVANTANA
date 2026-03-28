@@ -43,7 +43,7 @@ interface Booking {
     lastName: string;
     email: string;
     phone: string | null;
-    cleanerProfile: {
+    workerProfile: {
       address: string | null;
       city: string | null;
       state: string | null;
@@ -198,11 +198,11 @@ export default function InvoiceDetailPage() {
                         {booking.cleaner.phone}
                       </p>
                     )}
-                    {booking.cleaner.cleanerProfile?.address && (
+                    {booking.cleaner.workerProfile?.address && (
                       <p className="text-sm text-muted-foreground">
-                        {booking.cleaner.cleanerProfile.address}
-                        {booking.cleaner.cleanerProfile.city &&
-                          `, ${booking.cleaner.cleanerProfile.city}`}
+                        {booking.cleaner.workerProfile.address}
+                        {booking.cleaner.workerProfile.city &&
+                          `, ${booking.cleaner.workerProfile.city}`}
                       </p>
                     )}
                   </div>

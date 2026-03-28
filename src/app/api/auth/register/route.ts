@@ -95,7 +95,7 @@ export async function POST(request: Request) {
 
     // If registering as cleaner, create cleaner profile
     if (role === "CLEANER") {
-      await prisma.cleanerProfile.create({
+      await prisma.workerProfile.create({
         data: {
           userId: user.id,
           hourlyRate: 25, // Default hourly rate

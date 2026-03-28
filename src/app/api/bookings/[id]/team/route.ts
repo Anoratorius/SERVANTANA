@@ -30,7 +30,7 @@ export async function GET(
                 lastName: true,
                 avatar: true,
                 phone: true,
-                cleanerProfile: {
+                workerProfile: {
                   select: {
                     averageRating: true,
                     verified: true,
@@ -48,7 +48,7 @@ export async function GET(
             lastName: true,
             avatar: true,
             phone: true,
-            cleanerProfile: {
+            workerProfile: {
               select: {
                 averageRating: true,
                 verified: true,

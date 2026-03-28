@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         },
       },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           select: {
             timezone: true,
             paypalEmail: true,
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
     // 1. It's past 5:55 AM in their timezone
     // 2. They haven't been paid today (in their timezone)
     const cleanersToPayOut = cleanersWithEarnings.filter((cleaner) => {
-      const timezone = cleaner.cleanerProfile?.timezone || "UTC";
+      const timezone = cleaner.workerProfile?.timezone || "UTC";
 
       // Check if it's past 5:55 AM in their timezone
       if (!isPastPayoutTime(timezone)) {
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
     for (const cleaner of cleanersToPayOut) {
       const cleanerName = `${cleaner.firstName} ${cleaner.lastName}`;
       const earnings = cleaner.earnings;
-      const timezone = cleaner.cleanerProfile?.timezone || "UTC";
+      const timezone = cleaner.workerProfile?.timezone || "UTC";
 
       // Group earnings by currency
       const earningsByCurrency = new Map<string, typeof earnings>();
@@ -166,13 +166,13 @@ export async function GET(request: NextRequest) {
 
           // Try Stripe first, then PayPal
           if (
-            cleaner.cleanerProfile?.stripeAccountId &&
-            cleaner.cleanerProfile?.stripeOnboardingComplete
+            cleaner.workerProfile?.stripeAccountId &&
+            cleaner.workerProfile?.stripeOnboardingComplete
           ) {
             const transfer = await createTransfer({
               amount: totalAmount,
               currency,
-              destinationAccountId: cleaner.cleanerProfile.stripeAccountId,
+              destinationAccountId: cleaner.workerProfile.stripeAccountId,
               description: `Servantana payout - ${new Date().toISOString().split("T")[0]}`,
               metadata: {
                 cleanerId: cleaner.id,
@@ -182,9 +182,9 @@ export async function GET(request: NextRequest) {
             });
             payoutMethod = "stripe";
             externalPayoutId = transfer.id;
-          } else if (cleaner.cleanerProfile?.paypalEmail) {
+          } else if (cleaner.workerProfile?.paypalEmail) {
             const payout = await createSinglePayout(
-              cleaner.cleanerProfile.paypalEmail,
+              cleaner.workerProfile.paypalEmail,
               totalAmount,
               currency,
               `payout_${cleaner.id}_${Date.now()}`,

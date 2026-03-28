@@ -50,7 +50,7 @@ export async function DELETE(
         ? remainingReviews.reduce((sum, r) => sum + r.rating, 0) / remainingReviews.length
         : 0;
 
-    await prisma.cleanerProfile.updateMany({
+    await prisma.workerProfile.updateMany({
       where: { userId: review.revieweeId },
       data: { averageRating: newAverage },
     });

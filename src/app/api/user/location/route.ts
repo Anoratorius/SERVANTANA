@@ -60,18 +60,18 @@ export async function POST(request: NextRequest) {
     });
 
     // If user is a worker, also update their cleaner profile
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
     });
 
-    if (cleanerProfile) {
-      await prisma.cleanerProfile.update({
-        where: { id: cleanerProfile.id },
+    if (workerProfile) {
+      await prisma.workerProfile.update({
+        where: { id: workerProfile.id },
         data: {
           latitude,
           longitude,
-          city: city || cleanerProfile.city,
-          country: country || cleanerProfile.country,
+          city: city || workerProfile.city,
+          country: country || workerProfile.country,
         },
       });
     }

@@ -24,7 +24,7 @@ export async function PATCH(
       );
     }
 
-    const document = await prisma.cleanerDocument.findUnique({
+    const document = await prisma.workerDocument.findUnique({
       where: { id },
       include: {
         cleaner: {
@@ -54,7 +54,7 @@ export async function PATCH(
 
     const newStatus = action === "verify" ? "VERIFIED" : "REJECTED";
 
-    const updatedDocument = await prisma.cleanerDocument.update({
+    const updatedDocument = await prisma.workerDocument.update({
       where: { id },
       data: {
         status: newStatus,
@@ -67,7 +67,7 @@ export async function PATCH(
     // If verified, update cleaner profile verified status
     if (action === "verify") {
       // Check if all required documents are verified
-      const verifiedDocs = await prisma.cleanerDocument.findMany({
+      const verifiedDocs = await prisma.workerDocument.findMany({
         where: {
           cleanerId: document.cleanerId,
           status: "VERIFIED",
@@ -76,7 +76,7 @@ export async function PATCH(
 
       // If at least one document is verified, mark cleaner as verified
       if (verifiedDocs.length > 0) {
-        await prisma.cleanerProfile.updateMany({
+        await prisma.workerProfile.updateMany({
           where: { userId: document.cleanerId },
           data: { verified: true },
         });
@@ -122,7 +122,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const document = await prisma.cleanerDocument.findUnique({
+    const document = await prisma.workerDocument.findUnique({
       where: { id },
       include: {
         cleaner: {
@@ -132,7 +132,7 @@ export async function GET(
             lastName: true,
             email: true,
             avatar: true,
-            cleanerProfile: {
+            workerProfile: {
               select: {
                 verified: true,
                 experienceYears: true,

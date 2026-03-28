@@ -34,7 +34,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: {
             services: {
               include: {
@@ -67,7 +67,7 @@ export async function GET() {
         phone: user.phone,
         avatar: user.avatar,
       },
-      profile: user.cleanerProfile,
+      profile: user.workerProfile,
     });
   } catch (error) {
     console.error("Error fetching cleaner profile:", error);
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: {
             professions: true,
             availability: true,
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Please create your profile first" },
         { status: 400 }
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate onboarding requirements
-    const profile = user.cleanerProfile;
+    const profile = user.workerProfile;
     const errors: string[] = [];
 
     if (profile.professions.length === 0) {
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Mark onboarding as complete
-    await prisma.cleanerProfile.update({
+    await prisma.workerProfile.update({
       where: { id: profile.id },
       data: { onboardingComplete: true },
     });
@@ -164,7 +164,7 @@ export async function PUT(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { cleanerProfile: true },
+      include: { workerProfile: true },
     });
 
     if (!user || user.role !== "CLEANER") {
@@ -223,8 +223,8 @@ export async function PUT(request: NextRequest) {
     );
 
     let profile;
-    if (user.cleanerProfile) {
-      profile = await prisma.cleanerProfile.update({
+    if (user.workerProfile) {
+      profile = await prisma.workerProfile.update({
         where: { userId: session.user.id },
         data: cleanProfileData,
         include: {
@@ -233,7 +233,7 @@ export async function PUT(request: NextRequest) {
         },
       });
     } else {
-      profile = await prisma.cleanerProfile.create({
+      profile = await prisma.workerProfile.create({
         data: {
           userId: session.user.id,
           hourlyRate: data.hourlyRate || 25,

@@ -56,7 +56,7 @@ interface Cleaner {
   firstName: string;
   lastName: string;
   avatar: string | null;
-  cleanerProfile: CleanerProfile | null;
+  workerProfile: CleanerProfile | null;
 }
 
 function SearchContent() {
@@ -234,7 +234,7 @@ function SearchContent() {
 }
 
 function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<typeof useTranslations>; locale: string }) {
-  const profile = cleaner.cleanerProfile;
+  const profile = cleaner.workerProfile;
   const { formatPricePerHour } = useCurrency();
   if (!profile) return null;
 

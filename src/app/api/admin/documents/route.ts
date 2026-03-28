@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [documents, total] = await Promise.all([
-      prisma.cleanerDocument.findMany({
+      prisma.workerDocument.findMany({
         where,
         orderBy: { createdAt: "desc" },
         skip,
@@ -50,14 +50,14 @@ export async function GET(request: NextRequest) {
           },
         },
       }),
-      prisma.cleanerDocument.count({ where }),
+      prisma.workerDocument.count({ where }),
     ]);
 
     // Get counts by status
     const [pendingCount, verifiedCount, rejectedCount] = await Promise.all([
-      prisma.cleanerDocument.count({ where: { status: "PENDING" } }),
-      prisma.cleanerDocument.count({ where: { status: "VERIFIED" } }),
-      prisma.cleanerDocument.count({ where: { status: "REJECTED" } }),
+      prisma.workerDocument.count({ where: { status: "PENDING" } }),
+      prisma.workerDocument.count({ where: { status: "VERIFIED" } }),
+      prisma.workerDocument.count({ where: { status: "REJECTED" } }),
     ]);
 
     return NextResponse.json({

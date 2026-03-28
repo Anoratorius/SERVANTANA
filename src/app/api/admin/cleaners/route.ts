@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [cleaners, total] = await Promise.all([
-      prisma.cleanerProfile.findMany({
+      prisma.workerProfile.findMany({
         where,
         include: {
           user: {
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
       }),
-      prisma.cleanerProfile.count({ where }),
+      prisma.workerProfile.count({ where }),
     ]);
 
     return NextResponse.json({

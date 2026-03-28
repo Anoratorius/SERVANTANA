@@ -61,7 +61,7 @@ interface Cleaner {
   firstName: string;
   lastName: string;
   avatar: string | null;
-  cleanerProfile: CleanerProfile | null;
+  workerProfile: CleanerProfile | null;
 }
 
 export default function BookingPage({
@@ -142,8 +142,8 @@ export default function BookingPage({
     fetchPreviousBooking();
   }, [rebookId]);
 
-  const hourlyRate = cleaner?.cleanerProfile?.hourlyRate ?? 0;
-  const currency = cleaner?.cleanerProfile?.currency ?? "EUR";
+  const hourlyRate = cleaner?.workerProfile?.hourlyRate ?? 0;
+  const currency = cleaner?.workerProfile?.currency ?? "EUR";
 
   const basePrice = hourlyRate * selectedDuration;
 
@@ -206,7 +206,7 @@ export default function BookingPage({
     return <BookingPageSkeleton />;
   }
 
-  if (error || !cleaner || !cleaner.cleanerProfile) {
+  if (error || !cleaner || !cleaner.workerProfile) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -226,7 +226,7 @@ export default function BookingPage({
     );
   }
 
-  const profile = cleaner.cleanerProfile;
+  const profile = cleaner.workerProfile;
   const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
 
   return (

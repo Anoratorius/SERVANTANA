@@ -57,7 +57,7 @@ export async function GET(
             lastName: true,
             email: true,
             phone: true,
-            cleanerProfile: {
+            workerProfile: {
               select: {
                 address: true,
                 city: true,

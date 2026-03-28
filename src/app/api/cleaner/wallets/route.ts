@@ -14,7 +14,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: {
             cryptoWallets: true,
           },
@@ -29,7 +29,7 @@ export async function GET() {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Worker profile not found" },
         { status: 404 }
@@ -37,7 +37,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      wallets: user.cleanerProfile.cryptoWallets,
+      wallets: user.workerProfile.cryptoWallets,
     });
   } catch (error) {
     console.error("Error fetching wallets:", error);
@@ -59,7 +59,7 @@ export async function POST() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: {
             cryptoWallets: true,
           },
@@ -74,7 +74,7 @@ export async function POST() {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Worker profile not found. Please complete your profile first." },
         { status: 404 }
@@ -82,10 +82,10 @@ export async function POST() {
     }
 
     // Check if wallets already exist
-    if (user.cleanerProfile.cryptoWallets.length > 0) {
+    if (user.workerProfile.cryptoWallets.length > 0) {
       return NextResponse.json({
         message: "Wallets already exist",
-        wallets: user.cleanerProfile.cryptoWallets,
+        wallets: user.workerProfile.cryptoWallets,
       });
     }
 
@@ -99,7 +99,7 @@ export async function POST() {
     const wallets = await prisma.$transaction([
       prisma.cryptoWallet.create({
         data: {
-          cleanerProfileId: user.cleanerProfile.id,
+          workerProfileId: user.workerProfile.id,
           currency: "BTC",
           address: addresses.BTC,
           derivationIndex,
@@ -107,7 +107,7 @@ export async function POST() {
       }),
       prisma.cryptoWallet.create({
         data: {
-          cleanerProfileId: user.cleanerProfile.id,
+          workerProfileId: user.workerProfile.id,
           currency: "ETH",
           address: addresses.ETH,
           derivationIndex,
@@ -115,7 +115,7 @@ export async function POST() {
       }),
       prisma.cryptoWallet.create({
         data: {
-          cleanerProfileId: user.cleanerProfile.id,
+          workerProfileId: user.workerProfile.id,
           currency: "LTC",
           address: addresses.LTC,
           derivationIndex,

@@ -38,7 +38,7 @@ interface TeamMember {
     lastName: string;
     avatar: string | null;
     phone: string | null;
-    cleanerProfile: {
+    workerProfile: {
       averageRating: number;
       verified: boolean;
     } | null;
@@ -51,7 +51,7 @@ interface AvailableCleaner {
   lastName: string;
   avatar: string | null;
   distance: number | null;
-  cleanerProfile: {
+  workerProfile: {
     averageRating: number;
     totalBookings: number;
     verified: boolean;
@@ -277,10 +277,10 @@ export function BookingTeam({
                             {cleaner.firstName} {cleaner.lastName}
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            {(cleaner.cleanerProfile?.averageRating ?? 0) > 0 && (
+                            {(cleaner.workerProfile?.averageRating ?? 0) > 0 && (
                               <span className="flex items-center gap-1">
                                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                {cleaner.cleanerProfile?.averageRating?.toFixed(1)}
+                                {cleaner.workerProfile?.averageRating?.toFixed(1)}
                               </span>
                             )}
                             {cleaner.distance !== null && (
@@ -360,7 +360,7 @@ export function BookingTeam({
                   <Badge variant="secondary" className="text-xs">
                     {t("lead")}
                   </Badge>
-                  {leadCleaner.cleanerProfile?.verified && (
+                  {leadCleaner.workerProfile?.verified && (
                     <Badge className="bg-green-100 text-green-700 text-xs">
                       {t("verified")}
                     </Badge>

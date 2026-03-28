@@ -155,7 +155,7 @@ export const authOptions: NextAuthConfig = {
             status: true,
             suspendedUntil: true,
             locationVerifiedAt: true,
-            cleanerProfile: {
+            workerProfile: {
               select: { onboardingComplete: true }
             }
           },
@@ -171,7 +171,7 @@ export const authOptions: NextAuthConfig = {
           token.status = dbUser.status;
           token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
           token.locationVerified = !!dbUser.locationVerifiedAt;
-          token.onboardingComplete = dbUser.cleanerProfile?.onboardingComplete ?? false;
+          token.onboardingComplete = dbUser.workerProfile?.onboardingComplete ?? false;
         }
 
         // Check remember me preference on initial sign in
@@ -193,7 +193,7 @@ export const authOptions: NextAuthConfig = {
             status: true,
             suspendedUntil: true,
             locationVerifiedAt: true,
-            cleanerProfile: {
+            workerProfile: {
               select: { onboardingComplete: true }
             }
           },
@@ -211,7 +211,7 @@ export const authOptions: NextAuthConfig = {
         token.status = dbUser.status;
         token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
         token.locationVerified = !!dbUser.locationVerifiedAt;
-        token.onboardingComplete = dbUser.cleanerProfile?.onboardingComplete ?? false;
+        token.onboardingComplete = dbUser.workerProfile?.onboardingComplete ?? false;
 
         // If user is banned, invalidate session
         if (dbUser.status === "BANNED") {

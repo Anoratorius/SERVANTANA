@@ -167,7 +167,7 @@ export async function GET() {
     });
 
     // Get cleaner's location as starting point
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
       select: {
         latitude: true,
@@ -178,8 +178,8 @@ export async function GET() {
     // Optimize route
     const optimizedBookings = optimizeRoute(
       bookings,
-      cleanerProfile?.latitude ?? undefined,
-      cleanerProfile?.longitude ?? undefined
+      workerProfile?.latitude ?? undefined,
+      workerProfile?.longitude ?? undefined
     );
 
     // Calculate distances and travel times between stops
@@ -187,12 +187,12 @@ export async function GET() {
       let distanceFromPrevious = 0;
       let travelTimeMinutes = 0;
 
-      if (index === 0 && cleanerProfile?.latitude && cleanerProfile?.longitude) {
+      if (index === 0 && workerProfile?.latitude && workerProfile?.longitude) {
         // Distance from cleaner's home to first stop
         if (booking.latitude && booking.longitude) {
           distanceFromPrevious = calculateDistance(
-            cleanerProfile.latitude,
-            cleanerProfile.longitude,
+            workerProfile.latitude,
+            workerProfile.longitude,
             booking.latitude,
             booking.longitude
           );
@@ -246,10 +246,10 @@ export async function GET() {
         totalServiceTime,
         estimatedEndTime: calculateEndTime(routeWithDistances),
       },
-      startLocation: cleanerProfile?.latitude
+      startLocation: workerProfile?.latitude
         ? {
-            latitude: cleanerProfile.latitude,
-            longitude: cleanerProfile.longitude,
+            latitude: workerProfile.latitude,
+            longitude: workerProfile.longitude,
           }
         : null,
     });

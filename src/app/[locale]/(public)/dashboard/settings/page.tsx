@@ -274,7 +274,7 @@ export default function SettingsPage() {
           // Set selected services
           const servMap = new Map<string, { selected: boolean; customPrice: number | null }>();
           servicesData.allServices?.forEach((s: Service) => {
-            const existing = servicesData.cleanerServices?.find(
+            const existing = servicesData.workerServices?.find(
               (cs: CleanerService) => cs.serviceId === s.id
             );
             servMap.set(s.id, {

@@ -218,7 +218,7 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
 async function handleAccountUpdated(account: Stripe.Account) {
   // Update cleaner profile when their Stripe account status changes
   if (account.charges_enabled && account.payouts_enabled) {
-    await prisma.cleanerProfile.updateMany({
+    await prisma.workerProfile.updateMany({
       where: { stripeAccountId: account.id },
       data: { stripeOnboardingComplete: true },
     });

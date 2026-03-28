@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
       include: {
         cleaner: {
           include: {
-            cleanerProfile: {
+            workerProfile: {
               select: {
                 paypalEmail: true,
                 stripeAccountId: true,
@@ -207,14 +207,14 @@ export async function POST(request: NextRequest) {
 
         // Try Stripe first, then PayPal
         if (
-          cleaner.cleanerProfile?.stripeAccountId &&
-          cleaner.cleanerProfile?.stripeOnboardingComplete
+          cleaner.workerProfile?.stripeAccountId &&
+          cleaner.workerProfile?.stripeOnboardingComplete
         ) {
           // Pay via Stripe
           const transfer = await createTransfer({
             amount: totalAmount,
             currency,
-            destinationAccountId: cleaner.cleanerProfile.stripeAccountId,
+            destinationAccountId: cleaner.workerProfile.stripeAccountId,
             description: `Servantana earnings payout - ${new Date().toISOString().split("T")[0]}`,
             metadata: {
               cleanerId,
@@ -224,10 +224,10 @@ export async function POST(request: NextRequest) {
 
           payoutMethod = "stripe";
           externalPayoutId = transfer.id;
-        } else if (cleaner.cleanerProfile?.paypalEmail) {
+        } else if (cleaner.workerProfile?.paypalEmail) {
           // Pay via PayPal
           const payout = await createSinglePayout(
-            cleaner.cleanerProfile.paypalEmail,
+            cleaner.workerProfile.paypalEmail,
             totalAmount,
             currency,
             `payout_${cleanerId}_${Date.now()}`,

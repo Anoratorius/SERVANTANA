@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
     // Build where clause - use 'is' to filter and ensure profile exists
     const where: Prisma.UserWhereInput = {
       role: "CLEANER",
-      cleanerProfile: Object.keys(profileFilters).length > 0
+      workerProfile: Object.keys(profileFilters).length > 0
         ? { is: profileFilters }
         : { isNot: null },
     };
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
         firstName: true,
         lastName: true,
         avatar: true,
-        cleanerProfile: {
+        workerProfile: {
           select: {
             id: true,
             bio: true,
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: {
-        cleanerProfile: {
+        workerProfile: {
           averageRating: "desc",
         },
       },
@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Filter out null profiles (should already be filtered but be safe)
-    let filteredCleaners = cleaners.filter((c) => c.cleanerProfile !== null);
+    let filteredCleaners = cleaners.filter((c) => c.workerProfile !== null);
 
     // If user coordinates provided, calculate distances and filter
     if (userLat && userLng) {
@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
       if (!isNaN(lat) && !isNaN(lng)) {
         // Add distance to each cleaner
         const cleanersWithDistance = filteredCleaners.map((cleaner) => {
-          const profile = cleaner.cleanerProfile!;
+          const profile = cleaner.workerProfile!;
           let distance: number | null = null;
 
           if (profile.latitude && profile.longitude) {
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
 
           return {
             ...cleaner,
-            cleanerProfile: {
+            workerProfile: {
               ...profile,
               distance: distance ? Math.round(distance * 10) / 10 : null, // Round to 1 decimal
             },
@@ -230,24 +230,24 @@ export async function GET(request: NextRequest) {
         // Filter by max distance if provided
         if (maxDist) {
           filteredCleaners = cleanersWithDistance.filter((c) => {
-            const distance = c.cleanerProfile.distance;
-            const serviceRadius = c.cleanerProfile.serviceRadius || 10;
+            const distance = c.workerProfile.distance;
+            const serviceRadius = c.workerProfile.serviceRadius || 10;
             // Include if within max distance AND within worker's service radius
             return distance !== null && distance <= maxDist && distance <= serviceRadius;
           });
         } else {
           // Filter only by worker's service radius
           filteredCleaners = cleanersWithDistance.filter((c) => {
-            const distance = c.cleanerProfile.distance;
-            const serviceRadius = c.cleanerProfile.serviceRadius || 10;
+            const distance = c.workerProfile.distance;
+            const serviceRadius = c.workerProfile.serviceRadius || 10;
             return distance === null || distance <= serviceRadius;
           });
         }
 
         // Sort by distance (closest first)
         filteredCleaners.sort((a, b) => {
-          const profileA = a.cleanerProfile as { distance?: number | null };
-          const profileB = b.cleanerProfile as { distance?: number | null };
+          const profileA = a.workerProfile as { distance?: number | null };
+          const profileB = b.workerProfile as { distance?: number | null };
           const distA = profileA?.distance ?? Infinity;
           const distB = profileB?.distance ?? Infinity;
           return distA - distB;

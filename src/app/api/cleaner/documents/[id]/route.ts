@@ -15,7 +15,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    const document = await prisma.cleanerDocument.findUnique({
+    const document = await prisma.workerDocument.findUnique({
       where: { id },
     });
 
@@ -46,7 +46,7 @@ export async function DELETE(
     }
 
     // Delete from database
-    await prisma.cleanerDocument.delete({
+    await prisma.workerDocument.delete({
       where: { id },
     });
 
@@ -72,7 +72,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const document = await prisma.cleanerDocument.findUnique({
+    const document = await prisma.workerDocument.findUnique({
       where: { id },
       include: {
         verifiedBy: {

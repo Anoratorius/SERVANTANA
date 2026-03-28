@@ -41,11 +41,11 @@ export async function PATCH(
     const { verified, isActive } = validationResult.data;
 
     // Find cleaner profile by user ID
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: id },
     });
 
-    if (!cleanerProfile) {
+    if (!workerProfile) {
       return NextResponse.json(
         { error: "Worker profile not found" },
         { status: 404 }
@@ -57,7 +57,7 @@ export async function PATCH(
     if (verified !== undefined) updateData.verified = verified;
     if (isActive !== undefined) updateData.isActive = isActive;
 
-    const updated = await prisma.cleanerProfile.update({
+    const updated = await prisma.workerProfile.update({
       where: { userId: id },
       data: updateData,
       include: {

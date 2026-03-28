@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
           suspendedReason: true,
           createdAt: true,
           emailVerified: true,
-          cleanerProfile: {
+          workerProfile: {
             select: {
               verified: true,
               averageRating: true,

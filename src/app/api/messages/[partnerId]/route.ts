@@ -25,7 +25,7 @@ export async function GET(
         lastName: true,
         avatar: true,
         role: true,
-        cleanerProfile: {
+        workerProfile: {
           select: {
             verified: true,
             averageRating: true,

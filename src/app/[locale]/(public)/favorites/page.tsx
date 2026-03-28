@@ -30,7 +30,7 @@ interface Favorite {
     firstName: string;
     lastName: string;
     avatar: string | null;
-    cleanerProfile: {
+    workerProfile: {
       hourlyRate: number;
       averageRating: number;
       city: string | null;
@@ -128,7 +128,7 @@ export default function FavoritesPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {favorites.map((favorite) => {
                 const cleaner = favorite.cleaner;
-                const profile = cleaner.cleanerProfile;
+                const profile = cleaner.workerProfile;
                 const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
 
                 return (

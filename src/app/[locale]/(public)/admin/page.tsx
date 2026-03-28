@@ -130,7 +130,7 @@ interface User {
   suspendedUntil: string | null;
   suspendedReason: string | null;
   createdAt: string;
-  cleanerProfile?: {
+  workerProfile?: {
     verified: boolean;
     averageRating: number;
     totalBookings: number;
@@ -1562,14 +1562,14 @@ export default function AdminPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              {user.role === "CLEANER" && user.cleanerProfile && (
+                              {user.role === "CLEANER" && user.workerProfile && (
                                 <div className="text-right text-sm hidden sm:block">
                                   <div className="flex items-center gap-1">
                                     <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                    {user.cleanerProfile.averageRating.toFixed(1)}
+                                    {user.workerProfile.averageRating.toFixed(1)}
                                   </div>
                                   <span className="text-muted-foreground">
-                                    {user.cleanerProfile.totalBookings} {t("admin.bookings")}
+                                    {user.workerProfile.totalBookings} {t("admin.bookings")}
                                   </span>
                                 </div>
                               )}
@@ -1589,7 +1589,7 @@ export default function AdminPage() {
                               >
                                 {user.role === "CLEANER" ? "WORKER" : user.role}
                               </Badge>
-                              {user.role === "CLEANER" && user.cleanerProfile?.verified && (
+                              {user.role === "CLEANER" && user.workerProfile?.verified && (
                                 <CheckCircle className="h-4 w-4 text-green-500" />
                               )}
 

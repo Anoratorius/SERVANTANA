@@ -24,7 +24,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: {
             services: {
               include: { service: true },
@@ -49,7 +49,7 @@ export async function GET() {
 
     return NextResponse.json({
       allServices,
-      cleanerServices: user.cleanerProfile?.services || [],
+      workerServices: user.workerProfile?.services || [],
     });
   } catch (error) {
     console.error("Error fetching services:", error);
@@ -70,7 +70,7 @@ export async function PUT(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { cleanerProfile: true },
+      include: { workerProfile: true },
     });
 
     if (!user || user.role !== "CLEANER") {
@@ -80,7 +80,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Please complete your profile first" },
         { status: 400 }
@@ -98,16 +98,16 @@ export async function PUT(request: NextRequest) {
     }
 
     const { services } = validationResult.data;
-    const cleanerId = user.cleanerProfile.id;
+    const cleanerId = user.workerProfile.id;
 
     // Delete existing services
-    await prisma.cleanerService.deleteMany({
+    await prisma.workerService.deleteMany({
       where: { cleanerId },
     });
 
     // Create new services
     if (services.length > 0) {
-      await prisma.cleanerService.createMany({
+      await prisma.workerService.createMany({
         data: services.map((s) => ({
           cleanerId,
           serviceId: s.serviceId,
@@ -118,7 +118,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Fetch updated services
-    const updatedServices = await prisma.cleanerService.findMany({
+    const updatedServices = await prisma.workerService.findMany({
       where: { cleanerId },
       include: { service: true },
     });

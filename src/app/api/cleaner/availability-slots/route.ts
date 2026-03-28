@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get cleaner's availability schedule
-    const cleanerProfile = await prisma.cleanerProfile.findUnique({
+    const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: cleanerId },
       include: {
         availability: {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    if (!cleanerProfile) {
+    if (!workerProfile) {
       return NextResponse.json(
         { error: "Worker not found" },
         { status: 404 }
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     // Generate available slots
     const slots = generateAvailableSlots(
-      cleanerProfile.availability,
+      workerProfile.availability,
       existingBookings,
       start,
       end

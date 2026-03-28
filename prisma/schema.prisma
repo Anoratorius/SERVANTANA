@@ -180,7 +180,7 @@ model User {
   updatedAt         DateTime  @updatedAt
 
   // Relations
-  cleanerProfile   CleanerProfile?
+  cleanerProfile   WorkerProfile?
   accounts         Account[]
   sessions         Session[]
   bookingsAsCustomer Booking[] @relation("CustomerBookings")
@@ -221,8 +221,8 @@ model User {
   bookingPhotos  BookingPhoto[] @relation("BookingPhotosUploaded")
 
   // Document relations
-  cleanerDocuments  CleanerDocument[] @relation("CleanerDocuments")
-  documentsVerified CleanerDocument[] @relation("DocumentsVerified")
+  cleanerDocuments  WorkerDocument[] @relation("CleanerDocuments")
+  documentsVerified WorkerDocument[] @relation("DocumentsVerified")
 
   // Calendar relations
   calendarConnections CalendarConnection[] @relation("CalendarConnections")
@@ -297,8 +297,8 @@ model PasswordResetToken {
   @@index([identifier])
 }
 
-// Cleaner profile - additional info for cleaners
-model CleanerProfile {
+// Worker profile - additional info for workers
+model WorkerProfile {
   id              String   @id @default(cuid())
   userId          String   @unique
   bio             String?
@@ -343,9 +343,11 @@ model CleanerProfile {
 
   // Relations
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  services        CleanerService[]
+  services        WorkerService[]
   availability    Availability[]
-  professions     CleanerProfession[]
+  professions     WorkerProfession[]
+
+  @@map("CleanerProfile")
 }
 
 // Crypto wallet for cleaners
@@ -359,7 +361,7 @@ model CryptoWallet {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  cleanerProfile  CleanerProfile @relation(fields: [cleanerProfileId], references: [id], onDelete: Cascade)
+  cleanerProfile  WorkerProfile @relation(fields: [cleanerProfileId], references: [id], onDelete: Cascade)
 
   @@unique([cleanerProfileId, currency])
   @@index([cleanerProfileId])
@@ -380,12 +382,12 @@ model Service {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  cleanerServices CleanerService[]
+  cleanerServices WorkerService[]
   bookings        Booking[]
 }
 
-// Junction table: which services a cleaner offers with their custom prices
-model CleanerService {
+// Junction table: which services a worker offers with their custom prices
+model WorkerService {
   id          String   @id @default(cuid())
   cleanerId   String
   serviceId   String
@@ -395,10 +397,11 @@ model CleanerService {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  cleaner     CleanerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  cleaner     WorkerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
   service     Service        @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@unique([cleanerId, serviceId])
+  @@map("CleanerService")
 }
 
 // Cleaner availability schedule
@@ -410,7 +413,7 @@ model Availability {
   endTime   String   // "17:00"
   isActive  Boolean  @default(true)
 
-  cleaner   CleanerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  cleaner   WorkerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
 
   @@unique([cleanerId, dayOfWeek])
 }
@@ -668,14 +671,14 @@ model Profession {
   updatedAt   DateTime @updatedAt
 
   category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  cleaners    CleanerProfession[]
+  cleaners    WorkerProfession[]
 
   @@index([categoryId])
   @@index([status])
 }
 
 // Junction table: Workers can have multiple professions
-model CleanerProfession {
+model WorkerProfession {
   id           String   @id @default(cuid())
   cleanerId    String
   professionId String
@@ -683,12 +686,13 @@ model CleanerProfession {
   hourlyRate   Float?   // Rate for this specific profession (nullable for backwards compatibility)
   createdAt    DateTime @default(now())
 
-  cleaner      CleanerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  cleaner      WorkerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
   profession   Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
 
   @@unique([cleanerId, professionId])
   @@index([cleanerId])
   @@index([professionId])
+  @@map("CleanerProfession")
 }
 
 // Payout model for tracking cleaner payouts
@@ -921,7 +925,7 @@ model BookingPhoto {
 // CLEANER DOCUMENT VERIFICATION MODEL
 // ============================================
 
-model CleanerDocument {
+model WorkerDocument {
   id            String         @id @default(cuid())
   cleanerId     String
   type          DocumentType
@@ -942,6 +946,7 @@ model CleanerDocument {
   @@index([cleanerId])
   @@index([status])
   @@index([type])
+  @@map("CleanerDocument")
 }
 
 // ============================================

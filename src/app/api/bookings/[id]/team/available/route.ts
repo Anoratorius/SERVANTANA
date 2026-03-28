@@ -64,7 +64,7 @@ export async function GET(
       where: {
         role: "CLEANER",
         id: { notIn: existingMemberIds },
-        cleanerProfile: {
+        workerProfile: {
           services: {
             some: {
               serviceId: booking.serviceId,
@@ -92,7 +92,7 @@ export async function GET(
         firstName: true,
         lastName: true,
         avatar: true,
-        cleanerProfile: {
+        workerProfile: {
           select: {
             averageRating: true,
             totalBookings: true,
@@ -112,14 +112,14 @@ export async function GET(
       if (
         booking.latitude &&
         booking.longitude &&
-        cleaner.cleanerProfile?.latitude &&
-        cleaner.cleanerProfile?.longitude
+        cleaner.workerProfile?.latitude &&
+        cleaner.workerProfile?.longitude
       ) {
         distance = calculateDistance(
           booking.latitude,
           booking.longitude,
-          cleaner.cleanerProfile.latitude,
-          cleaner.cleanerProfile.longitude
+          cleaner.workerProfile.latitude,
+          cleaner.workerProfile.longitude
         );
       }
       return { ...cleaner, distance };
@@ -130,8 +130,8 @@ export async function GET(
       if (a.distance !== null && b.distance !== null) {
         return a.distance - b.distance;
       }
-      const ratingA = a.cleanerProfile?.averageRating || 0;
-      const ratingB = b.cleanerProfile?.averageRating || 0;
+      const ratingA = a.workerProfile?.averageRating || 0;
+      const ratingB = b.workerProfile?.averageRating || 0;
       return ratingB - ratingA;
     });
 

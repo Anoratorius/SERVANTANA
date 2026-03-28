@@ -92,7 +92,7 @@ interface Worker {
   firstName: string;
   lastName: string;
   avatar?: string;
-  cleanerProfile: {
+  workerProfile: {
     id: string;
     hourlyRate: number;
     currency: string;
@@ -283,29 +283,29 @@ export default function CategoryDetailPage() {
                           <h3 className="font-semibold text-gray-900 truncate">
                             {worker.firstName} {worker.lastName[0]}.
                           </h3>
-                          {worker.cleanerProfile.verified && (
+                          {worker.workerProfile.verified && (
                             <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
                               ✓
                             </Badge>
                           )}
                         </div>
-                        {worker.cleanerProfile.city && (
+                        {worker.workerProfile.city && (
                           <p className="text-sm text-gray-500 flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
-                            {worker.cleanerProfile.city}
+                            {worker.workerProfile.city}
                           </p>
                         )}
                         <div className="flex items-center gap-1 mt-1">
                           <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                           <span className="text-sm font-medium">
-                            {worker.cleanerProfile.averageRating.toFixed(1)}
+                            {worker.workerProfile.averageRating.toFixed(1)}
                           </span>
                         </div>
                       </div>
                     </div>
-                    {worker.cleanerProfile.professions.length > 0 && (
+                    {worker.workerProfile.professions.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-1">
-                        {worker.cleanerProfile.professions.slice(0, 3).map((p) => (
+                        {worker.workerProfile.professions.slice(0, 3).map((p) => (
                           <span
                             key={p.profession.id}
                             className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full"
@@ -317,8 +317,8 @@ export default function CategoryDetailPage() {
                     )}
                     <div className="mt-4 pt-4 border-t">
                       <span className="text-lg font-bold text-blue-600">
-                        {worker.cleanerProfile.currency === "EUR" ? "€" : "$"}
-                        {worker.cleanerProfile.hourlyRate}
+                        {worker.workerProfile.currency === "EUR" ? "€" : "$"}
+                        {worker.workerProfile.hourlyRate}
                       </span>
                       <span className="text-gray-500 text-sm">/hr</span>
                     </div>

@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     const averageRating =
       cleanerReviews.reduce((sum, r) => sum + r.rating, 0) / cleanerReviews.length;
 
-    await prisma.cleanerProfile.updateMany({
+    await prisma.workerProfile.updateMany({
       where: { userId: booking.cleanerId },
       data: { averageRating },
     });

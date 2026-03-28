@@ -72,7 +72,7 @@ export async function GET(
     // 3. Are verified
     // 4. Are within service radius of the booking location
 
-    const availableCleaners = await prisma.cleanerProfile.findMany({
+    const availableCleaners = await prisma.workerProfile.findMany({
       where: {
         userId: { not: booking.cleanerId },
         verified: true,
@@ -179,8 +179,8 @@ export async function GET(
       }
 
       // Get cleaner's price for this service
-      const cleanerService = cleaner.services[0];
-      const price = cleanerService?.customPrice ?? cleanerService?.service.basePrice ?? booking.totalPrice;
+      const workerService = cleaner.services[0];
+      const price = workerService?.customPrice ?? workerService?.service.basePrice ?? booking.totalPrice;
 
       substitutes.push({
         id: cleaner.userId,
@@ -270,7 +270,7 @@ export async function POST(
     }
 
     // Verify the substitute cleaner exists and offers this service
-    const substituteProfile = await prisma.cleanerProfile.findUnique({
+    const substituteProfile = await prisma.workerProfile.findUnique({
       where: { userId: substituteCleanerId },
       include: {
         services: {
@@ -293,8 +293,8 @@ export async function POST(
     }
 
     // Calculate new price
-    const cleanerService = substituteProfile.services[0];
-    const newPrice = cleanerService?.customPrice ?? booking.service?.basePrice ?? booking.totalPrice;
+    const workerService = substituteProfile.services[0];
+    const newPrice = workerService?.customPrice ?? booking.service?.basePrice ?? booking.totalPrice;
 
     // Create a new booking with the substitute cleaner
     const newBooking = await prisma.booking.create({

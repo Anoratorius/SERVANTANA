@@ -24,7 +24,7 @@ export async function GET() {
         locationVerifiedAt: true,
         latitude: true,
         longitude: true,
-        cleanerProfile: {
+        workerProfile: {
           select: {
             id: true,
             onboardingComplete: true,
@@ -51,19 +51,19 @@ export async function GET() {
         locationVerified: !!user?.locationVerifiedAt,
         hasLocation: !!(user?.latitude && user?.longitude),
       },
-      cleanerProfile: user?.cleanerProfile ? {
+      workerProfile: user?.workerProfile ? {
         exists: true,
-        onboardingComplete: user.cleanerProfile.onboardingComplete,
-        hourlyRate: user.cleanerProfile.hourlyRate,
-        professionsCount: user.cleanerProfile.professions.length,
-        availabilityCount: user.cleanerProfile.availability.length,
+        onboardingComplete: user.workerProfile.onboardingComplete,
+        hourlyRate: user.workerProfile.hourlyRate,
+        professionsCount: user.workerProfile.professions.length,
+        availabilityCount: user.workerProfile.availability.length,
       } : {
         exists: false,
       },
       shouldRedirectToOnboarding:
         user?.role === "CLEANER" &&
         !!user?.locationVerifiedAt &&
-        (!user?.cleanerProfile || user?.cleanerProfile?.onboardingComplete !== true),
+        (!user?.workerProfile || user?.workerProfile?.onboardingComplete !== true),
     });
   } catch (error) {
     console.error("Debug status error:", error);

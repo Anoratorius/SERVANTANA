@@ -33,7 +33,7 @@ export async function GET(
             lastName: true,
             avatar: true,
             email: true,
-            cleanerProfile: {
+            workerProfile: {
               select: {
                 stripeAccountId: true,
                 stripeOnboardingComplete: true,
@@ -73,8 +73,8 @@ export async function GET(
 
     // Check if cleaner has Stripe Connect set up
     const cleanerHasStripe = Boolean(
-      booking.cleaner.cleanerProfile?.stripeAccountId &&
-      booking.cleaner.cleanerProfile?.stripeOnboardingComplete
+      booking.cleaner.workerProfile?.stripeAccountId &&
+      booking.cleaner.workerProfile?.stripeOnboardingComplete
     );
 
     return NextResponse.json({ booking, cleanerHasStripe });

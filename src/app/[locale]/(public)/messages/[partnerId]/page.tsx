@@ -31,7 +31,7 @@ interface Partner {
   lastName: string;
   avatar: string | null;
   role: string;
-  cleanerProfile?: {
+  workerProfile?: {
     verified: boolean;
     averageRating: number;
   } | null;
@@ -216,16 +216,16 @@ export default function ConversationPage({
                   <h2 className="font-semibold">
                     {partner.firstName} {partner.lastName}
                   </h2>
-                  {partner.cleanerProfile?.verified && (
+                  {partner.workerProfile?.verified && (
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   )}
                 </div>
-                {partner.role === "CLEANER" && partner.cleanerProfile && (
+                {partner.role === "CLEANER" && partner.workerProfile && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Badge variant="secondary" className="text-xs">Worker</Badge>
                     <span className="flex items-center gap-1">
                       <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                      {partner.cleanerProfile.averageRating.toFixed(1)}
+                      {partner.workerProfile.averageRating.toFixed(1)}
                     </span>
                   </div>
                 )}

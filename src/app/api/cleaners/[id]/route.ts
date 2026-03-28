@@ -19,7 +19,7 @@ export async function GET(
         lastName: true,
         avatar: true,
         createdAt: true,
-        cleanerProfile: {
+        workerProfile: {
           select: {
             id: true,
             bio: true,
@@ -84,7 +84,7 @@ export async function GET(
       },
     });
 
-    if (!cleaner || !cleaner.cleanerProfile) {
+    if (!cleaner || !cleaner.workerProfile) {
       return NextResponse.json(
         { error: "Worker not found" },
         { status: 404 }

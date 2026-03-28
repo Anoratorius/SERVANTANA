@@ -18,7 +18,7 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { cleanerProfile: true },
+      include: { workerProfile: true },
     });
 
     if (!user || user.role !== "CLEANER") {
@@ -28,7 +28,7 @@ export async function GET() {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Worker profile not found" },
         { status: 404 }
@@ -36,15 +36,15 @@ export async function GET() {
     }
 
     const status = await getConnectAccountStatus(
-      user.cleanerProfile.stripeAccountId
+      user.workerProfile.stripeAccountId
     );
 
     // If account is complete, get dashboard link
     let dashboardUrl = null;
-    if (status === "complete" && user.cleanerProfile.stripeAccountId) {
+    if (status === "complete" && user.workerProfile.stripeAccountId) {
       try {
         const loginLink = await createConnectLoginLink(
-          user.cleanerProfile.stripeAccountId
+          user.workerProfile.stripeAccountId
         );
         dashboardUrl = loginLink.url;
       } catch {
@@ -54,8 +54,8 @@ export async function GET() {
 
     return NextResponse.json({
       status,
-      stripeAccountId: user.cleanerProfile.stripeAccountId,
-      onboardingComplete: user.cleanerProfile.stripeOnboardingComplete,
+      stripeAccountId: user.workerProfile.stripeAccountId,
+      onboardingComplete: user.workerProfile.stripeOnboardingComplete,
       dashboardUrl,
     });
   } catch (error) {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { cleanerProfile: true },
+      include: { workerProfile: true },
     });
 
     if (!user || user.role !== "CLEANER") {
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!user.cleanerProfile) {
+    if (!user.workerProfile) {
       return NextResponse.json(
         { error: "Please complete your worker profile first" },
         { status: 400 }
@@ -96,9 +96,9 @@ export async function POST(request: NextRequest) {
 
     // Get country from request body or default to cleaner's country
     const body = await request.json().catch(() => ({}));
-    const country = body.country || user.cleanerProfile.country || "DE";
+    const country = body.country || user.workerProfile.country || "DE";
 
-    let stripeAccountId = user.cleanerProfile.stripeAccountId;
+    let stripeAccountId = user.workerProfile.stripeAccountId;
 
     // Create new Stripe Connect account if not exists
     if (!stripeAccountId) {
@@ -106,8 +106,8 @@ export async function POST(request: NextRequest) {
       stripeAccountId = account.id;
 
       // Save account ID to database
-      await prisma.cleanerProfile.update({
-        where: { id: user.cleanerProfile.id },
+      await prisma.workerProfile.update({
+        where: { id: user.workerProfile.id },
         data: { stripeAccountId },
       });
     }
@@ -146,10 +146,10 @@ export async function PUT(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { cleanerProfile: true },
+      include: { workerProfile: true },
     });
 
-    if (!user?.cleanerProfile?.stripeAccountId) {
+    if (!user?.workerProfile?.stripeAccountId) {
       return NextResponse.json(
         { error: "No Stripe account found" },
         { status: 404 }
@@ -166,7 +166,7 @@ export async function PUT(request: NextRequest) {
       const returnUrl = `${origin}/dashboard/settings?stripe=success`;
 
       const accountLink = await createConnectOnboardingLink(
-        user.cleanerProfile.stripeAccountId,
+        user.workerProfile.stripeAccountId,
         refreshUrl,
         returnUrl
       );
@@ -177,12 +177,12 @@ export async function PUT(request: NextRequest) {
     if (action === "check") {
       // Check and update account status
       const status = await getConnectAccountStatus(
-        user.cleanerProfile.stripeAccountId
+        user.workerProfile.stripeAccountId
       );
 
-      if (status === "complete" && !user.cleanerProfile.stripeOnboardingComplete) {
-        await prisma.cleanerProfile.update({
-          where: { id: user.cleanerProfile.id },
+      if (status === "complete" && !user.workerProfile.stripeOnboardingComplete) {
+        await prisma.workerProfile.update({
+          where: { id: user.workerProfile.id },
           data: { stripeOnboardingComplete: true },
         });
       }

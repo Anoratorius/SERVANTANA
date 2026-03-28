@@ -21,7 +21,7 @@ export async function GET() {
       );
     }
 
-    const profile = await prisma.cleanerProfile.findUnique({
+    const profile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
       select: {
         introVideoUrl: true,
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current profile to check for existing video
-    const currentProfile = await prisma.cleanerProfile.findUnique({
+    const currentProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
       select: { introVideoId: true },
     });
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Update profile with new video URL
-    await prisma.cleanerProfile.update({
+    await prisma.workerProfile.update({
       where: { userId: session.user.id },
       data: {
         introVideoUrl: result.url,
@@ -143,7 +143,7 @@ export async function DELETE() {
       );
     }
 
-    const profile = await prisma.cleanerProfile.findUnique({
+    const profile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
       select: { introVideoId: true },
     });
@@ -163,7 +163,7 @@ export async function DELETE() {
     }
 
     // Remove from database
-    await prisma.cleanerProfile.update({
+    await prisma.workerProfile.update({
       where: { userId: session.user.id },
       data: {
         introVideoUrl: null,

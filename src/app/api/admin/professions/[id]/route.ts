@@ -105,7 +105,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Check if any workers have this profession
-    const workerCount = await prisma.cleanerProfession.count({
+    const workerCount = await prisma.workerProfession.count({
       where: { professionId: id },
     });
 

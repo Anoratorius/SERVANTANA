@@ -39,7 +39,7 @@ export async function GET(
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
-        cleanerProfile: {
+        workerProfile: {
           include: {
             services: { include: { service: true } },
             availability: true,
@@ -170,12 +170,12 @@ export async function PATCH(
 
     // If role changed to CLEANER, create cleaner profile if not exists
     if (body.role === "CLEANER") {
-      const existingProfile = await prisma.cleanerProfile.findUnique({
+      const existingProfile = await prisma.workerProfile.findUnique({
         where: { userId: id },
       });
 
       if (!existingProfile) {
-        await prisma.cleanerProfile.create({
+        await prisma.workerProfile.create({
           data: {
             userId: id,
             hourlyRate: 25,
@@ -324,10 +324,10 @@ export async function DELETE(
       // Delete user-specific records
       await tx.payout.deleteMany({ where: { cleanerId: id } });
       await tx.earning.deleteMany({ where: { cleanerId: id } });
-      await tx.cleanerDocument.deleteMany({ where: { cleanerId: id } });
+      await tx.workerDocument.deleteMany({ where: { cleanerId: id } });
 
       // Clear verified documents where this user was the verifier
-      await tx.cleanerDocument.updateMany({
+      await tx.workerDocument.updateMany({
         where: { verifiedById: id },
         data: { verifiedById: null },
       });
