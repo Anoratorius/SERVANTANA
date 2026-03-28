@@ -426,7 +426,7 @@ function WorkerOnboardingContent() {
                 {t("workerOnboarding.step1Desc")}
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                 {CATEGORIES.map((category) => {
                   const isSelected = selectedCategories.includes(category.id);
                   return (
@@ -434,37 +434,43 @@ function WorkerOnboardingContent() {
                       key={category.id}
                       onClick={() => toggleCategory(category.id)}
                       className={cn(
-                        "flex flex-col items-center p-4 bg-white rounded-xl border-2 transition-all",
+                        "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[100px] sm:min-h-[120px] bg-white rounded-xl border-2 transition-all",
                         isSelected
                           ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
                       )}
                     >
                       {isSelected && (
-                        <Check className="absolute top-2 right-2 h-5 w-5 text-blue-500" />
+                        <Check className="absolute top-2 right-2 h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
                       )}
-                      <span className="text-3xl mb-2">{category.emoji}</span>
-                      <span className="text-sm font-medium text-center">
+                      <span className="text-3xl sm:text-4xl mb-2">{category.emoji}</span>
+                      <span className="text-xs sm:text-sm font-medium text-center leading-tight">
                         {t(`categories.${category.id}`)}
                       </span>
                     </button>
                   );
                 })}
-                {customCategories.map((category) => {
+                {/* Only show custom categories that don't match built-in category IDs */}
+                {customCategories
+                  .filter((category) => !CATEGORIES.some((c) => c.id === category.id || c.id === category.name.toLowerCase().replace(/[^a-z]/g, "_")))
+                  .map((category) => {
                   const isSelected = selectedCategories.includes(`custom:${category.id}`);
                   return (
                     <button
                       key={category.id}
                       onClick={() => toggleCategory(category.id, true)}
                       className={cn(
-                        "flex flex-col items-center p-4 bg-white rounded-xl border-2 transition-all",
+                        "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[100px] sm:min-h-[120px] bg-white rounded-xl border-2 transition-all",
                         isSelected
                           ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
                       )}
                     >
-                      <span className="text-3xl mb-2">{category.emoji}</span>
-                      <span className="text-sm font-medium text-center">
+                      {isSelected && (
+                        <Check className="absolute top-2 right-2 h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                      )}
+                      <span className="text-3xl sm:text-4xl mb-2">{category.emoji}</span>
+                      <span className="text-xs sm:text-sm font-medium text-center leading-tight">
                         {locale === "de" && category.nameDE ? category.nameDE : category.name}
                       </span>
                     </button>
