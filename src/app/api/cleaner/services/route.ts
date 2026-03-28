@@ -98,18 +98,18 @@ export async function PUT(request: NextRequest) {
     }
 
     const { services } = validationResult.data;
-    const cleanerId = user.workerProfile.id;
+    const workerId = user.workerProfile.id;
 
     // Delete existing services
     await prisma.workerService.deleteMany({
-      where: { cleanerId },
+      where: { workerId },
     });
 
     // Create new services
     if (services.length > 0) {
       await prisma.workerService.createMany({
         data: services.map((s) => ({
-          cleanerId,
+          workerId,
           serviceId: s.serviceId,
           customPrice: s.customPrice ?? null,
           isActive: s.isActive ?? true,
@@ -119,7 +119,7 @@ export async function PUT(request: NextRequest) {
 
     // Fetch updated services
     const updatedServices = await prisma.workerService.findMany({
-      where: { cleanerId },
+      where: { workerId },
       include: { service: true },
     });
 

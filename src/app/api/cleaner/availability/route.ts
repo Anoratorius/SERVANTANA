@@ -88,7 +88,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const { availability } = validationResult.data;
-    const cleanerId = user.workerProfile.id;
+    const workerId = user.workerProfile.id;
 
     // Validate time ranges
     for (const slot of availability) {
@@ -102,14 +102,14 @@ export async function PUT(request: NextRequest) {
 
     // Delete existing availability
     await prisma.availability.deleteMany({
-      where: { cleanerId },
+      where: { workerId },
     });
 
     // Create new availability slots
     if (availability.length > 0) {
       await prisma.availability.createMany({
         data: availability.map((a) => ({
-          cleanerId,
+          workerId,
           dayOfWeek: a.dayOfWeek,
           startTime: a.startTime,
           endTime: a.endTime,
@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
 
     // Fetch updated availability
     const updatedAvailability = await prisma.availability.findMany({
-      where: { cleanerId },
+      where: { workerId },
       orderBy: { dayOfWeek: "asc" },
     });
 

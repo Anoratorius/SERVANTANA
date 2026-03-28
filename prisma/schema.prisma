@@ -180,7 +180,7 @@ model User {
   updatedAt         DateTime  @updatedAt
 
   // Relations
-  cleanerProfile   WorkerProfile?
+  workerProfile    WorkerProfile?
   accounts         Account[]
   sessions         Session[]
   bookingsAsCustomer Booking[] @relation("CustomerBookings")
@@ -350,21 +350,21 @@ model WorkerProfile {
   @@map("CleanerProfile")
 }
 
-// Crypto wallet for cleaners
+// Crypto wallet for workers
 model CryptoWallet {
-  id              String   @id @default(cuid())
-  cleanerProfileId String
-  currency        String   // BTC, ETH, LTC
-  address         String   // Public wallet address
-  derivationIndex Int      // HD wallet derivation index
-  balance         Float    @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String   @id @default(cuid())
+  workerProfileId  String   @map("cleanerProfileId")
+  currency         String   // BTC, ETH, LTC
+  address          String   // Public wallet address
+  derivationIndex  Int      // HD wallet derivation index
+  balance          Float    @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  cleanerProfile  WorkerProfile @relation(fields: [cleanerProfileId], references: [id], onDelete: Cascade)
+  workerProfile    WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
 
-  @@unique([cleanerProfileId, currency])
-  @@index([cleanerProfileId])
+  @@unique([workerProfileId, currency])
+  @@index([workerProfileId])
 }
 
 // Service types offered
@@ -382,14 +382,14 @@ model Service {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  cleanerServices WorkerService[]
+  workerServices  WorkerService[]
   bookings        Booking[]
 }
 
 // Junction table: which services a worker offers with their custom prices
 model WorkerService {
   id          String   @id @default(cuid())
-  cleanerId   String
+  workerId    String   @map("cleanerId")
   serviceId   String
   customPrice Float?   // null means use base price
   isActive    Boolean  @default(true)
@@ -397,25 +397,25 @@ model WorkerService {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  cleaner     WorkerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
-  service     Service        @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  worker      WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  service     Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  @@unique([cleanerId, serviceId])
+  @@unique([workerId, serviceId])
   @@map("CleanerService")
 }
 
-// Cleaner availability schedule
+// Worker availability schedule
 model Availability {
   id        String   @id @default(cuid())
-  cleanerId String
+  workerId  String   @map("cleanerId")
   dayOfWeek Int      // 0 = Sunday, 6 = Saturday
   startTime String   // "09:00"
   endTime   String   // "17:00"
   isActive  Boolean  @default(true)
 
-  cleaner   WorkerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  worker    WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
 
-  @@unique([cleanerId, dayOfWeek])
+  @@unique([workerId, dayOfWeek])
 }
 
 // Booking model
@@ -671,7 +671,7 @@ model Profession {
   updatedAt   DateTime @updatedAt
 
   category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  cleaners    WorkerProfession[]
+  workers     WorkerProfession[]
 
   @@index([categoryId])
   @@index([status])
@@ -680,17 +680,17 @@ model Profession {
 // Junction table: Workers can have multiple professions
 model WorkerProfession {
   id           String   @id @default(cuid())
-  cleanerId    String
+  workerId     String   @map("cleanerId")
   professionId String
   isPrimary    Boolean  @default(false)  // Main profession shown first
   hourlyRate   Float?   // Rate for this specific profession (nullable for backwards compatibility)
   createdAt    DateTime @default(now())
 
-  cleaner      WorkerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  worker       WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
   profession   Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
 
-  @@unique([cleanerId, professionId])
-  @@index([cleanerId])
+  @@unique([workerId, professionId])
+  @@index([workerId])
   @@index([professionId])
   @@map("CleanerProfession")
 }

@@ -214,7 +214,7 @@ async function main() {
         if (service && user.workerProfile) {
           await prisma.workerService.create({
             data: {
-              cleanerId: user.workerProfile.id,
+              workerId: user.workerProfile.id,
               serviceId: service.id,
             },
           });
@@ -226,7 +226,7 @@ async function main() {
         for (let day = 1; day <= 5; day++) {
           await prisma.availability.create({
             data: {
-              cleanerId: user.workerProfile.id,
+              workerId: user.workerProfile.id,
               dayOfWeek: day,
               startTime: "09:00",
               endTime: "17:00",

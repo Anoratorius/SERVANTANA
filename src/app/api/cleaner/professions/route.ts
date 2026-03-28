@@ -99,8 +99,8 @@ export async function POST(request: NextRequest) {
     // Check if already added
     const existing = await prisma.workerProfession.findUnique({
       where: {
-        cleanerId_professionId: {
-          cleanerId: workerProfile.id,
+        workerId_professionId: {
+          workerId: workerProfile.id,
           professionId,
         },
       },
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     // If setting as primary, unset other primaries
     if (isPrimary) {
       await prisma.workerProfession.updateMany({
-        where: { cleanerId: workerProfile.id },
+        where: { workerId: workerProfile.id },
         data: { isPrimary: false },
       });
     }
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     // Add profession to worker
     const workerProfession = await prisma.workerProfession.create({
       data: {
-        cleanerId: workerProfile.id,
+        workerId: workerProfile.id,
         professionId,
         isPrimary,
         hourlyRate,
@@ -186,8 +186,8 @@ export async function DELETE(request: NextRequest) {
 
     await prisma.workerProfession.delete({
       where: {
-        cleanerId_professionId: {
-          cleanerId: workerProfile.id,
+        workerId_professionId: {
+          workerId: workerProfile.id,
           professionId,
         },
       },

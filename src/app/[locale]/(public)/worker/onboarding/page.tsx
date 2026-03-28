@@ -282,7 +282,7 @@ function WorkerOnboardingContent() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          hourlyRate: parseFloat(hourlyRate),
+          hourlyRate: parseFloat(professionRates[primaryProfession || selectedProfessions[0]] || "25"),
           bio: bio.trim() || undefined,
           experienceYears: parseInt(experienceYears) || 0,
           ecoFriendly,
