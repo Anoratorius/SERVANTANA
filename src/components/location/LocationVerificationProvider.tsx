@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 
 // Dynamic import to avoid SSR issues
@@ -29,7 +29,6 @@ export default function LocationVerificationProvider({
 }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const router = useRouter();
   const [needsVerification, setNeedsVerification] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
@@ -67,27 +66,23 @@ export default function LocationVerificationProvider({
   }, [session, status, pathname]);
 
   const handleLocationVerified = async () => {
-    setNeedsVerification(false);
-
     // Extract locale from current pathname (e.g., /en/dashboard -> en)
     const localeMatch = pathname.match(/^\/(en|de)/);
     const locale = localeMatch ? localeMatch[1] : "en";
 
-    // Check if user is a worker who needs onboarding (don't rely on client session role)
+    // Check if user is a worker who needs onboarding
     try {
       const response = await fetch("/api/cleaner/profile");
       if (response.ok) {
-        // User is a worker - check if onboarding is complete
         const data = await response.json();
         if (!data.profile || data.profile.onboardingComplete !== true) {
-          // Worker needs onboarding - redirect directly
-          router.push(`/${locale}/worker/onboarding`);
+          // Worker needs onboarding - use full page navigation to trigger middleware
+          window.location.href = `/${locale}/worker/onboarding`;
           return;
         }
       }
-      // If 403 (not a worker) or onboarding complete, fall through to reload
     } catch {
-      // On network error, just reload
+      // On error, fall through to reload
     }
 
     // For customers or workers with completed onboarding, reload to refresh session
