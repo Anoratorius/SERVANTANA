@@ -921,6 +921,44 @@ function WorkerOnboardingContent() {
                   </CardContent>
                 </Card>
 
+                {/* Profile Details */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      {t("workerOnboarding.reviewProfile")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.experience")}</span>
+                      <span className="font-medium">{experienceYears} {t("workerOnboarding.years")}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.serviceRadius")}</span>
+                      <span className="font-medium">{serviceRadius} km</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.ecoFriendly")}</span>
+                      <Badge variant={ecoFriendly ? "default" : "secondary"}>
+                        {ecoFriendly ? "✓" : "✗"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.petFriendly")}</span>
+                      <Badge variant={petFriendly ? "default" : "secondary"}>
+                        {petFriendly ? "✓" : "✗"}
+                      </Badge>
+                    </div>
+                    {bio && (
+                      <div className="pt-2 border-t">
+                        <span className="text-sm text-gray-500">{t("workerOnboarding.bio")}</span>
+                        <p className="text-sm mt-1">{bio}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 {/* Ready message */}
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
                   <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
