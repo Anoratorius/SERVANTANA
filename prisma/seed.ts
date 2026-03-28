@@ -187,7 +187,7 @@ async function main() {
           firstName: cleaner.firstName,
           lastName: cleaner.lastName,
           role: "CLEANER",
-          cleanerProfile: {
+          workerProfile: {
             create: {
               bio: cleaner.bio,
               hourlyRate: cleaner.hourlyRate,
@@ -203,7 +203,7 @@ async function main() {
             },
           },
         },
-        include: { cleanerProfile: true },
+        include: { workerProfile: true },
       });
 
       // Add services to cleaner
@@ -211,10 +211,10 @@ async function main() {
         const service = await prisma.service.findUnique({
           where: { name: serviceName },
         });
-        if (service && user.cleanerProfile) {
-          await prisma.cleanerService.create({
+        if (service && user.workerProfile) {
+          await prisma.workerService.create({
             data: {
-              cleanerId: user.cleanerProfile.id,
+              cleanerId: user.workerProfile.id,
               serviceId: service.id,
             },
           });
@@ -222,11 +222,11 @@ async function main() {
       }
 
       // Add availability (Mon-Fri 9am-5pm)
-      if (user.cleanerProfile) {
+      if (user.workerProfile) {
         for (let day = 1; day <= 5; day++) {
           await prisma.availability.create({
             data: {
-              cleanerId: user.cleanerProfile.id,
+              cleanerId: user.workerProfile.id,
               dayOfWeek: day,
               startTime: "09:00",
               endTime: "17:00",
