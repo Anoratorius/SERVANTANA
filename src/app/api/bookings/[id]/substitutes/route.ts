@@ -128,7 +128,7 @@ export async function GET(
       // Check if cleaner has availability on this day
       const availability = await prisma.availability.findFirst({
         where: {
-          cleanerId: cleaner.id,
+          workerId: cleaner.id,
           dayOfWeek,
           isActive: true,
         },
