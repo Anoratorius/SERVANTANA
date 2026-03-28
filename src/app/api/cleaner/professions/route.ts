@@ -47,6 +47,7 @@ export async function GET() {
 const addProfessionSchema = z.object({
   professionId: z.string(),
   isPrimary: z.boolean().default(false),
+  hourlyRate: z.number().positive().optional(),
 });
 
 // POST - add a profession to worker's profile
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { professionId, isPrimary } = validation.data;
+    const { professionId, isPrimary, hourlyRate } = validation.data;
 
     // Get worker profile
     const cleanerProfile = await prisma.cleanerProfile.findUnique({
@@ -126,6 +127,7 @@ export async function POST(request: NextRequest) {
         cleanerId: cleanerProfile.id,
         professionId,
         isPrimary,
+        hourlyRate,
       },
       include: {
         profession: {

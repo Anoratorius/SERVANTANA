@@ -680,6 +680,7 @@ model CleanerProfession {
   cleanerId    String
   professionId String
   isPrimary    Boolean  @default(false)  // Main profession shown first
+  hourlyRate   Float?   // Rate for this specific profession (nullable for backwards compatibility)
   createdAt    DateTime @default(now())
 
   cleaner      CleanerProfile @relation(fields: [cleanerId], references: [id], onDelete: Cascade)

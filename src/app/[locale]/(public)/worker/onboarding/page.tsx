@@ -92,8 +92,8 @@ function WorkerOnboardingContent() {
   const [selectedProfessions, setSelectedProfessions] = useState<string[]>([]);
   const [primaryProfession, setPrimaryProfession] = useState<string | null>(null);
 
-  // Step 3: Rate
-  const [hourlyRate, setHourlyRate] = useState("25");
+  // Step 3: Rate per profession
+  const [professionRates, setProfessionRates] = useState<Record<string, string>>({});
   const [currency] = useState("EUR");
 
   // Step 4: Availability
@@ -193,11 +193,22 @@ function WorkerOnboardingContent() {
         if (primaryProfession === professionId) {
           setPrimaryProfession(null);
         }
+        // Remove rate when deselecting
+        setProfessionRates((rates) => {
+          const newRates = { ...rates };
+          delete newRates[professionId];
+          return newRates;
+        });
         return prev.filter((id) => id !== professionId);
       } else {
         if (prev.length === 0) {
           setPrimaryProfession(professionId);
         }
+        // Initialize rate with default
+        setProfessionRates((rates) => ({
+          ...rates,
+          [professionId]: "25",
+        }));
         return [...prev, professionId];
       }
     });
@@ -230,8 +241,11 @@ function WorkerOnboardingContent() {
       case 2:
         return selectedProfessions.length > 0;
       case 3:
-        const rate = parseFloat(hourlyRate);
-        return !isNaN(rate) && rate > 0;
+        // Check all selected professions have valid rates
+        return selectedProfessions.every((profId) => {
+          const rate = parseFloat(professionRates[profId] || "0");
+          return !isNaN(rate) && rate > 0;
+        });
       case 4:
         return availability.some((slot) => slot.isActive);
       case 5:
@@ -281,15 +295,16 @@ function WorkerOnboardingContent() {
         throw new Error("Failed to update profile");
       }
 
-      // Step 2: Add professions
+      // Step 2: Add professions with their rates
       for (let i = 0; i < selectedProfessions.length; i++) {
         const professionId = selectedProfessions[i];
         const isPrimary = professionId === primaryProfession || (i === 0 && !primaryProfession);
+        const hourlyRate = parseFloat(professionRates[professionId] || "25");
 
         const response = await fetch("/api/cleaner/professions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ professionId, isPrimary }),
+          body: JSON.stringify({ professionId, isPrimary, hourlyRate }),
         });
 
         if (!response.ok) {
@@ -465,7 +480,7 @@ function WorkerOnboardingContent() {
             </div>
           )}
 
-          {/* Step 2: Professions */}
+          {/* Step 2: Professions grouped by category */}
           {step === 2 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
@@ -485,36 +500,116 @@ function WorkerOnboardingContent() {
                   <p className="text-gray-500">{t("workerOnboarding.noProfessions")}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {professions.map((profession) => {
-                    const isSelected = selectedProfessions.includes(profession.id);
-                    const isPrimary = primaryProfession === profession.id;
+                <div className="space-y-6">
+                  {/* Group professions by category */}
+                  {selectedCategories.map((catId) => {
+                    const isCustomCategory = catId.startsWith("custom:");
+                    const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
+
+                    // Filter professions for this category
+                    const categoryProfessions = professions.filter((p) => {
+                      if (isCustomCategory) {
+                        return p.categoryId === categoryKey;
+                      }
+                      // Match built-in categories by category name pattern
+                      return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
+                             p.categoryId === catId;
+                    });
+
+                    if (categoryProfessions.length === 0) return null;
+
                     return (
-                      <button
-                        key={profession.id}
-                        onClick={() => toggleProfession(profession.id)}
-                        className={cn(
-                          "relative flex flex-col items-center p-3 bg-white rounded-lg border-2 transition-all",
-                          isSelected
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200 hover:border-gray-300"
-                        )}
-                      >
-                        {isSelected && (
-                          <div className={cn(
-                            "absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center",
-                            isPrimary ? "bg-yellow-500" : "bg-blue-500"
-                          )}>
-                            <Check className="h-3 w-3 text-white" />
-                          </div>
-                        )}
-                        <span className="text-2xl mb-1">{profession.emoji}</span>
-                        <span className="text-xs font-medium text-center">
-                          {getProfessionName(profession)}
-                        </span>
-                      </button>
+                      <div key={catId} className="bg-white rounded-xl p-4 border border-gray-200">
+                        <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                          {CATEGORIES.find((c) => c.id === catId)?.emoji || "📁"}
+                          {getCategoryName(catId)}
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {categoryProfessions.map((profession) => {
+                            const isSelected = selectedProfessions.includes(profession.id);
+                            const isPrimary = primaryProfession === profession.id;
+                            return (
+                              <button
+                                key={profession.id}
+                                onClick={() => toggleProfession(profession.id)}
+                                className={cn(
+                                  "relative flex flex-col items-center p-3 bg-gray-50 rounded-lg border-2 transition-all",
+                                  isSelected
+                                    ? "border-blue-500 bg-blue-50"
+                                    : "border-gray-200 hover:border-gray-300"
+                                )}
+                              >
+                                {isSelected && (
+                                  <div className={cn(
+                                    "absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center",
+                                    isPrimary ? "bg-yellow-500" : "bg-blue-500"
+                                  )}>
+                                    <Check className="h-3 w-3 text-white" />
+                                  </div>
+                                )}
+                                <span className="text-2xl mb-1">{profession.emoji}</span>
+                                <span className="text-xs font-medium text-center">
+                                  {getProfessionName(profession)}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     );
                   })}
+
+                  {/* Show professions without category match */}
+                  {professions.filter((p) => !selectedCategories.some((catId) => {
+                    const isCustomCategory = catId.startsWith("custom:");
+                    const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
+                    if (isCustomCategory) return p.categoryId === categoryKey;
+                    return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
+                           p.categoryId === catId;
+                  })).length > 0 && (
+                    <div className="bg-white rounded-xl p-4 border border-gray-200">
+                      <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                        📋 {t("workerOnboarding.otherProfessions")}
+                      </h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {professions.filter((p) => !selectedCategories.some((catId) => {
+                          const isCustomCategory = catId.startsWith("custom:");
+                          const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
+                          if (isCustomCategory) return p.categoryId === categoryKey;
+                          return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
+                                 p.categoryId === catId;
+                        })).map((profession) => {
+                          const isSelected = selectedProfessions.includes(profession.id);
+                          const isPrimary = primaryProfession === profession.id;
+                          return (
+                            <button
+                              key={profession.id}
+                              onClick={() => toggleProfession(profession.id)}
+                              className={cn(
+                                "relative flex flex-col items-center p-3 bg-gray-50 rounded-lg border-2 transition-all",
+                                isSelected
+                                  ? "border-blue-500 bg-blue-50"
+                                  : "border-gray-200 hover:border-gray-300"
+                              )}
+                            >
+                              {isSelected && (
+                                <div className={cn(
+                                  "absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center",
+                                  isPrimary ? "bg-yellow-500" : "bg-blue-500"
+                                )}>
+                                  <Check className="h-3 w-3 text-white" />
+                                </div>
+                              )}
+                              <span className="text-2xl mb-1">{profession.emoji}</span>
+                              <span className="text-xs font-medium text-center">
+                                {getProfessionName(profession)}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -526,7 +621,7 @@ function WorkerOnboardingContent() {
             </div>
           )}
 
-          {/* Step 3: Hourly Rate */}
+          {/* Step 3: Hourly Rate per Profession */}
           {step === 3 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
@@ -536,34 +631,62 @@ function WorkerOnboardingContent() {
                 {t("workerOnboarding.step3Desc")}
               </p>
 
-              <Card className="max-w-md mx-auto">
-                <CardContent className="pt-6">
-                  <div className="text-center mb-6">
-                    <div className="inline-flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-blue-600">€</span>
-                      <Input
-                        type="number"
-                        value={hourlyRate}
-                        onChange={(e) => setHourlyRate(e.target.value)}
-                        className="w-32 text-4xl font-bold text-center border-none shadow-none focus-visible:ring-0 p-0"
-                        min="1"
-                        max="500"
-                      />
-                      <span className="text-xl text-gray-500">/{t("workerOnboarding.hour")}</span>
-                    </div>
-                  </div>
+              <Card className="max-w-lg mx-auto">
+                <CardContent className="pt-6 space-y-4">
+                  {selectedProfessions.map((profId) => {
+                    const profession = professions.find((p) => p.id === profId);
+                    if (!profession) return null;
 
-                  <div className="flex justify-center gap-2 mb-4">
-                    {[15, 25, 35, 50, 75].map((rate) => (
-                      <Button
-                        key={rate}
-                        variant={hourlyRate === String(rate) ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setHourlyRate(String(rate))}
+                    return (
+                      <div
+                        key={profId}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                       >
-                        €{rate}
-                      </Button>
-                    ))}
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{profession.emoji}</span>
+                          <span className="font-medium">{getProfessionName(profession)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-blue-600">€</span>
+                          <Input
+                            type="number"
+                            value={professionRates[profId] || "25"}
+                            onChange={(e) => setProfessionRates((prev) => ({
+                              ...prev,
+                              [profId]: e.target.value,
+                            }))}
+                            className="w-20 text-center font-semibold"
+                            min="1"
+                            max="500"
+                          />
+                          <span className="text-gray-500">/{t("workerOnboarding.hour")}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-gray-500 text-center mb-3">
+                      {t("workerOnboarding.quickSetAll")}
+                    </p>
+                    <div className="flex justify-center gap-2 flex-wrap">
+                      {[15, 25, 35, 50, 75].map((rate) => (
+                        <Button
+                          key={rate}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const newRates: Record<string, string> = {};
+                            selectedProfessions.forEach((id) => {
+                              newRates[id] = String(rate);
+                            });
+                            setProfessionRates(newRates);
+                          }}
+                        >
+                          €{rate}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
 
                   <p className="text-sm text-gray-500 text-center">
@@ -754,19 +877,40 @@ function WorkerOnboardingContent() {
                   </CardContent>
                 </Card>
 
-                {/* Rate & Availability */}
+                {/* Rates */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Briefcase className="h-5 w-5" />
+                      {t("workerOnboarding.reviewRates")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {selectedProfessions.map((profId) => {
+                      const prof = professions.find((p) => p.id === profId);
+                      return (
+                        <div key={profId} className="flex justify-between items-center">
+                          <span className="text-sm">
+                            {prof?.emoji} {prof ? getProfessionName(prof) : profId}
+                          </span>
+                          <span className="font-medium">
+                            €{professionRates[profId] || "25"}/{t("workerOnboarding.hour")}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+
+                {/* Availability */}
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Clock className="h-5 w-5" />
-                      {t("workerOnboarding.reviewRateAvailability")}
+                      {t("workerOnboarding.reviewAvailability")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <p>
-                      <span className="font-medium">{t("workerOnboarding.hourlyRate")}:</span>{" "}
-                      €{hourlyRate}/{t("workerOnboarding.hour")}
-                    </p>
                     <p>
                       <span className="font-medium">{t("workerOnboarding.workingDays")}:</span>{" "}
                       {availability
