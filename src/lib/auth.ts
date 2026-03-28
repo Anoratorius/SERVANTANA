@@ -186,6 +186,9 @@ export const authOptions: NextAuthConfig = {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: {
+            firstName: true,
+            lastName: true,
+            role: true,
             tokenVersion: true,
             status: true,
             suspendedUntil: true,
@@ -201,7 +204,10 @@ export const authOptions: NextAuthConfig = {
           return {} as typeof token;
         }
 
-        // Update status in token (in case admin changed it)
+        // Update token with latest user data
+        token.firstName = dbUser.firstName;
+        token.lastName = dbUser.lastName;
+        token.role = dbUser.role;
         token.status = dbUser.status;
         token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
         token.locationVerified = !!dbUser.locationVerifiedAt;
