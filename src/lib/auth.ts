@@ -145,7 +145,20 @@ export const authOptions: NextAuthConfig = {
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
-          select: { id: true, role: true, firstName: true, lastName: true, tokenVersion: true, emailVerified: true, status: true, suspendedUntil: true },
+          select: {
+            id: true,
+            role: true,
+            firstName: true,
+            lastName: true,
+            tokenVersion: true,
+            emailVerified: true,
+            status: true,
+            suspendedUntil: true,
+            locationVerifiedAt: true,
+            cleanerProfile: {
+              select: { onboardingComplete: true }
+            }
+          },
         });
 
         if (dbUser) {
@@ -157,6 +170,8 @@ export const authOptions: NextAuthConfig = {
           token.isEmailVerified = !!dbUser.emailVerified;
           token.status = dbUser.status;
           token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
+          token.locationVerified = !!dbUser.locationVerifiedAt;
+          token.onboardingComplete = dbUser.cleanerProfile?.onboardingComplete ?? false;
         }
 
         // Check remember me preference on initial sign in
@@ -170,7 +185,15 @@ export const authOptions: NextAuthConfig = {
         // On subsequent requests, verify tokenVersion hasn't changed (password reset) and check status
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { tokenVersion: true, status: true, suspendedUntil: true },
+          select: {
+            tokenVersion: true,
+            status: true,
+            suspendedUntil: true,
+            locationVerifiedAt: true,
+            cleanerProfile: {
+              select: { onboardingComplete: true }
+            }
+          },
         });
 
         if (!dbUser || dbUser.tokenVersion !== token.tokenVersion) {
@@ -181,6 +204,8 @@ export const authOptions: NextAuthConfig = {
         // Update status in token (in case admin changed it)
         token.status = dbUser.status;
         token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
+        token.locationVerified = !!dbUser.locationVerifiedAt;
+        token.onboardingComplete = dbUser.cleanerProfile?.onboardingComplete ?? false;
 
         // If user is banned, invalidate session
         if (dbUser.status === "BANNED") {

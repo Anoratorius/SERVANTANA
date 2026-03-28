@@ -7,7 +7,10 @@ export const runtime = 'edge';
 // JWT token structure from NextAuth
 interface SessionToken {
   id?: string;
+  role?: string;
   isEmailVerified?: boolean;
+  locationVerified?: boolean;
+  onboardingComplete?: boolean;
   exp?: number;
 }
 
@@ -64,6 +67,20 @@ const EMAIL_VERIFICATION_BYPASS_PATHS = [
   '/forgot-password',
 ];
 
+// Paths that bypass worker onboarding check
+const WORKER_ONBOARDING_BYPASS_PATHS = [
+  '/coming-soon',
+  '/email-verification-required',
+  '/verify-email',
+  '/login',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+  '/worker/onboarding',
+  '/admin',
+  '/api',
+];
+
 // Check if path should bypass email verification
 function shouldBypassEmailVerification(pathname: string): boolean {
   // Remove locale prefix if present
@@ -79,6 +96,21 @@ function shouldBypassEmailVerification(pathname: string): boolean {
   // All API auth routes bypass
   if (pathWithoutLocale.startsWith('/api/auth')) {
     return true;
+  }
+
+  return false;
+}
+
+// Check if path should bypass worker onboarding check
+function shouldBypassWorkerOnboarding(pathname: string): boolean {
+  // Remove locale prefix if present
+  const pathWithoutLocale = pathname.replace(/^\/(en|de)/, '') || '/';
+
+  // Check exact matches and prefixes
+  for (const bypassPath of WORKER_ONBOARDING_BYPASS_PATHS) {
+    if (pathWithoutLocale === bypassPath || pathWithoutLocale.startsWith(bypassPath + '/')) {
+      return true;
+    }
   }
 
   return false;
@@ -158,6 +190,25 @@ export default function middleware(request: NextRequest) {
       const localeMatch = pathname.match(/^\/(en|de)/);
       const locale = localeMatch ? localeMatch[1] : 'en';
       url.pathname = `/${locale}/email-verification-required`;
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Check worker onboarding for CLEANER users
+  if (!shouldBypassWorkerOnboarding(pathname)) {
+    const token = getSessionToken(request);
+
+    // If user is a CLEANER with verified location but incomplete onboarding, redirect
+    if (
+      token?.id &&
+      token.role === 'CLEANER' &&
+      token.locationVerified === true &&
+      token.onboardingComplete !== true
+    ) {
+      const url = request.nextUrl.clone();
+      const localeMatch = pathname.match(/^\/(en|de)/);
+      const locale = localeMatch ? localeMatch[1] : 'en';
+      url.pathname = `/${locale}/worker/onboarding`;
       return NextResponse.redirect(url);
     }
   }
