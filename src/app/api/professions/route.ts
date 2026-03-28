@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
           select: { id: true, name: true, nameDE: true, emoji: true },
         },
         _count: {
-          select: { cleaners: true },
+          select: { workers: true },
         },
       },
       orderBy: { name: "asc" },
