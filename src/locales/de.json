@@ -1513,7 +1513,16 @@
     "completeStep": "Bitte schließen Sie diesen Schritt ab, bevor Sie fortfahren",
     "fetchError": "Laden fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
-    "completed": "Willkommen! Ihr Profil ist jetzt online."
+    "completed": "Willkommen! Ihr Profil ist jetzt online.",
+    "createYours": "Eigene erstellen",
+    "suggestCategory": "Kategorie vorschlagen",
+    "categoryName": "Kategoriename",
+    "categoryNamePlaceholder": "z.B. Haustierdienste",
+    "categoryEmoji": "Emoji (optional)",
+    "suggestionNote": "Ihr Vorschlag wird von unserem Team geprüft und bei Genehmigung hinzugefügt.",
+    "categorySuggestionSubmitted": "Kategorievorschlag eingereicht! Er wird bald überprüft.",
+    "suggestionFailed": "Vorschlag konnte nicht eingereicht werden",
+    "enterCategoryName": "Bitte geben Sie einen Kategorienamen ein"
   },
   "days": {
     "sunday": "Sonntag",

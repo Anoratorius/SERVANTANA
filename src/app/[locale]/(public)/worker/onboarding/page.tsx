@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle } from "lucide-react";
+import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -117,6 +117,12 @@ function WorkerOnboardingContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingProfessions, setIsFetchingProfessions] = useState(false);
+
+  // Category suggestion
+  const [showSuggestCategory, setShowSuggestCategory] = useState(false);
+  const [suggestCategoryName, setSuggestCategoryName] = useState("");
+  const [suggestCategoryEmoji, setSuggestCategoryEmoji] = useState("");
+  const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
 
   // Redirect if not authenticated or not a worker
   useEffect(() => {
@@ -270,6 +276,39 @@ function WorkerOnboardingContent() {
   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1);
+    }
+  };
+
+  const handleSubmitCategorySuggestion = async () => {
+    if (!suggestCategoryName.trim()) {
+      toast.error(t("workerOnboarding.enterCategoryName"));
+      return;
+    }
+
+    setIsSubmittingSuggestion(true);
+    try {
+      const response = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: suggestCategoryName.trim(),
+          emoji: suggestCategoryEmoji || "📁",
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t("workerOnboarding.categorySuggestionSubmitted"));
+        setShowSuggestCategory(false);
+        setSuggestCategoryName("");
+        setSuggestCategoryEmoji("");
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("workerOnboarding.suggestionFailed"));
+      }
+    } catch {
+      toast.error(t("workerOnboarding.suggestionFailed"));
+    } finally {
+      setIsSubmittingSuggestion(false);
     }
   };
 
@@ -476,7 +515,81 @@ function WorkerOnboardingContent() {
                     </button>
                   );
                 })}
+
+                {/* Create yours / Suggest category */}
+                <button
+                  onClick={() => setShowSuggestCategory(true)}
+                  className="relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[100px] sm:min-h-[120px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 transition-all hover:border-blue-400 hover:bg-blue-50"
+                >
+                  <Plus className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 mb-2" />
+                  <span className="text-xs sm:text-sm font-medium text-center leading-tight text-gray-600">
+                    {t("workerOnboarding.createYours")}
+                  </span>
+                </button>
               </div>
+
+              {/* Suggest Category Dialog */}
+              {showSuggestCategory && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">{t("workerOnboarding.suggestCategory")}</h3>
+                      <button
+                        onClick={() => setShowSuggestCategory(false)}
+                        className="p-1 hover:bg-gray-100 rounded-full"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="categoryName">{t("workerOnboarding.categoryName")}</Label>
+                        <Input
+                          id="categoryName"
+                          value={suggestCategoryName}
+                          onChange={(e) => setSuggestCategoryName(e.target.value)}
+                          placeholder={t("workerOnboarding.categoryNamePlaceholder")}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="categoryEmoji">{t("workerOnboarding.categoryEmoji")}</Label>
+                        <Input
+                          id="categoryEmoji"
+                          value={suggestCategoryEmoji}
+                          onChange={(e) => setSuggestCategoryEmoji(e.target.value)}
+                          placeholder="📁"
+                          className="mt-1 w-20"
+                          maxLength={4}
+                        />
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {t("workerOnboarding.suggestionNote")}
+                      </p>
+                      <div className="flex gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowSuggestCategory(false)}
+                          className="flex-1"
+                        >
+                          {t("common.cancel")}
+                        </Button>
+                        <Button
+                          onClick={handleSubmitCategorySuggestion}
+                          disabled={isSubmittingSuggestion || !suggestCategoryName.trim()}
+                          className="flex-1"
+                        >
+                          {isSubmittingSuggestion ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            t("common.submit")
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {selectedCategories.length > 0 && (
                 <p className="text-center text-sm text-blue-600 mt-4">
