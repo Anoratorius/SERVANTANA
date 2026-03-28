@@ -69,6 +69,10 @@ export default function LocationVerificationProvider({
   const handleLocationVerified = async () => {
     setNeedsVerification(false);
 
+    // Extract locale from current pathname (e.g., /en/dashboard -> en)
+    const localeMatch = pathname.match(/^\/(en|de)/);
+    const locale = localeMatch ? localeMatch[1] : "en";
+
     // For workers, check if they need onboarding and redirect directly
     if (session?.user?.role === "CLEANER") {
       try {
@@ -77,17 +81,17 @@ export default function LocationVerificationProvider({
           const data = await response.json();
           if (!data.profile || data.profile.onboardingComplete !== true) {
             // Worker needs onboarding - redirect directly
-            router.push("/worker/onboarding");
+            router.push(`/${locale}/worker/onboarding`);
             return;
           }
         } else {
           // No profile or error - redirect to onboarding
-          router.push("/worker/onboarding");
+          router.push(`/${locale}/worker/onboarding`);
           return;
         }
       } catch {
         // On error, redirect to onboarding to be safe
-        router.push("/worker/onboarding");
+        router.push(`/${locale}/worker/onboarding`);
         return;
       }
     }
