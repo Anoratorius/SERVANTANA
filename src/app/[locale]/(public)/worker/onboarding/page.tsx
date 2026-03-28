@@ -565,57 +565,6 @@ function WorkerOnboardingContent() {
                     );
                   })}
 
-                  {/* Show professions without category match */}
-                  {professions.filter((p) => !selectedCategories.some((catId) => {
-                    const isCustomCategory = catId.startsWith("custom:");
-                    const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
-                    if (isCustomCategory) return p.categoryId === categoryKey;
-                    return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
-                           p.categoryId === catId;
-                  })).length > 0 && (
-                    <div className="bg-white rounded-xl p-4 border border-gray-200">
-                      <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                        📋 {t("workerOnboarding.otherProfessions")}
-                      </h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {professions.filter((p) => !selectedCategories.some((catId) => {
-                          const isCustomCategory = catId.startsWith("custom:");
-                          const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
-                          if (isCustomCategory) return p.categoryId === categoryKey;
-                          return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
-                                 p.categoryId === catId;
-                        })).map((profession) => {
-                          const isSelected = selectedProfessions.includes(profession.id);
-                          const isPrimary = primaryProfession === profession.id;
-                          return (
-                            <button
-                              key={profession.id}
-                              onClick={() => toggleProfession(profession.id)}
-                              className={cn(
-                                "relative flex flex-col items-center p-3 bg-gray-50 rounded-lg border-2 transition-all",
-                                isSelected
-                                  ? "border-blue-500 bg-blue-50"
-                                  : "border-gray-200 hover:border-gray-300"
-                              )}
-                            >
-                              {isSelected && (
-                                <div className={cn(
-                                  "absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center",
-                                  isPrimary ? "bg-yellow-500" : "bg-blue-500"
-                                )}>
-                                  <Check className="h-3 w-3 text-white" />
-                                </div>
-                              )}
-                              <span className="text-2xl mb-1">{profession.emoji}</span>
-                              <span className="text-xs font-medium text-center">
-                                {getProfessionName(profession)}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
 
@@ -917,13 +866,27 @@ function WorkerOnboardingContent() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <p>
-                      <span className="font-medium">{t("workerOnboarding.workingDays")}:</span>{" "}
-                      {availability
-                        .filter((s) => s.isActive)
-                        .map((s) => t(`days.${DAYS_OF_WEEK.find((d) => d.value === s.dayOfWeek)?.key}`))
-                        .join(", ")}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.workingDays")}</span>
+                      <span className="font-medium text-right text-sm">
+                        {availability
+                          .filter((s) => s.isActive)
+                          .map((s) => t(`days.${DAYS_OF_WEEK.find((d) => d.value === s.dayOfWeek)?.key}`))
+                          .join(", ")}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.workingHours")}</span>
+                      <span className="font-medium text-sm">
+                        {(() => {
+                          const activeSlots = availability.filter((s) => s.isActive);
+                          if (activeSlots.length === 0) return "-";
+                          const times = activeSlots.map((s) => `${s.startTime}-${s.endTime}`);
+                          const uniqueTimes = [...new Set(times)];
+                          return uniqueTimes.join(", ");
+                        })()}
+                      </span>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -938,7 +901,7 @@ function WorkerOnboardingContent() {
                   <CardContent className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">{t("workerOnboarding.experience")}</span>
-                      <span className="font-medium">{experienceYears} {t("workerOnboarding.years")}</span>
+                      <span className="font-medium">{experienceYears} {parseInt(experienceYears) === 1 ? t("workerOnboarding.year") : t("workerOnboarding.years")}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">{t("workerOnboarding.serviceRadius")}</span>
