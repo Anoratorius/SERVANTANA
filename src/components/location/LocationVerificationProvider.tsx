@@ -73,30 +73,24 @@ export default function LocationVerificationProvider({
     const localeMatch = pathname.match(/^\/(en|de)/);
     const locale = localeMatch ? localeMatch[1] : "en";
 
-    // For workers, check if they need onboarding and redirect directly
-    if (session?.user?.role === "CLEANER") {
-      try {
-        const response = await fetch("/api/cleaner/profile");
-        if (response.ok) {
-          const data = await response.json();
-          if (!data.profile || data.profile.onboardingComplete !== true) {
-            // Worker needs onboarding - redirect directly
-            router.push(`/${locale}/worker/onboarding`);
-            return;
-          }
-        } else {
-          // No profile or error - redirect to onboarding
+    // Check if user is a worker who needs onboarding (don't rely on client session role)
+    try {
+      const response = await fetch("/api/cleaner/profile");
+      if (response.ok) {
+        // User is a worker - check if onboarding is complete
+        const data = await response.json();
+        if (!data.profile || data.profile.onboardingComplete !== true) {
+          // Worker needs onboarding - redirect directly
           router.push(`/${locale}/worker/onboarding`);
           return;
         }
-      } catch {
-        // On error, redirect to onboarding to be safe
-        router.push(`/${locale}/worker/onboarding`);
-        return;
       }
+      // If 403 (not a worker) or onboarding complete, fall through to reload
+    } catch {
+      // On network error, just reload
     }
 
-    // For customers or workers with completed onboarding, just reload
+    // For customers or workers with completed onboarding, reload to refresh session
     window.location.reload();
   };
 
