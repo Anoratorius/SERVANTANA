@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     // Build cleaner profile filter conditions
     // Only show workers who completed onboarding and are active
-    const profileFilters: Prisma.CleanerProfileWhereInput = {
+    const profileFilters: Prisma.WorkerProfileWhereInput = {
       onboardingComplete: true,
       isActive: true,
     };
