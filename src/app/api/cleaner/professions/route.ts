@@ -150,6 +150,83 @@ export async function POST(request: NextRequest) {
   }
 }
 
+const updateProfessionSchema = z.object({
+  professionId: z.string(),
+  hourlyRate: z.number().positive().optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+// PUT - update a profession's settings (hourly rate, primary status)
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const validation = updateProfessionSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: validation.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { professionId, hourlyRate, isPrimary } = validation.data;
+
+    // Get worker profile
+    const workerProfile = await prisma.workerProfile.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (!workerProfile) {
+      return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
+    }
+
+    // If setting as primary, unset other primaries
+    if (isPrimary) {
+      await prisma.workerProfession.updateMany({
+        where: { workerId: workerProfile.id },
+        data: { isPrimary: false },
+      });
+    }
+
+    // Update the profession
+    const updatedProfession = await prisma.workerProfession.update({
+      where: {
+        workerId_professionId: {
+          workerId: workerProfile.id,
+          professionId,
+        },
+      },
+      data: {
+        ...(hourlyRate !== undefined && { hourlyRate }),
+        ...(isPrimary !== undefined && { isPrimary }),
+      },
+      include: {
+        profession: {
+          include: {
+            category: {
+              select: { id: true, name: true, nameDE: true, emoji: true },
+            },
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(updatedProfession);
+  } catch (error) {
+    console.error("Failed to update profession:", error);
+    return NextResponse.json(
+      { error: "Failed to update profession" },
+      { status: 500 }
+    );
+  }
+}
+
 const removeProfessionSchema = z.object({
   professionId: z.string(),
 });

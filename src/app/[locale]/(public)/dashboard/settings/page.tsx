@@ -12,7 +12,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   User,
   Briefcase,
@@ -36,20 +35,36 @@ import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-interface Service {
+interface WorkerProfession {
   id: string;
-  name: string;
-  description: string | null;
-  basePrice: number;
-  duration: number;
+  professionId: string;
+  isPrimary: boolean;
+  hourlyRate: number | null;
+  profession: {
+    id: string;
+    name: string;
+    nameDE: string | null;
+    emoji: string;
+    category: {
+      id: string;
+      name: string;
+      nameDE: string | null;
+      emoji: string;
+    } | null;
+  };
 }
 
-interface CleanerService {
+interface Profession {
   id: string;
-  serviceId: string;
-  customPrice: number | null;
-  isActive: boolean;
-  service: Service;
+  name: string;
+  nameDE: string | null;
+  emoji: string;
+  category: {
+    id: string;
+    name: string;
+    nameDE: string | null;
+    emoji: string;
+  } | null;
 }
 
 interface Availability {
@@ -84,16 +99,6 @@ const DAYS = [
   { value: 6, label: "Saturday" },
 ];
 
-const SERVICE_NAMES: Record<string, string> = {
-  regular: "Regular Cleaning",
-  deep: "Deep Cleaning",
-  moveInOut: "Move In/Out Cleaning",
-  office: "Office Cleaning",
-  window: "Window Cleaning",
-  carpet: "Carpet Cleaning",
-  laundry: "Laundry Service",
-  organizing: "Organizing",
-};
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -102,7 +107,9 @@ export default function SettingsPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [allServices, setAllServices] = useState<Service[]>([]);
+  const [workerProfessions, setWorkerProfessions] = useState<WorkerProfession[]>([]);
+  const [allProfessions, setAllProfessions] = useState<Profession[]>([]);
+  const [showAddProfession, setShowAddProfession] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -126,10 +133,6 @@ export default function SettingsPage() {
       : "UTC",
     paypalEmail: "",
   });
-
-  const [selectedServices, setSelectedServices] = useState<
-    Map<string, { selected: boolean; customPrice: number | null }>
-  >(new Map());
 
   const [availability, setAvailability] = useState<
     Map<number, { enabled: boolean; startTime: string; endTime: string }>
@@ -194,9 +197,10 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [profileRes, servicesRes, videoRes, walletsRes, stripeRes] = await Promise.all([
+        const [profileRes, professionsRes, allProfessionsRes, videoRes, walletsRes, stripeRes] = await Promise.all([
           fetch("/api/cleaner/profile"),
-          fetch("/api/cleaner/services"),
+          fetch("/api/cleaner/professions"),
+          fetch("/api/professions"),
           fetch("/api/cleaner/video"),
           fetch("/api/cleaner/wallets"),
           fetch("/api/stripe/connect"),
@@ -267,22 +271,16 @@ export default function SettingsPage() {
           }
         }
 
-        if (servicesRes.ok) {
-          const servicesData = await servicesRes.json();
-          setAllServices(servicesData.allServices || []);
+        // Load worker's professions
+        if (professionsRes.ok) {
+          const professionsData = await professionsRes.json();
+          setWorkerProfessions(professionsData || []);
+        }
 
-          // Set selected services
-          const servMap = new Map<string, { selected: boolean; customPrice: number | null }>();
-          servicesData.allServices?.forEach((s: Service) => {
-            const existing = servicesData.workerServices?.find(
-              (cs: CleanerService) => cs.serviceId === s.id
-            );
-            servMap.set(s.id, {
-              selected: !!existing,
-              customPrice: existing?.customPrice ?? null,
-            });
-          });
-          setSelectedServices(servMap);
+        // Load all available professions
+        if (allProfessionsRes.ok) {
+          const allProfessionsData = await allProfessionsRes.json();
+          setAllProfessions(allProfessionsData || []);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -319,33 +317,102 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSaveServices = async () => {
-    setIsSaving(true);
+  const handleUpdateProfessionRate = async (professionId: string, hourlyRate: number) => {
     try {
-      const services = Array.from(selectedServices.entries())
-        .filter(([, value]) => value.selected)
-        .map(([serviceId, value]) => ({
-          serviceId,
-          customPrice: value.customPrice,
-          isActive: true,
-        }));
-
-      const response = await fetch("/api/cleaner/services", {
+      const response = await fetch("/api/cleaner/professions", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ services }),
+        body: JSON.stringify({ professionId, hourlyRate }),
       });
 
       if (response.ok) {
-        toast.success("Services updated successfully!");
+        const updated = await response.json();
+        setWorkerProfessions((prev) =>
+          prev.map((p) => (p.professionId === professionId ? updated : p))
+        );
+        toast.success("Rate updated!");
       } else {
         const data = await response.json();
-        toast.error(data.error || "Failed to update services");
+        toast.error(data.error || "Failed to update rate");
       }
     } catch {
-      toast.error("Failed to update services");
+      toast.error("Failed to update rate");
+    }
+  };
+
+  const handleSetPrimaryProfession = async (professionId: string) => {
+    try {
+      const response = await fetch("/api/cleaner/professions", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ professionId, isPrimary: true }),
+      });
+
+      if (response.ok) {
+        // Update all professions - set the selected one as primary, others as not
+        setWorkerProfessions((prev) =>
+          prev.map((p) => ({
+            ...p,
+            isPrimary: p.professionId === professionId,
+          }))
+        );
+        toast.success("Primary profession updated!");
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to update");
+      }
+    } catch {
+      toast.error("Failed to update");
+    }
+  };
+
+  const handleAddProfession = async (professionId: string) => {
+    setIsSaving(true);
+    try {
+      const response = await fetch("/api/cleaner/professions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ professionId, hourlyRate: formData.hourlyRate }),
+      });
+
+      if (response.ok) {
+        const newProfession = await response.json();
+        setWorkerProfessions((prev) => [...prev, newProfession]);
+        setShowAddProfession(false);
+        toast.success("Profession added!");
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to add profession");
+      }
+    } catch {
+      toast.error("Failed to add profession");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleRemoveProfession = async (professionId: string) => {
+    if (workerProfessions.length <= 1) {
+      toast.error("You must have at least one profession");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/cleaner/professions", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ professionId }),
+      });
+
+      if (response.ok) {
+        setWorkerProfessions((prev) => prev.filter((p) => p.professionId !== professionId));
+        toast.success("Profession removed!");
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to remove profession");
+      }
+    } catch {
+      toast.error("Failed to remove profession");
     }
   };
 
@@ -416,9 +483,9 @@ export default function SettingsPage() {
                 <User className="h-4 w-4" />
                 Profile
               </TabsTrigger>
-              <TabsTrigger value="services" className="gap-2">
+              <TabsTrigger value="professions" className="gap-2">
                 <Briefcase className="h-4 w-4" />
-                Services
+                Professions
               </TabsTrigger>
               <TabsTrigger value="availability" className="gap-2">
                 <Clock className="h-4 w-4" />
@@ -1084,97 +1151,127 @@ export default function SettingsPage() {
               </div>
             </TabsContent>
 
-            {/* Services Tab */}
-            <TabsContent value="services">
+            {/* Professions Tab */}
+            <TabsContent value="professions">
               <Card>
                 <CardHeader>
-                  <CardTitle>Services You Offer</CardTitle>
+                  <CardTitle>Your Professions</CardTitle>
                   <CardDescription>
-                    Select the services you provide and optionally set custom prices
+                    Manage your professions and set hourly rates for each
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {allServices.map((service) => {
-                    const serviceState = selectedServices.get(service.id) || {
-                      selected: false,
-                      customPrice: null,
-                    };
-
-                    return (
+                  {workerProfessions.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground mb-4">
+                        No professions added yet. Add your first profession to get started.
+                      </p>
+                    </div>
+                  ) : (
+                    workerProfessions.map((wp) => (
                       <div
-                        key={service.id}
+                        key={wp.id}
                         className={`p-4 rounded-lg border transition-colors ${
-                          serviceState.selected
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200"
+                          wp.isPrimary
+                            ? "border-yellow-500 bg-yellow-50"
+                            : "border-gray-200 bg-gray-50"
                         }`}
                       >
-                        <div className="flex items-start gap-4">
-                          <Checkbox
-                            id={`service-${service.id}`}
-                            checked={serviceState.selected}
-                            onCheckedChange={(checked) => {
-                              const newMap = new Map(selectedServices);
-                              newMap.set(service.id, {
-                                ...serviceState,
-                                selected: !!checked,
-                              });
-                              setSelectedServices(newMap);
-                            }}
-                          />
+                        <div className="flex items-center gap-4">
+                          <div className="text-3xl">{wp.profession.emoji}</div>
                           <div className="flex-1">
-                            <label
-                              htmlFor={`service-${service.id}`}
-                              className="font-medium cursor-pointer"
-                            >
-                              {SERVICE_NAMES[service.name] || service.name}
-                            </label>
-                            <p className="text-sm text-muted-foreground">
-                              {service.description || `~${service.duration} minutes`}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Base price: ${service.basePrice}
-                            </p>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{wp.profession.name}</span>
+                              {wp.isPrimary && (
+                                <span className="px-2 py-0.5 text-xs bg-yellow-200 text-yellow-800 rounded-full">
+                                  Primary
+                                </span>
+                              )}
+                            </div>
+                            {wp.profession.category && (
+                              <p className="text-sm text-muted-foreground">
+                                {wp.profession.category.emoji} {wp.profession.category.name}
+                              </p>
+                            )}
                           </div>
-                          {serviceState.selected && (
-                            <div className="w-32">
-                              <Label className="text-xs">Custom Price ($)</Label>
+                          <div className="flex items-center gap-2">
+                            <div className="w-24">
+                              <Label className="text-xs">€/hour</Label>
                               <Input
                                 type="number"
-                                min="0"
-                                placeholder={service.basePrice.toString()}
-                                value={serviceState.customPrice || ""}
+                                min="1"
+                                max="500"
+                                value={wp.hourlyRate || formData.hourlyRate}
                                 onChange={(e) => {
-                                  const newMap = new Map(selectedServices);
-                                  newMap.set(service.id, {
-                                    ...serviceState,
-                                    customPrice: e.target.value
-                                      ? parseFloat(e.target.value)
-                                      : null,
-                                  });
-                                  setSelectedServices(newMap);
+                                  const rate = parseFloat(e.target.value);
+                                  if (rate > 0) {
+                                    handleUpdateProfessionRate(wp.professionId, rate);
+                                  }
                                 }}
+                                className="h-8"
                               />
                             </div>
-                          )}
+                            {!wp.isPrimary && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleSetPrimaryProfession(wp.professionId)}
+                                title="Set as primary"
+                              >
+                                ⭐
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveProfession(wp.professionId)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))
+                  )}
 
-                  <Button
-                    onClick={handleSaveServices}
-                    disabled={isSaving}
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600"
-                    size="lg"
-                  >
-                    {isSaving ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Save className="h-4 w-4 mr-2" />
-                    )}
-                    Save Services
-                  </Button>
+                  {/* Add Profession Section */}
+                  {showAddProfession ? (
+                    <div className="border-2 border-dashed border-blue-300 rounded-lg p-4 bg-blue-50">
+                      <h4 className="font-medium mb-3">Add a Profession</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+                        {allProfessions
+                          .filter((p) => !workerProfessions.some((wp) => wp.professionId === p.id))
+                          .map((profession) => (
+                            <button
+                              key={profession.id}
+                              onClick={() => handleAddProfession(profession.id)}
+                              disabled={isSaving}
+                              className="flex items-center gap-2 p-2 rounded-lg border bg-white hover:bg-gray-50 transition-colors text-left"
+                            >
+                              <span className="text-xl">{profession.emoji}</span>
+                              <span className="text-sm truncate">{profession.name}</span>
+                            </button>
+                          ))}
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowAddProfession(false)}
+                        className="mt-3"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowAddProfession(true)}
+                      className="w-full border-dashed"
+                    >
+                      + Add Profession
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
