@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +27,7 @@ const LocationPicker = dynamic(() => import("./LocationPicker"), {
 
 interface LocationVerificationModalProps {
   isOpen: boolean;
-  onLocationVerified: (redirectTo: string | null) => void;
+  onLocationVerified: () => void;
 }
 
 export default function LocationVerificationModal({
@@ -34,6 +35,7 @@ export default function LocationVerificationModal({
   onLocationVerified,
 }: LocationVerificationModalProps) {
   const t = useTranslations();
+  const pathname = usePathname();
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
@@ -68,7 +70,17 @@ export default function LocationVerificationModal({
       if (response.ok) {
         const result = await response.json();
         toast.success(t("location.locationVerified"));
-        onLocationVerified(result.redirectTo || null);
+
+        // Extract locale and redirect directly
+        const localeMatch = pathname.match(/^\/(en|de)/);
+        const locale = localeMatch ? localeMatch[1] : "en";
+
+        if (result.redirectTo) {
+          window.location.href = `/${locale}${result.redirectTo}`;
+        } else {
+          window.location.reload();
+        }
+        return; // Exit early, navigation is happening
       } else {
         const data = await response.json();
         toast.error(data.error || t("location.verificationFailed"));

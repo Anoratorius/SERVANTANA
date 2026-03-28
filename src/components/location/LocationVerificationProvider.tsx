@@ -65,18 +65,9 @@ export default function LocationVerificationProvider({
     checkLocationVerification();
   }, [session, status, pathname]);
 
-  const handleLocationVerified = (redirectTo: string | null) => {
-    // Extract locale from current pathname (e.g., /en/dashboard -> en)
-    const localeMatch = pathname.match(/^\/(en|de)/);
-    const locale = localeMatch ? localeMatch[1] : "en";
-
-    if (redirectTo) {
-      // Worker needs onboarding - full page navigation
-      window.location.href = `/${locale}${redirectTo}`;
-    } else {
-      // Customer or worker with completed onboarding - reload to refresh session
-      window.location.reload();
-    }
+  // Modal handles redirect directly now, this is just for interface compatibility
+  const handleLocationVerified = () => {
+    // Navigation is handled directly in the modal
   };
 
   // Don't render modal while checking or on excluded paths
