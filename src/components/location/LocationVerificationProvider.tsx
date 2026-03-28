@@ -65,28 +65,18 @@ export default function LocationVerificationProvider({
     checkLocationVerification();
   }, [session, status, pathname]);
 
-  const handleLocationVerified = async () => {
+  const handleLocationVerified = (redirectTo: string | null) => {
     // Extract locale from current pathname (e.g., /en/dashboard -> en)
     const localeMatch = pathname.match(/^\/(en|de)/);
     const locale = localeMatch ? localeMatch[1] : "en";
 
-    // Check if user is a worker who needs onboarding
-    try {
-      const response = await fetch("/api/cleaner/profile");
-      if (response.ok) {
-        const data = await response.json();
-        if (!data.profile || data.profile.onboardingComplete !== true) {
-          // Worker needs onboarding - use full page navigation to trigger middleware
-          window.location.href = `/${locale}/worker/onboarding`;
-          return;
-        }
-      }
-    } catch {
-      // On error, fall through to reload
+    if (redirectTo) {
+      // Worker needs onboarding - full page navigation
+      window.location.href = `/${locale}${redirectTo}`;
+    } else {
+      // Customer or worker with completed onboarding - reload to refresh session
+      window.location.reload();
     }
-
-    // For customers or workers with completed onboarding, reload to refresh session
-    window.location.reload();
   };
 
   // Don't render modal while checking or on excluded paths

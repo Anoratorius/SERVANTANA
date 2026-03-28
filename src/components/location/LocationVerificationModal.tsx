@@ -26,7 +26,7 @@ const LocationPicker = dynamic(() => import("./LocationPicker"), {
 
 interface LocationVerificationModalProps {
   isOpen: boolean;
-  onLocationVerified: () => void;
+  onLocationVerified: (redirectTo: string | null) => void;
 }
 
 export default function LocationVerificationModal({
@@ -66,8 +66,9 @@ export default function LocationVerificationModal({
       });
 
       if (response.ok) {
+        const result = await response.json();
         toast.success(t("location.locationVerified"));
-        onLocationVerified();
+        onLocationVerified(result.redirectTo || null);
       } else {
         const data = await response.json();
         toast.error(data.error || t("location.verificationFailed"));

@@ -76,9 +76,24 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Check if user is a worker who needs onboarding
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        role: true,
+        workerProfile: {
+          select: { onboardingComplete: true },
+        },
+      },
+    });
+
+    const isWorker = user?.role === "CLEANER";
+    const needsOnboarding = isWorker && user?.workerProfile?.onboardingComplete !== true;
+
     return NextResponse.json({
       success: true,
       user: updatedUser,
+      redirectTo: needsOnboarding ? "/worker/onboarding" : null,
     });
   } catch (error) {
     console.error("Location verification error:", error);
