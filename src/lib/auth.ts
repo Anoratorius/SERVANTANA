@@ -150,6 +150,7 @@ export const authOptions: NextAuthConfig = {
             role: true,
             firstName: true,
             lastName: true,
+            avatar: true,
             tokenVersion: true,
             emailVerified: true,
             status: true,
@@ -166,6 +167,7 @@ export const authOptions: NextAuthConfig = {
           token.role = dbUser.role;
           token.firstName = dbUser.firstName;
           token.lastName = dbUser.lastName;
+          token.avatar = dbUser.avatar;
           token.tokenVersion = dbUser.tokenVersion;
           token.isEmailVerified = !!dbUser.emailVerified;
           token.status = dbUser.status;
@@ -188,6 +190,7 @@ export const authOptions: NextAuthConfig = {
           select: {
             firstName: true,
             lastName: true,
+            avatar: true,
             role: true,
             tokenVersion: true,
             status: true,
@@ -207,6 +210,7 @@ export const authOptions: NextAuthConfig = {
         // Update token with latest user data
         token.firstName = dbUser.firstName;
         token.lastName = dbUser.lastName;
+        token.avatar = dbUser.avatar;
         token.role = dbUser.role;
         token.status = dbUser.status;
         token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
@@ -231,6 +235,7 @@ export const authOptions: NextAuthConfig = {
         session.user.role = token.role as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
+        session.user.image = token.avatar as string | undefined;
         session.user.isEmailVerified = token.isEmailVerified as boolean;
       }
       return session;
