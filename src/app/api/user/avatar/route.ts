@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { uploadFile, deleteFile } from "@/lib/file-storage";
+import { uploadFile, deleteFile, extractPublicId } from "@/lib/file-storage";
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -75,13 +75,10 @@ export async function POST(request: NextRequest) {
     // Delete existing avatar if it's a Cloudinary URL
     if (currentUser?.avatar && currentUser.avatar.includes("cloudinary")) {
       try {
-        // Extract public ID from Cloudinary URL
-        const urlParts = currentUser.avatar.split("/");
-        const fileNameWithExt = urlParts[urlParts.length - 1];
-        const folderPath = urlParts.slice(-2, -1)[0];
-        const fileName = fileNameWithExt.split(".")[0];
-        const publicId = `${folderPath}/${fileName}`;
-        await deleteFile(publicId);
+        const publicId = extractPublicId(currentUser.avatar);
+        if (publicId) {
+          await deleteFile(publicId);
+        }
       } catch (err) {
         console.error("Error deleting old avatar:", err);
         // Continue anyway
@@ -92,7 +89,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const result = await uploadFile(buffer, file.name, {
       folder: "servantana/avatars",
-      resourceType: "image",
+      resourceType: "auto",
     });
 
     // Update user with new avatar URL
@@ -137,12 +134,10 @@ export async function DELETE() {
     // Delete from Cloudinary if it's a Cloudinary URL
     if (user.avatar.includes("cloudinary")) {
       try {
-        const urlParts = user.avatar.split("/");
-        const fileNameWithExt = urlParts[urlParts.length - 1];
-        const folderPath = urlParts.slice(-2, -1)[0];
-        const fileName = fileNameWithExt.split(".")[0];
-        const publicId = `${folderPath}/${fileName}`;
-        await deleteFile(publicId);
+        const publicId = extractPublicId(user.avatar);
+        if (publicId) {
+          await deleteFile(publicId);
+        }
       } catch (err) {
         console.error("Error deleting from Cloudinary:", err);
       }
