@@ -104,8 +104,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error uploading avatar:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to upload avatar" },
+      { error: `Failed to upload avatar: ${errorMessage}` },
       { status: 500 }
     );
   }
