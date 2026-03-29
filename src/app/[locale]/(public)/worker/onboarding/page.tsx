@@ -423,13 +423,13 @@ function WorkerOnboardingContent() {
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 md:py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Progress indicator */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center max-w-2xl mx-auto mb-2">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex justify-between items-center max-w-2xl mx-auto mb-2 px-2">
               {[1, 2, 3, 4, 5, 6].map((s) => (
                 <div key={s} className="flex items-center">
                   <div
                     className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
+                      "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors",
                       s < step
                         ? "bg-green-500 text-white"
                         : s === step
@@ -437,12 +437,12 @@ function WorkerOnboardingContent() {
                         : "bg-gray-200 text-gray-500"
                     )}
                   >
-                    {s < step ? <Check className="h-5 w-5" /> : s}
+                    {s < step ? <Check className="h-4 w-4 sm:h-5 sm:w-5" /> : s}
                   </div>
                   {s < 6 && (
                     <div
                       className={cn(
-                        "w-8 md:w-16 h-1 mx-1",
+                        "w-4 sm:w-8 md:w-16 h-1 mx-0.5 sm:mx-1",
                         s < step ? "bg-green-500" : "bg-gray-200"
                       )}
                     />
@@ -450,7 +450,7 @@ function WorkerOnboardingContent() {
                 </div>
               ))}
             </div>
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-xs sm:text-sm text-gray-500">
               {t("workerOnboarding.step")} {step} {t("workerOnboarding.of")} {TOTAL_STEPS}
             </p>
           </div>
@@ -776,7 +776,7 @@ function WorkerOnboardingContent() {
               </p>
 
               <Card className="max-w-lg mx-auto">
-                <CardContent className="pt-6 space-y-4">
+                <CardContent className="pt-6 space-y-3">
                   {DAYS_OF_WEEK.map((day) => {
                     const slot = availability.find((s) => s.dayOfWeek === day.value);
                     if (!slot) return null;
@@ -785,31 +785,33 @@ function WorkerOnboardingContent() {
                       <div
                         key={day.value}
                         className={cn(
-                          "flex items-center gap-4 p-3 rounded-lg transition-colors",
+                          "p-3 rounded-lg transition-colors",
                           slot.isActive ? "bg-blue-50" : "bg-gray-50"
                         )}
                       >
-                        <Switch
-                          checked={slot.isActive}
-                          onCheckedChange={() => toggleAvailability(day.value)}
-                        />
-                        <span className="w-24 font-medium">
-                          {t(`days.${day.key}`)}
-                        </span>
+                        <div className="flex items-center gap-3">
+                          <Switch
+                            checked={slot.isActive}
+                            onCheckedChange={() => toggleAvailability(day.value)}
+                          />
+                          <span className="font-medium text-sm sm:text-base">
+                            {t(`days.${day.key}`)}
+                          </span>
+                        </div>
                         {slot.isActive && (
-                          <div className="flex items-center gap-2 ml-auto">
+                          <div className="flex items-center gap-2 mt-2 ml-12">
                             <Input
                               type="time"
                               value={slot.startTime}
                               onChange={(e) => updateAvailabilityTime(day.value, "startTime", e.target.value)}
-                              className="w-28"
+                              className="w-24 sm:w-28 text-sm"
                             />
-                            <span className="text-gray-400">-</span>
+                            <span className="text-gray-400 text-sm">-</span>
                             <Input
                               type="time"
                               value={slot.endTime}
                               onChange={(e) => updateAvailabilityTime(day.value, "endTime", e.target.value)}
-                              className="w-28"
+                              className="w-24 sm:w-28 text-sm"
                             />
                           </div>
                         )}
@@ -844,7 +846,7 @@ function WorkerOnboardingContent() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="experience">{t("workerOnboarding.experience")}</Label>
                       <Input
@@ -1056,26 +1058,29 @@ function WorkerOnboardingContent() {
           )}
 
           {/* Navigation buttons */}
-          <div className="mt-8 flex justify-between max-w-lg mx-auto">
+          <div className="mt-6 sm:mt-8 flex justify-between gap-4 max-w-lg mx-auto px-2">
             <Button
               variant="outline"
               onClick={handleBack}
               disabled={step === 1 || isSubmitting}
+              className="flex-1 sm:flex-none h-12 sm:h-10"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("common.back")}
+              <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">{t("common.back")}</span>
+              <span className="sm:hidden">Back</span>
             </Button>
 
             {step < TOTAL_STEPS ? (
-              <Button onClick={handleNext} disabled={!canProceed()}>
-                {t("common.next")}
-                <ArrowRight className="h-4 w-4 ml-2" />
+              <Button onClick={handleNext} disabled={!canProceed()} className="flex-1 sm:flex-none h-12 sm:h-10">
+                <span className="hidden sm:inline">{t("common.next")}</span>
+                <span className="sm:hidden">Next</span>
+                <ArrowRight className="h-4 w-4 ml-1 sm:ml-2" />
               </Button>
             ) : (
               <Button
                 onClick={handleComplete}
                 disabled={isSubmitting}
-                className="bg-green-600 hover:bg-green-700"
+                className="flex-1 sm:flex-none h-12 sm:h-10 bg-green-600 hover:bg-green-700"
               >
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

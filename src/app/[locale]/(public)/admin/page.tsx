@@ -1288,68 +1288,81 @@ export default function AdminPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 bg-gradient-to-b from-purple-50 to-white py-8">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-8">
-            <Shield className="h-12 w-12 mx-auto text-purple-500 mb-4" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+      <main className="flex-1 bg-gradient-to-b from-purple-50 to-white py-4 sm:py-8">
+        <div className="container mx-auto px-2 sm:px-4 max-w-6xl">
+          <div className="text-center mb-4 sm:mb-8">
+            <Shield className="h-8 w-8 sm:h-12 sm:w-12 mx-auto text-purple-500 mb-2 sm:mb-4" />
+            <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               {t("admin.title")}
             </h1>
-            <p className="text-muted-foreground">{t("admin.subtitle")}</p>
+            <p className="text-sm sm:text-base text-muted-foreground">{t("admin.subtitle")}</p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6 w-full justify-center flex-wrap gap-1">
-              <TabsTrigger value="overview" className="gap-2">
-                <TrendingUp className="h-4 w-4" />
-                {t("admin.overview")}
-              </TabsTrigger>
-              <TabsTrigger value="users" className="gap-2">
-                <Users className="h-4 w-4" />
-                {t("admin.users")}
-              </TabsTrigger>
-              <TabsTrigger value="bookings" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                {t("admin.bookings")}
-              </TabsTrigger>
-              <TabsTrigger value="cleaners" className="gap-2">
-                <UserCheck className="h-4 w-4" />
-                {t("admin.verification")}
-              </TabsTrigger>
-              <TabsTrigger value="documents" className="gap-2">
-                <FileText className="h-4 w-4" />
-                {t("admin.documentsTab")}
-              </TabsTrigger>
-              <TabsTrigger value="disputes" className="gap-2">
-                <AlertCircle className="h-4 w-4" />
-                {t("admin.disputesTab")}
-                {disputeCounts.open > 0 && (
-                  <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 justify-center">
-                    {disputeCounts.open}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="reviews" className="gap-2">
-                <Star className="h-4 w-4" />
-                {t("admin.reviews")}
-              </TabsTrigger>
-              <TabsTrigger value="categories" className="gap-2">
-                <FolderPlus className="h-4 w-4" />
-                {t("admin.categories")}
-              </TabsTrigger>
-              <TabsTrigger value="professions" className="gap-2">
-                <Briefcase className="h-4 w-4" />
-                {t("admin.professions")}
-              </TabsTrigger>
-              <TabsTrigger value="auditLogs" className="gap-2">
-                <History className="h-4 w-4" />
-                {t("admin.auditLogs")}
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="gap-2">
-                <UserCog className="h-4 w-4" />
-                {t("admin.settingsTab")}
-              </TabsTrigger>
-            </TabsList>
+            <div className="overflow-x-auto pb-2 mb-4 sm:mb-6 -mx-2 px-2">
+              <TabsList className="w-max sm:w-full justify-start sm:justify-center flex-nowrap sm:flex-wrap gap-1 min-w-max">
+                <TabsTrigger value="overview" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.overview")}</span>
+                  <span className="sm:hidden">Stats</span>
+                </TabsTrigger>
+                <TabsTrigger value="users" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.users")}</span>
+                  <span className="sm:hidden">Users</span>
+                </TabsTrigger>
+                <TabsTrigger value="bookings" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.bookings")}</span>
+                  <span className="sm:hidden">Book</span>
+                </TabsTrigger>
+                <TabsTrigger value="cleaners" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.verification")}</span>
+                  <span className="sm:hidden">Verify</span>
+                </TabsTrigger>
+                <TabsTrigger value="documents" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.documentsTab")}</span>
+                  <span className="sm:hidden">Docs</span>
+                </TabsTrigger>
+                <TabsTrigger value="disputes" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.disputesTab")}</span>
+                  <span className="sm:hidden">Disp</span>
+                  {disputeCounts.open > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-4 w-4 sm:h-5 sm:w-5 p-0 justify-center text-xs">
+                      {disputeCounts.open}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.reviews")}</span>
+                  <span className="sm:hidden">Rev</span>
+                </TabsTrigger>
+                <TabsTrigger value="categories" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <FolderPlus className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.categories")}</span>
+                  <span className="sm:hidden">Cat</span>
+                </TabsTrigger>
+                <TabsTrigger value="professions" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <Briefcase className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.professions")}</span>
+                  <span className="sm:hidden">Prof</span>
+                </TabsTrigger>
+                <TabsTrigger value="auditLogs" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <History className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.auditLogs")}</span>
+                  <span className="sm:hidden">Logs</span>
+                </TabsTrigger>
+                <TabsTrigger value="settings" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <UserCog className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.settingsTab")}</span>
+                  <span className="sm:hidden">Set</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Overview Tab */}
             <TabsContent value="overview">

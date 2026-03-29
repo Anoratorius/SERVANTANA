@@ -459,36 +459,36 @@ export default function SettingsPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center gap-4 mb-8">
+      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-4 sm:py-8">
+        <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
+          <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <Link href="/dashboard">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-10 w-10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                 Profile Settings
               </h1>
-              <p className="text-muted-foreground">
-                Manage your worker profile, services, and availability
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Manage your profile and availability
               </p>
             </div>
           </div>
 
-          <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="profile" className="gap-2">
-                <User className="h-4 w-4" />
+          <Tabs defaultValue="profile" className="space-y-4 sm:space-y-6">
+            <TabsList className="grid w-full grid-cols-3 h-auto">
+              <TabsTrigger value="profile" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2 sm:py-1.5">
+                <User className="h-4 w-4 hidden sm:block" />
                 Profile
               </TabsTrigger>
-              <TabsTrigger value="professions" className="gap-2">
-                <Briefcase className="h-4 w-4" />
+              <TabsTrigger value="professions" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2 sm:py-1.5">
+                <Briefcase className="h-4 w-4 hidden sm:block" />
                 Professions
               </TabsTrigger>
-              <TabsTrigger value="availability" className="gap-2">
-                <Clock className="h-4 w-4" />
+              <TabsTrigger value="availability" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2 sm:py-1.5">
+                <Clock className="h-4 w-4 hidden sm:block" />
                 Availability
               </TabsTrigger>
             </TabsList>
@@ -1172,65 +1172,66 @@ export default function SettingsPage() {
                     workerProfessions.map((wp) => (
                       <div
                         key={wp.id}
-                        className={`p-4 rounded-lg border transition-colors ${
+                        className={`p-3 sm:p-4 rounded-lg border transition-colors ${
                           wp.isPrimary
                             ? "border-yellow-500 bg-yellow-50"
                             : "border-gray-200 bg-gray-50"
                         }`}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="text-3xl">{wp.profession.emoji}</div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{wp.profession.name}</span>
+                        <div className="flex items-start sm:items-center gap-3">
+                          <div className="text-2xl sm:text-3xl">{wp.profession.emoji}</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium text-sm sm:text-base truncate">{wp.profession.name}</span>
                               {wp.isPrimary && (
-                                <span className="px-2 py-0.5 text-xs bg-yellow-200 text-yellow-800 rounded-full">
+                                <span className="px-2 py-0.5 text-xs bg-yellow-200 text-yellow-800 rounded-full whitespace-nowrap">
                                   Primary
                                 </span>
                               )}
                             </div>
                             {wp.profession.category && (
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-xs sm:text-sm text-muted-foreground truncate">
                                 {wp.profession.category.emoji} {wp.profession.category.name}
                               </p>
                             )}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-24">
-                              <Label className="text-xs">€/hour</Label>
-                              <Input
-                                type="number"
-                                min="1"
-                                max="500"
-                                value={wp.hourlyRate || formData.hourlyRate}
-                                onChange={(e) => {
-                                  const rate = parseFloat(e.target.value);
-                                  if (rate > 0) {
-                                    handleUpdateProfessionRate(wp.professionId, rate);
-                                  }
-                                }}
-                                className="h-8"
-                              />
-                            </div>
-                            {!wp.isPrimary && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleSetPrimaryProfession(wp.professionId)}
-                                title="Set as primary"
-                              >
-                                ⭐
-                              </Button>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveProfession(wp.professionId)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                        </div>
+                        <div className="flex items-center gap-2 mt-3 ml-9 sm:ml-11">
+                          <div className="w-20 sm:w-24">
+                            <Label className="text-xs">€/hour</Label>
+                            <Input
+                              type="number"
+                              min="1"
+                              max="500"
+                              value={wp.hourlyRate || formData.hourlyRate}
+                              onChange={(e) => {
+                                const rate = parseFloat(e.target.value);
+                                if (rate > 0) {
+                                  handleUpdateProfessionRate(wp.professionId, rate);
+                                }
+                              }}
+                              className="h-8 text-sm"
+                            />
                           </div>
+                          {!wp.isPrimary && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleSetPrimaryProfession(wp.professionId)}
+                              title="Set as primary"
+                              className="h-8 w-8 p-0"
+                            >
+                              ⭐
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveProfession(wp.professionId)}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     ))
@@ -1280,12 +1281,12 @@ export default function SettingsPage() {
             <TabsContent value="availability">
               <Card>
                 <CardHeader>
-                  <CardTitle>Weekly Availability</CardTitle>
-                  <CardDescription>
-                    Set your working hours for each day of the week
+                  <CardTitle className="text-base sm:text-lg">Weekly Availability</CardTitle>
+                  <CardDescription className="text-sm">
+                    Set your working hours for each day
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3">
                   {DAYS.map((day) => {
                     const dayState = availability.get(day.value) || {
                       enabled: false,
@@ -1296,13 +1297,13 @@ export default function SettingsPage() {
                     return (
                       <div
                         key={day.value}
-                        className={`p-4 rounded-lg border transition-colors ${
+                        className={`p-3 rounded-lg border transition-colors ${
                           dayState.enabled
                             ? "border-green-500 bg-green-50"
                             : "border-gray-200"
                         }`}
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
                           <Switch
                             checked={dayState.enabled}
                             onCheckedChange={(checked) => {
@@ -1311,43 +1312,41 @@ export default function SettingsPage() {
                               setAvailability(newMap);
                             }}
                           />
-                          <span className="font-medium w-24">{day.label}</span>
-
-                          {dayState.enabled ? (
-                            <div className="flex items-center gap-2 flex-1">
-                              <Input
-                                type="time"
-                                value={dayState.startTime}
-                                onChange={(e) => {
-                                  const newMap = new Map(availability);
-                                  newMap.set(day.value, {
-                                    ...dayState,
-                                    startTime: e.target.value,
-                                  });
-                                  setAvailability(newMap);
-                                }}
-                                className="w-32"
-                              />
-                              <span className="text-muted-foreground">to</span>
-                              <Input
-                                type="time"
-                                value={dayState.endTime}
-                                onChange={(e) => {
-                                  const newMap = new Map(availability);
-                                  newMap.set(day.value, {
-                                    ...dayState,
-                                    endTime: e.target.value,
-                                  });
-                                  setAvailability(newMap);
-                                }}
-                                className="w-32"
-                              />
-                              <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground italic">Not available</span>
-                          )}
+                          <span className="font-medium text-sm sm:text-base">{day.label}</span>
                         </div>
+
+                        {dayState.enabled && (
+                          <div className="flex items-center gap-2 mt-2 ml-12">
+                            <Input
+                              type="time"
+                              value={dayState.startTime}
+                              onChange={(e) => {
+                                const newMap = new Map(availability);
+                                newMap.set(day.value, {
+                                  ...dayState,
+                                  startTime: e.target.value,
+                                });
+                                setAvailability(newMap);
+                              }}
+                              className="w-24 sm:w-28 text-sm"
+                            />
+                            <span className="text-muted-foreground text-sm">-</span>
+                            <Input
+                              type="time"
+                              value={dayState.endTime}
+                              onChange={(e) => {
+                                const newMap = new Map(availability);
+                                newMap.set(day.value, {
+                                  ...dayState,
+                                  endTime: e.target.value,
+                                });
+                                setAvailability(newMap);
+                              }}
+                              className="w-24 sm:w-28 text-sm"
+                            />
+                            <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                          </div>
+                        )}
                       </div>
                     );
                   })}
