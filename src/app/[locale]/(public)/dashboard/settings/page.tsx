@@ -22,7 +22,7 @@ import {
   Loader2,
   ArrowLeft,
   CheckCircle,
-  Video,
+  Camera,
   Upload,
   Trash2,
   Wallet,
@@ -138,10 +138,10 @@ export default function SettingsPage() {
     Map<number, { enabled: boolean; startTime: string; endTime: string }>
   >(new Map());
 
-  // Video state
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
-  const [isDeletingVideo, setIsDeletingVideo] = useState(false);
+  // Avatar state
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isDeletingAvatar, setIsDeletingAvatar] = useState(false);
 
   // Crypto wallet state
   const [cryptoWallets, setCryptoWallets] = useState<CryptoWallet[]>([]);
@@ -197,19 +197,19 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [profileRes, professionsRes, allProfessionsRes, videoRes, walletsRes, stripeRes] = await Promise.all([
+        const [profileRes, professionsRes, allProfessionsRes, avatarRes, walletsRes, stripeRes] = await Promise.all([
           fetch("/api/cleaner/profile"),
           fetch("/api/cleaner/professions"),
           fetch("/api/professions"),
-          fetch("/api/cleaner/video"),
+          fetch("/api/user/avatar"),
           fetch("/api/cleaner/wallets"),
           fetch("/api/stripe/connect"),
         ]);
 
-        // Load video
-        if (videoRes.ok) {
-          const videoData = await videoRes.json();
-          setVideoUrl(videoData.videoUrl);
+        // Load avatar
+        if (avatarRes.ok) {
+          const avatarData = await avatarRes.json();
+          setAvatarUrl(avatarData.avatarUrl);
         }
 
         // Load crypto wallets
@@ -558,119 +558,121 @@ export default function SettingsPage() {
                   </CardContent>
                 </Card>
 
-                {/* Intro Video */}
+                {/* Profile Picture */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Video className="h-5 w-5" />
-                      Intro Video
+                      <Camera className="h-5 w-5" />
+                      Profile Picture
                     </CardTitle>
                     <CardDescription>
-                      Record a short video to introduce yourself to customers (max 50MB)
+                      Upload a photo that will be shown to customers (max 5MB)
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {videoUrl ? (
-                      <div className="space-y-4">
-                        <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
-                          <video
-                            src={videoUrl}
-                            controls
-                            className="w-full h-full object-contain"
-                          >
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          onClick={async () => {
-                            setIsDeletingVideo(true);
-                            try {
-                              const res = await fetch("/api/cleaner/video", { method: "DELETE" });
-                              if (res.ok) {
-                                setVideoUrl(null);
-                                toast.success("Video deleted");
-                              } else {
-                                toast.error("Failed to delete video");
-                              }
-                            } catch {
-                              toast.error("Failed to delete video");
-                            } finally {
-                              setIsDeletingVideo(false);
-                            }
-                          }}
-                          disabled={isDeletingVideo}
-                        >
-                          {isDeletingVideo ? (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4 mr-2" />
-                          )}
-                          Delete Video
-                        </Button>
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
+                      <div className="relative">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt="Profile"
+                            className="w-32 h-32 rounded-full object-cover border-4 border-background shadow-lg"
+                          />
+                        ) : (
+                          <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-lg">
+                            <User className="h-16 w-16 text-muted-foreground" />
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                        <Video className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground mb-4">
-                          No intro video uploaded yet
-                        </p>
+                      <div className="flex flex-col gap-3 text-center sm:text-left">
                         <input
                           type="file"
-                          accept="video/mp4,video/webm,video/quicktime"
+                          accept="image/jpeg,image/png,image/webp"
                           className="hidden"
-                          id="video-upload"
+                          id="avatar-upload"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (!file) return;
 
-                            if (file.size > 50 * 1024 * 1024) {
-                              toast.error("Video must be less than 50MB");
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error("Image must be less than 5MB");
                               return;
                             }
 
-                            setIsUploadingVideo(true);
+                            setIsUploadingAvatar(true);
                             try {
                               const formData = new FormData();
-                              formData.append("video", file);
+                              formData.append("avatar", file);
 
-                              const res = await fetch("/api/cleaner/video", {
+                              const res = await fetch("/api/user/avatar", {
                                 method: "POST",
                                 body: formData,
                               });
 
                               if (res.ok) {
                                 const data = await res.json();
-                                setVideoUrl(data.videoUrl);
-                                toast.success("Video uploaded successfully");
+                                setAvatarUrl(data.avatarUrl);
+                                toast.success("Profile picture uploaded");
                               } else {
                                 const error = await res.json();
-                                toast.error(error.error || "Failed to upload video");
+                                toast.error(error.error || "Failed to upload picture");
                               }
                             } catch {
-                              toast.error("Failed to upload video");
+                              toast.error("Failed to upload picture");
                             } finally {
-                              setIsUploadingVideo(false);
+                              setIsUploadingAvatar(false);
                               e.target.value = "";
                             }
                           }}
                         />
                         <Button
-                          onClick={() => document.getElementById("video-upload")?.click()}
-                          disabled={isUploadingVideo}
+                          variant="outline"
+                          onClick={() => document.getElementById("avatar-upload")?.click()}
+                          disabled={isUploadingAvatar}
                         >
-                          {isUploadingVideo ? (
+                          {isUploadingAvatar ? (
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                           ) : (
                             <Upload className="h-4 w-4 mr-2" />
                           )}
-                          {isUploadingVideo ? "Uploading..." : "Upload Video"}
+                          {isUploadingAvatar ? "Uploading..." : avatarUrl ? "Change Photo" : "Upload Photo"}
                         </Button>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          MP4, WebM, or MOV up to 50MB
+                        {avatarUrl && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                            onClick={async () => {
+                              setIsDeletingAvatar(true);
+                              try {
+                                const res = await fetch("/api/user/avatar", { method: "DELETE" });
+                                if (res.ok) {
+                                  setAvatarUrl(null);
+                                  toast.success("Profile picture removed");
+                                } else {
+                                  toast.error("Failed to remove picture");
+                                }
+                              } catch {
+                                toast.error("Failed to remove picture");
+                              } finally {
+                                setIsDeletingAvatar(false);
+                              }
+                            }}
+                            disabled={isDeletingAvatar}
+                          >
+                            {isDeletingAvatar ? (
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4 mr-2" />
+                            )}
+                            Remove Photo
+                          </Button>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          JPEG, PNG, or WebP up to 5MB
                         </p>
                       </div>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
 
