@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 // GET - fetch all approved professions (public)
 export async function GET(request: NextRequest) {
@@ -49,6 +50,10 @@ const suggestProfessionSchema = z.object({
 
 // POST - worker suggests a new profession
 export async function POST(request: NextRequest) {
+  // Rate limiting: 3 suggestions per hour
+  const rateLimited = applyRateLimit(request, "suggestProfession");
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await auth();
 

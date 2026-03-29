@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { emitNewMessage } from "@/lib/message-events";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 const sendMessageSchema = z.object({
   receiverId: z.string().min(1, "Receiver ID is required"),
@@ -122,6 +123,10 @@ export async function GET() {
 
 // Send a new message
 export async function POST(request: NextRequest) {
+  // Rate limiting: 30 messages per minute
+  const rateLimited = applyRateLimit(request, "sendMessage");
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await auth();
     if (!session?.user?.id) {

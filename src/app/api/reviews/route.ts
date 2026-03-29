@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 const createReviewSchema = z.object({
   bookingId: z.string().min(1, "Booking ID is required"),
@@ -10,6 +11,10 @@ const createReviewSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Rate limiting: 5 reviews per hour
+  const rateLimited = applyRateLimit(request, "createReview");
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await auth();
     if (!session?.user?.id) {

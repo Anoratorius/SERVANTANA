@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DisputeType } from "@prisma/client";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // Rate limiting: 3 disputes per hour
+  const rateLimited = applyRateLimit(request, "createDispute");
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await auth();
     if (!session?.user?.id) {

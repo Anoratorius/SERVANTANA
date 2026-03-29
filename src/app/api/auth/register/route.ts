@@ -22,8 +22,8 @@ export async function POST(request: Request) {
   const ipBlock = checkIPBlock(clientIP);
   if (ipBlock) return ipBlock;
 
-  // Rate limiting: 10 registrations per 15 minutes per IP
-  const rateLimit = checkRateLimit(`register:${clientIP}`, rateLimiters.auth);
+  // Rate limiting: 3 registrations per hour per IP
+  const rateLimit = checkRateLimit(`register:${clientIP}`, rateLimiters.register);
 
   if (!rateLimit.success) {
     recordIPViolation(clientIP, "Registration rate limit exceeded");

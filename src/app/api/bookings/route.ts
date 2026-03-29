@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BookingStatus, Role } from "@prisma/client";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   try {
@@ -72,6 +73,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limiting: 10 booking creations per minute
+  const rateLimited = applyRateLimit(request, "createBooking");
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await auth();
     if (!session?.user?.id) {

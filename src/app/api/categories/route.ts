@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 // GET - fetch approved categories
 export async function GET() {
@@ -31,6 +32,10 @@ export async function GET() {
 
 // POST - submit new category suggestion
 export async function POST(request: NextRequest) {
+  // Rate limiting: 3 suggestions per hour
+  const rateLimited = applyRateLimit(request, "suggestCategory");
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await auth();
     const body = await request.json();

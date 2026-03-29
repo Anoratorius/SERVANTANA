@@ -109,17 +109,38 @@ export function getClientIP(request: Request): string {
 
 // Pre-configured rate limiters for common use cases
 export const rateLimiters = {
-  // Strict: 5 requests per 15 minutes (password reset, login)
+  // Authentication - strict limits
+  login: { maxRequests: 5, windowMs: 60 * 1000 },           // 5 per minute
+  register: { maxRequests: 3, windowMs: 60 * 60 * 1000 },   // 3 per hour
+  forgotPassword: { maxRequests: 3, windowMs: 15 * 60 * 1000 }, // 3 per 15 min
+  verifyEmail: { maxRequests: 5, windowMs: 15 * 60 * 1000 },    // 5 per 15 min
+  resetPassword: { maxRequests: 3, windowMs: 15 * 60 * 1000 },  // 3 per 15 min
+
+  // Bookings & Payments
+  createBooking: { maxRequests: 10, windowMs: 60 * 1000 },  // 10 per minute
+  payment: { maxRequests: 5, windowMs: 60 * 1000 },         // 5 per minute
+  createDispute: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 per hour
+
+  // Messaging
+  sendMessage: { maxRequests: 30, windowMs: 60 * 1000 },    // 30 per minute
+  markRead: { maxRequests: 60, windowMs: 60 * 1000 },       // 60 per minute
+
+  // Content creation
+  createReview: { maxRequests: 5, windowMs: 60 * 60 * 1000 },  // 5 per hour
+  suggestCategory: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 per hour
+  suggestProfession: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 per hour
+
+  // General operations
+  standard: { maxRequests: 30, windowMs: 60 * 1000 },       // 30 per minute (writes)
+  relaxed: { maxRequests: 100, windowMs: 60 * 1000 },       // 100 per minute (reads)
+  search: { maxRequests: 30, windowMs: 60 * 1000 },         // 30 per minute
+
+  // Admin - more lenient
+  admin: { maxRequests: 60, windowMs: 60 * 1000 },          // 60 per minute
+
+  // Legacy aliases
   strict: { maxRequests: 5, windowMs: 15 * 60 * 1000 },
-
-  // Auth: 10 requests per 15 minutes (registration)
   auth: { maxRequests: 10, windowMs: 15 * 60 * 1000 },
-
-  // Standard: 30 requests per minute (general API)
-  standard: { maxRequests: 30, windowMs: 60 * 1000 },
-
-  // Relaxed: 100 requests per minute (read operations)
-  relaxed: { maxRequests: 100, windowMs: 60 * 1000 },
 };
 
 /**
@@ -140,6 +161,34 @@ export function rateLimitResponse(resetTime: number) {
       },
     }
   );
+}
+
+/**
+ * Apply rate limiting to a request
+ * Returns null if allowed, or a 429 Response if rate limited
+ *
+ * Usage:
+ * ```ts
+ * const limited = applyRateLimit(request, "login");
+ * if (limited) return limited;
+ * // ... rest of handler
+ * ```
+ */
+export function applyRateLimit(
+  request: Request,
+  limitType: keyof typeof rateLimiters,
+  customKey?: string
+): Response | null {
+  const ip = getClientIP(request);
+  const key = customKey ? `${limitType}:${customKey}` : `${limitType}:${ip}`;
+  const config = rateLimiters[limitType];
+  const result = checkRateLimit(key, config);
+
+  if (!result.success) {
+    return rateLimitResponse(result.resetTime);
+  }
+
+  return null;
 }
 
 /**

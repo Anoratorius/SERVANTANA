@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { applyRateLimit } from "@/lib/rate-limit";
 
 // Haversine formula to calculate distance between two points in km
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -16,6 +17,10 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limiting: 30 searches per minute
+  const rateLimited = applyRateLimit(request, "search");
+  if (rateLimited) return rateLimited;
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const service = searchParams.get("service");

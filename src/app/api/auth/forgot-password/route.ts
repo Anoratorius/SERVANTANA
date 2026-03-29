@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
   const ipBlock = checkIPBlock(clientIP);
   if (ipBlock) return ipBlock;
 
-  // Rate limiting: 5 requests per 15 minutes per IP (strict)
-  const rateLimit = checkRateLimit(`forgot-password:${clientIP}`, rateLimiters.strict);
+  // Rate limiting: 3 requests per 15 minutes per IP
+  const rateLimit = checkRateLimit(`forgot-password:${clientIP}`, rateLimiters.forgotPassword);
 
   if (!rateLimit.success) {
     recordIPViolation(clientIP, "Password reset rate limit exceeded");
