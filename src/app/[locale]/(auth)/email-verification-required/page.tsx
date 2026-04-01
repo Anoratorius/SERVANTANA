@@ -3,21 +3,18 @@
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Mail, RefreshCw, LogOut, CheckCircle } from "lucide-react";
+import { Loader2, Mail, LogOut, CheckCircle } from "lucide-react";
 import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 import { toast } from "sonner";
 
 export default function EmailVerificationRequiredPage() {
   const t = useTranslations();
-  const { data: session, update } = useSession();
-  const router = useRouter();
+  const { data: session } = useSession();
   const [isResending, setIsResending] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
 
   const handleResend = async () => {
@@ -41,26 +38,6 @@ export default function EmailVerificationRequiredPage() {
       toast.error(t("emailVerification.resendFailed"));
     } finally {
       setIsResending(false);
-    }
-  };
-
-  const handleCheckVerification = async () => {
-    setIsChecking(true);
-
-    try {
-      // Update the session to get fresh data from the server
-      await update();
-
-      // Small delay to allow session to propagate
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Redirect to home - middleware will allow if verified
-      router.push("/");
-      router.refresh();
-    } catch {
-      toast.error(t("common.error"));
-    } finally {
-      setIsChecking(false);
     }
   };
 
@@ -105,34 +82,19 @@ export default function EmailVerificationRequiredPage() {
               </div>
             )}
 
-            <div className="space-y-3">
-              <Button
-                onClick={handleResend}
-                variant="outline"
-                className="w-full"
-                disabled={isResending}
-              >
-                {isResending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Mail className="h-4 w-4 mr-2" />
-                )}
-                {t("emailVerification.resendButton")}
-              </Button>
-
-              <Button
-                onClick={handleCheckVerification}
-                className="w-full"
-                disabled={isChecking}
-              >
-                {isChecking ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                )}
-                {t("emailVerification.checkButton")}
-              </Button>
-            </div>
+            <Button
+              onClick={handleResend}
+              variant="outline"
+              className="w-full"
+              disabled={isResending}
+            >
+              {isResending ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Mail className="h-4 w-4 mr-2" />
+              )}
+              {t("emailVerification.resendButton")}
+            </Button>
 
             <div className="pt-4 border-t">
               <p className="text-center text-sm text-muted-foreground mb-3">
