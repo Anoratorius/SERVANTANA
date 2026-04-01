@@ -27,15 +27,15 @@ async function fetchLocation(): Promise<GeoLocation | null> {
       }
     }
   } catch {
-    // Try ipwho.is as fallback
+    // Try ip-api.com as fallback (free for non-commercial use)
     try {
-      const response = await fetch("https://ipwho.is/", { cache: 'no-store' });
+      const response = await fetch("http://ip-api.com/json/?fields=city,countryCode", { cache: 'no-store' });
       if (response.ok) {
         const data = await response.json();
         if (data.city) {
           return {
             city: data.city,
-            countryCode: data.country_code || "",
+            countryCode: data.countryCode || "",
           };
         }
       }

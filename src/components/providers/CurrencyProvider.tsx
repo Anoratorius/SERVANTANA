@@ -29,39 +29,39 @@ async function detectCountryFromIP(): Promise<string | null> {
   const timeoutId = setTimeout(() => controller.abort(), 3000);
 
   try {
-    // Try ipwho.is first (free, no API key needed)
-    const response = await fetch("https://ipwho.is/", {
+    // Try ipinfo.io first (free tier available)
+    const response = await fetch("https://ipinfo.io/json", {
       signal: controller.signal
     });
     clearTimeout(timeoutId);
 
     if (response.ok) {
       const data = await response.json();
-      console.log("[Currency] ipwho.is detected country:", data.country_code);
-      if (data.country_code) {
-        return data.country_code;
+      console.log("[Currency] ipinfo.io detected country:", data.country);
+      if (data.country) {
+        return data.country;
       }
     }
   } catch (error) {
     clearTimeout(timeoutId);
-    console.log("[Currency] ipwho.is failed:", error);
+    console.log("[Currency] ipinfo.io failed:", error);
   }
 
-  // Fallback to ipinfo.io (runs if first attempt fails)
+  // Fallback to ip-api.com (runs if first attempt fails)
   const controller2 = new AbortController();
   const timeoutId2 = setTimeout(() => controller2.abort(), 3000);
 
   try {
-    const response = await fetch("https://ipinfo.io/json", {
+    const response = await fetch("http://ip-api.com/json/?fields=countryCode", {
       signal: controller2.signal
     });
     clearTimeout(timeoutId2);
 
     if (response.ok) {
       const data = await response.json();
-      console.log("[Currency] ipinfo.io fallback detected:", data.country);
-      if (data.country) {
-        return data.country;
+      console.log("[Currency] ip-api.com fallback detected:", data.countryCode);
+      if (data.countryCode) {
+        return data.countryCode;
       }
     }
   } catch (error) {
