@@ -184,9 +184,10 @@ export default function LocationPicker({
           zoom={position ? 15 : 5}
           style={{ height: "100%", width: "100%" }}
           ref={mapRef}
+          attributionControl={false}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='© OSM'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapClickHandler onLocationSelect={handleMapClick} />
