@@ -46,6 +46,7 @@ const suggestProfessionSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   nameDE: z.string().optional(),
   emoji: z.string().optional(),
+  categoryId: z.string().optional(),
 });
 
 // POST - worker suggests a new profession
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, nameDE, emoji } = validation.data;
+    const { name, nameDE, emoji, categoryId } = validation.data;
 
     // Check if profession already exists
     const existing = await prisma.profession.findFirst({
@@ -96,6 +97,7 @@ export async function POST(request: NextRequest) {
         name: name.trim(),
         nameDE: nameDE?.trim() || null,
         emoji: emoji || "👤",
+        categoryId: categoryId || null,
         status: "PENDING",
         submittedBy: session.user.id,
       },

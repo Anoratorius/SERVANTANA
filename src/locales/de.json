@@ -1522,7 +1522,15 @@
     "suggestionNote": "Ihr Vorschlag wird von unserem Team geprüft und bei Genehmigung hinzugefügt.",
     "categorySuggestionSubmitted": "Kategorievorschlag eingereicht! Er wird bald überprüft.",
     "suggestionFailed": "Vorschlag konnte nicht eingereicht werden",
-    "enterCategoryName": "Bitte geben Sie einen Kategorienamen ein"
+    "enterCategoryName": "Bitte geben Sie einen Kategorienamen ein",
+    "addYours": "Eigenen hinzufügen",
+    "suggestProfession": "Beruf vorschlagen",
+    "professionName": "Berufsname",
+    "professionNamePlaceholder": "z.B. Poolreiniger",
+    "professionEmoji": "Emoji (optional)",
+    "professionSuggestionNote": "Ihr Berufsvorschlag wird geprüft und bei Genehmigung zu dieser Kategorie hinzugefügt.",
+    "professionSuggestionSubmitted": "Berufsvorschlag eingereicht! Er wird bald überprüft.",
+    "enterProfessionName": "Bitte geben Sie einen Berufsnamen ein"
   },
   "days": {
     "sunday": "Sonntag",

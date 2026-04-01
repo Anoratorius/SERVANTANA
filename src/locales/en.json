@@ -1522,7 +1522,15 @@
     "suggestionNote": "Your suggestion will be reviewed by our team and added if approved.",
     "categorySuggestionSubmitted": "Category suggestion submitted! It will be reviewed soon.",
     "suggestionFailed": "Failed to submit suggestion",
-    "enterCategoryName": "Please enter a category name"
+    "enterCategoryName": "Please enter a category name",
+    "addYours": "Add yours",
+    "suggestProfession": "Suggest a Profession",
+    "professionName": "Profession name",
+    "professionNamePlaceholder": "e.g., Pool Cleaner",
+    "professionEmoji": "Emoji (optional)",
+    "professionSuggestionNote": "Your profession suggestion will be reviewed and added to this category if approved.",
+    "professionSuggestionSubmitted": "Profession suggestion submitted! It will be reviewed soon.",
+    "enterProfessionName": "Please enter a profession name"
   },
   "days": {
     "sunday": "Sunday",

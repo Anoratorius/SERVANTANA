@@ -124,6 +124,13 @@ function WorkerOnboardingContent() {
   const [suggestCategoryEmoji, setSuggestCategoryEmoji] = useState("");
   const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
 
+  // Profession suggestion
+  const [showSuggestProfession, setShowSuggestProfession] = useState(false);
+  const [suggestProfessionName, setSuggestProfessionName] = useState("");
+  const [suggestProfessionEmoji, setSuggestProfessionEmoji] = useState("");
+  const [suggestProfessionCategoryId, setSuggestProfessionCategoryId] = useState<string | null>(null);
+  const [isSubmittingProfessionSuggestion, setIsSubmittingProfessionSuggestion] = useState(false);
+
   // Redirect if not authenticated or not a worker
   useEffect(() => {
     if (status === "loading") return;
@@ -310,6 +317,46 @@ function WorkerOnboardingContent() {
     } finally {
       setIsSubmittingSuggestion(false);
     }
+  };
+
+  const handleSubmitProfessionSuggestion = async () => {
+    if (!suggestProfessionName.trim()) {
+      toast.error(t("workerOnboarding.enterProfessionName"));
+      return;
+    }
+
+    setIsSubmittingProfessionSuggestion(true);
+    try {
+      const response = await fetch("/api/professions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: suggestProfessionName.trim(),
+          emoji: suggestProfessionEmoji || "👤",
+          categoryId: suggestProfessionCategoryId,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t("workerOnboarding.professionSuggestionSubmitted"));
+        setShowSuggestProfession(false);
+        setSuggestProfessionName("");
+        setSuggestProfessionEmoji("");
+        setSuggestProfessionCategoryId(null);
+      } else {
+        const data = await response.json();
+        toast.error(data.error || t("workerOnboarding.suggestionFailed"));
+      }
+    } catch {
+      toast.error(t("workerOnboarding.suggestionFailed"));
+    } finally {
+      setIsSubmittingProfessionSuggestion(false);
+    }
+  };
+
+  const openProfessionSuggestion = (categoryId: string) => {
+    setSuggestProfessionCategoryId(categoryId);
+    setShowSuggestProfession(true);
   };
 
   const handleComplete = async () => {
@@ -673,6 +720,16 @@ function WorkerOnboardingContent() {
                               </button>
                             );
                           })}
+                          {/* Add yours button */}
+                          <button
+                            onClick={() => openProfessionSuggestion(isCustomCategory ? categoryKey : catId)}
+                            className="flex flex-col items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
+                          >
+                            <span className="text-2xl mb-1">➕</span>
+                            <span className="text-xs font-medium text-center text-gray-500">
+                              {t("workerOnboarding.addYours")}
+                            </span>
+                          </button>
                         </div>
                       </div>
                     );
@@ -685,6 +742,69 @@ function WorkerOnboardingContent() {
                 <p className="text-center text-sm text-blue-600 mt-4">
                   {selectedProfessions.length} {t("workerOnboarding.professionsSelected")}
                 </p>
+              )}
+
+              {/* Suggest Profession Dialog */}
+              {showSuggestProfession && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">{t("workerOnboarding.suggestProfession")}</h3>
+                      <button
+                        onClick={() => setShowSuggestProfession(false)}
+                        className="p-1 hover:bg-gray-100 rounded-full"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="professionName">{t("workerOnboarding.professionName")}</Label>
+                        <Input
+                          id="professionName"
+                          value={suggestProfessionName}
+                          onChange={(e) => setSuggestProfessionName(e.target.value)}
+                          placeholder={t("workerOnboarding.professionNamePlaceholder")}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="professionEmoji">{t("workerOnboarding.professionEmoji")}</Label>
+                        <Input
+                          id="professionEmoji"
+                          value={suggestProfessionEmoji}
+                          onChange={(e) => setSuggestProfessionEmoji(e.target.value)}
+                          placeholder="👤"
+                          className="mt-1 w-20"
+                          maxLength={4}
+                        />
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {t("workerOnboarding.professionSuggestionNote")}
+                      </p>
+                      <div className="flex gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowSuggestProfession(false)}
+                          className="flex-1"
+                        >
+                          {t("common.cancel")}
+                        </Button>
+                        <Button
+                          onClick={handleSubmitProfessionSuggestion}
+                          disabled={isSubmittingProfessionSuggestion || !suggestProfessionName.trim()}
+                          className="flex-1"
+                        >
+                          {isSubmittingProfessionSuggestion ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            t("common.submit")
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           )}
