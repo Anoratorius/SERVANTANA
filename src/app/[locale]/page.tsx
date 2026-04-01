@@ -10,7 +10,6 @@ import {
   Search,
   UserCheck,
   CalendarCheck,
-  Sparkles,
 } from "lucide-react";
 
 type Props = {
@@ -97,12 +96,11 @@ function HomeContent() {
         <section className="py-20 bg-muted/30 overflow-hidden w-full">
           <div className="w-full px-4 max-w-5xl mx-auto">
             {/* Desktop Flow - Horizontal Connected Timeline */}
-            <div className="hidden lg:block relative max-w-5xl mx-auto">
+            <div className="hidden lg:block relative max-w-4xl mx-auto">
               {/* Connecting Line */}
-              <div className="absolute top-10 left-[12.5%] right-[12.5%] h-1 bg-gradient-to-r from-blue-500 via-teal-500 via-green-500 to-emerald-500 rounded-full" />
+              <div className="absolute top-10 left-[16%] right-[16%] h-1 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
 
-              
-              <div className="grid grid-cols-4 gap-6 relative">
+              <div className="grid grid-cols-3 gap-8 relative">
                 <FlowStep
                   icon={<Search className="h-8 w-8" />}
                   title={t("home.howItWorks.step1.title")}
@@ -118,20 +116,15 @@ function HomeContent() {
                   title={t("home.howItWorks.step3.title")}
                   color="green"
                 />
-                <FlowStep
-                  icon={<Sparkles className="h-8 w-8" />}
-                  title={t("home.howItWorks.step4.title")}
-                  color="emerald"
-                />
               </div>
             </div>
 
             {/* Mobile Flow - Horizontal in one line */}
             <div className="lg:hidden relative flex flex-col items-center">
               {/* Connecting Line */}
-              <div className="absolute top-6 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 via-green-500 to-emerald-500 rounded-full" />
+              <div className="absolute top-6 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
 
-              <div className="grid grid-cols-4 gap-2 relative">
+              <div className="grid grid-cols-3 gap-4 relative">
                 <FlowStep
                   icon={<Search className="h-5 w-5" />}
                   title={t("home.howItWorks.step1.title")}
@@ -148,12 +141,6 @@ function HomeContent() {
                   icon={<CalendarCheck className="h-5 w-5" />}
                   title={t("home.howItWorks.step3.title")}
                   color="green"
-                  small
-                />
-                <FlowStep
-                  icon={<Sparkles className="h-5 w-5" />}
-                  title={t("home.howItWorks.step4.title")}
-                  color="emerald"
                   small
                 />
               </div>
