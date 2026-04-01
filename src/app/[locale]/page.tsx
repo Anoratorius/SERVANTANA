@@ -44,11 +44,11 @@ function FlowStep({
 
   return (
     <div className="flex flex-col items-center text-center group">
-      <div className={`${small ? 'w-10 h-10 mb-1' : 'w-16 h-16 mb-4'} rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center shadow-xl transition-transform group-hover:scale-110`}>
+      <div className={`${small ? 'w-8 h-8 mb-1' : 'w-10 h-10 mb-2'} rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <div className={`w-full ${small ? 'p-1.5' : 'p-4'} rounded-xl border ${bgClasses[color]} transition-all group-hover:shadow-md`}>
-        <h3 className={`font-bold ${small ? 'text-[10px]' : 'text-lg'} text-gray-800`}>{title}</h3>
+      <div className={`w-full ${small ? 'p-1' : 'p-2'} rounded-lg border ${bgClasses[color]} transition-all group-hover:shadow-md`}>
+        <h3 className={`font-bold ${small ? 'text-[8px]' : 'text-sm'} text-gray-800`}>{title}</h3>
       </div>
     </div>
   );
@@ -96,23 +96,23 @@ function HomeContent() {
         <section className="py-20 bg-muted/30 overflow-hidden w-full">
           <div className="w-full px-4 max-w-5xl mx-auto">
             {/* Desktop Flow - Horizontal Connected Timeline */}
-            <div className="hidden lg:block relative max-w-3xl mx-auto">
+            <div className="hidden lg:block relative max-w-xl mx-auto">
               {/* Connecting Line */}
-              <div className="absolute top-8 left-[16%] right-[16%] h-1 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
+              <div className="absolute top-5 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
 
-              <div className="grid grid-cols-3 gap-6 relative">
+              <div className="grid grid-cols-3 gap-4 relative">
                 <FlowStep
-                  icon={<Search className="h-6 w-6" />}
+                  icon={<Search className="h-4 w-4" />}
                   title={t("home.howItWorks.step1.title")}
                   color="blue"
                 />
                 <FlowStep
-                  icon={<UserCheck className="h-6 w-6" />}
+                  icon={<UserCheck className="h-4 w-4" />}
                   title={t("home.howItWorks.step2.title")}
                   color="teal"
                 />
                 <FlowStep
-                  icon={<CalendarCheck className="h-6 w-6" />}
+                  icon={<CalendarCheck className="h-4 w-4" />}
                   title={t("home.howItWorks.step3.title")}
                   color="green"
                 />
@@ -122,23 +122,23 @@ function HomeContent() {
             {/* Mobile Flow - Horizontal in one line */}
             <div className="lg:hidden relative flex flex-col items-center">
               {/* Connecting Line */}
-              <div className="absolute top-5 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
+              <div className="absolute top-4 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
 
-              <div className="grid grid-cols-3 gap-3 relative">
+              <div className="grid grid-cols-3 gap-2 relative">
                 <FlowStep
-                  icon={<Search className="h-4 w-4" />}
+                  icon={<Search className="h-3 w-3" />}
                   title={t("home.howItWorks.step1.title")}
                   color="blue"
                   small
                 />
                 <FlowStep
-                  icon={<UserCheck className="h-4 w-4" />}
+                  icon={<UserCheck className="h-3 w-3" />}
                   title={t("home.howItWorks.step2.title")}
                   color="teal"
                   small
                 />
                 <FlowStep
-                  icon={<CalendarCheck className="h-4 w-4" />}
+                  icon={<CalendarCheck className="h-3 w-3" />}
                   title={t("home.howItWorks.step3.title")}
                   color="green"
                   small
