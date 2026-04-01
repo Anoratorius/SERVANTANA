@@ -135,7 +135,7 @@ export default function SupportPage() {
                   <ul className="list-disc list-inside text-muted-foreground space-y-1">
                     <li>How do I cancel a booking?</li>
                     <li>What is the refund policy?</li>
-                    <li>How do I become a worker?</li>
+                    <li>How do I register as a worker?</li>
                     <li>How are payments processed?</li>
                   </ul>
                 </div>
