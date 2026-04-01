@@ -21,34 +21,30 @@ function FlowStep({
   icon,
   title,
   color,
-  small = false
 }: {
   icon: React.ReactNode;
   title: string;
-  color: "blue" | "teal" | "green" | "emerald";
-  small?: boolean;
+  color: "blue" | "teal" | "green";
 }) {
   const colorClasses = {
     blue: "from-blue-500 to-blue-600 shadow-blue-500/30",
     teal: "from-teal-500 to-teal-600 shadow-teal-500/30",
     green: "from-green-500 to-green-600 shadow-green-500/30",
-    emerald: "from-emerald-500 to-emerald-600 shadow-emerald-500/30",
   };
 
   const bgClasses = {
     blue: "bg-blue-50 border-blue-200",
     teal: "bg-teal-50 border-teal-200",
     green: "bg-green-50 border-green-200",
-    emerald: "bg-emerald-50 border-emerald-200",
   };
 
   return (
     <div className="flex flex-col items-center text-center group">
-      <div className={`${small ? 'w-8 h-8 mb-1' : 'w-10 h-10 mb-2'} rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-110`}>
+      <div className={`w-10 h-10 mb-2 rounded-full bg-gradient-to-br ${colorClasses[color]} text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <div className={`w-full ${small ? 'p-1' : 'p-2'} rounded-lg border ${bgClasses[color]} transition-all group-hover:shadow-md`}>
-        <h3 className={`font-bold ${small ? 'text-[8px]' : 'text-sm'} text-gray-800`}>{title}</h3>
+      <div className={`w-full p-2 rounded-lg border ${bgClasses[color]} transition-all group-hover:shadow-md`}>
+        <h3 className="font-bold text-sm text-gray-800">{title}</h3>
       </div>
     </div>
   );
@@ -93,10 +89,9 @@ function HomeContent() {
         </div>
 
         {/* Flow Section */}
-        <section className="py-20 bg-muted/30 overflow-hidden w-full">
-          <div className="w-full px-4 max-w-5xl mx-auto">
-            {/* Desktop Flow - Horizontal Connected Timeline */}
-            <div className="hidden lg:block relative max-w-xl mx-auto">
+        <section className="py-12 bg-muted/30 overflow-hidden w-full">
+          <div className="w-full px-4 max-w-xl mx-auto">
+            <div className="relative">
               {/* Connecting Line */}
               <div className="absolute top-5 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
 
@@ -115,33 +110,6 @@ function HomeContent() {
                   icon={<CalendarCheck className="h-4 w-4" />}
                   title={t("home.howItWorks.step3.title")}
                   color="green"
-                />
-              </div>
-            </div>
-
-            {/* Mobile Flow - Horizontal in one line */}
-            <div className="lg:hidden relative flex flex-col items-center">
-              {/* Connecting Line */}
-              <div className="absolute top-4 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 rounded-full" />
-
-              <div className="grid grid-cols-3 gap-2 relative">
-                <FlowStep
-                  icon={<Search className="h-3 w-3" />}
-                  title={t("home.howItWorks.step1.title")}
-                  color="blue"
-                  small
-                />
-                <FlowStep
-                  icon={<UserCheck className="h-3 w-3" />}
-                  title={t("home.howItWorks.step2.title")}
-                  color="teal"
-                  small
-                />
-                <FlowStep
-                  icon={<CalendarCheck className="h-3 w-3" />}
-                  title={t("home.howItWorks.step3.title")}
-                  color="green"
-                  small
                 />
               </div>
             </div>
