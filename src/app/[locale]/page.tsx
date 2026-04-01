@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { Card, CardContent } from "@/components/ui/card";
 import { Header, Footer } from "@/components/layout";
 import { HeaderLocation } from "@/components/layout/HeaderLocation";
 import { CTAButtons } from "@/components/home/CTAButtons";
@@ -9,10 +8,6 @@ import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
 import {
   Search,
-  Shield,
-  DollarSign,
-  Calendar,
-  Lock,
   UserCheck,
   CalendarCheck,
   Sparkles,
@@ -23,26 +18,6 @@ type Props = {
 };
 
 // Helper Components - defined before use
-function FeatureCard({ icon, title, color }: { icon: React.ReactNode; title: string; color: "blue" | "teal" | "green" | "emerald" }) {
-  const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    teal: "from-teal-500 to-teal-600",
-    green: "from-green-500 to-green-600",
-    emerald: "from-emerald-500 to-emerald-600",
-  };
-
-  return (
-    <Card className="text-center border shadow-sm hover:shadow-lg transition-all duration-300 ease-out bg-white cursor-pointer transform-gpu hover:scale-105 will-change-transform w-full max-w-xs" style={{ backfaceVisibility: "hidden", WebkitFontSmoothing: "subpixel-antialiased" }}>
-      <CardContent className="pt-6">
-        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${colorClasses[color]} text-white mb-4`}>
-          {icon}
-        </div>
-        <h3 className="font-bold text-xl">{title}</h3>
-      </CardContent>
-    </Card>
-  );
-}
-
 function FlowStep({
   icon,
   title,
@@ -113,37 +88,10 @@ function HomeContent() {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section id="features" className="pt-8 pb-20 md:py-20 bg-white w-full">
-          <div className="w-full px-4 flex flex-col items-center">
-            {/* Mobile Location - Only visible on mobile */}
-            <div className="md:hidden mb-6">
-              <HeaderLocation />
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto justify-items-center">
-              <FeatureCard
-                icon={<Shield className="h-10 w-10" />}
-                title={t("home.features.verified.title")}
-                color="blue"
-              />
-              <FeatureCard
-                icon={<Lock className="h-10 w-10" />}
-                title={t("home.features.secure.title")}
-                color="teal"
-              />
-              <FeatureCard
-                icon={<Calendar className="h-10 w-10" />}
-                title={t("home.features.flexible.title")}
-                color="green"
-              />
-              <FeatureCard
-                icon={<DollarSign className="h-10 w-10" />}
-                title={t("home.features.transparent.title")}
-                color="emerald"
-              />
-            </div>
-          </div>
-        </section>
+        {/* Mobile Location - Only visible on mobile */}
+        <div className="md:hidden py-4 bg-white w-full flex justify-center">
+          <HeaderLocation />
+        </div>
 
         {/* Flow Section */}
         <section className="py-20 bg-muted/30 overflow-hidden w-full">
