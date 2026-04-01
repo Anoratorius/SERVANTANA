@@ -19,8 +19,8 @@ import { toast } from "sonner";
 const LocationPicker = dynamic(() => import("./LocationPicker"), {
   ssr: false,
   loading: () => (
-    <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+    <div className="h-[200px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
+      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
     </div>
   ),
 });
@@ -96,28 +96,28 @@ export default function LocationVerificationModal({
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
-        className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
+        className="sm:max-w-[420px] max-h-[85vh] overflow-y-auto p-4"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-100 rounded-full">
-              <MapPin className="h-6 w-6 text-blue-600" />
+        <DialogHeader className="pb-2">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 bg-blue-100 rounded-full">
+              <MapPin className="h-4 w-4 text-blue-600" />
             </div>
-            <DialogTitle className="text-xl">{t("location.verifyYourLocation")}</DialogTitle>
+            <DialogTitle className="text-base">{t("location.verifyYourLocation")}</DialogTitle>
           </div>
-          <DialogDescription className="text-left">
+          <DialogDescription className="text-left text-xs">
             {t("location.verificationExplanation")}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
-            <Shield className="h-5 w-5 text-amber-600 mt-0.5" />
-            <div className="text-sm text-amber-800">
+        <div className="space-y-3 py-2">
+          <div className="flex items-start gap-2 p-2 bg-amber-50 rounded-lg border border-amber-200">
+            <Shield className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-amber-800">
               <p className="font-medium">{t("location.whyRequired")}</p>
-              <ul className="mt-1 space-y-1 list-disc list-inside text-amber-700">
+              <ul className="mt-1 space-y-0.5 list-disc list-inside text-amber-700">
                 <li>{t("location.reason1")}</li>
                 <li>{t("location.reason2")}</li>
                 <li>{t("location.reason3")}</li>
@@ -127,16 +127,16 @@ export default function LocationVerificationModal({
 
           <LocationPicker
             onLocationSelect={handleLocationSelect}
-            height="350px"
+            height="200px"
           />
 
           {selectedLocation && (
-            <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-              <div className="flex items-center gap-2 text-green-800">
-                <MapPin className="h-4 w-4" />
-                <span className="font-medium">{t("location.selectedLocation")}:</span>
+            <div className="p-2 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center gap-1.5 text-green-800">
+                <MapPin className="h-3 w-3" />
+                <span className="font-medium text-xs">{t("location.selectedLocation")}:</span>
               </div>
-              <p className="text-sm text-green-700 mt-1">
+              <p className="text-xs text-green-700 mt-0.5">
                 {selectedLocation.city && selectedLocation.country
                   ? `${selectedLocation.city}, ${selectedLocation.country}`
                   : `${selectedLocation.lat.toFixed(4)}, ${selectedLocation.lng.toFixed(4)}`}
@@ -145,16 +145,17 @@ export default function LocationVerificationModal({
           )}
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-1">
           <Button
             onClick={handleConfirmLocation}
             disabled={!selectedLocation || isSaving}
+            size="sm"
             className="w-full sm:w-auto"
           >
             {isSaving ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
             ) : (
-              <MapPin className="h-4 w-4 mr-2" />
+              <MapPin className="h-3 w-3 mr-1.5" />
             )}
             {t("location.confirmLocation")}
           </Button>
