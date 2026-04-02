@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X } from "lucide-react";
+import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X, CreditCard, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -79,9 +79,9 @@ function WorkerOnboardingContent() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  // Current step: 1=Categories, 2=Professions, 3=Rate, 4=Availability, 5=Profile, 6=Review
+  // Current step: 1=Categories, 2=Professions, 3=Rate, 4=Availability, 5=Profile, 6=Payment, 7=Review
   const [step, setStep] = useState(1);
-  const TOTAL_STEPS = 6;
+  const TOTAL_STEPS = 7;
 
   // Step 1: Categories
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>([]);
@@ -112,6 +112,11 @@ function WorkerOnboardingContent() {
   const [ecoFriendly, setEcoFriendly] = useState(false);
   const [petFriendly, setPetFriendly] = useState(false);
   const [serviceRadius, setServiceRadius] = useState("10");
+
+  // Step 6: Payment
+  const [stripeSetupComplete, setStripeSetupComplete] = useState(false);
+  const [isSettingUpStripe, setIsSettingUpStripe] = useState(false);
+  const [stripeStatus, setStripeStatus] = useState<string | null>(null);
 
   // Loading states
   const [isLoading, setIsLoading] = useState(true);
@@ -264,6 +269,8 @@ function WorkerOnboardingContent() {
       case 5:
         return true; // Bio is optional
       case 6:
+        return true; // Payment setup is optional, can skip
+      case 7:
         return true;
       default:
         return false;
@@ -472,11 +479,11 @@ function WorkerOnboardingContent() {
           {/* Progress indicator */}
           <div className="mb-6 sm:mb-8">
             <div className="flex justify-between items-center max-w-2xl mx-auto mb-2 px-2">
-              {[1, 2, 3, 4, 5, 6].map((s) => (
+              {[1, 2, 3, 4, 5, 6, 7].map((s) => (
                 <div key={s} className="flex items-center">
                   <div
                     className={cn(
-                      "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors",
+                      "w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors",
                       s < step
                         ? "bg-green-500 text-white"
                         : s === step
@@ -484,12 +491,12 @@ function WorkerOnboardingContent() {
                         : "bg-gray-200 text-gray-500"
                     )}
                   >
-                    {s < step ? <Check className="h-4 w-4 sm:h-5 sm:w-5" /> : s}
+                    {s < step ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : s}
                   </div>
-                  {s < 6 && (
+                  {s < 7 && (
                     <div
                       className={cn(
-                        "w-4 sm:w-8 md:w-16 h-1 mx-0.5 sm:mx-1",
+                        "w-3 sm:w-6 md:w-12 h-1 mx-0.5 sm:mx-1",
                         s < step ? "bg-green-500" : "bg-gray-200"
                       )}
                     />
@@ -1015,14 +1022,139 @@ function WorkerOnboardingContent() {
             </div>
           )}
 
-          {/* Step 6: Review */}
+          {/* Step 6: Payment Setup */}
           {step === 6 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step6Title")}
+                {t("workerOnboarding.step6PaymentTitle")}
               </h1>
               <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step6Desc")}
+                {t("workerOnboarding.step6PaymentDesc")}
+              </p>
+
+              <Card className="max-w-lg mx-auto">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-blue-600" />
+                    {t("workerOnboarding.paymentSetup")}
+                  </CardTitle>
+                  <CardDescription>
+                    {t("workerOnboarding.paymentSetupDesc")}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Stripe Connect Setup */}
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
+                          <path d="M15.3 11.5c0-.9.8-1.3 2-1.3 1.8 0 4 .5 5.8 1.5V6.5c-1.9-.8-3.8-1.1-5.8-1.1-4.7 0-7.8 2.5-7.8 6.6 0 6.4 8.8 5.4 8.8 8.1 0 1.1-.9 1.4-2.2 1.4-1.9 0-4.4-.8-6.3-1.8v5.2c2.2.9 4.4 1.3 6.3 1.3 4.8 0 8.1-2.4 8.1-6.6-.1-6.9-8.9-5.7-8.9-8.1z" fill="#6772E5"/>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-purple-900">{t("workerOnboarding.stripeConnect")}</h3>
+                        <p className="text-sm text-purple-700 mt-1">
+                          {t("workerOnboarding.stripeConnectDesc")}
+                        </p>
+                      </div>
+                    </div>
+
+                    {stripeSetupComplete ? (
+                      <div className="mt-4 p-3 bg-green-100 rounded-lg flex items-center gap-2 text-green-800">
+                        <CheckCircle className="h-5 w-5" />
+                        <span className="font-medium">{t("workerOnboarding.stripeSetupComplete")}</span>
+                      </div>
+                    ) : (
+                      <Button
+                        className="w-full mt-4"
+                        onClick={async () => {
+                          setIsSettingUpStripe(true);
+                          try {
+                            const response = await fetch("/api/stripe/connect", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({}),
+                            });
+
+                            if (response.ok) {
+                              const data = await response.json();
+                              if (data.url) {
+                                // Open Stripe onboarding in new tab
+                                window.open(data.url, "_blank");
+                                setStripeStatus("pending");
+                                toast.success(t("workerOnboarding.stripeRedirect"));
+                              }
+                            } else {
+                              const error = await response.json();
+                              toast.error(error.error || t("workerOnboarding.stripeSetupFailed"));
+                            }
+                          } catch {
+                            toast.error(t("workerOnboarding.stripeSetupFailed"));
+                          } finally {
+                            setIsSettingUpStripe(false);
+                          }
+                        }}
+                        disabled={isSettingUpStripe}
+                      >
+                        {isSettingUpStripe ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                        )}
+                        {t("workerOnboarding.setupStripe")}
+                      </Button>
+                    )}
+
+                    {stripeStatus === "pending" && (
+                      <div className="mt-3 text-center">
+                        <p className="text-sm text-purple-700">{t("workerOnboarding.stripeSetupPending")}</p>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="text-purple-600"
+                          onClick={async () => {
+                            try {
+                              const response = await fetch("/api/stripe/connect");
+                              if (response.ok) {
+                                const data = await response.json();
+                                if (data.status === "complete") {
+                                  setStripeSetupComplete(true);
+                                  setStripeStatus("complete");
+                                  toast.success(t("workerOnboarding.stripeVerified"));
+                                } else {
+                                  toast.info(t("workerOnboarding.stripeStillPending"));
+                                }
+                              }
+                            } catch {
+                              toast.error(t("workerOnboarding.checkFailed"));
+                            }
+                          }}
+                        >
+                          {t("workerOnboarding.checkStatus")}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Skip option */}
+                  <div className="text-center pt-4 border-t">
+                    <p className="text-sm text-gray-500 mb-2">
+                      {t("workerOnboarding.skipPaymentNote")}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Step 7: Review */}
+          {step === 7 && (
+            <div className="animate-in fade-in duration-300">
+              <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
+                {t("workerOnboarding.step7Title")}
+              </h1>
+              <p className="text-gray-600 text-center mb-8">
+                {t("workerOnboarding.step7Desc")}
               </p>
 
               <div className="space-y-4 max-w-lg mx-auto">
@@ -1159,6 +1291,29 @@ function WorkerOnboardingContent() {
                         <span className="text-sm text-gray-500">{t("workerOnboarding.bio")}</span>
                         <p className="text-sm mt-1">{bio}</p>
                       </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Payment Setup */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <CreditCard className="h-5 w-5" />
+                      {t("workerOnboarding.reviewPayment")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{t("workerOnboarding.stripeConnect")}</span>
+                      <Badge variant={stripeSetupComplete ? "default" : "secondary"}>
+                        {stripeSetupComplete ? t("workerOnboarding.connected") : t("workerOnboarding.notSetup")}
+                      </Badge>
+                    </div>
+                    {!stripeSetupComplete && (
+                      <p className="text-xs text-gray-500 mt-2">
+                        {t("workerOnboarding.canSetupLater")}
+                      </p>
                     )}
                   </CardContent>
                 </Card>
