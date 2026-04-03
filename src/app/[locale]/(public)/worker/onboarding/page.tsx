@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X, CreditCard, Camera, Building2 } from "lucide-react";
+import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X, CreditCard, Camera, Building2, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -92,11 +92,11 @@ function WorkerOnboardingContent() {
 
   // Step 1: What You Do (Categories + Professions)
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [professions, setProfessions] = useState<Profession[]>([]);
   const [selectedProfessions, setSelectedProfessions] = useState<string[]>([]);
   const [primaryProfession, setPrimaryProfession] = useState<string | null>(null);
-  const [showProfessions, setShowProfessions] = useState(false);
+  const [professionsFetched, setProfessionsFetched] = useState(false);
 
   // Step 2: Rates
   const [professionRates, setProfessionRates] = useState<Record<string, string>>({});
@@ -170,12 +170,9 @@ function WorkerOnboardingContent() {
     fetchCustomCategories();
   }, []);
 
-  // Fetch professions when categories are selected
+  // Fetch all professions once when first category is expanded
   const fetchProfessions = useCallback(async () => {
-    if (selectedCategories.length === 0) {
-      setProfessions([]);
-      return;
-    }
+    if (professionsFetched) return;
 
     setIsFetchingProfessions(true);
     try {
@@ -183,23 +180,25 @@ function WorkerOnboardingContent() {
       if (!response.ok) throw new Error("Failed to fetch professions");
       const allProfessions: Profession[] = await response.json();
       setProfessions(allProfessions);
+      setProfessionsFetched(true);
     } catch (error) {
       console.error("Failed to fetch professions:", error);
       toast.error(t("workerOnboarding.fetchError"));
     } finally {
       setIsFetchingProfessions(false);
     }
-  }, [selectedCategories, t]);
+  }, [professionsFetched, t]);
 
+  // Fetch professions when first category is expanded
   useEffect(() => {
-    if (selectedCategories.length > 0 && showProfessions) {
+    if (expandedCategories.length > 0 && !professionsFetched) {
       fetchProfessions();
     }
-  }, [selectedCategories, showProfessions, fetchProfessions]);
+  }, [expandedCategories, professionsFetched, fetchProfessions]);
 
   const toggleCategory = (categoryId: string, isCustom: boolean = false) => {
     const fullId = isCustom ? `custom:${categoryId}` : categoryId;
-    setSelectedCategories((prev) =>
+    setExpandedCategories((prev) =>
       prev.includes(fullId)
         ? prev.filter((id) => id !== fullId)
         : [...prev, fullId]
@@ -268,7 +267,7 @@ function WorkerOnboardingContent() {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return selectedCategories.length > 0 && selectedProfessions.length > 0;
+        return selectedProfessions.length > 0;
       case 2:
         return selectedProfessions.every((profId) => {
           const rate = parseFloat(professionRates[profId] || "0");
@@ -528,116 +527,58 @@ function WorkerOnboardingContent() {
                 {t("workerOnboarding.step1DescNew")}
               </p>
 
-              {/* Categories */}
-              {!showProfessions ? (
-                <>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                    {CATEGORIES.map((category) => {
-                      const isSelected = selectedCategories.includes(category.id);
-                      return (
-                        <button
-                          key={category.id}
-                          onClick={() => toggleCategory(category.id)}
-                          className={cn(
-                            "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[90px] sm:min-h-[110px] bg-white rounded-xl border-2 transition-all",
-                            isSelected
-                              ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
-                              : "border-gray-200 hover:border-gray-300"
+              {/* Accordion Categories */}
+              <div className="space-y-3 max-w-2xl mx-auto">
+                {CATEGORIES.map((category) => {
+                  const catId = category.id;
+                  const isExpanded = expandedCategories.includes(catId);
+                  const categoryProfessions = professions.filter((p) =>
+                    p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
+                    p.categoryId === catId
+                  );
+                  const selectedInCategory = categoryProfessions.filter((p) =>
+                    selectedProfessions.includes(p.id)
+                  ).length;
+
+                  return (
+                    <div key={catId} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                      {/* Category Header */}
+                      <button
+                        onClick={() => toggleCategory(catId)}
+                        className={cn(
+                          "w-full flex items-center justify-between p-4 transition-colors",
+                          isExpanded ? "bg-blue-50" : "hover:bg-gray-50"
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{category.emoji}</span>
+                          <span className="font-medium">{t(`categories.${category.id}`)}</span>
+                          {selectedInCategory > 0 && (
+                            <Badge variant="default" className="bg-blue-500">
+                              {selectedInCategory}
+                            </Badge>
                           )}
-                        >
-                          {isSelected && (
-                            <Check className="absolute top-2 right-2 h-4 w-4 text-blue-500" />
-                          )}
-                          <span className="text-2xl sm:text-3xl mb-1">{category.emoji}</span>
-                          <span className="text-xs sm:text-sm font-medium text-center leading-tight">
-                            {t(`categories.${category.id}`)}
-                          </span>
-                        </button>
-                      );
-                    })}
-                    {customCategories
-                      .filter((category) => !CATEGORIES.some((c) => c.id === category.id))
-                      .map((category) => {
-                        const isSelected = selectedCategories.includes(`custom:${category.id}`);
-                        return (
-                          <button
-                            key={category.id}
-                            onClick={() => toggleCategory(category.id, true)}
-                            className={cn(
-                              "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[90px] sm:min-h-[110px] bg-white rounded-xl border-2 transition-all",
-                              isSelected
-                                ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
-                                : "border-gray-200 hover:border-gray-300"
-                            )}
-                          >
-                            {isSelected && (
-                              <Check className="absolute top-2 right-2 h-4 w-4 text-blue-500" />
-                            )}
-                            <span className="text-2xl sm:text-3xl mb-1">{category.emoji}</span>
-                            <span className="text-xs sm:text-sm font-medium text-center leading-tight">
-                              {locale === "de" && category.nameDE ? category.nameDE : category.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    <button
-                      onClick={() => setShowSuggestCategory(true)}
-                      className="flex flex-col items-center justify-center p-3 sm:p-4 min-h-[90px] sm:min-h-[110px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
-                    >
-                      <Plus className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 mb-1" />
-                      <span className="text-xs sm:text-sm font-medium text-gray-600">
-                        {t("workerOnboarding.createYours")}
-                      </span>
-                    </button>
-                  </div>
+                        </div>
+                        {isExpanded ? (
+                          <ChevronDown className="h-5 w-5 text-gray-500" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5 text-gray-500" />
+                        )}
+                      </button>
 
-                  {selectedCategories.length > 0 && (
-                    <div className="mt-6 text-center">
-                      <p className="text-sm text-blue-600 mb-3">
-                        {selectedCategories.length} {t("workerOnboarding.categoriesSelected")}
-                      </p>
-                      <Button onClick={() => { setShowProfessions(true); fetchProfessions(); }}>
-                        {t("workerOnboarding.selectProfessions")}
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {/* Professions */}
-                  <div className="mb-4">
-                    <Button variant="ghost" size="sm" onClick={() => setShowProfessions(false)}>
-                      <ArrowLeft className="h-4 w-4 mr-1" />
-                      {t("workerOnboarding.backToCategories")}
-                    </Button>
-                  </div>
-
-                  {isFetchingProfessions ? (
-                    <div className="flex justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {selectedCategories.map((catId) => {
-                        const isCustomCategory = catId.startsWith("custom:");
-                        const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
-
-                        const categoryProfessions = professions.filter((p) => {
-                          if (isCustomCategory) {
-                            return p.categoryId === categoryKey;
-                          }
-                          return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
-                                 p.categoryId === catId;
-                        });
-
-                        return (
-                          <div key={catId} className="bg-white rounded-xl p-4 border border-gray-200">
-                            <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-                              {CATEGORIES.find((c) => c.id === catId)?.emoji || "📁"}
-                              {getCategoryName(catId)}
-                            </h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      {/* Professions (expanded) */}
+                      {isExpanded && (
+                        <div className="p-4 pt-0 border-t border-gray-100">
+                          {isFetchingProfessions ? (
+                            <div className="flex justify-center py-6">
+                              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                            </div>
+                          ) : categoryProfessions.length === 0 ? (
+                            <div className="py-4 text-center text-gray-500 text-sm">
+                              {t("workerOnboarding.noProfessionsInCategory")}
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-3">
                               {categoryProfessions.map((profession) => {
                                 const isSelected = selectedProfessions.includes(profession.id);
                                 return (
@@ -645,46 +586,147 @@ function WorkerOnboardingContent() {
                                     key={profession.id}
                                     onClick={() => toggleProfession(profession.id)}
                                     className={cn(
-                                      "relative flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border-2 transition-all",
+                                      "relative flex flex-col items-center p-3 rounded-lg border-2 transition-all",
                                       isSelected
                                         ? "border-blue-500 bg-blue-50"
-                                        : "border-transparent hover:border-gray-300"
+                                        : "border-gray-200 bg-gray-50 hover:border-gray-300"
                                     )}
                                   >
                                     {isSelected && (
-                                      <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-                                        <Check className="h-2.5 w-2.5 text-white" />
+                                      <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                                        <Check className="h-3 w-3 text-white" />
                                       </div>
                                     )}
-                                    <span className="text-xl mb-0.5">{profession.emoji}</span>
+                                    <span className="text-xl mb-1">{profession.emoji}</span>
                                     <span className="text-xs font-medium text-center leading-tight">
                                       {getProfessionName(profession)}
                                     </span>
                                   </button>
                                 );
                               })}
+                              {/* Add yours button */}
                               <button
-                                onClick={() => openProfessionSuggestion(isCustomCategory ? categoryKey : catId)}
-                                className="flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
+                                onClick={() => openProfessionSuggestion(catId)}
+                                className="flex flex-col items-center p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
                               >
-                                <span className="text-xl mb-0.5">➕</span>
+                                <span className="text-xl mb-1">➕</span>
                                 <span className="text-xs font-medium text-gray-500">
                                   {t("workerOnboarding.addYours")}
                                 </span>
                               </button>
                             </div>
-                          </div>
-                        );
-                      })}
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  );
+                })}
 
-                  {selectedProfessions.length > 0 && (
-                    <p className="text-center text-sm text-blue-600 mt-4">
-                      {selectedProfessions.length} {t("workerOnboarding.professionsSelected")}
-                    </p>
-                  )}
-                </>
+                {/* Custom Categories */}
+                {customCategories
+                  .filter((category) => !CATEGORIES.some((c) => c.id === category.id))
+                  .map((category) => {
+                    const catId = `custom:${category.id}`;
+                    const isExpanded = expandedCategories.includes(catId);
+                    const categoryProfessions = professions.filter((p) => p.categoryId === category.id);
+                    const selectedInCategory = categoryProfessions.filter((p) =>
+                      selectedProfessions.includes(p.id)
+                    ).length;
+
+                    return (
+                      <div key={catId} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                        <button
+                          onClick={() => toggleCategory(category.id, true)}
+                          className={cn(
+                            "w-full flex items-center justify-between p-4 transition-colors",
+                            isExpanded ? "bg-blue-50" : "hover:bg-gray-50"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{category.emoji}</span>
+                            <span className="font-medium">
+                              {locale === "de" && category.nameDE ? category.nameDE : category.name}
+                            </span>
+                            {selectedInCategory > 0 && (
+                              <Badge variant="default" className="bg-blue-500">
+                                {selectedInCategory}
+                              </Badge>
+                            )}
+                          </div>
+                          {isExpanded ? (
+                            <ChevronDown className="h-5 w-5 text-gray-500" />
+                          ) : (
+                            <ChevronRight className="h-5 w-5 text-gray-500" />
+                          )}
+                        </button>
+
+                        {isExpanded && (
+                          <div className="p-4 pt-0 border-t border-gray-100">
+                            {isFetchingProfessions ? (
+                              <div className="flex justify-center py-6">
+                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-3">
+                                {categoryProfessions.map((profession) => {
+                                  const isSelected = selectedProfessions.includes(profession.id);
+                                  return (
+                                    <button
+                                      key={profession.id}
+                                      onClick={() => toggleProfession(profession.id)}
+                                      className={cn(
+                                        "relative flex flex-col items-center p-3 rounded-lg border-2 transition-all",
+                                        isSelected
+                                          ? "border-blue-500 bg-blue-50"
+                                          : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                                      )}
+                                    >
+                                      {isSelected && (
+                                        <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                                          <Check className="h-3 w-3 text-white" />
+                                        </div>
+                                      )}
+                                      <span className="text-xl mb-1">{profession.emoji}</span>
+                                      <span className="text-xs font-medium text-center leading-tight">
+                                        {getProfessionName(profession)}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                                <button
+                                  onClick={() => openProfessionSuggestion(category.id)}
+                                  className="flex flex-col items-center p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
+                                >
+                                  <span className="text-xl mb-1">➕</span>
+                                  <span className="text-xs font-medium text-gray-500">
+                                    {t("workerOnboarding.addYours")}
+                                  </span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                {/* Suggest new category */}
+                <button
+                  onClick={() => setShowSuggestCategory(true)}
+                  className="w-full flex items-center justify-center gap-2 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
+                >
+                  <Plus className="h-5 w-5 text-gray-400" />
+                  <span className="font-medium text-gray-600">
+                    {t("workerOnboarding.createYours")}
+                  </span>
+                </button>
+              </div>
+
+              {/* Selected count */}
+              {selectedProfessions.length > 0 && (
+                <p className="text-center text-sm text-blue-600 mt-6">
+                  {selectedProfessions.length} {t("workerOnboarding.professionsSelected")}
+                </p>
               )}
 
               {/* Suggestion Dialogs */}

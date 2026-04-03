@@ -1486,6 +1486,7 @@
     "categoriesSelected": "Kategorien ausgewählt",
     "professionsSelected": "Berufe ausgewählt",
     "noProfessions": "Keine Berufe für ausgewählte Kategorien verfügbar",
+    "noProfessionsInCategory": "Noch keine Berufe. Fügen Sie Ihren unten hinzu!",
     "hour": "Stunde",
     "years": "Jahre",
     "year": "Jahr",

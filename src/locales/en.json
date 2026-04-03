@@ -1486,6 +1486,7 @@
     "categoriesSelected": "categories selected",
     "professionsSelected": "professions selected",
     "noProfessions": "No professions available for selected categories",
+    "noProfessionsInCategory": "No professions yet. Add yours below!",
     "hour": "hour",
     "years": "years",
     "year": "year",
