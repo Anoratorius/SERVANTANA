@@ -1053,7 +1053,10 @@ function WorkerOnboardingContent() {
                           id="experience"
                           type="number"
                           value={experienceYears}
-                          onChange={(e) => setExperienceYears(e.target.value)}
+                          onChange={(e) => {
+                            const val = Math.min(50, Math.max(0, parseInt(e.target.value) || 0));
+                            setExperienceYears(String(val));
+                          }}
                           min="0"
                           max="50"
                           className="mt-1"
@@ -1066,7 +1069,10 @@ function WorkerOnboardingContent() {
                             id="radius"
                             type="number"
                             value={serviceRadius}
-                            onChange={(e) => setServiceRadius(e.target.value)}
+                            onChange={(e) => {
+                              const val = Math.min(100, Math.max(1, parseInt(e.target.value) || 1));
+                              setServiceRadius(String(val));
+                            }}
                             min="1"
                             max="100"
                           />

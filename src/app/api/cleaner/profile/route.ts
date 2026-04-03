@@ -21,6 +21,8 @@ const updateProfileSchema = z.object({
   serviceRadius: z.number().min(1).max(100).optional(),
   timezone: z.string().max(100).optional(),
   paypalEmail: z.string().email().max(100).optional().or(z.literal("")),
+  iban: z.string().max(34).optional().or(z.literal("")),
+  accountHolder: z.string().max(100).optional().or(z.literal("")),
 });
 
 // Get cleaner's own profile
@@ -215,6 +217,8 @@ export async function PUT(request: NextRequest) {
       serviceRadius: data.serviceRadius,
       timezone: data.timezone,
       paypalEmail: data.paypalEmail || null,
+      iban: data.iban || null,
+      accountHolder: data.accountHolder || null,
     };
 
     // Remove undefined values

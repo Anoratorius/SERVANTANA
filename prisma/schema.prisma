@@ -327,6 +327,8 @@ model WorkerProfile {
 
   // Payment
   paypalEmail     String?  // PayPal email for receiving payouts
+  iban            String?  // IBAN for bank transfers
+  accountHolder   String?  // Bank account holder name
   cryptoWallets   CryptoWallet[]
 
   // Stripe Connect
