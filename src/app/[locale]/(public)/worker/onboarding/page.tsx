@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X, CreditCard, ExternalLink } from "lucide-react";
+import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X, CreditCard, Camera, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -42,6 +42,13 @@ const DAYS_OF_WEEK = [
   { value: 5, key: "friday" },
   { value: 6, key: "saturday" },
   { value: 0, key: "sunday" },
+];
+
+// Schedule presets
+const SCHEDULE_PRESETS = [
+  { id: "weekdays", days: [1, 2, 3, 4, 5], startTime: "09:00", endTime: "17:00" },
+  { id: "flexible", days: [1, 2, 3, 4, 5, 6, 0], startTime: "08:00", endTime: "20:00" },
+  { id: "weekends", days: [6, 0], startTime: "10:00", endTime: "18:00" },
 ];
 
 interface Profession {
@@ -79,57 +86,54 @@ function WorkerOnboardingContent() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  // Current step: 1=Categories, 2=Professions, 3=Rate, 4=Availability, 5=Profile, 6=Payment, 7=Review
+  // Current step: 1=What You Do, 2=Rates, 3=Schedule, 4=Get Paid, 5=Finish Up
   const [step, setStep] = useState(1);
-  const TOTAL_STEPS = 7;
+  const TOTAL_STEPS = 5;
 
-  // Step 1: Categories
+  // Step 1: What You Do (Categories + Professions)
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
-  // Step 2: Professions
   const [professions, setProfessions] = useState<Profession[]>([]);
   const [selectedProfessions, setSelectedProfessions] = useState<string[]>([]);
   const [primaryProfession, setPrimaryProfession] = useState<string | null>(null);
+  const [showProfessions, setShowProfessions] = useState(false);
 
-  // Step 3: Rate per profession
+  // Step 2: Rates
   const [professionRates, setProfessionRates] = useState<Record<string, string>>({});
-  const [currency] = useState("EUR");
 
-  // Step 4: Availability
+  // Step 3: Schedule
   const [availability, setAvailability] = useState<AvailabilitySlot[]>(
     DAYS_OF_WEEK.map((day) => ({
       dayOfWeek: day.value,
       startTime: "09:00",
       endTime: "17:00",
-      isActive: day.value >= 1 && day.value <= 5, // Mon-Fri active by default
+      isActive: day.value >= 1 && day.value <= 5,
     }))
   );
 
-  // Step 5: Profile
+  // Step 4: Payment
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const [iban, setIban] = useState("");
+  const [accountHolder, setAccountHolder] = useState("");
+
+  // Step 5: Finish Up
   const [bio, setBio] = useState("");
   const [experienceYears, setExperienceYears] = useState("1");
   const [ecoFriendly, setEcoFriendly] = useState(false);
   const [petFriendly, setPetFriendly] = useState(false);
   const [serviceRadius, setServiceRadius] = useState("10");
 
-  // Step 6: Payment
-  const [stripeSetupComplete, setStripeSetupComplete] = useState(false);
-  const [isSettingUpStripe, setIsSettingUpStripe] = useState(false);
-  const [stripeStatus, setStripeStatus] = useState<string | null>(null);
-
   // Loading states
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingProfessions, setIsFetchingProfessions] = useState(false);
 
-  // Category suggestion
+  // Suggestion dialogs
   const [showSuggestCategory, setShowSuggestCategory] = useState(false);
   const [suggestCategoryName, setSuggestCategoryName] = useState("");
   const [suggestCategoryEmoji, setSuggestCategoryEmoji] = useState("");
   const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
 
-  // Profession suggestion
   const [showSuggestProfession, setShowSuggestProfession] = useState(false);
   const [suggestProfessionName, setSuggestProfessionName] = useState("");
   const [suggestProfessionEmoji, setSuggestProfessionEmoji] = useState("");
@@ -177,10 +181,7 @@ function WorkerOnboardingContent() {
     try {
       const response = await fetch("/api/professions");
       if (!response.ok) throw new Error("Failed to fetch professions");
-
       const allProfessions: Profession[] = await response.json();
-
-      // For now, show all professions - the UI will group them
       setProfessions(allProfessions);
     } catch (error) {
       console.error("Failed to fetch professions:", error);
@@ -191,10 +192,10 @@ function WorkerOnboardingContent() {
   }, [selectedCategories, t]);
 
   useEffect(() => {
-    if (step === 2) {
+    if (selectedCategories.length > 0 && showProfessions) {
       fetchProfessions();
     }
-  }, [step, fetchProfessions]);
+  }, [selectedCategories, showProfessions, fetchProfessions]);
 
   const toggleCategory = (categoryId: string, isCustom: boolean = false) => {
     const fullId = isCustom ? `custom:${categoryId}` : categoryId;
@@ -211,7 +212,6 @@ function WorkerOnboardingContent() {
         if (primaryProfession === professionId) {
           setPrimaryProfession(null);
         }
-        // Remove rate when deselecting
         setProfessionRates((rates) => {
           const newRates = { ...rates };
           delete newRates[professionId];
@@ -222,10 +222,9 @@ function WorkerOnboardingContent() {
         if (prev.length === 0) {
           setPrimaryProfession(professionId);
         }
-        // Initialize rate with default
         setProfessionRates((rates) => ({
           ...rates,
-          [professionId]: "25",
+          [professionId]: "",
         }));
         return [...prev, professionId];
       }
@@ -252,26 +251,35 @@ function WorkerOnboardingContent() {
     );
   };
 
+  const applySchedulePreset = (presetId: string) => {
+    const preset = SCHEDULE_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return;
+
+    setAvailability(
+      DAYS_OF_WEEK.map((day) => ({
+        dayOfWeek: day.value,
+        startTime: preset.startTime,
+        endTime: preset.endTime,
+        isActive: preset.days.includes(day.value),
+      }))
+    );
+  };
+
   const canProceed = () => {
     switch (step) {
       case 1:
-        return selectedCategories.length > 0;
+        return selectedCategories.length > 0 && selectedProfessions.length > 0;
       case 2:
-        return selectedProfessions.length > 0;
-      case 3:
-        // Check all selected professions have valid rates
         return selectedProfessions.every((profId) => {
           const rate = parseFloat(professionRates[profId] || "0");
           return !isNaN(rate) && rate > 0;
         });
-      case 4:
+      case 3:
         return availability.some((slot) => slot.isActive);
+      case 4:
+        return true; // Payment is optional
       case 5:
-        return true; // Bio is optional
-      case 6:
-        return true; // Payment setup is optional, can skip
-      case 7:
-        return true;
+        return true; // Profile details are optional
       default:
         return false;
     }
@@ -370,7 +378,7 @@ function WorkerOnboardingContent() {
     setIsSubmitting(true);
 
     try {
-      // Step 1: Update profile with basic info
+      // Update profile with basic info
       const profileResponse = await fetch("/api/cleaner/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -381,6 +389,9 @@ function WorkerOnboardingContent() {
           ecoFriendly,
           petFriendly,
           serviceRadius: parseInt(serviceRadius) || 10,
+          paypalEmail: paypalEmail.trim() || undefined,
+          iban: iban.trim() || undefined,
+          accountHolder: accountHolder.trim() || undefined,
         }),
       });
 
@@ -388,7 +399,7 @@ function WorkerOnboardingContent() {
         throw new Error("Failed to update profile");
       }
 
-      // Step 2: Add professions with their rates
+      // Add professions with their rates
       for (let i = 0; i < selectedProfessions.length; i++) {
         const professionId = selectedProfessions[i];
         const isPrimary = professionId === primaryProfession || (i === 0 && !primaryProfession);
@@ -408,7 +419,7 @@ function WorkerOnboardingContent() {
         }
       }
 
-      // Step 3: Set availability
+      // Set availability
       const activeSlots = availability.filter((slot) => slot.isActive);
       const availabilityResponse = await fetch("/api/cleaner/availability", {
         method: "PUT",
@@ -420,7 +431,7 @@ function WorkerOnboardingContent() {
         throw new Error("Failed to set availability");
       }
 
-      // Step 4: Complete onboarding
+      // Complete onboarding
       const completeResponse = await fetch("/api/cleaner/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -442,7 +453,6 @@ function WorkerOnboardingContent() {
   };
 
   const getCategoryName = (categoryId: string) => {
-    // Check if it's a custom category
     if (categoryId.startsWith("custom:")) {
       const customId = categoryId.replace("custom:", "");
       const custom = customCategories.find((c) => c.id === customId);
@@ -450,7 +460,6 @@ function WorkerOnboardingContent() {
         return locale === "de" && custom.nameDE ? custom.nameDE : custom.name;
       }
     }
-    // Built-in category
     return t(`categories.${categoryId}`);
   };
 
@@ -478,12 +487,12 @@ function WorkerOnboardingContent() {
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Progress indicator */}
           <div className="mb-6 sm:mb-8">
-            <div className="flex justify-between items-center max-w-2xl mx-auto mb-2 px-2">
-              {[1, 2, 3, 4, 5, 6, 7].map((s) => (
+            <div className="flex justify-between items-center max-w-md mx-auto mb-2 px-2">
+              {[1, 2, 3, 4, 5].map((s) => (
                 <div key={s} className="flex items-center">
                   <div
                     className={cn(
-                      "w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors",
+                      "w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
                       s < step
                         ? "bg-green-500 text-white"
                         : s === step
@@ -491,12 +500,12 @@ function WorkerOnboardingContent() {
                         : "bg-gray-200 text-gray-500"
                     )}
                   >
-                    {s < step ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : s}
+                    {s < step ? <Check className="h-4 w-4 sm:h-5 sm:w-5" /> : s}
                   </div>
-                  {s < 7 && (
+                  {s < 5 && (
                     <div
                       className={cn(
-                        "w-3 sm:w-6 md:w-12 h-1 mx-0.5 sm:mx-1",
+                        "w-8 sm:w-12 md:w-16 h-1 mx-1",
                         s < step ? "bg-green-500" : "bg-gray-200"
                       )}
                     />
@@ -509,89 +518,182 @@ function WorkerOnboardingContent() {
             </p>
           </div>
 
-          {/* Step 1: Categories */}
+          {/* Step 1: What You Do (Categories + Professions) */}
           {step === 1 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step1Title")}
+                {t("workerOnboarding.step1TitleNew")}
               </h1>
-              <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step1Desc")}
+              <p className="text-gray-600 text-center mb-6">
+                {t("workerOnboarding.step1DescNew")}
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                {CATEGORIES.map((category) => {
-                  const isSelected = selectedCategories.includes(category.id);
-                  return (
+              {/* Categories */}
+              {!showProfessions ? (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                    {CATEGORIES.map((category) => {
+                      const isSelected = selectedCategories.includes(category.id);
+                      return (
+                        <button
+                          key={category.id}
+                          onClick={() => toggleCategory(category.id)}
+                          className={cn(
+                            "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[90px] sm:min-h-[110px] bg-white rounded-xl border-2 transition-all",
+                            isSelected
+                              ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
+                              : "border-gray-200 hover:border-gray-300"
+                          )}
+                        >
+                          {isSelected && (
+                            <Check className="absolute top-2 right-2 h-4 w-4 text-blue-500" />
+                          )}
+                          <span className="text-2xl sm:text-3xl mb-1">{category.emoji}</span>
+                          <span className="text-xs sm:text-sm font-medium text-center leading-tight">
+                            {t(`categories.${category.id}`)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                    {customCategories
+                      .filter((category) => !CATEGORIES.some((c) => c.id === category.id))
+                      .map((category) => {
+                        const isSelected = selectedCategories.includes(`custom:${category.id}`);
+                        return (
+                          <button
+                            key={category.id}
+                            onClick={() => toggleCategory(category.id, true)}
+                            className={cn(
+                              "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[90px] sm:min-h-[110px] bg-white rounded-xl border-2 transition-all",
+                              isSelected
+                                ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
+                                : "border-gray-200 hover:border-gray-300"
+                            )}
+                          >
+                            {isSelected && (
+                              <Check className="absolute top-2 right-2 h-4 w-4 text-blue-500" />
+                            )}
+                            <span className="text-2xl sm:text-3xl mb-1">{category.emoji}</span>
+                            <span className="text-xs sm:text-sm font-medium text-center leading-tight">
+                              {locale === "de" && category.nameDE ? category.nameDE : category.name}
+                            </span>
+                          </button>
+                        );
+                      })}
                     <button
-                      key={category.id}
-                      onClick={() => toggleCategory(category.id)}
-                      className={cn(
-                        "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[100px] sm:min-h-[120px] bg-white rounded-xl border-2 transition-all",
-                        isSelected
-                          ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      )}
+                      onClick={() => setShowSuggestCategory(true)}
+                      className="flex flex-col items-center justify-center p-3 sm:p-4 min-h-[90px] sm:min-h-[110px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
                     >
-                      {isSelected && (
-                        <Check className="absolute top-2 right-2 h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-                      )}
-                      <span className="text-3xl sm:text-4xl mb-2">{category.emoji}</span>
-                      <span className="text-xs sm:text-sm font-medium text-center leading-tight">
-                        {t(`categories.${category.id}`)}
+                      <Plus className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 mb-1" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">
+                        {t("workerOnboarding.createYours")}
                       </span>
                     </button>
-                  );
-                })}
-                {/* Only show custom categories that don't match built-in category IDs */}
-                {customCategories
-                  .filter((category) => !CATEGORIES.some((c) => c.id === category.id || c.id === category.name.toLowerCase().replace(/[^a-z]/g, "_")))
-                  .map((category) => {
-                  const isSelected = selectedCategories.includes(`custom:${category.id}`);
-                  return (
-                    <button
-                      key={category.id}
-                      onClick={() => toggleCategory(category.id, true)}
-                      className={cn(
-                        "relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[100px] sm:min-h-[120px] bg-white rounded-xl border-2 transition-all",
-                        isSelected
-                          ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      )}
-                    >
-                      {isSelected && (
-                        <Check className="absolute top-2 right-2 h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-                      )}
-                      <span className="text-3xl sm:text-4xl mb-2">{category.emoji}</span>
-                      <span className="text-xs sm:text-sm font-medium text-center leading-tight">
-                        {locale === "de" && category.nameDE ? category.nameDE : category.name}
-                      </span>
-                    </button>
-                  );
-                })}
+                  </div>
 
-                {/* Create yours / Suggest category */}
-                <button
-                  onClick={() => setShowSuggestCategory(true)}
-                  className="relative flex flex-col items-center justify-center p-3 sm:p-4 min-h-[100px] sm:min-h-[120px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 transition-all hover:border-blue-400 hover:bg-blue-50"
-                >
-                  <Plus className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 mb-2" />
-                  <span className="text-xs sm:text-sm font-medium text-center leading-tight text-gray-600">
-                    {t("workerOnboarding.createYours")}
-                  </span>
-                </button>
-              </div>
+                  {selectedCategories.length > 0 && (
+                    <div className="mt-6 text-center">
+                      <p className="text-sm text-blue-600 mb-3">
+                        {selectedCategories.length} {t("workerOnboarding.categoriesSelected")}
+                      </p>
+                      <Button onClick={() => { setShowProfessions(true); fetchProfessions(); }}>
+                        {t("workerOnboarding.selectProfessions")}
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Professions */}
+                  <div className="mb-4">
+                    <Button variant="ghost" size="sm" onClick={() => setShowProfessions(false)}>
+                      <ArrowLeft className="h-4 w-4 mr-1" />
+                      {t("workerOnboarding.backToCategories")}
+                    </Button>
+                  </div>
 
-              {/* Suggest Category Dialog */}
+                  {isFetchingProfessions ? (
+                    <div className="flex justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {selectedCategories.map((catId) => {
+                        const isCustomCategory = catId.startsWith("custom:");
+                        const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
+
+                        const categoryProfessions = professions.filter((p) => {
+                          if (isCustomCategory) {
+                            return p.categoryId === categoryKey;
+                          }
+                          return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
+                                 p.categoryId === catId;
+                        });
+
+                        return (
+                          <div key={catId} className="bg-white rounded-xl p-4 border border-gray-200">
+                            <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
+                              {CATEGORIES.find((c) => c.id === catId)?.emoji || "📁"}
+                              {getCategoryName(catId)}
+                            </h3>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                              {categoryProfessions.map((profession) => {
+                                const isSelected = selectedProfessions.includes(profession.id);
+                                return (
+                                  <button
+                                    key={profession.id}
+                                    onClick={() => toggleProfession(profession.id)}
+                                    className={cn(
+                                      "relative flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border-2 transition-all",
+                                      isSelected
+                                        ? "border-blue-500 bg-blue-50"
+                                        : "border-transparent hover:border-gray-300"
+                                    )}
+                                  >
+                                    {isSelected && (
+                                      <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
+                                        <Check className="h-2.5 w-2.5 text-white" />
+                                      </div>
+                                    )}
+                                    <span className="text-xl mb-0.5">{profession.emoji}</span>
+                                    <span className="text-xs font-medium text-center leading-tight">
+                                      {getProfessionName(profession)}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                              <button
+                                onClick={() => openProfessionSuggestion(isCustomCategory ? categoryKey : catId)}
+                                className="flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
+                              >
+                                <span className="text-xl mb-0.5">➕</span>
+                                <span className="text-xs font-medium text-gray-500">
+                                  {t("workerOnboarding.addYours")}
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {selectedProfessions.length > 0 && (
+                    <p className="text-center text-sm text-blue-600 mt-4">
+                      {selectedProfessions.length} {t("workerOnboarding.professionsSelected")}
+                    </p>
+                  )}
+                </>
+              )}
+
+              {/* Suggestion Dialogs */}
               {showSuggestCategory && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                   <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold">{t("workerOnboarding.suggestCategory")}</h3>
-                      <button
-                        onClick={() => setShowSuggestCategory(false)}
-                        className="p-1 hover:bg-gray-100 rounded-full"
-                      >
+                      <button onClick={() => setShowSuggestCategory(false)} className="p-1 hover:bg-gray-100 rounded-full">
                         <X className="h-5 w-5" />
                       </button>
                     </div>
@@ -617,27 +719,13 @@ function WorkerOnboardingContent() {
                           maxLength={4}
                         />
                       </div>
-                      <p className="text-sm text-gray-500">
-                        {t("workerOnboarding.suggestionNote")}
-                      </p>
+                      <p className="text-sm text-gray-500">{t("workerOnboarding.suggestionNote")}</p>
                       <div className="flex gap-3">
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowSuggestCategory(false)}
-                          className="flex-1"
-                        >
+                        <Button variant="outline" onClick={() => setShowSuggestCategory(false)} className="flex-1">
                           {t("common.cancel")}
                         </Button>
-                        <Button
-                          onClick={handleSubmitCategorySuggestion}
-                          disabled={isSubmittingSuggestion || !suggestCategoryName.trim()}
-                          className="flex-1"
-                        >
-                          {isSubmittingSuggestion ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            t("common.submit")
-                          )}
+                        <Button onClick={handleSubmitCategorySuggestion} disabled={isSubmittingSuggestion || !suggestCategoryName.trim()} className="flex-1">
+                          {isSubmittingSuggestion ? <Loader2 className="h-4 w-4 animate-spin" /> : t("common.submit")}
                         </Button>
                       </div>
                     </div>
@@ -645,122 +733,12 @@ function WorkerOnboardingContent() {
                 </div>
               )}
 
-              {selectedCategories.length > 0 && (
-                <p className="text-center text-sm text-blue-600 mt-4">
-                  {selectedCategories.length} {t("workerOnboarding.categoriesSelected")}
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Step 2: Professions grouped by category */}
-          {step === 2 && (
-            <div className="animate-in fade-in duration-300">
-              <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step2Title")}
-              </h1>
-              <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step2Desc")}
-              </p>
-
-              {isFetchingProfessions ? (
-                <div className="flex justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-              ) : professions.length === 0 ? (
-                <div className="text-center py-12">
-                  <Briefcase className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">{t("workerOnboarding.noProfessions")}</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {/* Group professions by category */}
-                  {selectedCategories.map((catId) => {
-                    const isCustomCategory = catId.startsWith("custom:");
-                    const categoryKey = isCustomCategory ? catId.replace("custom:", "") : catId;
-
-                    // Filter professions for this category
-                    const categoryProfessions = professions.filter((p) => {
-                      if (isCustomCategory) {
-                        return p.categoryId === categoryKey;
-                      }
-                      // Match built-in categories by category name pattern
-                      return p.category?.name?.toLowerCase().replace(/[^a-z]/g, "_").includes(catId.replace(/_/g, "")) ||
-                             p.categoryId === catId;
-                    });
-
-                    if (categoryProfessions.length === 0) return null;
-
-                    return (
-                      <div key={catId} className="bg-white rounded-xl p-4 border border-gray-200">
-                        <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                          {CATEGORIES.find((c) => c.id === catId)?.emoji || "📁"}
-                          {getCategoryName(catId)}
-                        </h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                          {categoryProfessions.map((profession) => {
-                            const isSelected = selectedProfessions.includes(profession.id);
-                            const isPrimary = primaryProfession === profession.id;
-                            return (
-                              <button
-                                key={profession.id}
-                                onClick={() => toggleProfession(profession.id)}
-                                className={cn(
-                                  "relative flex flex-col items-center p-3 bg-gray-50 rounded-lg border-2 transition-all",
-                                  isSelected
-                                    ? "border-blue-500 bg-blue-50"
-                                    : "border-gray-200 hover:border-gray-300"
-                                )}
-                              >
-                                {isSelected && (
-                                  <div className={cn(
-                                    "absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center",
-                                    isPrimary ? "bg-yellow-500" : "bg-blue-500"
-                                  )}>
-                                    <Check className="h-3 w-3 text-white" />
-                                  </div>
-                                )}
-                                <span className="text-2xl mb-1">{profession.emoji}</span>
-                                <span className="text-xs font-medium text-center">
-                                  {getProfessionName(profession)}
-                                </span>
-                              </button>
-                            );
-                          })}
-                          {/* Add yours button */}
-                          <button
-                            onClick={() => openProfessionSuggestion(isCustomCategory ? categoryKey : catId)}
-                            className="flex flex-col items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all"
-                          >
-                            <span className="text-2xl mb-1">➕</span>
-                            <span className="text-xs font-medium text-center text-gray-500">
-                              {t("workerOnboarding.addYours")}
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                </div>
-              )}
-
-              {selectedProfessions.length > 0 && (
-                <p className="text-center text-sm text-blue-600 mt-4">
-                  {selectedProfessions.length} {t("workerOnboarding.professionsSelected")}
-                </p>
-              )}
-
-              {/* Suggest Profession Dialog */}
               {showSuggestProfession && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                   <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold">{t("workerOnboarding.suggestProfession")}</h3>
-                      <button
-                        onClick={() => setShowSuggestProfession(false)}
-                        className="p-1 hover:bg-gray-100 rounded-full"
-                      >
+                      <button onClick={() => setShowSuggestProfession(false)} className="p-1 hover:bg-gray-100 rounded-full">
                         <X className="h-5 w-5" />
                       </button>
                     </div>
@@ -786,27 +764,13 @@ function WorkerOnboardingContent() {
                           maxLength={4}
                         />
                       </div>
-                      <p className="text-sm text-gray-500">
-                        {t("workerOnboarding.professionSuggestionNote")}
-                      </p>
+                      <p className="text-sm text-gray-500">{t("workerOnboarding.professionSuggestionNote")}</p>
                       <div className="flex gap-3">
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowSuggestProfession(false)}
-                          className="flex-1"
-                        >
+                        <Button variant="outline" onClick={() => setShowSuggestProfession(false)} className="flex-1">
                           {t("common.cancel")}
                         </Button>
-                        <Button
-                          onClick={handleSubmitProfessionSuggestion}
-                          disabled={isSubmittingProfessionSuggestion || !suggestProfessionName.trim()}
-                          className="flex-1"
-                        >
-                          {isSubmittingProfessionSuggestion ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            t("common.submit")
-                          )}
+                        <Button onClick={handleSubmitProfessionSuggestion} disabled={isSubmittingProfessionSuggestion || !suggestProfessionName.trim()} className="flex-1">
+                          {isSubmittingProfessionSuggestion ? <Loader2 className="h-4 w-4 animate-spin" /> : t("common.submit")}
                         </Button>
                       </div>
                     </div>
@@ -816,14 +780,14 @@ function WorkerOnboardingContent() {
             </div>
           )}
 
-          {/* Step 3: Hourly Rate per Profession */}
-          {step === 3 && (
+          {/* Step 2: Your Rates */}
+          {step === 2 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step3Title")}
+                {t("workerOnboarding.step2TitleNew")}
               </h1>
               <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step3Desc")}
+                {t("workerOnboarding.step2DescNew")}
               </p>
 
               <Card className="max-w-lg mx-auto">
@@ -845,62 +809,48 @@ function WorkerOnboardingContent() {
                           <span className="text-lg font-bold text-blue-600">€</span>
                           <Input
                             type="number"
-                            value={professionRates[profId] || "25"}
+                            value={professionRates[profId] || ""}
                             onChange={(e) => setProfessionRates((prev) => ({
                               ...prev,
                               [profId]: e.target.value,
                             }))}
+                            placeholder="0"
                             className="w-20 text-center font-semibold"
                             min="1"
-                            max="500"
                           />
                           <span className="text-gray-500">/{t("workerOnboarding.hour")}</span>
                         </div>
                       </div>
                     );
                   })}
-
-                  <div className="pt-4 border-t">
-                    <p className="text-sm text-gray-500 text-center mb-3">
-                      {t("workerOnboarding.quickSetAll")}
-                    </p>
-                    <div className="flex justify-center gap-2 flex-wrap">
-                      {[15, 25, 35, 50, 75].map((rate) => (
-                        <Button
-                          key={rate}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const newRates: Record<string, string> = {};
-                            selectedProfessions.forEach((id) => {
-                              newRates[id] = String(rate);
-                            });
-                            setProfessionRates(newRates);
-                          }}
-                        >
-                          €{rate}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-500 text-center">
-                    {t("workerOnboarding.rateHint")}
-                  </p>
                 </CardContent>
               </Card>
             </div>
           )}
 
-          {/* Step 4: Availability */}
-          {step === 4 && (
+          {/* Step 3: Your Schedule */}
+          {step === 3 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step4Title")}
+                {t("workerOnboarding.step3TitleNew")}
               </h1>
-              <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step4Desc")}
+              <p className="text-gray-600 text-center mb-6">
+                {t("workerOnboarding.step3DescNew")}
               </p>
+
+              {/* Schedule Presets */}
+              <div className="flex justify-center gap-2 mb-6 flex-wrap">
+                {SCHEDULE_PRESETS.map((preset) => (
+                  <Button
+                    key={preset.id}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => applySchedulePreset(preset.id)}
+                  >
+                    {t(`workerOnboarding.preset${preset.id.charAt(0).toUpperCase() + preset.id.slice(1)}`)}
+                  </Button>
+                ))}
+              </div>
 
               <Card className="max-w-lg mx-auto">
                 <CardContent className="pt-6 space-y-3">
@@ -950,384 +900,218 @@ function WorkerOnboardingContent() {
             </div>
           )}
 
-          {/* Step 5: Profile Info */}
-          {step === 5 && (
+          {/* Step 4: Get Paid */}
+          {step === 4 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step5Title")}
+                {t("workerOnboarding.step4TitleNew")}
               </h1>
               <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step5Desc")}
+                {t("workerOnboarding.step4DescNew")}
               </p>
 
               <Card className="max-w-lg mx-auto">
                 <CardContent className="pt-6 space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="bio">{t("workerOnboarding.aboutYou")}</Label>
-                    <Textarea
-                      id="bio"
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      placeholder={t("workerOnboarding.bioPlaceholder")}
-                      rows={4}
+                  {/* PayPal */}
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-white rounded-lg">
+                        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="#003087">
+                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">PayPal</h3>
+                        <p className="text-xs text-gray-600">{t("workerOnboarding.paypalDesc")}</p>
+                      </div>
+                    </div>
+                    <Input
+                      type="email"
+                      value={paypalEmail}
+                      onChange={(e) => setPaypalEmail(e.target.value)}
+                      placeholder={t("workerOnboarding.paypalEmailPlaceholder")}
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="experience">{t("workerOnboarding.experience")}</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 h-px bg-gray-200" />
+                    <span className="text-sm text-gray-500">{t("workerOnboarding.or")}</span>
+                    <div className="flex-1 h-px bg-gray-200" />
+                  </div>
+
+                  {/* Bank Account */}
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-white rounded-lg">
+                        <Building2 className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{t("workerOnboarding.bankAccount")}</h3>
+                        <p className="text-xs text-gray-600">{t("workerOnboarding.bankDesc")}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
                       <Input
-                        id="experience"
-                        type="number"
-                        value={experienceYears}
-                        onChange={(e) => setExperienceYears(e.target.value)}
-                        min="0"
-                        max="50"
+                        value={iban}
+                        onChange={(e) => setIban(e.target.value.toUpperCase())}
+                        placeholder={t("workerOnboarding.ibanPlaceholder")}
+                      />
+                      <Input
+                        value={accountHolder}
+                        onChange={(e) => setAccountHolder(e.target.value)}
+                        placeholder={t("workerOnboarding.accountHolderPlaceholder")}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="radius">{t("workerOnboarding.serviceRadius")}</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          id="radius"
-                          type="number"
-                          value={serviceRadius}
-                          onChange={(e) => setServiceRadius(e.target.value)}
-                          min="1"
-                          max="100"
-                        />
-                        <span className="text-gray-500">km</span>
-                      </div>
-                    </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>{t("workerOnboarding.ecoFriendly")}</Label>
-                        <p className="text-sm text-gray-500">{t("workerOnboarding.ecoFriendlyDesc")}</p>
-                      </div>
-                      <Switch checked={ecoFriendly} onCheckedChange={setEcoFriendly} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>{t("workerOnboarding.petFriendly")}</Label>
-                        <p className="text-sm text-gray-500">{t("workerOnboarding.petFriendlyDesc")}</p>
-                      </div>
-                      <Switch checked={petFriendly} onCheckedChange={setPetFriendly} />
-                    </div>
-                  </div>
+                  <p className="text-xs text-center text-gray-500">
+                    {t("workerOnboarding.paymentSkipNote")}
+                  </p>
                 </CardContent>
               </Card>
             </div>
           )}
 
-          {/* Step 6: Payment Setup */}
-          {step === 6 && (
+          {/* Step 5: Finish Up */}
+          {step === 5 && (
             <div className="animate-in fade-in duration-300">
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step6PaymentTitle")}
+                {t("workerOnboarding.step5TitleNew")}
               </h1>
-              <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step6PaymentDesc")}
+              <p className="text-gray-600 text-center mb-6">
+                {t("workerOnboarding.step5DescNew")}
               </p>
 
-              <Card className="max-w-lg mx-auto">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-blue-600" />
-                    {t("workerOnboarding.paymentSetup")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("workerOnboarding.paymentSetupDesc")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Stripe Connect Setup */}
-                  <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 bg-white rounded-lg shadow-sm">
-                        <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-                          <path d="M15.3 11.5c0-.9.8-1.3 2-1.3 1.8 0 4 .5 5.8 1.5V6.5c-1.9-.8-3.8-1.1-5.8-1.1-4.7 0-7.8 2.5-7.8 6.6 0 6.4 8.8 5.4 8.8 8.1 0 1.1-.9 1.4-2.2 1.4-1.9 0-4.4-.8-6.3-1.8v5.2c2.2.9 4.4 1.3 6.3 1.3 4.8 0 8.1-2.4 8.1-6.6-.1-6.9-8.9-5.7-8.9-8.1z" fill="#6772E5"/>
-                        </svg>
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {/* Profile Form */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      {t("workerOnboarding.aboutYou")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="bio">{t("workerOnboarding.bio")}</Label>
+                      <Textarea
+                        id="bio"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        placeholder={t("workerOnboarding.bioPlaceholder")}
+                        rows={3}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="experience">{t("workerOnboarding.experience")}</Label>
+                        <Input
+                          id="experience"
+                          type="number"
+                          value={experienceYears}
+                          onChange={(e) => setExperienceYears(e.target.value)}
+                          min="0"
+                          max="50"
+                          className="mt-1"
+                        />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-purple-900">{t("workerOnboarding.stripeConnect")}</h3>
-                        <p className="text-sm text-purple-700 mt-1">
-                          {t("workerOnboarding.stripeConnectDesc")}
+                      <div>
+                        <Label htmlFor="radius">{t("workerOnboarding.serviceRadius")}</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Input
+                            id="radius"
+                            type="number"
+                            value={serviceRadius}
+                            onChange={(e) => setServiceRadius(e.target.value)}
+                            min="1"
+                            max="100"
+                          />
+                          <span className="text-gray-500 text-sm">km</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm">{t("workerOnboarding.ecoFriendly")}</Label>
+                        <Switch checked={ecoFriendly} onCheckedChange={setEcoFriendly} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm">{t("workerOnboarding.petFriendly")}</Label>
+                        <Switch checked={petFriendly} onCheckedChange={setPetFriendly} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Preview */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      {t("workerOnboarding.preview")}
+                    </CardTitle>
+                    <CardDescription>{t("workerOnboarding.previewDesc")}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-4 bg-gray-50 rounded-lg space-y-3">
+                      <div>
+                        <span className="text-xs text-gray-500">{t("workerOnboarding.reviewProfessions")}</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {selectedProfessions.slice(0, 3).map((profId) => {
+                            const prof = professions.find((p) => p.id === profId);
+                            return (
+                              <Badge key={profId} variant="secondary" className="text-xs">
+                                {prof?.emoji} {prof ? getProfessionName(prof) : profId}
+                              </Badge>
+                            );
+                          })}
+                          {selectedProfessions.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{selectedProfessions.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-xs text-gray-500">{t("workerOnboarding.experience")}</span>
+                          <p className="font-medium">{experienceYears} {t("workerOnboarding.years")}</p>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-500">{t("workerOnboarding.serviceRadius")}</span>
+                          <p className="font-medium">{serviceRadius} km</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span className="text-xs text-gray-500">{t("workerOnboarding.workingDays")}</span>
+                        <p className="text-sm font-medium">
+                          {availability
+                            .filter((s) => s.isActive)
+                            .map((s) => t(`days.${DAYS_OF_WEEK.find((d) => d.value === s.dayOfWeek)?.key}`).slice(0, 3))
+                            .join(", ")}
                         </p>
                       </div>
-                    </div>
 
-                    {stripeSetupComplete ? (
-                      <div className="mt-4 p-3 bg-green-100 rounded-lg flex items-center gap-2 text-green-800">
-                        <CheckCircle className="h-5 w-5" />
-                        <span className="font-medium">{t("workerOnboarding.stripeSetupComplete")}</span>
+                      <div className="flex gap-2">
+                        {ecoFriendly && <Badge variant="outline" className="text-xs">🌱 Eco</Badge>}
+                        {petFriendly && <Badge variant="outline" className="text-xs">🐾 Pets</Badge>}
+                        {(paypalEmail || iban) && <Badge variant="outline" className="text-xs text-green-600">💳 Payment</Badge>}
                       </div>
-                    ) : (
-                      <Button
-                        className="w-full mt-4"
-                        onClick={async () => {
-                          setIsSettingUpStripe(true);
-                          try {
-                            const response = await fetch("/api/stripe/connect", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({}),
-                            });
-
-                            if (response.ok) {
-                              const data = await response.json();
-                              if (data.url) {
-                                // Open Stripe onboarding in new tab
-                                window.open(data.url, "_blank");
-                                setStripeStatus("pending");
-                                toast.success(t("workerOnboarding.stripeRedirect"));
-                              }
-                            } else {
-                              const error = await response.json();
-                              toast.error(error.error || t("workerOnboarding.stripeSetupFailed"));
-                            }
-                          } catch {
-                            toast.error(t("workerOnboarding.stripeSetupFailed"));
-                          } finally {
-                            setIsSettingUpStripe(false);
-                          }
-                        }}
-                        disabled={isSettingUpStripe}
-                      >
-                        {isSettingUpStripe ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : (
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                        )}
-                        {t("workerOnboarding.setupStripe")}
-                      </Button>
-                    )}
-
-                    {stripeStatus === "pending" && (
-                      <div className="mt-3 text-center">
-                        <p className="text-sm text-purple-700">{t("workerOnboarding.stripeSetupPending")}</p>
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="text-purple-600"
-                          onClick={async () => {
-                            try {
-                              const response = await fetch("/api/stripe/connect");
-                              if (response.ok) {
-                                const data = await response.json();
-                                if (data.status === "complete") {
-                                  setStripeSetupComplete(true);
-                                  setStripeStatus("complete");
-                                  toast.success(t("workerOnboarding.stripeVerified"));
-                                } else {
-                                  toast.info(t("workerOnboarding.stripeStillPending"));
-                                }
-                              }
-                            } catch {
-                              toast.error(t("workerOnboarding.checkFailed"));
-                            }
-                          }}
-                        >
-                          {t("workerOnboarding.checkStatus")}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Skip option */}
-                  <div className="text-center pt-4 border-t">
-                    <p className="text-sm text-gray-500 mb-2">
-                      {t("workerOnboarding.skipPaymentNote")}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {/* Step 7: Review */}
-          {step === 7 && (
-            <div className="animate-in fade-in duration-300">
-              <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
-                {t("workerOnboarding.step7Title")}
-              </h1>
-              <p className="text-gray-600 text-center mb-8">
-                {t("workerOnboarding.step7Desc")}
-              </p>
-
-              <div className="space-y-4 max-w-lg mx-auto">
-                {/* Categories */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Briefcase className="h-5 w-5" />
-                      {t("workerOnboarding.reviewCategories")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCategories.map((catId) => (
-                        <Badge key={catId} variant="secondary">
-                          {getCategoryName(catId)}
-                        </Badge>
-                      ))}
                     </div>
-                  </CardContent>
-                </Card>
 
-                {/* Professions */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <User className="h-5 w-5" />
-                      {t("workerOnboarding.reviewProfessions")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProfessions.map((profId) => {
-                        const prof = professions.find((p) => p.id === profId);
-                        return (
-                          <Badge key={profId} variant="secondary">
-                            {prof?.emoji} {prof ? getProfessionName(prof) : profId}
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Rates */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Briefcase className="h-5 w-5" />
-                      {t("workerOnboarding.reviewRates")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {selectedProfessions.map((profId) => {
-                      const prof = professions.find((p) => p.id === profId);
-                      return (
-                        <div key={profId} className="flex justify-between items-center">
-                          <span className="text-sm">
-                            {prof?.emoji} {prof ? getProfessionName(prof) : profId}
-                          </span>
-                          <span className="font-medium">
-                            €{professionRates[profId] || "25"}/{t("workerOnboarding.hour")}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-
-                {/* Availability */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Clock className="h-5 w-5" />
-                      {t("workerOnboarding.reviewAvailability")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.workingDays")}</span>
-                      <span className="font-medium text-right text-sm">
-                        {availability
-                          .filter((s) => s.isActive)
-                          .map((s) => t(`days.${DAYS_OF_WEEK.find((d) => d.value === s.dayOfWeek)?.key}`))
-                          .join(", ")}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.workingHours")}</span>
-                      <span className="font-medium text-sm">
-                        {(() => {
-                          const activeSlots = availability.filter((s) => s.isActive);
-                          if (activeSlots.length === 0) return "-";
-                          const times = activeSlots.map((s) => `${s.startTime}-${s.endTime}`);
-                          const uniqueTimes = [...new Set(times)];
-                          return uniqueTimes.join(", ");
-                        })()}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Profile Details */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <User className="h-5 w-5" />
-                      {t("workerOnboarding.reviewProfile")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.experience")}</span>
-                      <span className="font-medium">{experienceYears} {parseInt(experienceYears) === 1 ? t("workerOnboarding.year") : t("workerOnboarding.years")}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.serviceRadius")}</span>
-                      <span className="font-medium">{serviceRadius} km</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.ecoFriendly")}</span>
-                      <Badge variant={ecoFriendly ? "default" : "secondary"}>
-                        {ecoFriendly ? "✓" : "✗"}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.petFriendly")}</span>
-                      <Badge variant={petFriendly ? "default" : "secondary"}>
-                        {petFriendly ? "✓" : "✗"}
-                      </Badge>
-                    </div>
-                    {bio && (
-                      <div className="pt-2 border-t">
-                        <span className="text-sm text-gray-500">{t("workerOnboarding.bio")}</span>
-                        <p className="text-sm mt-1">{bio}</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Payment Setup */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <CreditCard className="h-5 w-5" />
-                      {t("workerOnboarding.reviewPayment")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{t("workerOnboarding.stripeConnect")}</span>
-                      <Badge variant={stripeSetupComplete ? "default" : "secondary"}>
-                        {stripeSetupComplete ? t("workerOnboarding.connected") : t("workerOnboarding.notSetup")}
-                      </Badge>
-                    </div>
-                    {!stripeSetupComplete && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        {t("workerOnboarding.canSetupLater")}
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                      <CheckCircle className="h-6 w-6 text-green-500 mx-auto mb-1" />
+                      <p className="text-green-800 font-medium text-sm">
+                        {t("workerOnboarding.readyToGo")}
                       </p>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
-
-                {/* Ready message */}
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                  <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <p className="text-green-800 font-medium">
-                    {t("workerOnboarding.readyToGo")}
-                  </p>
-                  <p className="text-sm text-green-600 mt-1">
-                    {t("workerOnboarding.profileWillBeVisible")}
-                  </p>
-                </div>
               </div>
             </div>
           )}
@@ -1341,14 +1125,16 @@ function WorkerOnboardingContent() {
               className="flex-1 sm:flex-none h-12 sm:h-10"
             >
               <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">{t("common.back")}</span>
-              <span className="sm:hidden">Back</span>
+              {t("common.back")}
             </Button>
 
             {step < TOTAL_STEPS ? (
-              <Button onClick={handleNext} disabled={!canProceed()} className="flex-1 sm:flex-none h-12 sm:h-10">
-                <span className="hidden sm:inline">{t("common.next")}</span>
-                <span className="sm:hidden">Next</span>
+              <Button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className="flex-1 sm:flex-none h-12 sm:h-10"
+              >
+                {t("common.next")}
                 <ArrowRight className="h-4 w-4 ml-1 sm:ml-2" />
               </Button>
             ) : (
