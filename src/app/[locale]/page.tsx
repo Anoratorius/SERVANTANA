@@ -6,6 +6,7 @@ import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
+import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import {
   Search,
   UserCheck,
@@ -77,6 +78,11 @@ function HomeContent() {
               {t("home.hero.subtitle")}
             </p>
             <HeroSearch />
+
+            {/* Trust Badge */}
+            <div className="mt-6">
+              <ServiceGuaranteeBadge />
+            </div>
 
             {/* Scroll Indicator */}
             <ScrollIndicator />

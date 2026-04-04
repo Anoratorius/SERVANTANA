@@ -22,6 +22,7 @@ import {
   LogOut,
   ShieldCheck,
   RefreshCw,
+  ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -232,6 +233,11 @@ export default function SecuritySettingsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+
           {/* Page Header */}
           <div className="flex items-center gap-3 mb-8">
             <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">

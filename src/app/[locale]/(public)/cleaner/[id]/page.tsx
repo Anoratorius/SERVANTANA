@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
+import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { toast } from "sonner";
 
 interface Service {
@@ -246,6 +247,7 @@ export default function CleanerProfilePage({
                       {t("cleaner.profile.verified")}
                     </Badge>
                   )}
+                  <ServiceGuaranteeBadge variant="compact" />
                   {profile.availableNow && (
                     <Badge variant="secondary" className="bg-green-100 text-green-800">
                       Available Now

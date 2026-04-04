@@ -1612,5 +1612,99 @@
     "cancelSuccess": "Booking cancelled successfully",
     "pendingApproval": "Pending Approval",
     "awaitingWorkerApproval": "Awaiting worker approval"
+  },
+  "guarantee": {
+    "badge": "Service Guarantee",
+    "title": "Service Guarantee",
+    "shortDescription": "Your satisfaction is protected",
+    "back": "Back",
+    "pageTitle": "Service Guarantee",
+    "pageSubtitle": "Book with confidence. Every service on Servantana is backed by our comprehensive satisfaction guarantee.",
+    "promiseTitle": "Our Promise to You",
+    "promiseDescription": "If your service doesn't meet your expectations, we'll make it right — whether through a free re-service, partial refund, or full refund.",
+    "coverageTitle": "What's Covered",
+    "coverage": {
+      "noShow": {
+        "title": "No-Show Protection",
+        "description": "If your service provider doesn't show up, you'll receive a full refund and priority rebooking."
+      },
+      "incompleteWork": {
+        "title": "Incomplete Work",
+        "description": "If the job isn't finished as agreed, we'll arrange for completion or provide a refund."
+      },
+      "poorQuality": {
+        "title": "Quality Guarantee",
+        "description": "Not satisfied with the quality? We'll send another professional or refund your payment."
+      },
+      "propertyDamage": {
+        "title": "Property Protection",
+        "description": "Damage caused by the service provider during work is covered up to $1,000."
+      },
+      "unprofessional": {
+        "title": "Professional Standards",
+        "description": "All providers must maintain professional behavior. Report any issues for immediate action."
+      }
+    },
+    "processTitle": "How It Works",
+    "process": {
+      "fileReport": {
+        "title": "Report the Issue",
+        "description": "Submit a claim within 7 days of your service with details about what went wrong."
+      },
+      "review": {
+        "title": "Quick Review",
+        "description": "Our team reviews your claim and contacts the service provider within 24 hours."
+      },
+      "resolution": {
+        "title": "Get Resolution",
+        "description": "Receive a re-service, credit, or refund based on your situation — usually within 48 hours."
+      }
+    },
+    "termsTitle": "Terms & Conditions",
+    "terms": {
+      "timeLimit": "Claims must be submitted within 7 days of the service date",
+      "bookingOnly": "Only applies to services booked and paid through Servantana",
+      "evidence": "Photo or video evidence may be requested to process claims",
+      "onePerBooking": "One claim allowed per booking"
+    },
+    "ctaText": "Ready to book with confidence?",
+    "ctaButton": "Find Service Providers",
+    "claimForm": {
+      "title": "File a Guarantee Claim",
+      "selectReason": "Select a reason",
+      "reasons": {
+        "NO_SHOW": "Service provider didn't show up",
+        "INCOMPLETE_SERVICE": "Service was not completed as agreed",
+        "POOR_QUALITY": "Quality was below expectations",
+        "PROPERTY_DAMAGE": "Property was damaged during service",
+        "LATE_ARRIVAL": "Service provider arrived late",
+        "UNPROFESSIONAL": "Unprofessional behavior",
+        "OTHER": "Other issue"
+      },
+      "descriptionLabel": "Describe the issue",
+      "descriptionPlaceholder": "Please provide details about what happened and why you're filing this claim...",
+      "evidenceLabel": "Upload evidence (optional)",
+      "evidenceHint": "Photos or videos that support your claim",
+      "submitClaim": "Submit Claim",
+      "submitting": "Submitting...",
+      "submitSuccess": "Claim submitted successfully. We'll review it within 24 hours.",
+      "submitError": "Failed to submit claim. Please try again."
+    },
+    "claimStatus": {
+      "PENDING": "Pending Review",
+      "UNDER_REVIEW": "Under Review",
+      "APPROVED": "Approved",
+      "DENIED": "Denied",
+      "RESOLVED": "Resolved"
+    },
+    "resolution": {
+      "FULL_REFUND": "Full Refund",
+      "PARTIAL_REFUND": "Partial Refund",
+      "SERVICE_CREDIT": "Service Credit",
+      "FREE_REBOOK": "Free Rebooking",
+      "NO_ACTION": "No Action Required",
+      "WORKER_WARNING": "Provider Warned",
+      "WORKER_SUSPENDED": "Provider Suspended"
+    }
   }
 }

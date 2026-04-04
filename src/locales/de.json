@@ -1612,5 +1612,99 @@
     "cancelSuccess": "Buchung erfolgreich storniert",
     "pendingApproval": "Genehmigung ausstehend",
     "awaitingWorkerApproval": "Warte auf Bestätigung der Fachkraft"
+  },
+  "guarantee": {
+    "badge": "Service-Garantie",
+    "title": "Service-Garantie",
+    "shortDescription": "Ihre Zufriedenheit ist geschützt",
+    "back": "Zurück",
+    "pageTitle": "Service-Garantie",
+    "pageSubtitle": "Buchen Sie mit Vertrauen. Jeder Service auf Servantana ist durch unsere umfassende Zufriedenheitsgarantie abgesichert.",
+    "promiseTitle": "Unser Versprechen an Sie",
+    "promiseDescription": "Wenn Ihr Service nicht Ihren Erwartungen entspricht, machen wir es wieder gut — ob durch kostenlosen Nachservice, teilweise oder vollständige Rückerstattung.",
+    "coverageTitle": "Was ist abgedeckt",
+    "coverage": {
+      "noShow": {
+        "title": "Nichterscheinen-Schutz",
+        "description": "Wenn Ihr Dienstleister nicht erscheint, erhalten Sie eine volle Rückerstattung und bevorzugte Neubuchung."
+      },
+      "incompleteWork": {
+        "title": "Unvollständige Arbeit",
+        "description": "Wenn die Arbeit nicht wie vereinbart abgeschlossen wird, arrangieren wir die Fertigstellung oder erstatten Ihnen das Geld zurück."
+      },
+      "poorQuality": {
+        "title": "Qualitätsgarantie",
+        "description": "Nicht zufrieden mit der Qualität? Wir schicken eine andere Fachkraft oder erstatten Ihre Zahlung."
+      },
+      "propertyDamage": {
+        "title": "Eigentumsschutz",
+        "description": "Schäden, die während der Arbeit durch den Dienstleister verursacht werden, sind bis zu 1.000 € abgedeckt."
+      },
+      "unprofessional": {
+        "title": "Professionelle Standards",
+        "description": "Alle Anbieter müssen professionelles Verhalten zeigen. Melden Sie Probleme für sofortige Maßnahmen."
+      }
+    },
+    "processTitle": "So funktioniert es",
+    "process": {
+      "fileReport": {
+        "title": "Problem melden",
+        "description": "Reichen Sie innerhalb von 7 Tagen nach Ihrem Service einen Antrag mit Details zum Problem ein."
+      },
+      "review": {
+        "title": "Schnelle Prüfung",
+        "description": "Unser Team prüft Ihren Antrag und kontaktiert den Dienstleister innerhalb von 24 Stunden."
+      },
+      "resolution": {
+        "title": "Lösung erhalten",
+        "description": "Erhalten Sie Nachservice, Guthaben oder Rückerstattung basierend auf Ihrer Situation — normalerweise innerhalb von 48 Stunden."
+      }
+    },
+    "termsTitle": "Allgemeine Geschäftsbedingungen",
+    "terms": {
+      "timeLimit": "Anträge müssen innerhalb von 7 Tagen nach dem Servicedatum eingereicht werden",
+      "bookingOnly": "Gilt nur für Services, die über Servantana gebucht und bezahlt wurden",
+      "evidence": "Foto- oder Videobeweise können zur Bearbeitung von Anträgen angefordert werden",
+      "onePerBooking": "Ein Antrag pro Buchung erlaubt"
+    },
+    "ctaText": "Bereit, mit Vertrauen zu buchen?",
+    "ctaButton": "Dienstleister finden",
+    "claimForm": {
+      "title": "Garantieantrag einreichen",
+      "selectReason": "Grund auswählen",
+      "reasons": {
+        "NO_SHOW": "Dienstleister ist nicht erschienen",
+        "INCOMPLETE_SERVICE": "Service wurde nicht wie vereinbart abgeschlossen",
+        "POOR_QUALITY": "Qualität war unter den Erwartungen",
+        "PROPERTY_DAMAGE": "Eigentum wurde während des Services beschädigt",
+        "LATE_ARRIVAL": "Dienstleister kam zu spät",
+        "UNPROFESSIONAL": "Unprofessionelles Verhalten",
+        "OTHER": "Anderes Problem"
+      },
+      "descriptionLabel": "Beschreiben Sie das Problem",
+      "descriptionPlaceholder": "Bitte geben Sie Details darüber an, was passiert ist und warum Sie diesen Antrag stellen...",
+      "evidenceLabel": "Beweise hochladen (optional)",
+      "evidenceHint": "Fotos oder Videos, die Ihren Antrag unterstützen",
+      "submitClaim": "Antrag einreichen",
+      "submitting": "Wird eingereicht...",
+      "submitSuccess": "Antrag erfolgreich eingereicht. Wir werden ihn innerhalb von 24 Stunden prüfen.",
+      "submitError": "Antrag konnte nicht eingereicht werden. Bitte versuchen Sie es erneut."
+    },
+    "claimStatus": {
+      "PENDING": "Prüfung ausstehend",
+      "UNDER_REVIEW": "Wird geprüft",
+      "APPROVED": "Genehmigt",
+      "DENIED": "Abgelehnt",
+      "RESOLVED": "Gelöst"
+    },
+    "resolution": {
+      "FULL_REFUND": "Volle Rückerstattung",
+      "PARTIAL_REFUND": "Teilweise Rückerstattung",
+      "SERVICE_CREDIT": "Serviceguthaben",
+      "FREE_REBOOK": "Kostenlose Neubuchung",
+      "NO_ACTION": "Keine Maßnahme erforderlich",
+      "WORKER_WARNING": "Anbieter verwarnt",
+      "WORKER_SUSPENDED": "Anbieter gesperrt"
+    }
   }
 }

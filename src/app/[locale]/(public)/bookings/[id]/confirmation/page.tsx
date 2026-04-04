@@ -29,6 +29,7 @@ import {
   Bitcoin,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { toast } from "sonner";
 import Script from "next/script";
 
@@ -305,6 +306,9 @@ export default function BookingConfirmationPage({
                 <p className="text-muted-foreground">
                   Your booking is confirmed and payment has been received.
                 </p>
+                <div className="mt-4">
+                  <ServiceGuaranteeBadge variant="card" />
+                </div>
               </>
             ) : (
               <>

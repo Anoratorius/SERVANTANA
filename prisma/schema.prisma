@@ -82,6 +82,36 @@ enum DisputeResolution {
 }
 
 // ============================================
+// GUARANTEE CLAIM ENUMS
+// ============================================
+
+enum GuaranteeClaimStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  DENIED
+  RESOLVED
+}
+
+enum GuaranteeClaimReason {
+  NO_SHOW
+  INCOMPLETE_SERVICE
+  POOR_QUALITY
+  PROPERTY_DAMAGE
+  LATE_ARRIVAL
+  UNPROFESSIONAL
+  OTHER
+}
+
+enum GuaranteeResolution {
+  FULL_REFUND
+  PARTIAL_REFUND
+  FREE_REBOOKING
+  SERVICE_CREDIT
+  DENIED
+}
+
+// ============================================
 // NOTIFICATION ENUMS
 // ============================================
 
@@ -243,6 +273,11 @@ model User {
   // Customer review relations (cleaners rating customers)
   customerReviewsGiven    CustomerReview[] @relation("CustomerReviewsGiven")
   customerReviewsReceived CustomerReview[] @relation("CustomerReviewsReceived")
+
+  // Guarantee claim relations
+  guaranteeClaimsAsCustomer GuaranteeClaim[] @relation("CustomerClaims")
+  guaranteeClaimsAsCleaner  GuaranteeClaim[] @relation("CleanerClaims")
+  guaranteeClaimsResolved   GuaranteeClaim[] @relation("ResolvedClaims")
 }
 
 // NextAuth.js Account model
@@ -491,6 +526,7 @@ model Booking {
   teamMembers   BookingTeamMember[]
   invoice       Invoice?
   customerReview CustomerReview?
+  guaranteeClaims GuaranteeClaim[]
 
   @@index([customerId])
   @@index([propertyId])
@@ -1271,4 +1307,47 @@ model Invoice {
   @@index([customerId])
   @@index([cleanerId])
   @@index([invoiceNumber])
+}
+
+// ============================================
+// GUARANTEE CLAIMS
+// ============================================
+
+model GuaranteeClaim {
+  id            String   @id @default(cuid())
+
+  // Relations
+  bookingId     String
+  customerId    String
+  cleanerId     String
+
+  // Claim details
+  reason        GuaranteeClaimReason
+  description   String   @db.Text
+  evidence      String[] // Array of file URLs (photos, etc.)
+
+  // Status tracking
+  status        GuaranteeClaimStatus @default(PENDING)
+
+  // Resolution
+  resolution       GuaranteeResolution?
+  resolutionNote   String?  @db.Text
+  refundAmount     Float?
+  resolvedAt       DateTime?
+  resolvedById     String?
+
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  booking       Booking  @relation(fields: [bookingId], references: [id])
+  customer      User     @relation("CustomerClaims", fields: [customerId], references: [id])
+  cleaner       User     @relation("CleanerClaims", fields: [cleanerId], references: [id])
+  resolvedBy    User?    @relation("ResolvedClaims", fields: [resolvedById], references: [id])
+
+  @@index([bookingId])
+  @@index([customerId])
+  @@index([cleanerId])
+  @@index([status])
 }
