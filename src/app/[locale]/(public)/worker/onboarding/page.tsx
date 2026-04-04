@@ -969,9 +969,12 @@ function WorkerOnboardingContent() {
                     </div>
                     <Input
                       type="email"
+                      inputMode="email"
+                      autoComplete="email"
                       value={paypalEmail}
                       onChange={(e) => setPaypalEmail(e.target.value)}
                       placeholder={t("workerOnboarding.paypalEmailPlaceholder")}
+                      className="text-base"
                     />
                   </div>
 
@@ -994,14 +997,23 @@ function WorkerOnboardingContent() {
                     </div>
                     <div className="space-y-3">
                       <Input
+                        type="text"
+                        inputMode="text"
+                        autoComplete="off"
+                        autoCapitalize="characters"
                         value={iban}
                         onChange={(e) => setIban(e.target.value.toUpperCase())}
                         placeholder={t("workerOnboarding.ibanPlaceholder")}
+                        className="text-base"
                       />
                       <Input
+                        type="text"
+                        inputMode="text"
+                        autoComplete="name"
                         value={accountHolder}
                         onChange={(e) => setAccountHolder(e.target.value)}
                         placeholder={t("workerOnboarding.accountHolderPlaceholder")}
+                        className="text-base"
                       />
                     </div>
                   </div>
