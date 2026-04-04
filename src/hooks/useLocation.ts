@@ -68,12 +68,18 @@ export function useLocation() {
     // Fetch fresh location
     locationPromise = fetchLocation();
 
-    locationPromise.then((result) => {
-      cachedLocation = result;
-      cacheTimestamp = Date.now();
-      setLocation(result);
-      setIsDetecting(false);
-    });
+    locationPromise
+      .then((result) => {
+        cachedLocation = result;
+        cacheTimestamp = Date.now();
+        setLocation(result);
+      })
+      .catch(() => {
+        // Ignore errors - just means no location
+      })
+      .finally(() => {
+        setIsDetecting(false);
+      });
   }, [initial.cacheValid]);
 
   return { location, isDetecting };
