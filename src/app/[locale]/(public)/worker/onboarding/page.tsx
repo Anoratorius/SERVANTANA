@@ -1053,7 +1053,8 @@ function WorkerOnboardingContent() {
                           id="experience"
                           type="number"
                           value={experienceYears}
-                          onChange={(e) => {
+                          onChange={(e) => setExperienceYears(e.target.value)}
+                          onBlur={(e) => {
                             const val = Math.min(50, Math.max(0, parseInt(e.target.value) || 0));
                             setExperienceYears(String(val));
                           }}
@@ -1069,7 +1070,8 @@ function WorkerOnboardingContent() {
                             id="radius"
                             type="number"
                             value={serviceRadius}
-                            onChange={(e) => {
+                            onChange={(e) => setServiceRadius(e.target.value)}
+                            onBlur={(e) => {
                               const val = Math.min(100, Math.max(1, parseInt(e.target.value) || 1));
                               setServiceRadius(String(val));
                             }}
