@@ -170,7 +170,7 @@ function SearchContent() {
           <div className="container mx-auto px-2 md:px-4 max-w-5xl">
             <Button
               variant="ghost"
-              onClick={() => router.push("/")}
+              onClick={() => router.back()}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

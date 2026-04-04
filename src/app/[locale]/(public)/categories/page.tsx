@@ -71,7 +71,7 @@ export default function CategoriesPage() {
         <div className="container mx-auto px-4 max-w-5xl">
           <Button
             variant="ghost"
-            onClick={() => router.push("/")}
+            onClick={() => router.back()}
             className="mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
