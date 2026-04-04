@@ -11,11 +11,62 @@ interface GeoLocation {
 let cachedLocation: GeoLocation | null = null;
 let locationPromise: Promise<GeoLocation | null> | null = null;
 let cacheTimestamp: number = 0;
-const CACHE_DURATION = 30000; // 30 seconds - refresh location periodically
+const CACHE_DURATION = 300000; // 5 minutes - GPS location doesn't change often
 
-async function fetchLocation(): Promise<GeoLocation | null> {
+// Reverse geocode coordinates to city name
+async function reverseGeocode(lat: number, lng: number): Promise<GeoLocation | null> {
   try {
-    // Try ipinfo.io first
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`,
+      {
+        headers: { "Accept-Language": "en" },
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      const address = data.address || {};
+      const city = address.city || address.town || address.village || address.municipality || address.county || "";
+      const countryCode = address.country_code?.toUpperCase() || "";
+      if (city) {
+        return { city, countryCode };
+      }
+    }
+  } catch {
+    // Reverse geocode failed
+  }
+  return null;
+}
+
+// Get precise GPS location
+async function getGPSLocation(): Promise<GeoLocation | null> {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(null);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const location = await reverseGeocode(latitude, longitude);
+        resolve(location);
+      },
+      () => {
+        // GPS denied or failed
+        resolve(null);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutes
+      }
+    );
+  });
+}
+
+// Fallback: IP-based location
+async function getIPLocation(): Promise<GeoLocation | null> {
+  try {
     const response = await fetch("https://ipinfo.io/json", { cache: 'no-store' });
     if (response.ok) {
       const data = await response.json();
@@ -27,23 +78,21 @@ async function fetchLocation(): Promise<GeoLocation | null> {
       }
     }
   } catch {
-    // Try ip-api.com as fallback (free for non-commercial use)
-    try {
-      const response = await fetch("http://ip-api.com/json/?fields=city,countryCode", { cache: 'no-store' });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.city) {
-          return {
-            city: data.city,
-            countryCode: data.countryCode || "",
-          };
-        }
-      }
-    } catch {
-      // Ignore
-    }
+    // IP detection failed
   }
   return null;
+}
+
+// Main location fetch: GPS first, then IP fallback
+async function fetchLocation(): Promise<GeoLocation | null> {
+  // Try GPS first (precise)
+  const gpsLocation = await getGPSLocation();
+  if (gpsLocation) {
+    return gpsLocation;
+  }
+
+  // Fallback to IP-based (approximate)
+  return await getIPLocation();
 }
 
 function getInitialLocation(): { location: GeoLocation | null; cacheValid: boolean } {
