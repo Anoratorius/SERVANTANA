@@ -18,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
+import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint, ArrowLeft } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 interface Service {
@@ -63,6 +64,7 @@ function SearchContent() {
   const t = useTranslations();
   const locale = useLocale();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [cleaners, setCleaners] = useState<Cleaner[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -166,6 +168,15 @@ function SearchContent() {
         {/* Search Header */}
         <section className="bg-white border-b py-3 md:py-8">
           <div className="container mx-auto px-2 md:px-4 max-w-5xl">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/")}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t("common.back")}
+            </Button>
+
             <div className="text-center mb-3 md:mb-6">
               <Search className="h-7 w-7 md:h-12 md:w-12 mx-auto text-blue-500 mb-1.5 md:mb-3" />
               <h1 className="text-lg md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{t("customer.search.title")}</h1>
