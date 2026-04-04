@@ -13,24 +13,68 @@ export function HeroBackground() {
 
     const cityName = location.city;
 
-    // Universal rule: Unsplash with city + skyline for all cities
-    const unsplashUrl = `https://source.unsplash.com/1920x1080/?${encodeURIComponent(cityName)},skyline`;
+    // Use Teleport API for city photos (reliable, free, no key needed)
+    async function fetchCityImage() {
+      try {
+        // Try Teleport API first (has curated city images)
+        const slug = cityName.toLowerCase().replace(/\s+/g, "-");
+        const teleportUrl = `https://api.teleport.org/api/urban_areas/slug:${slug}/images/`;
+        const response = await fetch(teleportUrl);
 
-    // Preload image - only show after fully loaded
-    const img = new window.Image();
-    img.onload = () => {
-      setLoadedImageUrl(unsplashUrl);
-    };
-    img.onerror = () => {
-      // Silently fail - no background
-      setLoadedImageUrl("");
-    };
-    img.src = unsplashUrl;
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = data.photos?.[0]?.image?.web;
+          if (imageUrl) {
+            preloadImage(imageUrl);
+            return;
+          }
+        }
+      } catch {
+        // Teleport failed, try Wikipedia
+      }
 
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
+      // Fallback: Wikipedia skyline search
+      try {
+        const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(cityName + " skyline")}`;
+        const response = await fetch(wikiUrl);
+
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = data.originalimage?.source || data.thumbnail?.source?.replace(/\/\d+px-/, '/1920px-');
+          if (imageUrl && !imageUrl.toLowerCase().includes("flag")) {
+            preloadImage(imageUrl);
+            return;
+          }
+        }
+      } catch {
+        // Wikipedia failed too
+      }
+
+      // Final fallback: plain city Wikipedia
+      try {
+        const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(cityName)}`;
+        const response = await fetch(wikiUrl);
+
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = data.originalimage?.source || data.thumbnail?.source?.replace(/\/\d+px-/, '/1920px-');
+          if (imageUrl && !imageUrl.toLowerCase().includes("flag") && !imageUrl.toLowerCase().includes("emblem")) {
+            preloadImage(imageUrl);
+          }
+        }
+      } catch {
+        // All failed - no background
+      }
+    }
+
+    function preloadImage(url: string) {
+      const img = new window.Image();
+      img.onload = () => setLoadedImageUrl(url);
+      img.onerror = () => setLoadedImageUrl("");
+      img.src = url;
+    }
+
+    fetchCityImage();
   }, [location, isDetecting]);
 
   if (!loadedImageUrl) return null;
