@@ -66,8 +66,8 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     const completed = localStorage.getItem(STORAGE_KEY);
     if (completed) return;
 
-    const timer = setTimeout(() => setIsOpen(true), 1000);
-    return () => clearTimeout(timer);
+    // Show immediately - no delay
+    setIsOpen(true);
   }, []);
 
   const enableAllFeatures = async () => {
