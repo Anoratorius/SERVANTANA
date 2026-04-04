@@ -74,26 +74,33 @@ export function PermissionsOnboarding({ locale }: PermissionsOnboardingProps) {
     setIsEnabling(true);
     const newPermissions: PermissionState = { ...permissions };
 
-    if ("Notification" in window) {
-      try {
-        const result = await Notification.requestPermission();
-        newPermissions.notifications = result === "granted" ? "granted" : "denied";
-      } catch {
-        newPermissions.notifications = "denied";
+    // Request BOTH permissions in parallel
+    const notificationPromise = (async () => {
+      if ("Notification" in window) {
+        try {
+          const result = await Notification.requestPermission();
+          newPermissions.notifications = result === "granted" ? "granted" : "denied";
+        } catch {
+          newPermissions.notifications = "denied";
+        }
       }
-    }
-    setPermissions({ ...newPermissions });
+    })();
 
-    try {
-      await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-      });
-      newPermissions.location = "granted";
-    } catch {
-      newPermissions.location = "denied";
-    }
-    setPermissions({ ...newPermissions });
+    const locationPromise = (async () => {
+      try {
+        await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+        newPermissions.location = "granted";
+      } catch {
+        newPermissions.location = "denied";
+      }
+    })();
 
+    // Wait for both to complete
+    await Promise.all([notificationPromise, locationPromise]);
+
+    setPermissions({ ...newPermissions });
     setIsEnabling(false);
     setIsDone(true);
   };
