@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Mail, LogOut, CheckCircle } from "lucide-react";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 export default function EmailVerificationRequiredPage() {
   const t = useTranslations();
+  const router = useRouter();
   const { data: session } = useSession();
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
@@ -42,7 +43,8 @@ export default function EmailVerificationRequiredPage() {
   };
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/login" });
+    await signOut({ redirect: false });
+    router.push("/login");
   };
 
   return (
