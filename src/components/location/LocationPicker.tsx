@@ -65,7 +65,15 @@ export default function LocationPicker({
   const [mapCenter, setMapCenter] = useState<[number, number]>([52.52, 13.405]); // Berlin default
   const mapRef = useRef<L.Map | null>(null);
 
-  // Get IP-based location for cross-check
+  // Detect if device is mobile (has real GPS hardware)
+  const isMobileDevice = (): boolean => {
+    if (typeof window === "undefined") return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    ) || (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
+  };
+
+  // Get IP-based location (reliable for desktop, fallback for mobile)
   const getIPLocation = async (): Promise<{ lat: number; lng: number; city: string } | null> => {
     try {
       const response = await fetch("https://ipinfo.io/json", { cache: "no-store" });
@@ -80,21 +88,6 @@ export default function LocationPicker({
       // IP detection failed
     }
     return null;
-  };
-
-  // Calculate distance between two coordinates in km
-  const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-    const R = 6371; // Earth's radius in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLng = ((lng2 - lng1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
   };
 
   // Reverse geocode to get city and country
@@ -127,75 +120,81 @@ export default function LocationPicker({
     onLocationSelect(lat, lng, city, country);
   };
 
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser");
-      return;
-    }
+  // Use real GPS on mobile devices
+  const getMobileGPSLocation = (): Promise<{ lat: number; lng: number } | null> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve(null);
+        return;
+      }
 
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        () => {
+          resolve(null);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        }
+      );
+    });
+  };
+
+  const getCurrentLocation = async () => {
     setIsLocating(true);
     setLocationError(null);
     setLocationWarning(null);
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const gpsLat = pos.coords.latitude;
-        const gpsLng = pos.coords.longitude;
+    const isMobile = isMobileDevice();
 
-        // Cross-check with IP location
-        const ipLocation = await getIPLocation();
+    if (isMobile) {
+      // MOBILE: Use real GPS hardware
+      const gpsLocation = await getMobileGPSLocation();
 
-        if (ipLocation) {
-          const distance = getDistance(gpsLat, gpsLng, ipLocation.lat, ipLocation.lng);
-          // If GPS and IP locations differ by more than 500km, show warning
-          if (distance > 500) {
-            setLocationWarning(
-              `GPS shows a location far from your IP location (${ipLocation.city}). ` +
-              `If this doesn't look right, click on the map to set your location manually.`
-            );
-          }
-        }
-
-        setPosition([gpsLat, gpsLng]);
-        setMapCenter([gpsLat, gpsLng]);
-        const { city, country } = await reverseGeocode(gpsLat, gpsLng);
-        onLocationSelect(gpsLat, gpsLng, city, country);
+      if (gpsLocation) {
+        setPosition([gpsLocation.lat, gpsLocation.lng]);
+        setMapCenter([gpsLocation.lat, gpsLocation.lng]);
+        const { city, country } = await reverseGeocode(gpsLocation.lat, gpsLocation.lng);
+        onLocationSelect(gpsLocation.lat, gpsLocation.lng, city, country);
         setIsLocating(false);
-      },
-      async (error) => {
-        // GPS failed - try IP-based location as fallback
-        const ipLocation = await getIPLocation();
-        if (ipLocation) {
-          setPosition([ipLocation.lat, ipLocation.lng]);
-          setMapCenter([ipLocation.lat, ipLocation.lng]);
-          const { city, country } = await reverseGeocode(ipLocation.lat, ipLocation.lng);
-          onLocationSelect(ipLocation.lat, ipLocation.lng, city, country);
-          setLocationWarning("Using approximate location based on IP. Click on the map to set exact location.");
-          setIsLocating(false);
-          return;
-        }
-
-        setIsLocating(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            setLocationError("Location permission denied. Please click on the map to set your location manually.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            setLocationError("Location information unavailable. Please click on the map.");
-            break;
-          case error.TIMEOUT:
-            setLocationError("Location request timed out. Please click on the map.");
-            break;
-          default:
-            setLocationError("An unknown error occurred. Please click on the map.");
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
+        return;
       }
-    );
+
+      // GPS failed on mobile - fall back to IP
+      const ipLocation = await getIPLocation();
+      if (ipLocation) {
+        setPosition([ipLocation.lat, ipLocation.lng]);
+        setMapCenter([ipLocation.lat, ipLocation.lng]);
+        const { city, country } = await reverseGeocode(ipLocation.lat, ipLocation.lng);
+        onLocationSelect(ipLocation.lat, ipLocation.lng, city, country);
+        setLocationWarning("GPS unavailable. Using approximate IP location. Click on map to adjust.");
+        setIsLocating(false);
+        return;
+      }
+
+      setLocationError("Could not detect location. Please click on the map to set your location.");
+      setIsLocating(false);
+    } else {
+      // DESKTOP: Use IP-based location (more reliable than browser "GPS")
+      const ipLocation = await getIPLocation();
+
+      if (ipLocation) {
+        setPosition([ipLocation.lat, ipLocation.lng]);
+        setMapCenter([ipLocation.lat, ipLocation.lng]);
+        const { city, country } = await reverseGeocode(ipLocation.lat, ipLocation.lng);
+        onLocationSelect(ipLocation.lat, ipLocation.lng, city, country);
+        setLocationWarning("Location detected from IP. Click on map for exact position.");
+        setIsLocating(false);
+        return;
+      }
+
+      setLocationError("Could not detect location. Please click on the map to set your location.");
+      setIsLocating(false);
+    }
   };
 
   // Try to get location on mount
