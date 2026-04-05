@@ -1,20 +1,14 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
 import { Header, Footer } from "@/components/layout";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "@/i18n/navigation";
+import { ArrowLeft } from "lucide-react";
 
-type Props = {
-  params: Promise<{ locale: string }>;
-};
-
-export default async function CookiePolicyPage({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
-  return <CookieContent />;
-}
-
-function CookieContent() {
+export default function CookiePolicyPage() {
   const t = useTranslations();
+  const router = useRouter();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -22,6 +16,10 @@ function CookieContent() {
 
       <main className="flex-1 bg-white py-12">
         <div className="container mx-auto px-4 max-w-3xl">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t("common.back")}
+          </Button>
           <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent text-center" style={{ fontFamily: 'var(--font-logo)' }}>{t("legal.cookies.title")}</h1>
 
           <div className="prose prose-gray max-w-none space-y-6">

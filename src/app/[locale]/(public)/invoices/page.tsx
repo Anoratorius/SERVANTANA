@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Eye, Calendar } from "lucide-react";
+import { FileText, Eye, Calendar, ArrowLeft } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 
 interface Invoice {
@@ -39,6 +40,8 @@ const statusColors: Record<string, string> = {
 
 export default function InvoicesPage() {
   const t = useTranslations("invoice");
+  const tCommon = useTranslations("common");
+  const router = useRouter();
   const { data: session, status: authStatus } = useSession();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,6 +78,10 @@ export default function InvoicesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {tCommon("back")}
+          </Button>
           {/* Header */}
           <div className="flex items-center gap-3 mb-8">
             <FileText className="h-8 w-8 text-blue-500" />

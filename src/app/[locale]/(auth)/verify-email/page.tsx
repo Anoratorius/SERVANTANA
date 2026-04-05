@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Loader2, Mail } from "lucide-react";
+import { CheckCircle, XCircle, Loader2, Mail, ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const t = useTranslations();
   const token = searchParams.get("token");
 
   const [status, setStatus] = useState<"loading" | "success" | "error" | "no-token">(
@@ -42,6 +45,10 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full text-center">
+        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t("common.back")}
+        </Button>
         {status === "loading" && (
           <div className="space-y-4">
             <Loader2 className="h-16 w-16 text-blue-500 mx-auto animate-spin" />

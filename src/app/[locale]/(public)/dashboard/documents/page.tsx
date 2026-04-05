@@ -27,7 +27,9 @@ import {
   Trash2,
   Eye,
   Shield,
+  ArrowLeft,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 interface Document {
@@ -56,6 +58,7 @@ const DOCUMENT_TYPES = [
 
 export default function DocumentsPage() {
   const router = useRouter();
+  const t = useTranslations();
   const { data: session, status: authStatus } = useSession();
 
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -218,6 +221,10 @@ export default function DocumentsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t("common.back")}
+          </Button>
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
               <Shield className="h-6 w-6" />

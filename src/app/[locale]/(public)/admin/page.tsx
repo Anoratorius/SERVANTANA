@@ -42,6 +42,7 @@ import {
   Download,
   Plus,
   Pencil,
+  ArrowLeft,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -1290,6 +1291,10 @@ export default function AdminPage() {
 
       <main className="flex-1 bg-gradient-to-b from-purple-50 to-white py-4 sm:py-8">
         <div className="container mx-auto px-2 sm:px-4 max-w-6xl">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t("common.back")}
+          </Button>
           <div className="text-center mb-4 sm:mb-8">
             <Shield className="h-8 w-8 sm:h-12 sm:w-12 mx-auto text-purple-500 mb-2 sm:mb-4" />
             <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">

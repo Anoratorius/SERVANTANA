@@ -11,11 +11,16 @@ import {
   Mail,
   Phone,
   ExternalLink,
+  ArrowLeft,
 } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export default function SupportPage() {
   const { data: session } = useSession();
+  const router = useRouter();
+  const t = useTranslations();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -23,6 +28,10 @@ export default function SupportPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t("common.back")}
+          </Button>
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
               <HelpCircle className="h-8 w-8" />

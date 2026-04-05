@@ -1,22 +1,14 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
 import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
-import { Mail } from "lucide-react";
+import { Mail, ArrowLeft } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 
-type Props = {
-  params: Promise<{ locale: string }>;
-};
-
-export default async function PressPage({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
-  return <PressContent />;
-}
-
-function PressContent() {
+export default function PressPage() {
   const t = useTranslations();
+  const router = useRouter();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -25,13 +17,19 @@ function PressContent() {
       <main className="flex-1">
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-16">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
-              {t("press.title")}
+          <div className="container mx-auto px-4 max-w-4xl">
+            <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t("common.back")}
+            </Button>
+            <div className="text-center">
+              <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
+                {t("press.title")}
             </h1>
             <p className="text-lg md:text-xl text-gray-600">
               {t("press.subtitle")}
             </p>
+            </div>
           </div>
         </section>
 

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
+import { Loader2, Eye, EyeOff, Sparkles, ArrowLeft } from "lucide-react";
 import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 
@@ -121,6 +121,10 @@ function SignupForm() {
   return (
     <Card className="w-full max-w-md relative z-10">
       <CardHeader className="text-center">
+        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t("common.back")}
+        </Button>
         <div className="mb-4">
           <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
             {t("common.appName")}

@@ -27,7 +27,9 @@ import {
   AlertCircle,
   Loader2,
   Bitcoin,
+  ArrowLeft,
 } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { toast } from "sonner";
@@ -98,6 +100,7 @@ export default function BookingConfirmationPage({
 }) {
   const { id } = use(params);
   const t = useTranslations();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -293,6 +296,10 @@ export default function BookingConfirmationPage({
 
       <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-16">
         <div className="container mx-auto px-4 max-w-2xl text-center">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t("common.back")}
+          </Button>
           {/* Success/Status Icon */}
           <div className="mb-8">
             {isPaid ? (

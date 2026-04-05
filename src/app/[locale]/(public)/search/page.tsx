@@ -171,7 +171,7 @@ function SearchContent() {
             <Button
               variant="ghost"
               onClick={() => router.back()}
-              className="mb-4"
+              className="mb-6"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t("common.back")}

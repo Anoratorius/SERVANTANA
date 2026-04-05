@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Header, Footer } from "@/components/layout";
-import { ChevronDown } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { ChevronDown, ArrowLeft } from "lucide-react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
 
 const FAQ_ITEMS = [
   "whatIsServantana",
@@ -19,6 +20,7 @@ const FAQ_ITEMS = [
 
 export default function FAQPage() {
   const t = useTranslations();
+  const router = useRouter();
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const toggleItem = (id: string) => {
@@ -34,13 +36,19 @@ export default function FAQPage() {
       <main className="flex-1">
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-16">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
-              {t("faq.title")}
-            </h1>
+          <div className="container mx-auto px-4 max-w-4xl">
+            <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t("common.back")}
+            </Button>
+            <div className="text-center">
+              <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
+                {t("faq.title")}
+              </h1>
             <p className="text-lg md:text-xl text-gray-600">
               {t("faq.subtitle")}
             </p>
+            </div>
           </div>
         </section>
 

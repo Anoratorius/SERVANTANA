@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 
@@ -18,6 +19,7 @@ const REMEMBERED_EMAIL_KEY = "servantana_remembered_email";
 
 function LoginForm() {
   const t = useTranslations();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const error = searchParams.get("error");
@@ -73,6 +75,10 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md relative z-10">
       <CardHeader className="text-center">
+        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t("common.back")}
+        </Button>
         <div className="mb-4">
           <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
             {t("common.appName")}

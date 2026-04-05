@@ -15,7 +15,10 @@ import {
   Download,
   ArrowUp,
   ArrowDown,
+  ArrowLeft,
 } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface AdminAnalytics {
   summary: {
@@ -55,6 +58,8 @@ interface RevenueData {
 }
 
 export default function AdminAnalyticsPage() {
+  const router = useRouter();
+  const t = useTranslations();
   const [period, setPeriod] = useState("month");
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [revenueData, setRevenueData] = useState<RevenueData | null>(null);
@@ -148,6 +153,10 @@ export default function AdminAnalyticsPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-7xl">
+        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t("common.back")}
+        </Button>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Platform Analytics
