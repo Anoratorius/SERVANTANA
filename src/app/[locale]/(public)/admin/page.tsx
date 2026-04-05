@@ -43,6 +43,8 @@ import {
   Plus,
   Pencil,
   ArrowLeft,
+  Mail,
+  Send,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -175,6 +177,29 @@ interface AuditLog {
   ip: string | null;
   userAgent: string | null;
   severity: "low" | "medium" | "high" | "critical";
+  createdAt: string;
+}
+
+interface EmailLog {
+  id: string;
+  type: string;
+  channel: string;
+  title: string;
+  body: string;
+  sent: boolean;
+  sentAt: string | null;
+  error: string | null;
+  data: {
+    recipientType?: string;
+    sentBy?: string;
+    sentByName?: string;
+  };
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
   createdAt: string;
 }
 
@@ -463,6 +488,22 @@ export default function AdminPage() {
   const [auditLogsSeverity, setAuditLogsSeverity] = useState("all");
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
 
+  // Email state
+  const [emails, setEmails] = useState<EmailLog[]>([]);
+  const [emailsPage, setEmailsPage] = useState(1);
+  const [emailsTotalPages, setEmailsTotalPages] = useState(1);
+  const [loadingEmails, setLoadingEmails] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    subject: "",
+    body: "",
+    recipientType: "individual" as "individual" | "all" | "workers" | "customers",
+    recipientId: "",
+  });
+  const [emailUserSearch, setEmailUserSearch] = useState("");
+  const [emailSearchResults, setEmailSearchResults] = useState<User[]>([]);
+  const [searchingUsers, setSearchingUsers] = useState(false);
+
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login?callbackUrl=/admin");
@@ -716,6 +757,93 @@ export default function AdminPage() {
     }
   }, [auditLogsPage, auditLogsFilter, auditLogsSeverity]);
 
+  const fetchEmails = useCallback(async () => {
+    setLoadingEmails(true);
+    try {
+      const params = new URLSearchParams({
+        page: emailsPage.toString(),
+        limit: "20",
+      });
+
+      const response = await fetch(`/api/admin/emails?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setEmails(data.emails);
+        setEmailsTotalPages(data.pagination.totalPages);
+      }
+    } catch (error) {
+      console.error("Error fetching emails:", error);
+    } finally {
+      setLoadingEmails(false);
+    }
+  }, [emailsPage]);
+
+  const searchUsersForEmail = useCallback(async (query: string) => {
+    if (!query || query.length < 2) {
+      setEmailSearchResults([]);
+      return;
+    }
+    setSearchingUsers(true);
+    try {
+      const params = new URLSearchParams({
+        search: query,
+        limit: "10",
+      });
+      const response = await fetch(`/api/admin/users?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setEmailSearchResults(data.users);
+      }
+    } catch (error) {
+      console.error("Error searching users:", error);
+    } finally {
+      setSearchingUsers(false);
+    }
+  }, []);
+
+  const sendEmail = async () => {
+    if (!emailForm.subject || !emailForm.body) {
+      toast.error(t("admin.emailSubjectBodyRequired"));
+      return;
+    }
+
+    if (emailForm.recipientType === "individual" && !emailForm.recipientId) {
+      toast.error(t("admin.selectRecipient"));
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const response = await fetch("/api/admin/emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(emailForm),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(data.message);
+        setEmailForm({
+          subject: "",
+          body: "",
+          recipientType: "individual",
+          recipientId: "",
+        });
+        setEmailUserSearch("");
+        setEmailSearchResults([]);
+        fetchEmails();
+      } else {
+        const error = await response.json();
+        toast.error(error.error || t("admin.emailSendFailed"));
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error(t("admin.emailSendFailed"));
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === "users" && authStatus === "authenticated") {
       fetchUsers();
@@ -770,6 +898,12 @@ export default function AdminPage() {
       fetchAuditLogs();
     }
   }, [activeTab, fetchAuditLogs, authStatus]);
+
+  useEffect(() => {
+    if (activeTab === "emails" && authStatus === "authenticated") {
+      fetchEmails();
+    }
+  }, [activeTab, fetchEmails, authStatus]);
 
   const handleVerifyWorker = async (userId: string, verified: boolean) => {
     setVerifyingId(userId);
@@ -1360,6 +1494,11 @@ export default function AdminPage() {
                   <History className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{t("admin.auditLogs")}</span>
                   <span className="sm:hidden">Logs</span>
+                </TabsTrigger>
+                <TabsTrigger value="emails" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                  <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">{t("admin.emailsTab")}</span>
+                  <span className="sm:hidden">Email</span>
                 </TabsTrigger>
                 <TabsTrigger value="settings" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
                   <UserCog className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -3024,6 +3163,246 @@ export default function AdminPage() {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Emails Tab */}
+            <TabsContent value="emails">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Compose Email */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Send className="h-5 w-5" />
+                      {t("admin.composeEmail")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Recipient Type */}
+                      <div>
+                        <Label>{t("admin.recipientType")}</Label>
+                        <Select
+                          value={emailForm.recipientType}
+                          onValueChange={(value: "individual" | "all" | "workers" | "customers") =>
+                            setEmailForm({ ...emailForm, recipientType: value, recipientId: "" })
+                          }
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="individual">{t("admin.individualUser")}</SelectItem>
+                            <SelectItem value="all">{t("admin.allUsers")}</SelectItem>
+                            <SelectItem value="workers">{t("admin.allWorkers")}</SelectItem>
+                            <SelectItem value="customers">{t("admin.allCustomers")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Individual User Search */}
+                      {emailForm.recipientType === "individual" && (
+                        <div>
+                          <Label>{t("admin.searchUser")}</Label>
+                          <div className="relative mt-1">
+                            <Input
+                              placeholder={t("admin.searchUserPlaceholder")}
+                              value={emailUserSearch}
+                              onChange={(e) => {
+                                setEmailUserSearch(e.target.value);
+                                searchUsersForEmail(e.target.value);
+                              }}
+                            />
+                            {searchingUsers && (
+                              <Loader2 className="absolute right-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
+                            )}
+                          </div>
+                          {emailSearchResults.length > 0 && (
+                            <div className="mt-2 border rounded-md max-h-40 overflow-y-auto">
+                              {emailSearchResults.map((user) => (
+                                <div
+                                  key={user.id}
+                                  className={`p-2 cursor-pointer hover:bg-gray-50 flex items-center gap-2 ${
+                                    emailForm.recipientId === user.id ? "bg-blue-50" : ""
+                                  }`}
+                                  onClick={() => {
+                                    setEmailForm({ ...emailForm, recipientId: user.id });
+                                    setEmailUserSearch(`${user.firstName} ${user.lastName} (${user.email})`);
+                                    setEmailSearchResults([]);
+                                  }}
+                                >
+                                  <Avatar className="h-6 w-6">
+                                    <AvatarImage src={user.avatar || undefined} />
+                                    <AvatarFallback className="text-xs">
+                                      {user.firstName[0]}{user.lastName[0]}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate">
+                                      {user.firstName} {user.lastName}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">
+                                    {user.role}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {emailForm.recipientId && (
+                            <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                              <CheckCircle className="h-3 w-3" />
+                              {t("admin.recipientSelected")}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Subject */}
+                      <div>
+                        <Label>{t("admin.emailSubject")}</Label>
+                        <Input
+                          className="mt-1"
+                          placeholder={t("admin.emailSubjectPlaceholder")}
+                          value={emailForm.subject}
+                          onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                          maxLength={200}
+                        />
+                      </div>
+
+                      {/* Body */}
+                      <div>
+                        <Label>{t("admin.emailBody")}</Label>
+                        <Textarea
+                          className="mt-1 min-h-[150px]"
+                          placeholder={t("admin.emailBodyPlaceholder")}
+                          value={emailForm.body}
+                          onChange={(e) => setEmailForm({ ...emailForm, body: e.target.value })}
+                          maxLength={10000}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {emailForm.body.length}/10000
+                        </p>
+                      </div>
+
+                      {/* Warning for bulk */}
+                      {emailForm.recipientType !== "individual" && (
+                        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
+                          <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
+                          <p className="text-sm text-yellow-800">
+                            {t("admin.bulkEmailWarning")}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Send Button */}
+                      <Button
+                        className="w-full"
+                        onClick={sendEmail}
+                        disabled={sendingEmail || !emailForm.subject || !emailForm.body || (emailForm.recipientType === "individual" && !emailForm.recipientId)}
+                      >
+                        {sendingEmail ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            {t("admin.sending")}
+                          </>
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4 mr-2" />
+                            {t("admin.sendEmail")}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Email History */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <History className="h-5 w-5" />
+                      {t("admin.emailHistory")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {loadingEmails ? (
+                      <div className="flex justify-center py-8">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : emails.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        {t("admin.noEmailHistory")}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                          {emails.map((email) => (
+                            <div
+                              key={email.id}
+                              className="p-3 border rounded-lg"
+                            >
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Badge variant={email.sent ? "default" : "destructive"}>
+                                      {email.sent ? t("admin.sent") : t("admin.failed")}
+                                    </Badge>
+                                    <Badge variant="outline">
+                                      {email.type === "ADMIN_EMAIL" ? t("admin.individual") : t("admin.announcement")}
+                                    </Badge>
+                                  </div>
+                                  <p className="font-medium text-sm truncate">{email.title}</p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {t("admin.to")}: {email.user.firstName} {email.user.lastName} ({email.user.email})
+                                  </p>
+                                  {email.data.sentByName && (
+                                    <p className="text-xs text-muted-foreground">
+                                      {t("admin.sentBy")}: {email.data.sentByName}
+                                    </p>
+                                  )}
+                                  {email.error && (
+                                    <p className="text-xs text-red-500 mt-1">{email.error}</p>
+                                  )}
+                                </div>
+                                <div className="text-right text-xs text-muted-foreground">
+                                  <p>{email.sentAt ? new Date(email.sentAt).toLocaleDateString() : "-"}</p>
+                                  <p>{email.sentAt ? new Date(email.sentAt).toLocaleTimeString() : "-"}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Pagination */}
+                        <div className="flex items-center justify-between mt-4">
+                          <p className="text-sm text-muted-foreground">
+                            {t("admin.page")} {emailsPage} / {emailsTotalPages}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setEmailsPage((p) => Math.max(1, p - 1))}
+                              disabled={emailsPage === 1}
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setEmailsPage((p) => p + 1)}
+                              disabled={emailsPage >= emailsTotalPages}
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* Settings Tab */}

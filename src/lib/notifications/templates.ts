@@ -78,6 +78,14 @@ export function getNotificationTemplate(
       title: "New Review",
       body: `${data.customerName} has left a review for your service.`,
     },
+    ADMIN_EMAIL: {
+      title: "Message from Admin",
+      body: "You have received a message from the Servantana team.",
+    },
+    ADMIN_ANNOUNCEMENT: {
+      title: "Announcement",
+      body: "You have received an announcement from Servantana.",
+    },
   };
 
   return templates[type] || { title: "Notification", body: "You have a new notification." };

@@ -135,6 +135,8 @@ enum NotificationType {
   DOCUMENT_REJECTED
   MESSAGE_RECEIVED
   REVIEW_RECEIVED
+  ADMIN_EMAIL
+  ADMIN_ANNOUNCEMENT
 }
 
 // ============================================
