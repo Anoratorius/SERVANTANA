@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-lea
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
-import { Loader2, MapPin, Navigation } from "lucide-react";
+import { Loader2, MapPin, Navigation, AlertTriangle } from "lucide-react";
 
 // Fix Leaflet marker icon issue
 const markerIcon = new L.Icon({
@@ -61,8 +61,41 @@ export default function LocationPicker({
   );
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationWarning, setLocationWarning] = useState<string | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([52.52, 13.405]); // Berlin default
   const mapRef = useRef<L.Map | null>(null);
+
+  // Get IP-based location for cross-check
+  const getIPLocation = async (): Promise<{ lat: number; lng: number; city: string } | null> => {
+    try {
+      const response = await fetch("https://ipinfo.io/json", { cache: "no-store" });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.loc) {
+          const [lat, lng] = data.loc.split(",").map(Number);
+          return { lat, lng, city: data.city || "" };
+        }
+      }
+    } catch {
+      // IP detection failed
+    }
+    return null;
+  };
+
+  // Calculate distance between two coordinates in km
+  const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
 
   // Reverse geocode to get city and country
   const reverseGeocode = async (lat: number, lng: number) => {
@@ -88,6 +121,8 @@ export default function LocationPicker({
 
   const handleMapClick = async (lat: number, lng: number) => {
     setPosition([lat, lng]);
+    setLocationWarning(null); // Clear warning when user manually selects
+    setLocationError(null);
     const { city, country } = await reverseGeocode(lat, lng);
     onLocationSelect(lat, lng, city, country);
   };
@@ -100,18 +135,46 @@ export default function LocationPicker({
 
     setIsLocating(true);
     setLocationError(null);
+    setLocationWarning(null);
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setPosition([lat, lng]);
-        setMapCenter([lat, lng]);
-        const { city, country } = await reverseGeocode(lat, lng);
-        onLocationSelect(lat, lng, city, country);
+        const gpsLat = pos.coords.latitude;
+        const gpsLng = pos.coords.longitude;
+
+        // Cross-check with IP location
+        const ipLocation = await getIPLocation();
+
+        if (ipLocation) {
+          const distance = getDistance(gpsLat, gpsLng, ipLocation.lat, ipLocation.lng);
+          // If GPS and IP locations differ by more than 500km, show warning
+          if (distance > 500) {
+            setLocationWarning(
+              `GPS shows a location far from your IP location (${ipLocation.city}). ` +
+              `If this doesn't look right, click on the map to set your location manually.`
+            );
+          }
+        }
+
+        setPosition([gpsLat, gpsLng]);
+        setMapCenter([gpsLat, gpsLng]);
+        const { city, country } = await reverseGeocode(gpsLat, gpsLng);
+        onLocationSelect(gpsLat, gpsLng, city, country);
         setIsLocating(false);
       },
-      (error) => {
+      async (error) => {
+        // GPS failed - try IP-based location as fallback
+        const ipLocation = await getIPLocation();
+        if (ipLocation) {
+          setPosition([ipLocation.lat, ipLocation.lng]);
+          setMapCenter([ipLocation.lat, ipLocation.lng]);
+          const { city, country } = await reverseGeocode(ipLocation.lat, ipLocation.lng);
+          onLocationSelect(ipLocation.lat, ipLocation.lng, city, country);
+          setLocationWarning("Using approximate location based on IP. Click on the map to set exact location.");
+          setIsLocating(false);
+          return;
+        }
+
         setIsLocating(false);
         switch (error.code) {
           case error.PERMISSION_DENIED:
@@ -175,6 +238,13 @@ export default function LocationPicker({
       {locationError && (
         <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
           {locationError}
+        </div>
+      )}
+
+      {locationWarning && (
+        <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded flex items-start gap-2">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span>{locationWarning}</span>
         </div>
       )}
 
