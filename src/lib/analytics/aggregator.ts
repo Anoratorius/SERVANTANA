@@ -251,7 +251,7 @@ export async function getAdminAnalytics(period: string) {
     pendingDisputes,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "CUSTOMER" } }),
-    prisma.user.count({ where: { role: "CLEANER" } }),
+    prisma.user.count({ where: { role: "WORKER" } }),
     prisma.booking.count({ where: { createdAt: { gte: start, lte: end } } }),
     prisma.payment.aggregate({
       where: { createdAt: { gte: start, lte: end }, status: "SUCCEEDED" },

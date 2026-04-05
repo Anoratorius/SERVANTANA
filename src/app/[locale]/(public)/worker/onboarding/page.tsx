@@ -147,7 +147,7 @@ function WorkerOnboardingContent() {
       router.push("/login");
       return;
     }
-    if (session.user.role !== "CLEANER") {
+    if (session.user.role !== "WORKER") {
       router.push("/");
       return;
     }
@@ -378,7 +378,7 @@ function WorkerOnboardingContent() {
 
     try {
       // Update profile with basic info
-      const profileResponse = await fetch("/api/cleaner/profile", {
+      const profileResponse = await fetch("/api/worker/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -404,7 +404,7 @@ function WorkerOnboardingContent() {
         const isPrimary = professionId === primaryProfession || (i === 0 && !primaryProfession);
         const hourlyRate = parseFloat(professionRates[professionId] || "25");
 
-        const response = await fetch("/api/cleaner/professions", {
+        const response = await fetch("/api/worker/professions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ professionId, isPrimary, hourlyRate }),
@@ -420,7 +420,7 @@ function WorkerOnboardingContent() {
 
       // Set availability
       const activeSlots = availability.filter((slot) => slot.isActive);
-      const availabilityResponse = await fetch("/api/cleaner/availability", {
+      const availabilityResponse = await fetch("/api/worker/availability", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ availability: activeSlots }),
@@ -431,7 +431,7 @@ function WorkerOnboardingContent() {
       }
 
       // Complete onboarding
-      const completeResponse = await fetch("/api/cleaner/profile", {
+      const completeResponse = await fetch("/api/worker/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });

@@ -6,7 +6,7 @@ import { writeAuditLog, AuditAction } from "@/lib/audit-log";
 import { getClientIP } from "@/lib/rate-limit";
 
 const updateUserSchema = z.object({
-  role: z.enum(["CUSTOMER", "CLEANER", "ADMIN"]).optional(),
+  role: z.enum(["CUSTOMER", "WORKER", "ADMIN"]).optional(),
   status: z.enum(["ACTIVE", "SUSPENDED", "BANNED"]).optional(),
   suspendedUntil: z.string().datetime().nullable().optional(),
   suspendedReason: z.string().max(500).nullable().optional(),
@@ -169,7 +169,7 @@ export async function PATCH(
     });
 
     // If role changed to CLEANER, create cleaner profile if not exists
-    if (body.role === "CLEANER") {
+    if (body.role === "WORKER") {
       const existingProfile = await prisma.workerProfile.findUnique({
         where: { userId: id },
       });

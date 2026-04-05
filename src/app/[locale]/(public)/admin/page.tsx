@@ -178,7 +178,7 @@ interface AuditLog {
   createdAt: string;
 }
 
-interface Cleaner {
+interface Worker {
   id: string;
   verified: boolean;
   hourlyRate: number;
@@ -250,7 +250,7 @@ interface Profession {
     email: string;
   } | null;
   _count?: {
-    cleaners: number;
+    workers: number;
   };
   createdAt: string;
 }
@@ -366,10 +366,10 @@ export default function AdminPage() {
   const [loadingUsers, setLoadingUsers] = useState(false);
 
   // Cleaners state
-  const [cleaners, setCleaners] = useState<Cleaner[]>([]);
-  const [cleanersPage, setCleanersPage] = useState(1);
-  const [cleanersTotalPages, setCleanersTotalPages] = useState(1);
-  const [cleanersFilter, setCleanersFilter] = useState("false"); // pending verification
+  const [workers, setWorkers] = useState<Worker[]>([]);
+  const [workersPage, setWorkersPage] = useState(1);
+  const [workersTotalPages, setWorkersTotalPages] = useState(1);
+  const [workersFilter, setWorkersFilter] = useState("false"); // pending verification
   const [loadingCleaners, setLoadingCleaners] = useState(false);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
 
@@ -524,23 +524,23 @@ export default function AdminPage() {
     setLoadingCleaners(true);
     try {
       const params = new URLSearchParams({
-        page: cleanersPage.toString(),
+        page: workersPage.toString(),
         limit: "10",
-        verified: cleanersFilter,
+        verified: workersFilter,
       });
 
-      const response = await fetch(`/api/admin/cleaners?${params}`);
+      const response = await fetch(`/api/admin/workers?${params}`);
       if (response.ok) {
         const data = await response.json();
-        setCleaners(data.cleaners);
-        setCleanersTotalPages(data.pagination.totalPages);
+        setWorkers(data.workers);
+        setWorkersTotalPages(data.pagination.totalPages);
       }
     } catch (error) {
-      console.error("Error fetching cleaners:", error);
+      console.error("Error fetching workers:", error);
     } finally {
       setLoadingCleaners(false);
     }
-  }, [cleanersPage, cleanersFilter]);
+  }, [workersPage, workersFilter]);
 
   const fetchReviews = useCallback(async () => {
     setLoadingReviews(true);
@@ -723,7 +723,7 @@ export default function AdminPage() {
   }, [activeTab, fetchUsers, authStatus]);
 
   useEffect(() => {
-    if (activeTab === "cleaners" && authStatus === "authenticated") {
+    if (activeTab === "workers" && authStatus === "authenticated") {
       fetchCleaners();
     }
   }, [activeTab, fetchCleaners, authStatus]);
@@ -771,10 +771,10 @@ export default function AdminPage() {
     }
   }, [activeTab, fetchAuditLogs, authStatus]);
 
-  const handleVerifyCleaner = async (userId: string, verified: boolean) => {
+  const handleVerifyWorker = async (userId: string, verified: boolean) => {
     setVerifyingId(userId);
     try {
-      const response = await fetch(`/api/admin/cleaners/${userId}/verify`, {
+      const response = await fetch(`/api/admin/workers/${userId}/verify`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ verified }),
@@ -1321,7 +1321,7 @@ export default function AdminPage() {
                   <span className="hidden sm:inline">{t("admin.bookings")}</span>
                   <span className="sm:hidden">Book</span>
                 </TabsTrigger>
-                <TabsTrigger value="cleaners" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
+                <TabsTrigger value="workers" className="gap-1 text-xs sm:text-sm px-2 sm:px-3">
                   <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{t("admin.verification")}</span>
                   <span className="sm:hidden">Verify</span>
@@ -1455,8 +1455,8 @@ export default function AdminPage() {
                                   <p className="text-xs text-muted-foreground">{user.email}</p>
                                 </div>
                               </div>
-                              <Badge variant={user.role === "CLEANER" ? "default" : "secondary"}>
-                                {user.role === "CLEANER" ? "WORKER" : user.role}
+                              <Badge variant={user.role === "WORKER" ? "default" : "secondary"}>
+                                {user.role === "WORKER" ? "WORKER" : user.role}
                               </Badge>
                             </div>
                           ))}
@@ -1531,7 +1531,7 @@ export default function AdminPage() {
                       >
                         <option value="all">All Roles</option>
                         <option value="CUSTOMER">Customers</option>
-                        <option value="CLEANER">Workers</option>
+                        <option value="WORKER">Workers</option>
                         <option value="ADMIN">Admins</option>
                       </select>
                       <select
@@ -1580,7 +1580,7 @@ export default function AdminPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              {user.role === "CLEANER" && user.workerProfile && (
+                              {user.role === "WORKER" && user.workerProfile && (
                                 <div className="text-right text-sm hidden sm:block">
                                   <div className="flex items-center gap-1">
                                     <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
@@ -1600,14 +1600,14 @@ export default function AdminPage() {
                                 variant={
                                   user.role === "ADMIN"
                                     ? "destructive"
-                                    : user.role === "CLEANER"
+                                    : user.role === "WORKER"
                                     ? "default"
                                     : "secondary"
                                 }
                               >
-                                {user.role === "CLEANER" ? "WORKER" : user.role}
+                                {user.role === "WORKER" ? "WORKER" : user.role}
                               </Badge>
-                              {user.role === "CLEANER" && user.workerProfile?.verified && (
+                              {user.role === "WORKER" && user.workerProfile?.verified && (
                                 <CheckCircle className="h-4 w-4 text-green-500" />
                               )}
 
@@ -1644,11 +1644,11 @@ export default function AdminPage() {
                                         {user.role === "CUSTOMER" && <CheckCircle className="h-4 w-4 ml-2" />}
                                       </DropdownMenuItem>
                                       <DropdownMenuItem
-                                        onClick={() => handleChangeRole(user, "CLEANER")}
-                                        disabled={user.role === "CLEANER" || processingAction}
+                                        onClick={() => handleChangeRole(user, "WORKER")}
+                                        disabled={user.role === "WORKER" || processingAction}
                                       >
                                         {t("admin.workers")}
-                                        {user.role === "CLEANER" && <CheckCircle className="h-4 w-4 ml-2" />}
+                                        {user.role === "WORKER" && <CheckCircle className="h-4 w-4 ml-2" />}
                                       </DropdownMenuItem>
                                       <DropdownMenuItem
                                         onClick={() => handleChangeRole(user, "ADMIN")}
@@ -1746,14 +1746,14 @@ export default function AdminPage() {
             </TabsContent>
 
             {/* Workers Verification Tab */}
-            <TabsContent value="cleaners">
+            <TabsContent value="workers">
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Worker Verification</CardTitle>
                     <select
-                      value={cleanersFilter}
-                      onChange={(e) => setCleanersFilter(e.target.value)}
+                      value={workersFilter}
+                      onChange={(e) => setWorkersFilter(e.target.value)}
                       className="border rounded-md px-3 py-2 text-sm"
                     >
                       <option value="false">Pending Verification</option>
@@ -1766,55 +1766,55 @@ export default function AdminPage() {
                     <div className="flex justify-center py-8">
                       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
-                  ) : cleaners.length === 0 ? (
+                  ) : workers.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
-                      {cleanersFilter === "false"
+                      {workersFilter === "false"
                         ? "No workers pending verification"
                         : "No verified workers"}
                     </div>
                   ) : (
                     <>
                       <div className="space-y-4">
-                        {cleaners.map((cleaner) => (
+                        {workers.map((worker) => (
                           <div
-                            key={cleaner.id}
+                            key={worker.id}
                             className="p-4 border rounded-lg space-y-3"
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex items-center gap-3">
                                 <Avatar className="h-12 w-12">
-                                  <AvatarImage src={cleaner.user.avatar || undefined} />
+                                  <AvatarImage src={worker.user.avatar || undefined} />
                                   <AvatarFallback>
-                                    {cleaner.user.firstName[0]}{cleaner.user.lastName[0]}
+                                    {worker.user.firstName[0]}{worker.user.lastName[0]}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div>
                                   <p className="font-medium">
-                                    {cleaner.user.firstName} {cleaner.user.lastName}
+                                    {worker.user.firstName} {worker.user.lastName}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {cleaner.user.email}
+                                    {worker.user.email}
                                   </p>
-                                  {cleaner.city && (
+                                  {worker.city && (
                                     <p className="text-sm text-muted-foreground">
-                                      {cleaner.city}
+                                      {worker.city}
                                     </p>
                                   )}
                                 </div>
                               </div>
                               <div className="text-right">
                                 <p className="font-medium text-green-600">
-                                  ${cleaner.hourlyRate}/hr
+                                  ${worker.hourlyRate}/hr
                                 </p>
                                 <div className="flex items-center gap-1 text-sm">
                                   <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                  {cleaner.averageRating.toFixed(1)}
+                                  {worker.averageRating.toFixed(1)}
                                 </div>
                               </div>
                             </div>
 
                             <div className="flex flex-wrap gap-2">
-                              {cleaner.services.map((s, i) => (
+                              {worker.services.map((s, i) => (
                                 <Badge key={i} variant="secondary">
                                   {s.service ? (SERVICE_NAMES[s.service.name] || s.service.name) : "N/A"}
                                 </Badge>
@@ -1822,15 +1822,15 @@ export default function AdminPage() {
                             </div>
 
                             <div className="flex justify-end gap-2">
-                              {cleaner.verified ? (
+                              {worker.verified ? (
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   className="text-red-600"
-                                  onClick={() => handleVerifyCleaner(cleaner.user.id, false)}
-                                  disabled={verifyingId === cleaner.user.id}
+                                  onClick={() => handleVerifyWorker(worker.user.id, false)}
+                                  disabled={verifyingId === worker.user.id}
                                 >
-                                  {verifyingId === cleaner.user.id ? (
+                                  {verifyingId === worker.user.id ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                   ) : (
                                     <XCircle className="h-4 w-4 mr-1" />
@@ -1841,10 +1841,10 @@ export default function AdminPage() {
                                 <Button
                                   size="sm"
                                   className="bg-green-500 hover:bg-green-600"
-                                  onClick={() => handleVerifyCleaner(cleaner.user.id, true)}
-                                  disabled={verifyingId === cleaner.user.id}
+                                  onClick={() => handleVerifyWorker(worker.user.id, true)}
+                                  disabled={verifyingId === worker.user.id}
                                 >
-                                  {verifyingId === cleaner.user.id ? (
+                                  {verifyingId === worker.user.id ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                   ) : (
                                     <CheckCircle className="h-4 w-4 mr-1" />
@@ -1860,22 +1860,22 @@ export default function AdminPage() {
                       {/* Pagination */}
                       <div className="flex items-center justify-between mt-4">
                         <p className="text-sm text-muted-foreground">
-                          Page {cleanersPage} of {cleanersTotalPages}
+                          Page {workersPage} of {workersTotalPages}
                         </p>
                         <div className="flex gap-2">
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setCleanersPage((p) => Math.max(1, p - 1))}
-                            disabled={cleanersPage === 1}
+                            onClick={() => setWorkersPage((p) => Math.max(1, p - 1))}
+                            disabled={workersPage === 1}
                           >
                             <ChevronLeft className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setCleanersPage((p) => Math.min(cleanersTotalPages, p + 1))}
-                            disabled={cleanersPage === cleanersTotalPages}
+                            onClick={() => setWorkersPage((p) => Math.min(workersTotalPages, p + 1))}
+                            disabled={workersPage === workersTotalPages}
                           >
                             <ChevronRight className="h-4 w-4" />
                           </Button>
@@ -2315,9 +2315,9 @@ export default function AdminPage() {
                                       {profession.category.name}
                                     </Badge>
                                   )}
-                                  {profession._count && profession._count.cleaners > 0 && (
+                                  {profession._count && profession._count.workers > 0 && (
                                     <span className="text-xs text-muted-foreground">
-                                      {profession._count.cleaners} {t("admin.workersAssigned")}
+                                      {profession._count.workers} {t("admin.workersAssigned")}
                                     </span>
                                   )}
                                 </div>
@@ -2383,7 +2383,7 @@ export default function AdminPage() {
                                   setProfessionToDelete(profession);
                                   setDeleteProfessionDialogOpen(true);
                                 }}
-                                disabled={profession._count && profession._count.cleaners > 0}
+                                disabled={profession._count && profession._count.workers > 0}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -3043,7 +3043,7 @@ export default function AdminPage() {
                           <span className="font-medium">€2.00 + 5%</span>
                         </div>
                         <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                          <span className="text-sm">{t("admin.cleanerFee")}</span>
+                          <span className="text-sm">{t("admin.workerFee")}</span>
                           <span className="font-medium">€1.00 + 15%</span>
                         </div>
                       </div>
@@ -3155,7 +3155,7 @@ export default function AdminPage() {
                 <div className="p-3 border rounded-lg">
                   <p className="text-xs text-muted-foreground mb-1">{t("admin.role")}</p>
                   <Badge variant={userDetails.role === "ADMIN" ? "destructive" : "default"}>
-                    {userDetails.role === "CLEANER" ? "WORKER" : userDetails.role}
+                    {userDetails.role === "WORKER" ? "WORKER" : userDetails.role}
                   </Badge>
                 </div>
               </div>

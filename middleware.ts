@@ -194,14 +194,14 @@ export default function middleware(request: NextRequest) {
     }
   }
 
-  // Check worker onboarding for CLEANER users
+  // Check worker onboarding for WORKER users
   if (!shouldBypassWorkerOnboarding(pathname)) {
     const token = getSessionToken(request);
 
-    // If user is a CLEANER with verified location but incomplete onboarding, redirect
+    // If user is a WORKER with verified location but incomplete onboarding, redirect
     if (
       token?.id &&
-      token.role === 'CLEANER' &&
+      token.role === 'WORKER' &&
       token.locationVerified === true &&
       token.onboardingComplete !== true
     ) {

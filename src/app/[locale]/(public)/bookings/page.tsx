@@ -521,7 +521,7 @@ function BookingCard({
                 )}
                 {isPast && booking.status === "COMPLETED" && isCustomer && (
                   <>
-                    <Link href={`/cleaner/${booking.cleaner.id}?rebook=${booking.id}`}>
+                    <Link href={`/worker-profile/${booking.cleaner.id}?rebook=${booking.id}`}>
                       <Button size="sm" className="bg-gradient-to-r from-green-500 to-green-600">
                         <RotateCcw className="h-4 w-4 mr-1" />
                         {t("booking.bookAgain")}

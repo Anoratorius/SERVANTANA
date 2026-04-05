@@ -202,7 +202,7 @@ export default function ConversationPage({
                 </Button>
               </Link>
 
-              <Link href={partner.role === "CLEANER" ? `/cleaner/${partner.id}` : "#"}>
+              <Link href={partner.role === "WORKER" ? `/cleaner/${partner.id}` : "#"}>
                 <Avatar className="h-12 w-12">
                   <AvatarImage src={partner.avatar || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white">
@@ -220,7 +220,7 @@ export default function ConversationPage({
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   )}
                 </div>
-                {partner.role === "CLEANER" && partner.workerProfile && (
+                {partner.role === "WORKER" && partner.workerProfile && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Badge variant="secondary" className="text-xs">Worker</Badge>
                     <span className="flex items-center gap-1">
@@ -240,8 +240,8 @@ export default function ConversationPage({
                   )}
                 </span>
 
-                {partner.role === "CLEANER" && (
-                  <Link href={`/cleaner/${partner.id}/book`}>
+                {partner.role === "WORKER" && (
+                  <Link href={`/worker-profile/${partner.id}/book`}>
                     <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600">
                       <Calendar className="h-4 w-4 mr-1" />
                       Book

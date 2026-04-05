@@ -61,7 +61,7 @@ export async function GET() {
         exists: false,
       },
       shouldRedirectToOnboarding:
-        user?.role === "CLEANER" &&
+        user?.role === "WORKER" &&
         !!user?.locationVerifiedAt &&
         (!user?.workerProfile || user?.workerProfile?.onboardingComplete !== true),
     });

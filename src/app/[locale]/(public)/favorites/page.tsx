@@ -141,7 +141,7 @@ export default function FavoritesPage() {
                     <CardContent className="p-0">
                       <div className="p-4">
                         <div className="flex items-start gap-4">
-                          <Link href={`/cleaner/${cleaner.id}`}>
+                          <Link href={`/worker-profile/${cleaner.id}`}>
                             <Avatar className="h-16 w-16 ring-2 ring-red-100">
                               <AvatarImage src={cleaner.avatar || undefined} />
                               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white text-lg">
@@ -152,7 +152,7 @@ export default function FavoritesPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <Link href={`/cleaner/${cleaner.id}`}>
+                              <Link href={`/worker-profile/${cleaner.id}`}>
                                 <h3 className="font-semibold hover:text-blue-600 transition-colors">
                                   {cleaner.firstName} {cleaner.lastName}
                                 </h3>
@@ -189,7 +189,7 @@ export default function FavoritesPage() {
                         </div>
 
                         <div className="flex gap-2 mt-4">
-                          <Link href={`/cleaner/${cleaner.id}/book`} className="flex-1">
+                          <Link href={`/worker-profile/${cleaner.id}/book`} className="flex-1">
                             <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600" size="sm">
                               <Calendar className="h-4 w-4 mr-1" />
                               Book Now

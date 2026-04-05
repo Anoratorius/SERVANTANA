@@ -14,7 +14,7 @@ datasource db {
 // Enums for PostgreSQL
 enum Role {
   CUSTOMER
-  CLEANER
+  WORKER
   ADMIN
 }
 

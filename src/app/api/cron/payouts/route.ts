@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     // Get all cleaners with pending earnings that are available
     const cleanersWithEarnings = await prisma.user.findMany({
       where: {
-        role: "CLEANER",
+        role: "WORKER",
         earnings: {
           some: {
             status: "PENDING",

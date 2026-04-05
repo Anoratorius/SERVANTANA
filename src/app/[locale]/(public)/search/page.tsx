@@ -129,7 +129,7 @@ function SearchContent() {
       if (ecoFriendly) params.set("ecoFriendly", "true");
       if (petFriendly) params.set("petFriendly", "true");
 
-      const response = await fetch(`/api/cleaners?${params.toString()}`);
+      const response = await fetch(`/api/workers?${params.toString()}`);
       const data = await response.json();
       setCleaners(data.cleaners || []);
     } catch (error) {
@@ -307,8 +307,8 @@ function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<t
           <div className="pt-1 md:pt-2 border-t text-center">
             <span className="text-sm md:text-xl font-bold text-blue-600">{formatPricePerHour(profile.hourlyRate, locale)}</span>
           </div>
-          <Link href={`/cleaner/${cleaner.id}`} className="block mt-1 md:mt-2">
-            <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[9px] md:text-sm h-6 md:h-9">{t("cleaner.profile.bookNow")}</Button>
+          <Link href={`/worker-profile/${cleaner.id}`} className="block mt-1 md:mt-2">
+            <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[9px] md:text-sm h-6 md:h-9">{t("worker.profile.bookNow")}</Button>
           </Link>
         </div>
       </CardContent>

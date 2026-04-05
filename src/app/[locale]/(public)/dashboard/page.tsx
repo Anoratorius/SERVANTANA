@@ -52,7 +52,7 @@ export default function DashboardPage() {
   const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isCleaner = session?.user?.role === "CLEANER";
+  const isCleaner = session?.user?.role === "WORKER";
 
   useEffect(() => {
     if (authStatus === "unauthenticated") {
@@ -119,7 +119,7 @@ export default function DashboardPage() {
               Welcome back, {session?.user?.firstName || session?.user?.name}!
             </h1>
             <p className="text-muted-foreground mb-4">
-              {isCleaner ? t("cleaner.dashboard.title") : t("customer.dashboard.title")}
+              {isCleaner ? t("worker.dashboard.title") : t("customer.dashboard.title")}
             </p>
             <div className="flex gap-3">
               <Link href={isCleaner ? "/dashboard/settings" : "/search"}>
@@ -147,13 +147,13 @@ export default function DashboardPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatCard
               icon={<Calendar className="h-6 w-6" />}
-              label={isCleaner ? t("cleaner.dashboard.todayBookings") : "Upcoming Bookings"}
+              label={isCleaner ? t("worker.dashboard.todayBookings") : "Upcoming Bookings"}
               value={stats?.upcomingBookings || 0}
               color="blue"
             />
             <StatCard
               icon={<CheckCircle className="h-6 w-6" />}
-              label={isCleaner ? t("cleaner.dashboard.completedJobs") : "Completed"}
+              label={isCleaner ? t("worker.dashboard.completedJobs") : "Completed"}
               value={stats?.completedBookings || 0}
               color="green"
             />
@@ -162,7 +162,7 @@ export default function DashboardPage() {
                 <Link href="/dashboard/earnings" className="block">
                   <StatCard
                     icon={<DollarSign className="h-6 w-6" />}
-                    label={t("cleaner.dashboard.earnings")}
+                    label={t("worker.dashboard.earnings")}
                     value={`$${stats?.totalEarnings || 0}`}
                     color="emerald"
                     clickable
@@ -197,7 +197,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>
-                {isCleaner ? t("cleaner.dashboard.upcomingBookings") : t("customer.dashboard.upcomingBookings")}
+                {isCleaner ? t("worker.dashboard.upcomingBookings") : t("customer.dashboard.upcomingBookings")}
               </CardTitle>
               <Link href="/bookings">
                 <Button variant="ghost" size="sm">

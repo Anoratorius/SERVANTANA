@@ -99,9 +99,9 @@ export default function RoutePlannerPage() {
       }
     }
 
-    if (authStatus === "authenticated" && session?.user?.role === "CLEANER") {
+    if (authStatus === "authenticated" && session?.user?.role === "WORKER") {
       fetchRoute();
-    } else if (authStatus === "authenticated" && session?.user?.role !== "CLEANER") {
+    } else if (authStatus === "authenticated" && session?.user?.role !== "WORKER") {
       setError("Only workers can access route planning");
       setIsLoading(false);
     }

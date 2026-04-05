@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     // Verify cleaner exists
     const cleaner = await prisma.user.findUnique({
-      where: { id: cleanerId, role: "CLEANER" },
+      where: { id: cleanerId, role: "WORKER" },
     });
 
     if (!cleaner) {

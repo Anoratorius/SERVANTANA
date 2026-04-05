@@ -103,13 +103,13 @@ async function main() {
 
   console.log(`Created ${services.length} services`);
 
-  // Create sample cleaners
-  const sampleCleaners = [
+  // Create sample workers
+  const sampleWorkers = [
     {
       email: "maria.garcia@example.com",
       firstName: "Maria",
       lastName: "Garcia",
-      bio: "Professional cleaner with over 8 years of experience. I take pride in leaving every home spotless and fresh. Specializing in deep cleaning and move-in/out services.",
+      bio: "Professional service provider with over 8 years of experience. I take pride in delivering excellent results. Specializing in deep cleaning and move-in/out services.",
       hourlyRate: 35,
       experienceYears: 8,
       city: "Tbilisi",
@@ -125,7 +125,7 @@ async function main() {
       email: "james.wilson@example.com",
       firstName: "James",
       lastName: "Wilson",
-      bio: "Reliable and detail-oriented cleaning professional. I use eco-friendly products and pay attention to every corner of your home.",
+      bio: "Reliable and detail-oriented professional. I use eco-friendly products and pay attention to every detail.",
       hourlyRate: 30,
       experienceYears: 5,
       city: "Tbilisi",
@@ -141,7 +141,7 @@ async function main() {
       email: "sarah.johnson@example.com",
       firstName: "Sarah",
       lastName: "Johnson",
-      bio: "Experienced office and residential cleaner. I provide thorough, consistent cleaning services that you can count on week after week.",
+      bio: "Experienced office and residential service provider. I deliver thorough, consistent services that you can count on week after week.",
       hourlyRate: 40,
       experienceYears: 10,
       city: "Tbilisi",
@@ -157,7 +157,7 @@ async function main() {
       email: "michael.chen@example.com",
       firstName: "Michael",
       lastName: "Chen",
-      bio: "Professional cleaner specializing in carpet and upholstery cleaning. I use industry-leading equipment for the best results.",
+      bio: "Professional service provider specializing in carpet and upholstery care. I use industry-leading equipment for the best results.",
       hourlyRate: 45,
       experienceYears: 6,
       city: "Tbilisi",
@@ -202,41 +202,41 @@ async function main() {
     console.log("Updated admin user password: admin@servantana.com / Admin123!");
   }
 
-  for (const cleaner of sampleCleaners) {
+  for (const worker of sampleWorkers) {
     // Delete existing user if exists (to update with new data)
     await prisma.user.deleteMany({
-      where: { email: cleaner.email },
+      where: { email: worker.email },
     });
 
     {
       const user = await prisma.user.create({
         data: {
-          email: cleaner.email,
+          email: worker.email,
           password: hashedPassword,
-          firstName: cleaner.firstName,
-          lastName: cleaner.lastName,
-          role: "CLEANER",
+          firstName: worker.firstName,
+          lastName: worker.lastName,
+          role: "WORKER",
           workerProfile: {
             create: {
-              bio: cleaner.bio,
-              hourlyRate: cleaner.hourlyRate,
-              experienceYears: cleaner.experienceYears,
-              city: cleaner.city,
-              state: cleaner.state,
+              bio: worker.bio,
+              hourlyRate: worker.hourlyRate,
+              experienceYears: worker.experienceYears,
+              city: worker.city,
+              state: worker.state,
               country: "USA",
-              verified: cleaner.verified,
-              availableNow: cleaner.availableNow,
-              averageRating: cleaner.averageRating,
-              totalBookings: cleaner.totalBookings,
-              responseTime: cleaner.responseTime,
+              verified: worker.verified,
+              availableNow: worker.availableNow,
+              averageRating: worker.averageRating,
+              totalBookings: worker.totalBookings,
+              responseTime: worker.responseTime,
             },
           },
         },
         include: { workerProfile: true },
       });
 
-      // Add services to cleaner
-      for (const serviceName of cleaner.services) {
+      // Add services to worker
+      for (const serviceName of worker.services) {
         const service = await prisma.service.findUnique({
           where: { name: serviceName },
         });
@@ -264,7 +264,7 @@ async function main() {
         }
       }
 
-      console.log(`Created cleaner: ${cleaner.firstName} ${cleaner.lastName}`);
+      console.log(`Created worker: ${worker.firstName} ${worker.lastName}`);
     }
   }
 

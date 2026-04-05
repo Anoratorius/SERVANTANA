@@ -21,7 +21,7 @@ export async function GET() {
       include: { workerProfile: true },
     });
 
-    if (!user || user.role !== "CLEANER") {
+    if (!user || user.role !== "WORKER") {
       return NextResponse.json(
         { error: "Only workers can access Stripe Connect" },
         { status: 403 }
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       include: { workerProfile: true },
     });
 
-    if (!user || user.role !== "CLEANER") {
+    if (!user || user.role !== "WORKER") {
       return NextResponse.json(
         { error: "Only workers can connect with Stripe" },
         { status: 403 }

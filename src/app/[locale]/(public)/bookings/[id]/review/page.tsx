@@ -261,7 +261,7 @@ export default function ReviewPage({
                   View My Bookings
                 </Button>
               </Link>
-              <Link href={`/cleaner/${booking.cleaner.id}`}>
+              <Link href={`/worker-profile/${booking.cleaner.id}`}>
                 <Button size="lg" variant="outline">
                   View Worker Profile
                 </Button>

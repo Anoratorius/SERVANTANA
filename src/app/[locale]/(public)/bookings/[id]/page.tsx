@@ -449,7 +449,7 @@ export default function BookingDetailPage() {
                         <div className="flex items-center gap-2 text-green-600">
                           <Car className="h-5 w-5" />
                           <span className="font-medium">
-                            {t("tracking.cleanerEnRoute", { name: tracking.cleanerName })}
+                            {t("tracking.workerEnRoute", { name: tracking.cleanerName })}
                           </span>
                         </div>
 

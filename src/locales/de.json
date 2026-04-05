@@ -128,7 +128,7 @@
       "title": "Bereit loszulegen?",
       "subtitle": "Schließen Sie sich Tausenden zufriedener Kunden an.",
       "customerButton": "Fachkraft buchen",
-      "cleanerButton": "Ich bin Fachkraft"
+      "workerButton": "Ich bin Fachkraft"
     }
   },
   "auth": {
@@ -154,7 +154,7 @@
       "confirmPassword": "Passwort bestätigen",
       "accountType": "Ich möchte:",
       "customer": "Fachkraft buchen",
-      "cleaner": "Ich bin Fachkraft",
+      "worker": "Ich bin Fachkraft",
       "terms": "Ich stimme den AGB und der Datenschutzerklärung zu",
       "termsPrefix": "Ich stimme den",
       "termsAnd": "und der",
@@ -195,7 +195,7 @@
       "goToLogin": "Zur Anmeldung"
     }
   },
-  "cleaner": {
+  "worker": {
     "profile": {
       "title": "Fachkraft-Profil",
       "about": "Über mich",
@@ -320,7 +320,7 @@
     "stopFailed": "Tracking konnte nicht beendet werden",
     "gpsNotSupported": "GPS wird auf diesem Gerät nicht unterstützt",
     "locationError": "Standort konnte nicht ermittelt werden",
-    "cleanerEnRoute": "{name} ist unterwegs",
+    "workerEnRoute": "{name} ist unterwegs",
     "distance": "Entfernung",
     "eta": "Voraussichtliche Ankunft",
     "lastUpdate": "Zuletzt aktualisiert",
@@ -672,7 +672,7 @@
     "systemSettings": "Systemeinstellungen",
     "platformFees": "Plattformgebühren",
     "customerFee": "Kundengebühr",
-    "cleanerFee": "Fachkraftgebühr",
+    "workerFee": "Fachkraftgebühr",
     "bookingSettings": "Buchungseinstellungen",
     "minBookingValue": "Mindestbuchungswert",
     "defaultCurrency": "Standardwährung",

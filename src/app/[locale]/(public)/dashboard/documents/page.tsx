@@ -73,20 +73,20 @@ export default function DocumentsPage() {
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login");
-    } else if (authStatus === "authenticated" && session?.user?.role !== "CLEANER") {
+    } else if (authStatus === "authenticated" && session?.user?.role !== "WORKER") {
       router.push("/dashboard");
     }
   }, [authStatus, session, router]);
 
   useEffect(() => {
-    if (authStatus === "authenticated" && session?.user?.role === "CLEANER") {
+    if (authStatus === "authenticated" && session?.user?.role === "WORKER") {
       fetchDocuments();
     }
   }, [authStatus, session]);
 
   const fetchDocuments = async () => {
     try {
-      const res = await fetch("/api/cleaner/documents");
+      const res = await fetch("/api/worker/documents");
       if (res.ok) {
         const data = await res.json();
         setDocuments(data.documents || []);
@@ -113,7 +113,7 @@ export default function DocumentsPage() {
         formData.append("expiresAt", expiresAt);
       }
 
-      const res = await fetch("/api/cleaner/documents", {
+      const res = await fetch("/api/worker/documents", {
         method: "POST",
         body: formData,
       });
@@ -139,7 +139,7 @@ export default function DocumentsPage() {
     if (!confirm("Are you sure you want to delete this document?")) return;
 
     try {
-      const res = await fetch(`/api/cleaner/documents/${id}`, {
+      const res = await fetch(`/api/worker/documents/${id}`, {
         method: "DELETE",
       });
 

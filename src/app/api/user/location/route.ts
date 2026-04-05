@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const isWorker = user?.role === "CLEANER";
+    const isWorker = user?.role === "WORKER";
     const needsOnboarding = isWorker && user?.workerProfile?.onboardingComplete !== true;
 
     return NextResponse.json({

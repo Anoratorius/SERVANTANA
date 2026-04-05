@@ -76,7 +76,7 @@ export function RescheduleDialog({
         .split("T")[0];
 
       const res = await fetch(
-        `/api/cleaner/availability-slots?cleanerId=${cleanerId}&startDate=${startDate}&endDate=${endDate}`
+        `/api/worker/availability-slots?cleanerId=${cleanerId}&startDate=${startDate}&endDate=${endDate}`
       );
 
       if (res.ok) {

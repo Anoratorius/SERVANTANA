@@ -164,7 +164,7 @@ export default function CategoryDetailPage() {
   const fetchWorkers = async (categoryId: string) => {
     setLoadingWorkers(true);
     try {
-      const response = await fetch(`/api/cleaners?categoryId=${categoryId}`);
+      const response = await fetch(`/api/workers?categoryId=${categoryId}`);
       if (response.ok) {
         const data = await response.json();
         setWorkers(data.cleaners || []);
@@ -181,7 +181,7 @@ export default function CategoryDetailPage() {
   };
 
   const handleWorkerClick = (workerId: string) => {
-    router.push(`/cleaner/${workerId}`);
+    router.push(`/worker-profile/${workerId}`);
   };
 
   const handleBack = () => {

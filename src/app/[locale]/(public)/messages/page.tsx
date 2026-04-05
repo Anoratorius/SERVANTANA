@@ -202,7 +202,7 @@ export default function MessagesPage() {
                                 {initials}
                               </AvatarFallback>
                             </Avatar>
-                            {partner.role === "CLEANER" && (
+                            {partner.role === "WORKER" && (
                               <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-0.5">
                                 <CheckCircle className="h-3 w-3 text-white" />
                               </div>
@@ -236,7 +236,7 @@ export default function MessagesPage() {
                               {lastMessage.content}
                             </p>
 
-                            {partner.role === "CLEANER" && (
+                            {partner.role === "WORKER" && (
                               <Badge variant="secondary" className="mt-2 text-xs">
                                 Worker
                               </Badge>

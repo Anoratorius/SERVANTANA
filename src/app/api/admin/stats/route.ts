@@ -41,7 +41,7 @@ export async function GET() {
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { role: "CUSTOMER" } }),
-      prisma.user.count({ where: { role: "CLEANER" } }),
+      prisma.user.count({ where: { role: "WORKER" } }),
       prisma.workerProfile.count({ where: { verified: true } }),
       prisma.workerProfile.count({ where: { verified: false } }),
       prisma.booking.count(),

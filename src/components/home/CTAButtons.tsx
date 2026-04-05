@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 
 export function CTAButtons({
   customerLabel,
-  cleanerLabel,
+  workerLabel,
 }: {
   customerLabel: string;
-  cleanerLabel: string;
+  workerLabel: string;
 }) {
   const { status } = useSession();
   const router = useRouter();
@@ -48,7 +48,7 @@ export function CTAButtons({
         className="border-white text-white bg-transparent hover:bg-white hover:text-green-600 transition-all duration-300"
         onClick={handleBecomeWorker}
       >
-        {cleanerLabel}
+        {workerLabel}
       </Button>
     </div>
   );

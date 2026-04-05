@@ -50,8 +50,8 @@ export default function CleanerAnalyticsPage() {
       setLoading(true);
       try {
         const [analyticsRes, earningsRes] = await Promise.all([
-          fetch(`/api/analytics/cleaner?period=${period}`),
-          fetch(`/api/analytics/cleaner/earnings?period=${period}`),
+          fetch(`/api/analytics/worker?period=${period}`),
+          fetch(`/api/analytics/worker/earnings?period=${period}`),
         ]);
 
         if (analyticsRes.ok) {

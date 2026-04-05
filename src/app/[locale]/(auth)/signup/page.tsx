@@ -27,7 +27,7 @@ function SignupForm() {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: typeParam === "cleaner" ? "CLEANER" : "CUSTOMER",
+    role: typeParam === "cleaner" ? "WORKER" : "CUSTOMER",
     acceptTerms: false,
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -275,7 +275,7 @@ function SignupForm() {
               </label>
               <label
                 className={`flex items-center justify-center p-3 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
-                  formData.role === "CLEANER"
+                  formData.role === "WORKER"
                     ? "border-green-600 bg-green-600 text-white shadow-lg shadow-green-200"
                     : "border-gray-300 text-gray-500 bg-transparent hover:border-green-400 hover:text-green-500"
                 }`}
@@ -283,12 +283,12 @@ function SignupForm() {
                 <input
                   type="radio"
                   name="role"
-                  value="CLEANER"
-                  checked={formData.role === "CLEANER"}
+                  value="WORKER"
+                  checked={formData.role === "WORKER"}
                   onChange={handleChange}
                   className="sr-only"
                 />
-                <span className="text-sm font-medium">{t("auth.signup.cleaner")}</span>
+                <span className="text-sm font-medium">{t("auth.signup.worker")}</span>
               </label>
             </div>
           </div>

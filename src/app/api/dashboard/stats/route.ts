@@ -10,7 +10,7 @@ export async function GET() {
     }
 
     const userId = session.user.id;
-    const isCleaner = session.user.role === "CLEANER";
+    const isCleaner = session.user.role === "WORKER";
 
     // Get booking counts
     const [totalBookings, upcomingBookings, completedBookings] = await Promise.all([

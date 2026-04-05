@@ -102,8 +102,8 @@ export default function EarningsPage() {
     async function fetchData() {
       try {
         const [earningsRes, payoutsRes] = await Promise.all([
-          fetch(`/api/cleaner/earnings?period=${period}`),
-          fetch("/api/cleaner/payouts"),
+          fetch(`/api/worker/earnings?period=${period}`),
+          fetch("/api/worker/payouts"),
         ]);
 
         if (earningsRes.ok) {
@@ -131,7 +131,7 @@ export default function EarningsPage() {
   const handleRequestPayout = async () => {
     setIsRequestingPayout(true);
     try {
-      const response = await fetch("/api/cleaner/payouts", {
+      const response = await fetch("/api/worker/payouts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ payoutMethod: "bank_transfer" }),
@@ -143,8 +143,8 @@ export default function EarningsPage() {
         toast.success("Payout requested successfully!");
         // Refresh data
         const [earningsRes, payoutsRes] = await Promise.all([
-          fetch(`/api/cleaner/earnings?period=${period}`),
-          fetch("/api/cleaner/payouts"),
+          fetch(`/api/worker/earnings?period=${period}`),
+          fetch("/api/worker/payouts"),
         ]);
         if (earningsRes.ok) {
           const eData = await earningsRes.json();

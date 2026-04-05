@@ -89,12 +89,12 @@ export async function POST(request: Request) {
         firstName,
         lastName,
         phone: phone || null,
-        role: role === "CLEANER" ? "CLEANER" : "CUSTOMER",
+        role: role === "WORKER" ? "WORKER" : "CUSTOMER",
       },
     });
 
     // If registering as cleaner, create cleaner profile
-    if (role === "CLEANER") {
+    if (role === "WORKER") {
       await prisma.workerProfile.create({
         data: {
           userId: user.id,

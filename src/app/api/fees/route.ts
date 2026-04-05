@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     customerPays: formatPrice(fees.customerTotal, currency, locale),
     customerFee: formatPrice(fees.customerFixedFee + fees.customerPercentageFee, currency, locale),
     cleanerReceives: formatPrice(fees.cleanerReceives, currency, locale),
-    cleanerFee: formatPrice(fees.cleanerFixedFee + fees.cleanerPercentageFee, currency, locale),
+    workerFee: formatPrice(fees.cleanerFixedFee + fees.cleanerPercentageFee, currency, locale),
     platformFee: formatPrice(fees.platformTotal, currency, locale),
   };
 

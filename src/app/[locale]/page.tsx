@@ -130,7 +130,7 @@ function HomeContent() {
             </h2>
             <CTAButtons
               customerLabel={t("home.cta.customerButton")}
-              cleanerLabel={t("home.cta.cleanerButton")}
+              workerLabel={t("home.cta.workerButton")}
             />
           </div>
         </section>

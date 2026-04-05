@@ -62,7 +62,7 @@ export async function GET(
     // Get cleaners who offer this service
     const availableCleaners = await prisma.user.findMany({
       where: {
-        role: "CLEANER",
+        role: "WORKER",
         id: { notIn: existingMemberIds },
         workerProfile: {
           services: {

@@ -128,7 +128,7 @@
       "title": "Ready to Get Started?",
       "subtitle": "Join thousands of happy customers who trust Servantana.",
       "customerButton": "Book a Worker",
-      "cleanerButton": "I am a Worker"
+      "workerButton": "I am a Worker"
     }
   },
   "auth": {
@@ -154,7 +154,7 @@
       "confirmPassword": "Confirm Password",
       "accountType": "I want to:",
       "customer": "Book a Worker",
-      "cleaner": "I am a Worker",
+      "worker": "I am a Worker",
       "terms": "I agree to the Terms of Service and Privacy Policy",
       "termsPrefix": "I agree to the",
       "termsAnd": "and",
@@ -195,7 +195,7 @@
       "goToLogin": "Go to Login"
     }
   },
-  "cleaner": {
+  "worker": {
     "profile": {
       "title": "Worker Profile",
       "about": "About",
@@ -320,7 +320,7 @@
     "stopFailed": "Failed to stop tracking",
     "gpsNotSupported": "GPS is not supported on this device",
     "locationError": "Could not get your location",
-    "cleanerEnRoute": "{name} is on the way",
+    "workerEnRoute": "{name} is on the way",
     "distance": "Distance",
     "eta": "Estimated Arrival",
     "lastUpdate": "Last updated",
@@ -656,7 +656,7 @@
     "actionReactivate": "User Reactivated",
     "actionDelete": "User Deleted",
     "actionRoleChange": "Role Changed",
-    "actionVerify": "Cleaner Verified",
+    "actionVerify": "Worker Verified",
     "actionDocVerify": "Document Verified",
     "allSeverities": "All Severities",
     "severityLow": "Low",
@@ -672,7 +672,7 @@
     "systemSettings": "System Settings",
     "platformFees": "Platform Fees",
     "customerFee": "Customer Fee",
-    "cleanerFee": "Worker Fee",
+    "workerFee": "Worker Fee",
     "bookingSettings": "Booking Settings",
     "minBookingValue": "Minimum Booking Value",
     "defaultCurrency": "Default Currency",

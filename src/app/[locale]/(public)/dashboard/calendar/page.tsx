@@ -46,7 +46,7 @@ export default function CalendarPage() {
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.push("/login");
-    } else if (authStatus === "authenticated" && session?.user?.role !== "CLEANER") {
+    } else if (authStatus === "authenticated" && session?.user?.role !== "WORKER") {
       router.push("/dashboard");
     }
   }, [authStatus, session, router]);

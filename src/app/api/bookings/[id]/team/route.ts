@@ -176,7 +176,7 @@ export async function POST(
     if (action === "add" && cleanerId) {
       // Check if cleaner exists and is a cleaner
       const cleaner = await prisma.user.findFirst({
-        where: { id: cleanerId, role: "CLEANER" },
+        where: { id: cleanerId, role: "WORKER" },
       });
 
       if (!cleaner) {

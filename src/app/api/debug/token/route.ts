@@ -54,7 +54,7 @@ export async function GET() {
       rawToken,
       dbState,
       shouldRedirect: dbState ? (
-        dbState.role === 'CLEANER' &&
+        dbState.role === 'WORKER' &&
         dbState.locationVerified === true &&
         dbState.onboardingComplete !== true
       ) : false,

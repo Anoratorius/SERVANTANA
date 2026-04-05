@@ -114,7 +114,7 @@ export default function ProfessionOnboardingModal({
         const professionId = selectedProfessions[i];
         const isPrimary = professionId === primaryProfession;
 
-        const response = await fetch("/api/cleaner/professions", {
+        const response = await fetch("/api/worker/professions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ professionId, isPrimary }),

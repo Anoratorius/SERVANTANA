@@ -157,7 +157,7 @@ export default function SettingsPage() {
       return;
     }
 
-    if (authStatus === "authenticated" && session?.user?.role !== "CLEANER") {
+    if (authStatus === "authenticated" && session?.user?.role !== "WORKER") {
       router.push("/dashboard");
       return;
     }
@@ -198,11 +198,11 @@ export default function SettingsPage() {
     async function fetchData() {
       try {
         const [profileRes, professionsRes, allProfessionsRes, avatarRes, walletsRes, stripeRes] = await Promise.all([
-          fetch("/api/cleaner/profile"),
-          fetch("/api/cleaner/professions"),
+          fetch("/api/worker/profile"),
+          fetch("/api/worker/professions"),
           fetch("/api/professions"),
           fetch("/api/user/avatar"),
-          fetch("/api/cleaner/wallets"),
+          fetch("/api/worker/wallets"),
           fetch("/api/stripe/connect"),
         ]);
 
@@ -290,7 +290,7 @@ export default function SettingsPage() {
       }
     }
 
-    if (authStatus === "authenticated" && session?.user?.role === "CLEANER") {
+    if (authStatus === "authenticated" && session?.user?.role === "WORKER") {
       fetchData();
     }
   }, [authStatus, session]);
@@ -298,7 +298,7 @@ export default function SettingsPage() {
   const handleSaveProfile = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch("/api/cleaner/profile", {
+      const response = await fetch("/api/worker/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -319,7 +319,7 @@ export default function SettingsPage() {
 
   const handleUpdateProfessionRate = async (professionId: string, hourlyRate: number) => {
     try {
-      const response = await fetch("/api/cleaner/professions", {
+      const response = await fetch("/api/worker/professions", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ professionId, hourlyRate }),
@@ -342,7 +342,7 @@ export default function SettingsPage() {
 
   const handleSetPrimaryProfession = async (professionId: string) => {
     try {
-      const response = await fetch("/api/cleaner/professions", {
+      const response = await fetch("/api/worker/professions", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ professionId, isPrimary: true }),
@@ -369,7 +369,7 @@ export default function SettingsPage() {
   const handleAddProfession = async (professionId: string) => {
     setIsSaving(true);
     try {
-      const response = await fetch("/api/cleaner/professions", {
+      const response = await fetch("/api/worker/professions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ professionId, hourlyRate: formData.hourlyRate }),
@@ -398,7 +398,7 @@ export default function SettingsPage() {
     }
 
     try {
-      const response = await fetch("/api/cleaner/professions", {
+      const response = await fetch("/api/worker/professions", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ professionId }),
@@ -428,7 +428,7 @@ export default function SettingsPage() {
           isActive: true,
         }));
 
-      const response = await fetch("/api/cleaner/availability", {
+      const response = await fetch("/api/worker/availability", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ availability: availabilityData }),
@@ -451,7 +451,7 @@ export default function SettingsPage() {
     return <SettingsPageSkeleton />;
   }
 
-  if (session?.user?.role !== "CLEANER") {
+  if (session?.user?.role !== "WORKER") {
     return null;
   }
 
@@ -1005,7 +1005,7 @@ export default function SettingsPage() {
                           onClick={async () => {
                             setIsCreatingWallets(true);
                             try {
-                              const res = await fetch("/api/cleaner/wallets", {
+                              const res = await fetch("/api/worker/wallets", {
                                 method: "POST",
                               });
                               if (res.ok) {

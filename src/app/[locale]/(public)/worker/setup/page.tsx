@@ -76,7 +76,7 @@ function WorkerSetupContent() {
       router.push("/login");
       return;
     }
-    if (session.user.role !== "CLEANER") {
+    if (session.user.role !== "WORKER") {
       router.push("/");
       return;
     }
@@ -185,7 +185,7 @@ function WorkerSetupContent() {
 
     try {
       // First, update the worker profile with basic info
-      const profileResponse = await fetch("/api/cleaner/profile", {
+      const profileResponse = await fetch("/api/worker/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -204,7 +204,7 @@ function WorkerSetupContent() {
         const professionId = selectedProfessions[i];
         const isPrimary = professionId === primaryProfession || (i === 0 && !primaryProfession);
 
-        const response = await fetch("/api/cleaner/professions", {
+        const response = await fetch("/api/worker/professions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -399,7 +399,7 @@ function WorkerSetupContent() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="hourlyRate">{t("cleaner.profile.hourlyRate")} (EUR)</Label>
+                    <Label htmlFor="hourlyRate">{t("worker.profile.hourlyRate")} (EUR)</Label>
                     <Input
                       id="hourlyRate"
                       type="number"
@@ -412,7 +412,7 @@ function WorkerSetupContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="experienceYears">{t("cleaner.profile.experience")}</Label>
+                    <Label htmlFor="experienceYears">{t("worker.profile.experience")}</Label>
                     <Input
                       id="experienceYears"
                       type="number"
@@ -425,7 +425,7 @@ function WorkerSetupContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="bio">{t("cleaner.profile.about")}</Label>
+                    <Label htmlFor="bio">{t("worker.profile.about")}</Label>
                     <Textarea
                       id="bio"
                       value={bio}

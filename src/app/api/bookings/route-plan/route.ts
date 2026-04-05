@@ -113,7 +113,7 @@ export async function GET() {
     }
 
     // Only cleaners can access route planning
-    if (session.user.role !== "CLEANER") {
+    if (session.user.role !== "WORKER") {
       return NextResponse.json(
         { error: "Only cleaners can access route planning" },
         { status: 403 }

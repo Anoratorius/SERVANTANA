@@ -43,7 +43,7 @@ export default function ProfessionOnboardingProvider({
       }
 
       // Only check for workers (CLEANER role)
-      if (session.user.role !== "CLEANER") {
+      if (session.user.role !== "WORKER") {
         setHasChecked(true);
         return;
       }
@@ -70,7 +70,7 @@ export default function ProfessionOnboardingProvider({
         }
 
         // Check if worker has completed onboarding
-        const response = await fetch("/api/cleaner/profile");
+        const response = await fetch("/api/worker/profile");
         if (response.ok) {
           const data = await response.json();
           // If no profile or onboarding not complete, redirect
@@ -99,7 +99,7 @@ export default function ProfessionOnboardingProvider({
   useEffect(() => {
     if (
       status !== "authenticated" ||
-      session?.user?.role !== "CLEANER" ||
+      session?.user?.role !== "WORKER" ||
       hasChecked
     ) {
       return;
@@ -117,7 +117,7 @@ export default function ProfessionOnboardingProvider({
           const locationData = await locationResponse.json();
           if (locationData.isVerified) {
             // Location now verified, check onboarding status
-            const profileResponse = await fetch("/api/cleaner/profile");
+            const profileResponse = await fetch("/api/worker/profile");
             if (profileResponse.ok) {
               const data = await profileResponse.json();
               if (!data.profile || data.profile.onboardingComplete !== true) {
