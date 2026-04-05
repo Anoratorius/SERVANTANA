@@ -12,9 +12,11 @@ datasource db {
 }
 
 // Enums for PostgreSQL
+// Note: CLEANER is deprecated, use WORKER instead. Keeping for backward compatibility.
 enum Role {
   CUSTOMER
   WORKER
+  CLEANER // @deprecated - use WORKER
   ADMIN
 }
 
