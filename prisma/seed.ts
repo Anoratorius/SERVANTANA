@@ -173,6 +173,35 @@ async function main() {
 
   const hashedPassword = await hash("password123", 12);
 
+  // Create or update admin user
+  const adminEmail = "admin@servantana.com";
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: adminEmail },
+  });
+
+  if (!existingAdmin) {
+    await prisma.user.create({
+      data: {
+        email: adminEmail,
+        password: await hash("Admin123!", 12),
+        firstName: "Admin",
+        lastName: "User",
+        role: "ADMIN",
+        emailVerified: new Date(),
+      },
+    });
+    console.log("Created admin user: admin@servantana.com / Admin123!");
+  } else {
+    // Update password if admin exists
+    await prisma.user.update({
+      where: { email: adminEmail },
+      data: {
+        password: await hash("Admin123!", 12),
+      },
+    });
+    console.log("Updated admin user password: admin@servantana.com / Admin123!");
+  }
+
   for (const cleaner of sampleCleaners) {
     // Delete existing user if exists (to update with new data)
     await prisma.user.deleteMany({
