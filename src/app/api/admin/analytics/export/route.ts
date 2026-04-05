@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
           totalPrice: b.totalPrice,
           serviceName: b.service?.name || "N/A",
           customerName: `${b.customer.firstName || ""} ${b.customer.lastName || ""}`.trim() || "N/A",
-          cleanerName: b.cleaner
+          workerName: b.cleaner
             ? `${b.cleaner.firstName || ""} ${b.cleaner.lastName || ""}`.trim() || "N/A"
             : "Unassigned",
         }));

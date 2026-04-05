@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// GET - Get customer's average rating (visible only to cleaners)
+// GET - Get customer's average rating (visible only to workers)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -13,10 +13,10 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only cleaners can view customer ratings
+    // Only workers can view customer ratings
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can view customer ratings" },
+        { error: "Only workers can view customer ratings" },
         { status: 403 }
       );
     }

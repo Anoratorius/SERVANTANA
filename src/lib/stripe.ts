@@ -42,7 +42,7 @@ export function formatAmountFromStripe(amount: number, currency: string): number
 }
 
 // ============================================
-// Stripe Connect Functions (for cleaner payouts)
+// Stripe Connect Functions (for worker payouts)
 // ============================================
 
 export type ConnectAccountStatus = "not_connected" | "pending" | "complete";
@@ -183,11 +183,11 @@ export async function getCheckoutSession(
 }
 
 // ============================================
-// Payout Functions (transfer to cleaners)
+// Payout Functions (transfer to workers)
 // ============================================
 
 /**
- * Transfer funds to a connected Stripe account (for cleaner payouts)
+ * Transfer funds to a connected Stripe account (for worker payouts)
  */
 export async function createTransfer(params: {
   amount: number; // Amount in currency units

@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // If registering as cleaner, create cleaner profile
+    // If registering as worker, create worker profile
     if (role === "WORKER") {
       await prisma.workerProfile.create({
         data: {

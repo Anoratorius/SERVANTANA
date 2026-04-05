@@ -77,7 +77,7 @@ export async function GET(
 
     return NextResponse.json({
       teamSize: booking.teamSize,
-      leadCleaner: booking.cleaner,
+      leadWorker: booking.cleaner,
       teamMembers: booking.teamMembers,
     });
   } catch (error) {
@@ -159,10 +159,10 @@ export async function POST(
       return NextResponse.json({ message: "Declined participation" });
     }
 
-    // Only lead cleaner can add team members
+    // Only lead worker can add team members
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json(
-        { error: "Only lead cleaner can manage team" },
+        { error: "Only lead worker can manage team" },
         { status: 403 }
       );
     }
@@ -174,12 +174,12 @@ export async function POST(
 
     // Add team member
     if (action === "add" && cleanerId) {
-      // Check if cleaner exists and is a cleaner
-      const cleaner = await prisma.user.findFirst({
+      // Check if worker exists and is a worker
+      const teamWorker = await prisma.user.findFirst({
         where: { id: cleanerId, role: "WORKER" },
       });
 
-      if (!cleaner) {
+      if (!teamWorker) {
         return NextResponse.json(
           { error: "Worker not found" },
           { status: 404 }
@@ -261,10 +261,10 @@ export async function DELETE(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only lead cleaner can remove members
+    // Only lead worker can remove members
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json(
-        { error: "Only lead cleaner can remove team members" },
+        { error: "Only lead worker can remove team members" },
         { status: 403 }
       );
     }

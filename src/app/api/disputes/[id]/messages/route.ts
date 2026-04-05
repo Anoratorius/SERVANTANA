@@ -42,7 +42,7 @@ export async function POST(
       );
     }
 
-    // Only customer, cleaner, or admin can send messages
+    // Only customer, worker, or admin can send messages
     const isCustomer = dispute.customerId === session.user.id;
     const isCleaner = dispute.cleanerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";
@@ -112,7 +112,7 @@ export async function GET(
       );
     }
 
-    // Only customer, cleaner, or admin can view messages
+    // Only customer, worker, or admin can view messages
     const isCustomer = dispute.customerId === session.user.id;
     const isCleaner = dispute.cleanerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";

@@ -35,7 +35,7 @@ export async function GET() {
     let averageRating = 0;
 
     if (isCleaner) {
-      // Calculate total earnings for cleaner
+      // Calculate total earnings for worker
       const earnings = await prisma.booking.aggregate({
         where: {
           cleanerId: userId,

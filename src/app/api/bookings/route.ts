@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get("status") as BookingStatus | null;
 
-    // Get bookings for the current user (as customer or cleaner)
+    // Get bookings for the current user (as customer or worker)
     const bookings = await prisma.booking.findMany({
       where: {
         OR: [

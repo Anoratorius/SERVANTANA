@@ -11,7 +11,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify user is a cleaner
+    // Verify user is a worker
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { role: true },
@@ -19,7 +19,7 @@ export async function GET(_request: NextRequest) {
 
     if (user?.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can view payouts" },
+        { error: "Only workers can view payouts" },
         { status: 403 }
       );
     }
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify user is a cleaner
+    // Verify user is a worker
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { role: true },
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     if (user?.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can request payouts" },
+        { error: "Only workers can request payouts" },
         { status: 403 }
       );
     }

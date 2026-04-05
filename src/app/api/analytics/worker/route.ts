@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getCleanerAnalytics } from "@/lib/analytics/aggregator";
+import { getWorkerAnalytics } from "@/lib/analytics/aggregator";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access this" },
+        { error: "Only workers can access this" },
         { status: 403 }
       );
     }
@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const period = searchParams.get("period") || "month";
 
-    const analytics = await getCleanerAnalytics(session.user.id, period);
+    const analytics = await getWorkerAnalytics(session.user.id, period);
 
     return NextResponse.json(analytics);
   } catch (error) {
-    console.error("Error fetching cleaner analytics:", error);
+    console.error("Error fetching worker analytics:", error);
     return NextResponse.json(
       { error: "Failed to fetch analytics" },
       { status: 500 }

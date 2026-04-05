@@ -7,7 +7,7 @@ import { createSinglePayout } from "@/lib/paypal-payouts";
  * Cron endpoint for processing daily payouts at 5:55 AM local time
  *
  * Runs every 12 hours via external cron service (cron-job.org)
- * For each cleaner, checks if it's past 5:55 AM in their timezone
+ * For each worker, checks if it's past 5:55 AM in their timezone
  * and they haven't been paid today - if so, pays them
  */
 
@@ -33,7 +33,7 @@ function isPastPayoutTime(timezone: string): boolean {
 }
 
 /**
- * Get today's date string in the cleaner's timezone (YYYY-MM-DD)
+ * Get today's date string in the worker's timezone (YYYY-MM-DD)
  */
 function getTodayInTimezone(timezone: string): string {
   try {
@@ -61,8 +61,8 @@ export async function GET(request: NextRequest) {
   try {
     console.log(`Daily payout job started at ${new Date().toISOString()}`);
 
-    // Get all cleaners with pending earnings that are available
-    const cleanersWithEarnings = await prisma.user.findMany({
+    // Get all workers with pending earnings that are available
+    const workersWithEarnings = await prisma.user.findMany({
       where: {
         role: "WORKER",
         earnings: {
@@ -95,11 +95,11 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Filter to only cleaners where:
+    // Filter to only workers where:
     // 1. It's past 5:55 AM in their timezone
     // 2. They haven't been paid today (in their timezone)
-    const cleanersToPayOut = cleanersWithEarnings.filter((cleaner) => {
-      const timezone = cleaner.workerProfile?.timezone || "UTC";
+    const workersToPayOut = workersWithEarnings.filter((worker) => {
+      const timezone = worker.workerProfile?.timezone || "UTC";
 
       // Check if it's past 5:55 AM in their timezone
       if (!isPastPayoutTime(timezone)) {
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
 
       // Check if they were already paid today
       const todayLocal = getTodayInTimezone(timezone);
-      const lastPayout = cleaner.payouts[0];
+      const lastPayout = worker.payouts[0];
 
       if (lastPayout) {
         const lastPayoutDate = new Date(
@@ -123,17 +123,17 @@ export async function GET(request: NextRequest) {
       return true;
     });
 
-    if (cleanersToPayOut.length === 0) {
+    if (workersToPayOut.length === 0) {
       return NextResponse.json({
-        message: "No cleaners ready for payout (not past 5:55 AM local time or already paid today)",
-        checked: cleanersWithEarnings.length,
+        message: "No workers ready for payout (not past 5:55 AM local time or already paid today)",
+        checked: workersWithEarnings.length,
         processed: 0,
       });
     }
 
     const results: Array<{
-      cleanerId: string;
-      cleanerName: string;
+      workerId: string;
+      workerName: string;
       timezone: string;
       amount: number;
       currency: string;
@@ -142,11 +142,11 @@ export async function GET(request: NextRequest) {
       error?: string;
     }> = [];
 
-    // Process each cleaner's payout
-    for (const cleaner of cleanersToPayOut) {
-      const cleanerName = `${cleaner.firstName} ${cleaner.lastName}`;
-      const earnings = cleaner.earnings;
-      const timezone = cleaner.workerProfile?.timezone || "UTC";
+    // Process each worker's payout
+    for (const worker of workersToPayOut) {
+      const workerName = `${worker.firstName} ${worker.lastName}`;
+      const earnings = worker.earnings;
+      const timezone = worker.workerProfile?.timezone || "UTC";
 
       // Group earnings by currency
       const earningsByCurrency = new Map<string, typeof earnings>();
@@ -166,36 +166,36 @@ export async function GET(request: NextRequest) {
 
           // Try Stripe first, then PayPal
           if (
-            cleaner.workerProfile?.stripeAccountId &&
-            cleaner.workerProfile?.stripeOnboardingComplete
+            worker.workerProfile?.stripeAccountId &&
+            worker.workerProfile?.stripeOnboardingComplete
           ) {
             const transfer = await createTransfer({
               amount: totalAmount,
               currency,
-              destinationAccountId: cleaner.workerProfile.stripeAccountId,
+              destinationAccountId: worker.workerProfile.stripeAccountId,
               description: `Servantana payout - ${new Date().toISOString().split("T")[0]}`,
               metadata: {
-                cleanerId: cleaner.id,
+                workerId: worker.id,
                 timezone,
                 earningIds: currencyEarnings.map((e) => e.id).join(","),
               },
             });
             payoutMethod = "stripe";
             externalPayoutId = transfer.id;
-          } else if (cleaner.workerProfile?.paypalEmail) {
+          } else if (worker.workerProfile?.paypalEmail) {
             const payout = await createSinglePayout(
-              cleaner.workerProfile.paypalEmail,
+              worker.workerProfile.paypalEmail,
               totalAmount,
               currency,
-              `payout_${cleaner.id}_${Date.now()}`,
+              `payout_${worker.id}_${Date.now()}`,
               `Servantana earnings for ${currencyEarnings.length} booking(s)`
             );
             payoutMethod = "paypal";
             externalPayoutId = payout.batch_header.payout_batch_id;
           } else {
             results.push({
-              cleanerId: cleaner.id,
-              cleanerName,
+              workerId: worker.id,
+              workerName,
               timezone,
               amount: totalAmount,
               currency,
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
           // Create payout record
           const payout = await prisma.payout.create({
             data: {
-              cleanerId: cleaner.id,
+              cleanerId: worker.id,
               amount: totalAmount,
               currency,
               status: "COMPLETED",
@@ -229,8 +229,8 @@ export async function GET(request: NextRequest) {
           });
 
           results.push({
-            cleanerId: cleaner.id,
-            cleanerName,
+            workerId: worker.id,
+            workerName,
             timezone,
             amount: totalAmount,
             currency,
@@ -238,10 +238,10 @@ export async function GET(request: NextRequest) {
             success: true,
           });
         } catch (error) {
-          console.error(`Payout failed for ${cleanerName}:`, error);
+          console.error(`Payout failed for ${workerName}:`, error);
           results.push({
-            cleanerId: cleaner.id,
-            cleanerName,
+            workerId: worker.id,
+            workerName,
             timezone,
             amount: totalAmount,
             currency,

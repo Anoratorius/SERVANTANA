@@ -85,7 +85,7 @@ export async function GET(
       );
     }
 
-    // Only customer, cleaner, or admin can view
+    // Only customer, worker, or admin can view
     const isCustomer = dispute.customerId === session.user.id;
     const isCleaner = dispute.cleanerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";

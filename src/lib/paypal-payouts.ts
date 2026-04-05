@@ -1,6 +1,6 @@
 /**
  * PayPal Payouts API Integration
- * Used for paying cleaners who have PayPal set up
+ * Used for paying workers who have PayPal set up
  */
 
 interface PayPalAccessToken {

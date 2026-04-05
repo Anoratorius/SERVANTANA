@@ -112,10 +112,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only cleaners can access route planning
+    // Only workers can access route planning
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access route planning" },
+        { error: "Only workers can access route planning" },
         { status: 403 }
       );
     }
@@ -126,7 +126,7 @@ export async function GET() {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Fetch today's confirmed/pending bookings for this cleaner
+    // Fetch today's confirmed/pending bookings for this worker
     const bookings = await prisma.booking.findMany({
       where: {
         cleanerId: session.user.id,
@@ -166,7 +166,7 @@ export async function GET() {
       },
     });
 
-    // Get cleaner's location as starting point
+    // Get worker's location as starting point
     const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
       select: {
@@ -188,7 +188,7 @@ export async function GET() {
       let travelTimeMinutes = 0;
 
       if (index === 0 && workerProfile?.latitude && workerProfile?.longitude) {
-        // Distance from cleaner's home to first stop
+        // Distance from worker's home to first stop
         if (booking.latitude && booking.longitude) {
           distanceFromPrevious = calculateDistance(
             workerProfile.latitude,

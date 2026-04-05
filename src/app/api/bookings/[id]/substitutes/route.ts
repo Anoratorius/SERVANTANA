@@ -26,7 +26,7 @@ function toRad(deg: number): number {
   return deg * (Math.PI / 180);
 }
 
-// GET - Find available substitute cleaners for a cancelled/cancelling booking
+// GET - Find available substitute workers for a cancelled/cancelling booking
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -66,13 +66,13 @@ export async function GET(
       return NextResponse.json({ error: "Booking has no service" }, { status: 400 });
     }
 
-    // Find cleaners who:
+    // Find workers who:
     // 1. Offer the same service
-    // 2. Are not the original cleaner
+    // 2. Are not the original worker
     // 3. Are verified
     // 4. Are within service radius of the booking location
 
-    const availableCleaners = await prisma.workerProfile.findMany({
+    const availableWorkers = await prisma.workerProfile.findMany({
       where: {
         userId: { not: booking.cleanerId },
         verified: true,
@@ -109,26 +109,26 @@ export async function GET(
 
     const substitutes = [];
 
-    for (const cleaner of availableCleaners) {
+    for (const worker of availableWorkers) {
       // Check distance if coordinates available
-      if (booking.latitude && booking.longitude && cleaner.latitude && cleaner.longitude) {
+      if (booking.latitude && booking.longitude && worker.latitude && worker.longitude) {
         const distance = calculateDistance(
           booking.latitude,
           booking.longitude,
-          cleaner.latitude,
-          cleaner.longitude
+          worker.latitude,
+          worker.longitude
         );
 
         // Skip if outside service radius
-        if (distance > cleaner.serviceRadius) {
+        if (distance > worker.serviceRadius) {
           continue;
         }
       }
 
-      // Check if cleaner has availability on this day
+      // Check if worker has availability on this day
       const availability = await prisma.availability.findFirst({
         where: {
-          workerId: cleaner.id,
+          workerId: worker.id,
           dayOfWeek,
           isActive: true,
         },
@@ -154,7 +154,7 @@ export async function GET(
       // Check for conflicting bookings
       const conflictingBooking = await prisma.booking.findFirst({
         where: {
-          cleanerId: cleaner.userId,
+          cleanerId: worker.userId,
           scheduledDate: booking.scheduledDate,
           status: { in: ["PENDING", "CONFIRMED", "IN_PROGRESS"] },
           id: { not: booking.id },
@@ -168,7 +168,7 @@ export async function GET(
         const conflictEnd = conflictStart + conflictingBooking.duration;
         const bookingEnd = bookingTimeMinutes + booking.duration;
 
-        // If times overlap, skip this cleaner
+        // If times overlap, skip this worker
         if (
           (bookingTimeMinutes >= conflictStart && bookingTimeMinutes < conflictEnd) ||
           (bookingEnd > conflictStart && bookingEnd <= conflictEnd) ||
@@ -178,19 +178,19 @@ export async function GET(
         }
       }
 
-      // Get cleaner's price for this service
-      const workerService = cleaner.services[0];
+      // Get worker's price for this service
+      const workerService = worker.services[0];
       const price = workerService?.customPrice ?? workerService?.service.basePrice ?? booking.totalPrice;
 
       substitutes.push({
-        id: cleaner.userId,
-        firstName: cleaner.user.firstName,
-        lastName: cleaner.user.lastName,
-        avatar: cleaner.user.avatar,
-        rating: cleaner.averageRating,
-        totalBookings: cleaner.totalBookings,
+        id: worker.userId,
+        firstName: worker.user.firstName,
+        lastName: worker.user.lastName,
+        avatar: worker.user.avatar,
+        rating: worker.averageRating,
+        totalBookings: worker.totalBookings,
         price,
-        bio: cleaner.bio,
+        bio: worker.bio,
       });
     }
 
@@ -203,7 +203,7 @@ export async function GET(
         scheduledDate: booking.scheduledDate,
         scheduledTime: booking.scheduledTime,
         service: booking.service?.name || "Cleaning Service",
-        originalCleaner: booking.cleaner ? {
+        originalWorker: booking.cleaner ? {
           firstName: booking.cleaner.firstName,
           lastName: booking.cleaner.lastName,
         } : null,
@@ -219,7 +219,7 @@ export async function GET(
   }
 }
 
-// POST - Accept a substitute cleaner
+// POST - Accept a substitute worker
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -232,11 +232,11 @@ export async function POST(
 
     const { id } = await params;
     const body = await request.json();
-    const { substituteCleanerId } = body;
+    const { substituteWorkerId } = body;
 
-    if (!substituteCleanerId) {
+    if (!substituteWorkerId) {
       return NextResponse.json(
-        { error: "Substitute cleaner ID required" },
+        { error: "Substitute worker ID required" },
         { status: 400 }
       );
     }
@@ -269,9 +269,9 @@ export async function POST(
       return NextResponse.json({ error: "Booking has no service" }, { status: 400 });
     }
 
-    // Verify the substitute cleaner exists and offers this service
+    // Verify the substitute worker exists and offers this service
     const substituteProfile = await prisma.workerProfile.findUnique({
-      where: { userId: substituteCleanerId },
+      where: { userId: substituteWorkerId },
       include: {
         services: {
           where: { serviceId: booking.serviceId },
@@ -287,7 +287,7 @@ export async function POST(
 
     if (!substituteProfile) {
       return NextResponse.json(
-        { error: "Substitute cleaner not found" },
+        { error: "Substitute worker not found" },
         { status: 404 }
       );
     }
@@ -296,11 +296,11 @@ export async function POST(
     const workerService = substituteProfile.services[0];
     const newPrice = workerService?.customPrice ?? booking.service?.basePrice ?? booking.totalPrice;
 
-    // Create a new booking with the substitute cleaner
+    // Create a new booking with the substitute worker
     const newBooking = await prisma.booking.create({
       data: {
         customerId: booking.customerId,
-        cleanerId: substituteCleanerId,
+        cleanerId: substituteWorkerId,
         serviceId: booking.serviceId,
         scheduledDate: booking.scheduledDate,
         scheduledTime: booking.scheduledTime,
@@ -330,7 +330,7 @@ export async function POST(
       message: "Substitute accepted successfully",
       newBooking: {
         id: newBooking.id,
-        cleanerName: `${substituteProfile.user.firstName} ${substituteProfile.user.lastName}`,
+        workerName: `${substituteProfile.user.firstName} ${substituteProfile.user.lastName}`,
         price: newPrice,
       },
     });

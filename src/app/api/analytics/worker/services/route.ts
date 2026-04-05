@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access this" },
+        { error: "Only workers can access this" },
         { status: 403 }
       );
     }

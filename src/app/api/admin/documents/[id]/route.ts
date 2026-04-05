@@ -64,7 +64,7 @@ export async function PATCH(
       },
     });
 
-    // If verified, update cleaner profile verified status
+    // If verified, update worker profile verified status
     if (action === "verify") {
       // Check if all required documents are verified
       const verifiedDocs = await prisma.workerDocument.findMany({
@@ -74,7 +74,7 @@ export async function PATCH(
         },
       });
 
-      // If at least one document is verified, mark cleaner as verified
+      // If at least one document is verified, mark worker as verified
       if (verifiedDocs.length > 0) {
         await prisma.workerProfile.updateMany({
           where: { userId: document.cleanerId },

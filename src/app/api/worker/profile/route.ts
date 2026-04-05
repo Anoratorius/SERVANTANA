@@ -25,7 +25,7 @@ const updateProfileSchema = z.object({
   accountHolder: z.string().max(100).optional().or(z.literal("")),
 });
 
-// Get cleaner's own profile
+// Get worker's own profile
 export async function GET() {
   try {
     const session = await auth();
@@ -55,7 +55,7 @@ export async function GET() {
 
     if (user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access this endpoint" },
+        { error: "Only workers can access this endpoint" },
         { status: 403 }
       );
     }
@@ -72,7 +72,7 @@ export async function GET() {
       profile: user.workerProfile,
     });
   } catch (error) {
-    console.error("Error fetching cleaner profile:", error);
+    console.error("Error fetching worker profile:", error);
     return NextResponse.json(
       { error: "Failed to fetch profile" },
       { status: 500 }
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Update cleaner's profile
+// Update worker's profile
 export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
@@ -171,7 +171,7 @@ export async function PUT(request: NextRequest) {
 
     if (!user || user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can update their profile" },
+        { error: "Only workers can update their profile" },
         { status: 403 }
       );
     }
@@ -201,7 +201,7 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    // Update or create cleaner profile
+    // Update or create worker profile
     const profileData = {
       bio: data.bio,
       hourlyRate: data.hourlyRate,
@@ -255,7 +255,7 @@ export async function PUT(request: NextRequest) {
       profile,
     });
   } catch (error) {
-    console.error("Error updating cleaner profile:", error);
+    console.error("Error updating worker profile:", error);
     return NextResponse.json(
       { error: "Failed to update profile" },
       { status: 500 }

@@ -33,7 +33,7 @@ function estimateArrival(distanceKm: number): Date {
   return new Date(Date.now() + minutesToArrive * 60 * 1000);
 }
 
-// GET - Get cleaner's current location (for customer)
+// GET - Get worker's current location (for customer)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -73,7 +73,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can view tracking
+    // Only customer or worker can view tracking
     if (
       booking.customerId !== session.user.id &&
       booking.cleanerId !== session.user.id
@@ -102,7 +102,7 @@ export async function GET(
 
     return NextResponse.json({
       trackingActive: booking.trackingActive,
-      cleanerLocation: booking.trackingActive
+      workerLocation: booking.trackingActive
         ? {
             latitude: booking.cleanerLatitude,
             longitude: booking.cleanerLongitude,
@@ -128,7 +128,7 @@ export async function GET(
   }
 }
 
-// POST - Update cleaner's location or toggle tracking
+// POST - Update worker's location or toggle tracking
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -157,10 +157,10 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only cleaner can update tracking
+    // Only worker can update tracking
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json(
-        { error: "Only cleaner can update tracking" },
+        { error: "Only worker can update tracking" },
         { status: 403 }
       );
     }

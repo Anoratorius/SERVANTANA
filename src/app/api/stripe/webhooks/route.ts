@@ -123,7 +123,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     },
   });
 
-  // Create earning record for cleaner (status PENDING until payout day)
+  // Create earning record for worker (status PENDING until payout day)
   if (payment.cleanerPayout) {
     // Calculate next payout date (1st or 15th of month)
     const now = new Date();
@@ -158,7 +158,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     });
   }
 
-  console.log(`Payment completed for booking ${bookingId}, payout scheduled`);
+  console.log(`Payment completed for booking ${bookingId}, worker payout scheduled`);
 }
 
 async function handleCheckoutExpired(session: Stripe.Checkout.Session) {

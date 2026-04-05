@@ -36,7 +36,7 @@ interface TrendData {
   value: number;
 }
 
-export async function getCleanerAnalytics(
+export async function getWorkerAnalytics(
   cleanerId: string,
   period: string
 ): Promise<{

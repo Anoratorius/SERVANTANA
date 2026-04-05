@@ -40,7 +40,7 @@ export async function PATCH(
 
     const { verified, isActive } = validationResult.data;
 
-    // Find cleaner profile by user ID
+    // Find worker profile by user ID
     const workerProfile = await prisma.workerProfile.findUnique({
       where: { userId: id },
     });
@@ -82,10 +82,10 @@ export async function PATCH(
 
     return NextResponse.json({
       message,
-      cleaner: updated,
+      worker: updated,
     });
   } catch (error) {
-    console.error("Error verifying cleaner:", error);
+    console.error("Error verifying worker:", error);
     return NextResponse.json(
       { error: "Failed to update verification status" },
       { status: 500 }

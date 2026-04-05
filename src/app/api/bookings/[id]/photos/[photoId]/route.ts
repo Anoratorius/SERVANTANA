@@ -33,7 +33,7 @@ export async function DELETE(
       );
     }
 
-    // Only the uploader (cleaner) can delete
+    // Only the uploader (worker) can delete
     if (photo.uploaderId !== session.user.id) {
       return NextResponse.json(
         { error: "Only the uploader can delete this photo" },
@@ -103,7 +103,7 @@ export async function GET(
       );
     }
 
-    // Only customer or cleaner can view
+    // Only customer or worker can view
     if (
       photo.booking.customerId !== session.user.id &&
       photo.booking.cleanerId !== session.user.id

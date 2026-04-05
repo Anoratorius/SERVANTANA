@@ -58,11 +58,11 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can request reschedule
+    // Only customer or worker can request reschedule
     const isCustomer = booking.customerId === session.user.id;
-    const isCleaner = booking.cleanerId === session.user.id;
+    const isWorker = booking.cleanerId === session.user.id;
 
-    if (!isCustomer && !isCleaner) {
+    if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -86,8 +86,8 @@ export async function POST(
       );
     }
 
-    // If cleaner reschedules, auto-approve. If customer reschedules, needs cleaner approval
-    const autoApprove = isCleaner;
+    // If worker reschedules, auto-approve. If customer reschedules, needs worker approval
+    const autoApprove = isWorker;
     const isFree = isRescheduleFree(hoursUntilBooking);
 
     const bookingChange = await prisma.bookingChange.create({
@@ -106,7 +106,7 @@ export async function POST(
       },
     });
 
-    // If auto-approved (cleaner requested), update booking immediately
+    // If auto-approved (worker requested), update booking immediately
     if (autoApprove) {
       await prisma.booking.update({
         where: { id },
@@ -123,7 +123,7 @@ export async function POST(
       isFree,
       message: autoApprove
         ? "Booking rescheduled successfully"
-        : "Reschedule request sent to cleaner for approval",
+        : "Reschedule request sent to worker for approval",
     });
   } catch (error) {
     console.error("Error creating reschedule request:", error);

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only customer or cleaner can create dispute
+    // Only customer or worker can create dispute
     const isCustomer = booking.customerId === session.user.id;
     const isCleaner = booking.cleanerId === session.user.id;
 

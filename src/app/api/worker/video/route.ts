@@ -16,7 +16,7 @@ export async function GET() {
 
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access this" },
+        { error: "Only workers can access this" },
         { status: 403 }
       );
     }
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can upload intro videos" },
+        { error: "Only workers can upload intro videos" },
         { status: 403 }
       );
     }
@@ -138,7 +138,7 @@ export async function DELETE() {
 
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can delete intro videos" },
+        { error: "Only workers can delete intro videos" },
         { status: 403 }
       );
     }

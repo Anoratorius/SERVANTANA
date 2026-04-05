@@ -24,7 +24,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    // Get the review to update cleaner's average rating after deletion
+    // Get the review to update worker's average rating after deletion
     const review = await prisma.review.findUnique({
       where: { id },
       select: { revieweeId: true },
@@ -39,7 +39,7 @@ export async function DELETE(
       where: { id },
     });
 
-    // Recalculate cleaner's average rating
+    // Recalculate worker's average rating
     const remainingReviews = await prisma.review.findMany({
       where: { revieweeId: review.revieweeId },
       select: { rating: true },

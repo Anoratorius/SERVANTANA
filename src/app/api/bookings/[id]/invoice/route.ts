@@ -74,7 +74,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can view invoice
+    // Only customer or worker can view invoice
     if (
       booking.customerId !== session.user.id &&
       booking.cleanerId !== session.user.id
@@ -136,7 +136,7 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can generate invoice
+    // Only customer or worker can generate invoice
     if (
       booking.customerId !== session.user.id &&
       booking.cleanerId !== session.user.id

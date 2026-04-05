@@ -23,10 +23,10 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only cleaner can upload photos
+    // Only worker can upload photos
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json(
-        { error: "Only the cleaner can upload photos" },
+        { error: "Only the worker can upload photos" },
         { status: 403 }
       );
     }
@@ -137,7 +137,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can view photos
+    // Only customer or worker can view photos
     if (
       booking.customerId !== session.user.id &&
       booking.cleanerId !== session.user.id

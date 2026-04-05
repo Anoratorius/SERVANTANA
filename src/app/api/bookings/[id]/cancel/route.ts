@@ -32,11 +32,11 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can cancel
+    // Only customer or worker can cancel
     const isCustomer = booking.customerId === session.user.id;
-    const isCleaner = booking.cleanerId === session.user.id;
+    const isWorker = booking.cleanerId === session.user.id;
 
-    if (!isCustomer && !isCleaner) {
+    if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -58,7 +58,7 @@ export async function POST(
       ? calculateRefundAmount(booking.totalPrice, hoursUntilBooking)
       : { amount: booking.totalPrice, percent: 100, reason: "Worker cancelled - full refund" };
 
-    // If cleaner cancels, always full refund to customer
+    // If worker cancels, always full refund to customer
     // If customer cancels, refund based on policy
 
     const bookingChange = await prisma.bookingChange.create({
@@ -83,7 +83,7 @@ export async function POST(
         cancelledAt: new Date(),
         cancellationReason: reason,
         // Track who cancelled
-        ...(isCleaner && { cancelledByCleaner: true }),
+        ...(isWorker && { cancelledByCleaner: true }),
       },
     });
 
@@ -99,8 +99,8 @@ export async function POST(
       });
     }
 
-    // If cleaner cancelled, provide substitute URL for customer
-    const substituteUrl = isCleaner ? `/bookings/${id}/substitutes` : null;
+    // If worker cancelled, provide substitute URL for customer
+    const substituteUrl = isWorker ? `/bookings/${id}/substitutes` : null;
 
     return NextResponse.json({
       change: bookingChange,
@@ -110,7 +110,7 @@ export async function POST(
         reason: refund.reason,
       },
       message: "Booking cancelled successfully",
-      cancelledByCleaner: isCleaner,
+      cancelledByCleaner: isWorker,
       substituteUrl,
     });
   } catch (error) {
@@ -143,7 +143,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can view
+    // Only customer or worker can view
     if (
       booking.customerId !== session.user.id &&
       booking.cleanerId !== session.user.id

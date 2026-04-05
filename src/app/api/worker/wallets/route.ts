@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateWalletAddresses, getNextDerivationIndex } from "@/lib/crypto-wallets";
 
-// Get cleaner's crypto wallets
+// Get worker's crypto wallets
 export async function GET() {
   try {
     const session = await auth();
@@ -24,7 +24,7 @@ export async function GET() {
 
     if (!user || user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access wallets" },
+        { error: "Only workers can access wallets" },
         { status: 403 }
       );
     }
@@ -48,7 +48,7 @@ export async function GET() {
   }
 }
 
-// Create crypto wallets for cleaner
+// Create crypto wallets for worker
 export async function POST() {
   try {
     const session = await auth();

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Only cleaner can sync their bookings
+      // Only worker can sync their bookings
       if (booking.cleanerId !== session.user.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }

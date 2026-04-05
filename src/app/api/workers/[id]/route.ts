@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const cleaner = await prisma.user.findUnique({
+    const worker = await prisma.user.findUnique({
       where: {
         id,
         role: "WORKER",
@@ -84,22 +84,22 @@ export async function GET(
       },
     });
 
-    if (!cleaner || !cleaner.workerProfile) {
+    if (!worker || !worker.workerProfile) {
       return NextResponse.json(
         { error: "Worker not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ cleaner }, {
+    return NextResponse.json({ cleaner: worker }, {
       headers: {
         'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
       },
     });
   } catch (error) {
-    console.error("Error fetching cleaner:", error);
+    console.error("Error fetching worker:", error);
     return NextResponse.json(
-      { error: "Failed to fetch cleaner" },
+      { error: "Failed to fetch worker" },
       { status: 500 }
     );
   }

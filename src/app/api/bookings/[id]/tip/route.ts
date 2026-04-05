@@ -36,7 +36,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can view tip
+    // Only customer or worker can view tip
     if (
       booking.customerId !== session.user.id &&
       booking.cleanerId !== session.user.id

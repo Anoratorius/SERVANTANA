@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       // Skip if booking is in the past
       if (minutesUntilBooking < 0) continue;
 
-      // Process reminders for both customer and cleaner
+      // Process reminders for both customer and worker
       const users = [
         { user: booking.customer, role: "customer" as const },
         { user: booking.cleaner, role: "cleaner" as const },

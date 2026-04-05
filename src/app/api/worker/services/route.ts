@@ -13,7 +13,7 @@ const updateServicesSchema = z.object({
   ),
 });
 
-// Get all available services and cleaner's current services
+// Get all available services and worker's current services
 export async function GET() {
   try {
     const session = await auth();
@@ -36,7 +36,7 @@ export async function GET() {
 
     if (!user || user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can access this endpoint" },
+        { error: "Only workers can access this endpoint" },
         { status: 403 }
       );
     }
@@ -60,7 +60,7 @@ export async function GET() {
   }
 }
 
-// Update cleaner's services
+// Update worker's services
 export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
@@ -75,7 +75,7 @@ export async function PUT(request: NextRequest) {
 
     if (!user || user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can update services" },
+        { error: "Only workers can update services" },
         { status: 403 }
       );
     }

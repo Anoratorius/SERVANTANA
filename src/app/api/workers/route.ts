@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const userLng = searchParams.get("lng");
     const maxDistance = searchParams.get("maxDistance"); // in km
 
-    // Build cleaner profile filter conditions
+    // Build worker profile filter conditions
     // Only show workers who completed onboarding and are active
     const profileFilters: Prisma.WorkerProfileWhereInput = {
       onboardingComplete: true,
@@ -128,8 +128,8 @@ export async function GET(request: NextRequest) {
         : { isNot: null },
     };
 
-    // Get cleaners with optimized query
-    const cleaners = await prisma.user.findMany({
+    // Get workers with optimized query
+    const workers = await prisma.user.findMany({
       where,
       select: {
         id: true,
@@ -205,7 +205,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Filter out null profiles (should already be filtered but be safe)
-    let filteredCleaners = cleaners.filter((c) => c.workerProfile !== null);
+    let filteredWorkers = workers.filter((c) => c.workerProfile !== null);
 
     // If user coordinates provided, calculate distances and filter
     if (userLat && userLng) {
@@ -214,9 +214,9 @@ export async function GET(request: NextRequest) {
       const maxDist = maxDistance ? parseFloat(maxDistance) : null;
 
       if (!isNaN(lat) && !isNaN(lng)) {
-        // Add distance to each cleaner
-        const cleanersWithDistance = filteredCleaners.map((cleaner) => {
-          const profile = cleaner.workerProfile!;
+        // Add distance to each worker
+        const workersWithDistance = filteredWorkers.map((worker) => {
+          const profile = worker.workerProfile!;
           let distance: number | null = null;
 
           if (profile.latitude && profile.longitude) {
@@ -224,7 +224,7 @@ export async function GET(request: NextRequest) {
           }
 
           return {
-            ...cleaner,
+            ...worker,
             workerProfile: {
               ...profile,
               distance: distance ? Math.round(distance * 10) / 10 : null, // Round to 1 decimal
@@ -234,7 +234,7 @@ export async function GET(request: NextRequest) {
 
         // Filter by max distance if provided
         if (maxDist) {
-          filteredCleaners = cleanersWithDistance.filter((c) => {
+          filteredWorkers = workersWithDistance.filter((c) => {
             const distance = c.workerProfile.distance;
             const serviceRadius = c.workerProfile.serviceRadius || 10;
             // Include if within max distance AND within worker's service radius
@@ -242,7 +242,7 @@ export async function GET(request: NextRequest) {
           });
         } else {
           // Filter only by worker's service radius
-          filteredCleaners = cleanersWithDistance.filter((c) => {
+          filteredWorkers = workersWithDistance.filter((c) => {
             const distance = c.workerProfile.distance;
             const serviceRadius = c.workerProfile.serviceRadius || 10;
             return distance === null || distance <= serviceRadius;
@@ -250,7 +250,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Sort by distance (closest first)
-        filteredCleaners.sort((a, b) => {
+        filteredWorkers.sort((a, b) => {
           const profileA = a.workerProfile as { distance?: number | null };
           const profileB = b.workerProfile as { distance?: number | null };
           const distA = profileA?.distance ?? Infinity;
@@ -260,15 +260,15 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ cleaners: filteredCleaners }, {
+    return NextResponse.json({ cleaners: filteredWorkers }, {
       headers: {
         'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
       },
     });
   } catch (error) {
-    console.error("Error fetching cleaners:", error);
+    console.error("Error fetching workers:", error);
     return NextResponse.json(
-      { error: "Failed to fetch cleaners" },
+      { error: "Failed to fetch workers" },
       { status: 500 }
     );
   }

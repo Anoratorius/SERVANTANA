@@ -66,18 +66,18 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only allow customer or cleaner to view the booking
+    // Only allow customer or worker to view the booking
     if (booking.customerId !== session.user.id && booking.cleanerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if cleaner has Stripe Connect set up
-    const cleanerHasStripe = Boolean(
+    // Check if worker has Stripe Connect set up
+    const workerHasStripe = Boolean(
       booking.cleaner.workerProfile?.stripeAccountId &&
       booking.cleaner.workerProfile?.stripeOnboardingComplete
     );
 
-    return NextResponse.json({ booking, cleanerHasStripe });
+    return NextResponse.json({ booking, workerHasStripe });
   } catch (error) {
     console.error("Error fetching booking:", error);
     return NextResponse.json(
@@ -109,11 +109,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only customer or cleaner can modify booking
+    // Only customer or worker can modify booking
     const isCustomer = booking.customerId === session.user.id;
-    const isCleaner = booking.cleanerId === session.user.id;
+    const isWorker = booking.cleanerId === session.user.id;
 
-    if (!isCustomer && !isCleaner) {
+    if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -135,21 +135,21 @@ export async function PATCH(
     }
 
     // Role-based permission checks
-    if (status === "CONFIRMED" && !isCleaner) {
+    if (status === "CONFIRMED" && !isWorker) {
       return NextResponse.json(
-        { error: "Only the cleaner can confirm a booking" },
+        { error: "Only the worker can confirm a booking" },
         { status: 403 }
       );
     }
-    if (status === "IN_PROGRESS" && !isCleaner) {
+    if (status === "IN_PROGRESS" && !isWorker) {
       return NextResponse.json(
-        { error: "Only the cleaner can start a booking" },
+        { error: "Only the worker can start a booking" },
         { status: 403 }
       );
     }
-    if (status === "COMPLETED" && !isCleaner) {
+    if (status === "COMPLETED" && !isWorker) {
       return NextResponse.json(
-        { error: "Only the cleaner can complete a booking" },
+        { error: "Only the worker can complete a booking" },
         { status: 403 }
       );
     }

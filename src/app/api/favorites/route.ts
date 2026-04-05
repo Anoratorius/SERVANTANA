@@ -59,12 +59,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify cleaner exists
-    const cleaner = await prisma.user.findUnique({
+    // Verify worker exists
+    const targetWorker = await prisma.user.findUnique({
       where: { id: cleanerId, role: "WORKER" },
     });
 
-    if (!cleaner) {
+    if (!targetWorker) {
       return NextResponse.json({ error: "Worker not found" }, { status: 404 });
     }
 

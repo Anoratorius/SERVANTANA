@@ -168,7 +168,7 @@ export async function PATCH(
       },
     });
 
-    // If role changed to CLEANER, create cleaner profile if not exists
+    // If role changed to WORKER, create worker profile if not exists
     if (body.role === "WORKER") {
       const existingProfile = await prisma.workerProfile.findUnique({
         where: { userId: id },
@@ -278,7 +278,7 @@ export async function DELETE(
     // Use a transaction to delete all related records
     // Many relations don't have onDelete: Cascade, so we must manually delete them
     await prisma.$transaction(async (tx) => {
-      // Get all bookings where user is customer or cleaner
+      // Get all bookings where user is customer or worker
       const userBookings = await tx.booking.findMany({
         where: { OR: [{ customerId: id }, { cleanerId: id }] },
         select: { id: true },

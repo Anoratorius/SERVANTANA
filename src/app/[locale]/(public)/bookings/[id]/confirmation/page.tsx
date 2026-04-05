@@ -49,13 +49,13 @@ interface FeeBreakdown {
   customerTotal: number;
   customerFixedFee: number;
   customerPercentageFee: number;
-  cleanerReceives: number;
+  workerReceives: number;
   currency: string;
   formatted: {
     bookingPrice: string;
     customerPays: string;
     customerFee: string;
-    cleanerReceives: string;
+    workerReceives: string;
   };
 }
 

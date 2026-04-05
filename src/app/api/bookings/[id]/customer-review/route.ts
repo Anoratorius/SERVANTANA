@@ -35,7 +35,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only cleaner can view/create customer reviews
+    // Only worker can view/create customer reviews
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -94,10 +94,10 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only cleaner can review customer
+    // Only worker can review customer
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json(
-        { error: "Only the cleaner can review the customer" },
+        { error: "Only the worker can review the customer" },
         { status: 403 }
       );
     }

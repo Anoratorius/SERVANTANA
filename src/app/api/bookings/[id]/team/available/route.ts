@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// GET - Find available cleaners for team booking
+// GET - Find available workers for team booking
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -35,10 +35,10 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only lead cleaner can search for team members
+    // Only lead worker can search for team members
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json(
-        { error: "Only lead cleaner can search for team members" },
+        { error: "Only lead worker can search for team members" },
         { status: 403 }
       );
     }
@@ -53,14 +53,14 @@ export async function GET(
       ...booking.teamMembers.map((m) => m.cleanerId),
     ];
 
-    // Find cleaners who:
+    // Find workers who:
     // 1. Offer the same service
     // 2. Are not already on the team
     // 3. Don't have conflicting bookings
     const dayOfWeek = booking.scheduledDate.getDay();
 
-    // Get cleaners who offer this service
-    const availableCleaners = await prisma.user.findMany({
+    // Get workers who offer this service
+    const availableWorkers = await prisma.user.findMany({
       where: {
         role: "WORKER",
         id: { notIn: existingMemberIds },
@@ -78,7 +78,7 @@ export async function GET(
             },
           },
         },
-        // Exclude cleaners with conflicting bookings
+        // Exclude workers with conflicting bookings
         bookingsAsCleaner: {
           none: {
             scheduledDate: booking.scheduledDate,
@@ -107,26 +107,26 @@ export async function GET(
     });
 
     // Calculate distance if booking has coordinates
-    const cleanersWithDistance = availableCleaners.map((cleaner) => {
+    const workersWithDistance = availableWorkers.map((worker) => {
       let distance = null;
       if (
         booking.latitude &&
         booking.longitude &&
-        cleaner.workerProfile?.latitude &&
-        cleaner.workerProfile?.longitude
+        worker.workerProfile?.latitude &&
+        worker.workerProfile?.longitude
       ) {
         distance = calculateDistance(
           booking.latitude,
           booking.longitude,
-          cleaner.workerProfile.latitude,
-          cleaner.workerProfile.longitude
+          worker.workerProfile.latitude,
+          worker.workerProfile.longitude
         );
       }
-      return { ...cleaner, distance };
+      return { ...worker, distance };
     });
 
     // Sort by distance if available, otherwise by rating
-    cleanersWithDistance.sort((a, b) => {
+    workersWithDistance.sort((a, b) => {
       if (a.distance !== null && b.distance !== null) {
         return a.distance - b.distance;
       }
@@ -135,11 +135,11 @@ export async function GET(
       return ratingB - ratingA;
     });
 
-    return NextResponse.json({ cleaners: cleanersWithDistance });
+    return NextResponse.json({ workers: workersWithDistance });
   } catch (error) {
-    console.error("Error finding available cleaners:", error);
+    console.error("Error finding available workers:", error);
     return NextResponse.json(
-      { error: "Failed to find available cleaners" },
+      { error: "Failed to find available workers" },
       { status: 500 }
     );
   }

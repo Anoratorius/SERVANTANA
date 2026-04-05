@@ -106,7 +106,7 @@ function generateLTCAddress(seed: Uint8Array, index: number): string {
 }
 
 /**
- * Generate all wallet addresses for a cleaner at given derivation index
+ * Generate all wallet addresses for a worker at given derivation index
  */
 export function generateWalletAddresses(derivationIndex: number): WalletAddresses {
   const seed = getMasterSeed();

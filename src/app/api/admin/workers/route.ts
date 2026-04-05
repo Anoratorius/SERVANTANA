@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       where.verified = false;
     }
 
-    const [cleaners, total] = await Promise.all([
+    const [workers, total] = await Promise.all([
       prisma.workerProfile.findMany({
         where,
         include: {
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     return NextResponse.json({
-      cleaners,
+      workers,
       pagination: {
         page,
         limit,
@@ -71,9 +71,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching cleaners:", error);
+    console.error("Error fetching workers:", error);
     return NextResponse.json(
-      { error: "Failed to fetch cleaners" },
+      { error: "Failed to fetch workers" },
       { status: 500 }
     );
   }

@@ -38,7 +38,7 @@ export function generateBookingsExport(
     totalPrice: number;
     serviceName: string;
     customerName: string;
-    cleanerName: string;
+    workerName: string;
   }>
 ): string {
   const data: ExportRow[] = bookings.map((b) => ({
@@ -48,7 +48,7 @@ export function generateBookingsExport(
     Status: b.status,
     Service: b.serviceName,
     Customer: b.customerName,
-    Cleaner: b.cleanerName,
+    Worker: b.workerName,
     Amount: b.totalPrice,
   }));
 

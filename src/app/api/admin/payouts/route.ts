@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Group earnings by cleaner
-    const cleanerEarnings = new Map<
+    // Group earnings by worker
+    const workerEarnings = new Map<
       string,
       {
         cleaner: typeof pendingEarnings[0]["cleaner"];
@@ -170,13 +170,13 @@ export async function POST(request: NextRequest) {
 
     for (const earning of pendingEarnings) {
       const cleanerId = earning.cleanerId;
-      const existing = cleanerEarnings.get(cleanerId);
+      const existing = workerEarnings.get(cleanerId);
 
       if (existing) {
         existing.earnings.push(earning);
         existing.totalAmount += earning.amount;
       } else {
-        cleanerEarnings.set(cleanerId, {
+        workerEarnings.set(cleanerId, {
           cleaner: earning.cleaner,
           earnings: [earning],
           totalAmount: earning.amount,
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
 
     const results: Array<{
       cleanerId: string;
-      cleanerName: string;
+      workerName: string;
       amount: number;
       currency: string;
       method: "stripe" | "paypal" | "skipped";
@@ -196,10 +196,10 @@ export async function POST(request: NextRequest) {
       payoutId?: string;
     }> = [];
 
-    // Process each cleaner's payout
-    for (const [cleanerId, data] of cleanerEarnings) {
-      const { cleaner, earnings, totalAmount, currency } = data;
-      const cleanerName = `${cleaner.firstName} ${cleaner.lastName}`;
+    // Process each worker's payout
+    for (const [cleanerId, data] of workerEarnings) {
+      const { cleaner: worker, earnings, totalAmount, currency } = data;
+      const workerName = `${worker.firstName} ${worker.lastName}`;
 
       try {
         let payoutMethod: "stripe" | "paypal" | "skipped" = "skipped";
@@ -207,14 +207,14 @@ export async function POST(request: NextRequest) {
 
         // Try Stripe first, then PayPal
         if (
-          cleaner.workerProfile?.stripeAccountId &&
-          cleaner.workerProfile?.stripeOnboardingComplete
+          worker.workerProfile?.stripeAccountId &&
+          worker.workerProfile?.stripeOnboardingComplete
         ) {
           // Pay via Stripe
           const transfer = await createTransfer({
             amount: totalAmount,
             currency,
-            destinationAccountId: cleaner.workerProfile.stripeAccountId,
+            destinationAccountId: worker.workerProfile.stripeAccountId,
             description: `Servantana earnings payout - ${new Date().toISOString().split("T")[0]}`,
             metadata: {
               cleanerId,
@@ -224,10 +224,10 @@ export async function POST(request: NextRequest) {
 
           payoutMethod = "stripe";
           externalPayoutId = transfer.id;
-        } else if (cleaner.workerProfile?.paypalEmail) {
+        } else if (worker.workerProfile?.paypalEmail) {
           // Pay via PayPal
           const payout = await createSinglePayout(
-            cleaner.workerProfile.paypalEmail,
+            worker.workerProfile.paypalEmail,
             totalAmount,
             currency,
             `payout_${cleanerId}_${Date.now()}`,
@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
           // No payment method configured
           results.push({
             cleanerId,
-            cleanerName,
+            workerName,
             amount: totalAmount,
             currency,
             method: "skipped",
@@ -280,7 +280,7 @@ export async function POST(request: NextRequest) {
 
         results.push({
           cleanerId,
-          cleanerName,
+          workerName,
           amount: totalAmount,
           currency,
           method: payoutMethod,
@@ -291,7 +291,7 @@ export async function POST(request: NextRequest) {
         console.error(`Payout failed for cleaner ${cleanerId}:`, error);
         results.push({
           cleanerId,
-          cleanerName,
+          workerName,
           amount: totalAmount,
           currency,
           method: "skipped",

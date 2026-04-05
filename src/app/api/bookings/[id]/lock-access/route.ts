@@ -7,7 +7,7 @@ function generateAccessCode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// GET - Get lock access for a booking (cleaner view)
+// GET - Get lock access for a booking (worker view)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -55,7 +55,7 @@ export async function GET(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Only cleaner assigned to booking can access
+    // Only worker assigned to booking can access
     if (booking.cleanerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }

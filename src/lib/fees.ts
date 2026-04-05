@@ -1,6 +1,6 @@
 // Platform fee structure
-// Fixed: €0.99 from customer + €0.99 from cleaner
-// Percentage: 2.5% from customer + 2.5% from cleaner
+// Fixed: €0.99 from customer + €0.99 from worker
+// Percentage: 2.5% from customer + 2.5% from worker
 
 export const PLATFORM_FEES = {
   // Fixed service fee in cents (to avoid floating point issues)
@@ -10,16 +10,16 @@ export const PLATFORM_FEES = {
 } as const;
 
 export interface FeeBreakdown {
-  // Original booking price (cleaner's rate)
+  // Original booking price (worker's rate)
   bookingPrice: number;
   // Customer fees
   customerFixedFee: number;
   customerPercentageFee: number;
   customerTotal: number; // What customer pays
-  // Cleaner fees
-  cleanerFixedFee: number;
-  cleanerPercentageFee: number;
-  cleanerReceives: number; // What cleaner gets
+  // Worker fees
+  workerFixedFee: number;
+  workerPercentageFee: number;
+  workerReceives: number; // What worker gets
   // Platform
   platformTotal: number; // Total platform revenue before Stripe
   // Currency
@@ -28,7 +28,7 @@ export interface FeeBreakdown {
 
 /**
  * Calculate fee breakdown for a booking
- * @param bookingPrice - The cleaner's rate for the job (in currency units, e.g., euros)
+ * @param bookingPrice - The worker's rate for the job (in currency units, e.g., euros)
  * @param currency - Currency code (e.g., "EUR", "USD")
  * @returns Detailed fee breakdown
  */
@@ -43,7 +43,7 @@ export function calculateFees(
   const roundedPercentageFee = Math.round(percentageFee * 100) / 100;
 
   const customerTotal = bookingPrice + fixedFee + roundedPercentageFee;
-  const cleanerReceives = bookingPrice - fixedFee - roundedPercentageFee;
+  const workerReceives = bookingPrice - fixedFee - roundedPercentageFee;
   const platformTotal = (fixedFee + roundedPercentageFee) * 2;
 
   return {
@@ -51,9 +51,9 @@ export function calculateFees(
     customerFixedFee: fixedFee,
     customerPercentageFee: roundedPercentageFee,
     customerTotal: Math.round(customerTotal * 100) / 100,
-    cleanerFixedFee: fixedFee,
-    cleanerPercentageFee: roundedPercentageFee,
-    cleanerReceives: Math.round(cleanerReceives * 100) / 100,
+    workerFixedFee: fixedFee,
+    workerPercentageFee: roundedPercentageFee,
+    workerReceives: Math.round(workerReceives * 100) / 100,
     platformTotal: Math.round(platformTotal * 100) / 100,
     currency,
   };

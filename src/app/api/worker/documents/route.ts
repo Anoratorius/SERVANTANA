@@ -10,10 +10,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify user is a cleaner
+    // Verify user is a worker
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can upload documents" },
+        { error: "Only workers can upload documents" },
         { status: 403 }
       );
     }
@@ -135,10 +135,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify user is a cleaner
+    // Verify user is a worker
     if (session.user.role !== "WORKER") {
       return NextResponse.json(
-        { error: "Only cleaners can view documents" },
+        { error: "Only workers can view documents" },
         { status: 403 }
       );
     }

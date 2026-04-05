@@ -27,8 +27,8 @@ export async function GET() {
     const [
       totalUsers,
       totalCustomers,
-      totalCleaners,
-      verifiedCleaners,
+      totalWorkers,
+      verifiedWorkers,
       pendingVerification,
       totalBookings,
       completedBookings,
@@ -91,8 +91,8 @@ export async function GET() {
       overview: {
         totalUsers,
         totalCustomers,
-        totalCleaners,
-        verifiedCleaners,
+        totalWorkers,
+        verifiedWorkers,
         pendingVerification,
         totalBookings,
         completedBookings,
