@@ -41,27 +41,27 @@ interface Service {
   duration: number;
 }
 
-interface CleanerService {
+interface WorkerService {
   id: string;
   customPrice: number | null;
   service: Service;
 }
 
-interface CleanerProfile {
+interface WorkerProfileData {
   id: string;
   hourlyRate: number;
   currency: string;
   verified: boolean;
   averageRating: number;
-  services: CleanerService[];
+  services: WorkerService[];
 }
 
-interface Cleaner {
+interface Worker {
   id: string;
   firstName: string;
   lastName: string;
   avatar: string | null;
-  workerProfile: CleanerProfile | null;
+  workerProfile: WorkerProfileData | null;
 }
 
 export default function BookingPage({
@@ -77,7 +77,7 @@ export default function BookingPage({
   const { formatPrice, formatPricePerHour } = useCurrency();
   const rebookId = searchParams.get("rebook");
 
-  const [cleaner, setCleaner] = useState<Cleaner | null>(null);
+  const [worker, setWorker] = useState<Worker | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,7 +95,7 @@ export default function BookingPage({
   // Redirect to login if not authenticated
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push(`/login?callbackUrl=/cleaner/${id}/book`);
+      router.push(`/login?callbackUrl=/worker-profile/${id}/book`);
     }
   }, [status, router, id]);
 
@@ -108,7 +108,7 @@ export default function BookingPage({
           return;
         }
         const data = await response.json();
-        setCleaner(data.cleaner);
+        setWorker(data.cleaner);
       } catch {
         setError("Failed to load worker");
       } finally {
@@ -142,8 +142,8 @@ export default function BookingPage({
     fetchPreviousBooking();
   }, [rebookId]);
 
-  const hourlyRate = cleaner?.workerProfile?.hourlyRate ?? 0;
-  const currency = cleaner?.workerProfile?.currency ?? "EUR";
+  const hourlyRate = worker?.workerProfile?.hourlyRate ?? 0;
+  const currency = worker?.workerProfile?.currency ?? "EUR";
 
   const basePrice = hourlyRate * selectedDuration;
 
@@ -206,7 +206,7 @@ export default function BookingPage({
     return <BookingPageSkeleton />;
   }
 
-  if (error || !cleaner || !cleaner.workerProfile) {
+  if (error || !worker || !worker.workerProfile) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -226,8 +226,8 @@ export default function BookingPage({
     );
   }
 
-  const profile = cleaner.workerProfile;
-  const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
+  const profile = worker.workerProfile;
+  const initials = `${worker.firstName[0]}${worker.lastName[0]}`;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -416,14 +416,14 @@ export default function BookingPage({
                     {/* Cleaner Info */}
                     <div className="flex items-center gap-3 pb-4 border-b">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={cleaner.avatar || undefined} />
+                        <AvatarImage src={worker.avatar || undefined} />
                         <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white">
                           {initials}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <h4 className="font-semibold">
-                          {cleaner.firstName} {cleaner.lastName}
+                          {worker.firstName} {worker.lastName}
                         </h4>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />

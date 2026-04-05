@@ -5,7 +5,7 @@
 import { prisma } from "@/lib/prisma";
 import { getDateRange, calculatePercentageChange, calculateAverageRating, groupByDate, fillMissingDates } from "./calculations";
 
-interface CleanerStats {
+interface WorkerStats {
   totalBookings: number;
   completedBookings: number;
   cancelledBookings: number;
@@ -37,10 +37,10 @@ interface TrendData {
 }
 
 export async function getWorkerAnalytics(
-  cleanerId: string,
+  workerId: string,
   period: string
 ): Promise<{
-  stats: CleanerStats;
+  stats: WorkerStats;
   earnings: EarningsBreakdown;
   serviceStats: ServiceStats[];
   bookingTrend: TrendData[];
@@ -62,7 +62,7 @@ export async function getWorkerAnalytics(
   // Current period bookings
   const bookings = await prisma.booking.findMany({
     where: {
-      cleanerId,
+      cleanerId: workerId,
       createdAt: { gte: start, lte: end },
     },
     include: {
@@ -74,7 +74,7 @@ export async function getWorkerAnalytics(
   // Previous period bookings for comparison
   const previousBookings = await prisma.booking.findMany({
     where: {
-      cleanerId,
+      cleanerId: workerId,
       createdAt: { gte: previousStart, lte: previousEnd },
     },
     select: { id: true, totalPrice: true },
@@ -83,14 +83,14 @@ export async function getWorkerAnalytics(
   // Earnings data
   const earnings = await prisma.earning.findMany({
     where: {
-      cleanerId,
+      cleanerId: workerId,
       createdAt: { gte: start, lte: end },
     },
   });
 
   const previousEarnings = await prisma.earning.findMany({
     where: {
-      cleanerId,
+      cleanerId: workerId,
       createdAt: { gte: previousStart, lte: previousEnd },
     },
     select: { amount: true },
@@ -99,7 +99,7 @@ export async function getWorkerAnalytics(
   // Reviews
   const reviews = await prisma.review.findMany({
     where: {
-      revieweeId: cleanerId,
+      revieweeId: workerId,
       createdAt: { gte: start, lte: end },
     },
     select: { rating: true },
@@ -107,7 +107,7 @@ export async function getWorkerAnalytics(
 
   const previousReviews = await prisma.review.findMany({
     where: {
-      revieweeId: cleanerId,
+      revieweeId: workerId,
       createdAt: { gte: previousStart, lte: previousEnd },
     },
     select: { rating: true },
@@ -117,7 +117,7 @@ export async function getWorkerAnalytics(
   const completedBookings = bookings.filter((b) => b.status === "COMPLETED");
   const cancelledBookings = bookings.filter((b) => b.status === "CANCELLED");
 
-  const stats: CleanerStats = {
+  const stats: WorkerStats = {
     totalBookings: bookings.length,
     completedBookings: completedBookings.length,
     cancelledBookings: cancelledBookings.length,
@@ -126,7 +126,7 @@ export async function getWorkerAnalytics(
     responseRate: bookings.length > 0
       ? Math.round((completedBookings.length / bookings.length) * 100)
       : 0,
-    repeatCustomers: await getRepeatCustomerCount(cleanerId, start, end),
+    repeatCustomers: await getRepeatCustomerCount(workerId, start, end),
   };
 
   // Earnings breakdown
@@ -218,14 +218,14 @@ export async function getWorkerAnalytics(
 }
 
 async function getRepeatCustomerCount(
-  cleanerId: string,
+  workerId: string,
   start: Date,
   end: Date
 ): Promise<number> {
   const result = await prisma.booking.groupBy({
     by: ["customerId"],
     where: {
-      cleanerId,
+      cleanerId: workerId,
       createdAt: { gte: start, lte: end },
       status: "COMPLETED",
     },

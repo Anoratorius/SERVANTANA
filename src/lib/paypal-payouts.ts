@@ -91,7 +91,7 @@ export async function createPayoutBatch(
     amount: number;
     currency: string;
     note?: string;
-    referenceId: string; // e.g., payout ID or cleaner ID
+    referenceId: string; // e.g., payout ID or worker ID
   }>
 ): Promise<PayoutResponse> {
   const accessToken = await getAccessToken();
@@ -103,7 +103,7 @@ export async function createPayoutBatch(
       value: item.amount.toFixed(2),
       currency: item.currency.toUpperCase(),
     },
-    note: item.note || "Servantana Cleaner Payout",
+    note: item.note || "Servantana Worker Payout",
     sender_item_id: item.referenceId,
   }));
 

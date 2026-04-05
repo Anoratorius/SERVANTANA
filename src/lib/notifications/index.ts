@@ -16,7 +16,7 @@ const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Servantana <onboarding@rese
 interface NotificationData {
   bookingId?: string;
   customerName?: string;
-  cleanerName?: string;
+  workerName?: string;
   serviceName?: string;
   bookingDate?: string;
   bookingTime?: string;

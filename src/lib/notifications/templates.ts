@@ -11,7 +11,7 @@ interface NotificationTemplate {
 
 interface TemplateData {
   customerName?: string;
-  cleanerName?: string;
+  workerName?: string;
   serviceName?: string;
   bookingDate?: string;
   bookingTime?: string;
@@ -32,7 +32,7 @@ export function getNotificationTemplate(
     },
     BOOKING_CONFIRMED: {
       title: "Booking Confirmed",
-      body: `Your booking for ${data.serviceName} on ${data.bookingDate} at ${data.bookingTime} has been confirmed by ${data.cleanerName}.`,
+      body: `Your booking for ${data.serviceName} on ${data.bookingDate} at ${data.bookingTime} has been confirmed by ${data.workerName}.`,
     },
     BOOKING_CANCELLED: {
       title: "Booking Cancelled",
@@ -44,7 +44,7 @@ export function getNotificationTemplate(
     },
     BOOKING_COMPLETED: {
       title: "Booking Completed",
-      body: `Your ${data.serviceName} has been completed. Please leave a review for ${data.cleanerName}.`,
+      body: `Your ${data.serviceName} has been completed. Please leave a review for ${data.workerName}.`,
     },
     PAYMENT_RECEIVED: {
       title: "Payment Received",

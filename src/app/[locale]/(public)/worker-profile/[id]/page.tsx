@@ -38,7 +38,7 @@ interface Service {
   duration: number;
 }
 
-interface CleanerService {
+interface WorkerService {
   id: string;
   customPrice: number | null;
   service: Service;
@@ -62,7 +62,7 @@ interface Review {
   };
 }
 
-interface CleanerProfile {
+interface WorkerProfile {
   id: string;
   bio: string | null;
   introVideoUrl: string | null;
@@ -79,23 +79,23 @@ interface CleanerProfile {
   averageRating: number;
   totalBookings: number;
   responseTime: number | null;
-  services: CleanerService[];
+  services: WorkerService[];
   availability: Availability[];
 }
 
-interface Cleaner {
+interface Worker {
   id: string;
   firstName: string;
   lastName: string;
   avatar: string | null;
   createdAt: string;
-  workerProfile: CleanerProfile | null;
+  workerProfile: WorkerProfile | null;
   reviewsReceived: Review[];
 }
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default function CleanerProfilePage({
+export default function WorkerProfilePage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -104,14 +104,14 @@ export default function CleanerProfilePage({
   const t = useTranslations();
   const { data: session } = useSession();
   const { formatPrice, formatPricePerHour } = useCurrency();
-  const [cleaner, setCleaner] = useState<Cleaner | null>(null);
+  const [worker, setWorker] = useState<Worker | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchCleaner() {
+    async function fetchWorker() {
       try {
         const response = await fetch(`/api/workers/${id}`);
         if (!response.ok) {
@@ -123,14 +123,14 @@ export default function CleanerProfilePage({
           return;
         }
         const data = await response.json();
-        setCleaner(data.cleaner);
+        setWorker(data.cleaner);
       } catch {
         setError("Failed to load worker profile");
       } finally {
         setIsLoading(false);
       }
     }
-    fetchCleaner();
+    fetchWorker();
   }, [id]);
 
   useEffect(() => {
@@ -184,10 +184,10 @@ export default function CleanerProfilePage({
   };
 
   if (isLoading) {
-    return <CleanerProfileSkeleton />;
+    return <WorkerProfileSkeleton />;
   }
 
-  if (error || !cleaner || !cleaner.workerProfile) {
+  if (error || !worker || !worker.workerProfile) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -207,8 +207,8 @@ export default function CleanerProfilePage({
     );
   }
 
-  const profile = cleaner.workerProfile;
-  const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
+  const profile = worker.workerProfile;
+  const initials = `${worker.firstName[0]}${worker.lastName[0]}`;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -231,7 +231,7 @@ export default function CleanerProfilePage({
             <div className="flex flex-col md:flex-row gap-6">
               {/* Avatar */}
               <Avatar className="h-32 w-32 border-4 border-white shadow-lg ring-4 ring-blue-100">
-                <AvatarImage src={cleaner.avatar || undefined} />
+                <AvatarImage src={worker.avatar || undefined} />
                 <AvatarFallback className="text-3xl bg-gradient-to-br from-blue-500 to-green-500 text-white">{initials}</AvatarFallback>
               </Avatar>
 
@@ -239,7 +239,7 @@ export default function CleanerProfilePage({
               <div className="flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                    {cleaner.firstName} {cleaner.lastName}
+                    {worker.firstName} {worker.lastName}
                   </h1>
                   {profile.verified && (
                     <Badge className="bg-blue-500 hover:bg-blue-600">
@@ -284,7 +284,7 @@ export default function CleanerProfilePage({
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold">{profile.averageRating.toFixed(1)}</span>
                     <span className="text-muted-foreground">
-                      ({cleaner.reviewsReceived.length} {t("worker.profile.reviews").toLowerCase()})
+                      ({worker.reviewsReceived.length} {t("worker.profile.reviews").toLowerCase()})
                     </span>
                   </div>
                   <div className="text-muted-foreground">
@@ -307,13 +307,13 @@ export default function CleanerProfilePage({
 
                 {/* Actions */}
                 <div className="flex gap-3 mt-6">
-                  <Link href={`/worker-profile/${cleaner.id}/book`}>
+                  <Link href={`/worker-profile/${worker.id}/book`}>
                     <Button size="lg" className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
                       <Calendar className="mr-2 h-4 w-4" />
                       {t("worker.profile.bookNow")}
                     </Button>
                   </Link>
-                  <Link href={`/messages/${cleaner.id}`}>
+                  <Link href={`/messages/${worker.id}`}>
                     <Button variant="outline" size="lg" className="border-green-500 text-green-600 hover:bg-green-50">
                       <MessageCircle className="mr-2 h-4 w-4" />
                       {t("messages.send")}
@@ -446,15 +446,15 @@ export default function CleanerProfilePage({
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {t("worker.profile.reviews")} ({cleaner.reviewsReceived.length})
+                      {t("worker.profile.reviews")} ({worker.reviewsReceived.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {cleaner.reviewsReceived.length === 0 ? (
+                    {worker.reviewsReceived.length === 0 ? (
                       <p className="text-muted-foreground italic">No reviews yet</p>
                     ) : (
                       <div className="space-y-6">
-                        {cleaner.reviewsReceived.map((review) => (
+                        {worker.reviewsReceived.map((review) => (
                           <div key={review.id} className="border-b last:border-0 pb-6 last:pb-0">
                             <div className="flex items-start gap-4">
                               <Avatar>
@@ -542,7 +542,7 @@ export default function CleanerProfilePage({
   );
 }
 
-function CleanerProfileSkeleton() {
+function WorkerProfileSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
