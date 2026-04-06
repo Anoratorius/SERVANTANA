@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 
@@ -13,6 +13,7 @@ export default function Error({
   reset: () => void;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
 
   useEffect(() => {
     // Log error to monitoring service in production
@@ -35,7 +36,7 @@ export default function Error({
           <Button onClick={reset} variant="default">
             {t("errors.tryAgain")}
           </Button>
-          <Button onClick={() => window.location.href = "/"} variant="outline">
+          <Button onClick={() => window.location.href = `/${locale}`} variant="outline">
             {t("errors.goHome")}
           </Button>
         </div>

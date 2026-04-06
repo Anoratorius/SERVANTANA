@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { HeroBackground } from "@/components/home/HeroBackground";
 
 function SignupForm() {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type");
@@ -109,7 +110,7 @@ function SignupForm() {
         router.push("/login");
       } else {
         // Redirect to email verification page after registration
-        window.location.href = "/email-verification-required";
+        window.location.href = `/${locale}/email-verification-required`;
       }
     } catch {
       setErrorMessage("An error occurred. Please try again.");

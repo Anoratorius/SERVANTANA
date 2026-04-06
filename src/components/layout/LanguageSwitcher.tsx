@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import { type Locale } from "@/i18n/config";
 import { Button } from "@/components/ui/button";
 
@@ -14,10 +14,9 @@ export function LanguageSwitcher() {
   const otherName = otherLocale === "en" ? "English" : "Deutsch";
 
   const handleSwitch = () => {
-    const segments = pathname.split("/");
-    segments[1] = otherLocale;
-    const newPath = segments.join("/");
-    router.push(newPath);
+    // Preserve search params during language switch
+    const searchParams = window.location.search;
+    router.push(pathname + searchParams, { locale: otherLocale });
   };
 
   return (

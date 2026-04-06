@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,9 +19,14 @@ const REMEMBERED_EMAIL_KEY = "servantana_remembered_email";
 
 function LoginForm() {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const rawCallbackUrl = searchParams.get("callbackUrl") || "/";
+  // Ensure callbackUrl has locale prefix
+  const callbackUrl = rawCallbackUrl.match(/^\/(en|de)/)
+    ? rawCallbackUrl
+    : `/${locale}${rawCallbackUrl.startsWith('/') ? '' : '/'}${rawCallbackUrl}`;
   const error = searchParams.get("error");
 
   const [email, setEmail] = useState("");
