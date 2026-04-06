@@ -883,7 +883,7 @@
     }
   },
   "jobs": {
-    "cleaner": "Worker",
+    "cleaner": "Cleaner",
     "housekeeper": "Housekeeper",
     "maid": "Maid",
     "gardener": "Gardener",
