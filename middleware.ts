@@ -59,12 +59,18 @@ const PUBLIC_API_ROUTES = ['/api/ip'];
 
 // Paths that bypass email verification check
 const EMAIL_VERIFICATION_BYPASS_PATHS = [
+  '/',
   '/coming-soon',
   '/email-verification-required',
   '/verify-email',
   '/login',
   '/signup',
   '/forgot-password',
+  '/reset-password',
+  '/about',
+  '/contact',
+  '/privacy',
+  '/terms',
 ];
 
 // Paths that bypass worker onboarding check

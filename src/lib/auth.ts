@@ -193,6 +193,7 @@ export const authOptions: NextAuthConfig = {
             avatar: true,
             role: true,
             tokenVersion: true,
+            emailVerified: true,
             status: true,
             suspendedUntil: true,
             locationVerifiedAt: true,
@@ -212,6 +213,7 @@ export const authOptions: NextAuthConfig = {
         token.lastName = dbUser.lastName;
         token.avatar = dbUser.avatar;
         token.role = dbUser.role;
+        token.isEmailVerified = !!dbUser.emailVerified;
         token.status = dbUser.status;
         token.suspendedUntil = dbUser.suspendedUntil?.toISOString() || null;
         token.locationVerified = !!dbUser.locationVerifiedAt;

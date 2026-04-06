@@ -110,3 +110,46 @@ POSTGRES_URL_NON_POOLING # Direct connection
 NEXTAUTH_URL             # Auth callback URL
 NEXTAUTH_SECRET          # JWT secret
 ```
+
+## Every Change Must Be Analyzed and Verified
+
+**Before making ANY change, analyze the full impact. After making it, verify it worked.**
+
+### Before Every Change - Analyze:
+1. **What systems does this touch?** (code, database, env vars, external APIs, deployments)
+2. **What depends on this?** (other files, database state, user flows, third-party services)
+3. **What could break?** (existing functionality, production data, other features)
+4. **What needs to change together?** (if A changes, B and C must also change)
+
+### After Every Change - Verify:
+1. **Execute** the change in the actual target environment
+2. **Query/check** the actual state to confirm change applied
+3. **Test** every user-facing flow affected by the change
+4. **Check logs** for errors in production
+
+### Never Assume:
+- "The tool will handle it" - tools often don't handle edge cases
+- "The command succeeded" - success message ≠ actual change applied
+- "It works locally" - production has different state
+- "Only this file is affected" - trace all dependencies first
+
+### Always:
+- List ALL places affected before starting
+- Update ALL affected places, not just the obvious ones
+- Verify EACH change in production
+- Test end-to-end user flows
+- Check production logs after deployment
+
+### Database Changes - Special Care:
+- **Enums**: Prisma does NOT auto-migrate enums. Run `ALTER TYPE` SQL manually on production.
+- **Column renames**: Require data migration, not just schema change.
+- **Any schema change**: Verify on production database with a SELECT query, not just locally.
+- **Use direct connection** (non-pooling URL) for DDL changes.
+
+### Change Is Not Complete Until:
+- All affected systems are updated
+- All changes are verified in production
+- All affected functionality is tested
+- No errors in production logs
+
+**If you cannot verify a change took effect, the task is NOT complete.**
