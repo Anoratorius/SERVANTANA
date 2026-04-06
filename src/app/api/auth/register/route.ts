@@ -103,12 +103,14 @@ export async function POST(request: Request) {
       });
     }
 
-    // Send verification email (non-blocking)
-    sendVerificationEmail(user.id, user.email, user.firstName).catch((err) => {
+    // Send verification email - must await on serverless to prevent early termination
+    try {
+      await sendVerificationEmail(user.id, user.email, user.firstName);
+    } catch (err) {
       console.error("Failed to send verification email:", err);
-    });
+    }
 
-    // Audit log (non-blocking)
+    // Audit log (non-blocking - less critical)
     writeAuditLog({
       action: "USER_CREATED",
       actorId: user.id,

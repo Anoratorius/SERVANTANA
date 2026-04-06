@@ -81,20 +81,13 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase();
     const { code } = await createResetToken(normalizedEmail, "email");
 
-    // Respond immediately - don't wait for email
-    const response = NextResponse.json({
-      success: true,
-      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***${normalizedEmail.split("@")[0].slice(-1)}@${normalizedEmail.split("@")[1]}`,
-    });
+    // Send email - must await on serverless to prevent early termination
+    const emailResult = await sendResetEmail(normalizedEmail, code);
+    if (!emailResult.success) {
+      console.error("Email send failed:", emailResult.message);
+    }
 
-    // Send email in background (non-blocking)
-    sendResetEmail(normalizedEmail, code).then((result) => {
-      if (!result.success) {
-        console.error("Email send failed:", result.message);
-      }
-    });
-
-    // Audit log (non-blocking)
+    // Audit log (non-blocking - less critical)
     writeAuditLog({
       action: "PASSWORD_RESET_REQUESTED",
       actorId: user.id,
@@ -102,9 +95,12 @@ export async function POST(request: NextRequest) {
       ip: clientIP,
       userAgent: request.headers.get("user-agent") || undefined,
       details: { type: "email" },
-    });
+    }).catch(() => {});
 
-    return response;
+    return NextResponse.json({
+      success: true,
+      message: `Reset code sent to ${normalizedEmail.split("@")[0][0]}***${normalizedEmail.split("@")[0].slice(-1)}@${normalizedEmail.split("@")[1]}`,
+    });
   } catch (error) {
     console.error("Error in forgot password:", error);
     return NextResponse.json(
