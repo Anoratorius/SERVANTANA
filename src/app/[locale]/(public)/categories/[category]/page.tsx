@@ -235,7 +235,7 @@ export default function CategoryDetailPage() {
               <div className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${dbCategory.gradient} flex items-center justify-center mb-4 shadow-xl`}>
                 <span className="text-5xl drop-shadow-md">{dbCategory.emoji}</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
                 {dbCategory.name}
               </h1>
               <p className="text-gray-600 text-center mt-2">
@@ -351,7 +351,7 @@ export default function CategoryDetailPage() {
             <div className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${builtInMeta.gradient} flex items-center justify-center mb-4 shadow-xl`}>
               <span className="text-5xl drop-shadow-md">{builtInMeta.emoji}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
               {t(`categories.${categorySlug}`)}
             </h1>
             <p className="text-gray-600 text-center mt-2">
