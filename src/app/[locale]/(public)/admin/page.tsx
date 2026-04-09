@@ -1,4 +1,5 @@
 "use client";
+// Admin Dashboard v2 - with bulk user selection
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
