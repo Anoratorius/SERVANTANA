@@ -1930,13 +1930,14 @@ export default function AdminPage() {
                   ) : (
                     <>
                       {/* Select All Header */}
-                      <div className="flex items-center gap-3 p-3 border-b mb-3">
+                      <div className="flex items-center gap-3 p-3 border-b mb-3 bg-gray-50">
                         <Checkbox
                           checked={selectedUsers.size > 0 && selectedUsers.size === users.filter(u => u.id !== session?.user?.id).length}
                           onCheckedChange={toggleSelectAll}
+                          className="h-5 w-5 border-2 border-gray-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                         />
-                        <span className="text-sm text-muted-foreground">
-                          Select all ({users.filter(u => u.id !== session?.user?.id).length} users)
+                        <span className="text-sm font-medium">
+                          Select all ({users.filter(u => u.id !== session?.user?.id).length} selectable users)
                         </span>
                       </div>
 
@@ -1952,10 +1953,11 @@ export default function AdminPage() {
                                 <Checkbox
                                   checked={selectedUsers.has(user.id)}
                                   onCheckedChange={() => toggleUserSelection(user.id)}
+                                  className="h-5 w-5 border-2 border-gray-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                 />
                               )}
                               {user.id === session?.user?.id && (
-                                <div className="w-4" />
+                                <div className="w-5" />
                               )}
                               <Avatar>
                                 <AvatarImage src={user.avatar || undefined} />
