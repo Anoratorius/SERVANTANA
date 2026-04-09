@@ -21,11 +21,11 @@ import {
   MessageCircle,
   Heart,
   Share2,
-  ArrowLeft,
   Loader2,
   PlayCircle,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { toast } from "sonner";
@@ -194,12 +194,7 @@ export default function WorkerProfilePage({
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
-            <Link href="/search">
-              <Button>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t("common.back")}
-              </Button>
-            </Link>
+            <BackButton href="/search" />
           </div>
         </main>
         <Footer />
@@ -217,12 +212,7 @@ export default function WorkerProfilePage({
       <main className="flex-1 bg-muted/30">
         {/* Back button */}
         <div className="container mx-auto px-4 py-4">
-          <Link href="/search">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t("common.back")}
-            </Button>
-          </Link>
+          <BackButton href="/search" />
         </div>
 
         {/* Profile Header */}

@@ -5,8 +5,8 @@ import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import {
-  ArrowLeft,
   Shield,
   CheckCircle,
   Clock,
@@ -40,10 +40,7 @@ export default function GuaranteePage() {
 
       <main className="flex-1 bg-gradient-to-br from-emerald-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("back")}
-          </Button>
+          <BackButton href="/" />
 
           {/* Hero Section */}
           <div className="text-center mb-12">

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Header, Footer } from "@/components/layout";
-import { ArrowLeft, Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,9 +17,6 @@ export default function SuggestCategoryPage() {
   const [categoryName, setCategoryName] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleBack = () => {
-    router.push("/categories");
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,14 +43,7 @@ export default function SuggestCategoryPage() {
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-lg">
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            className="mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t("common.back")}
-          </Button>
+          <BackButton href="/categories" />
 
           {submitted ? (
             <div className="text-center py-12">
@@ -65,7 +56,7 @@ export default function SuggestCategoryPage() {
               <p className="text-gray-600 mb-8">
                 {t("categories.suggest.submitted")}
               </p>
-              <Button onClick={handleBack}>
+              <Button onClick={() => router.push("/categories")}>
                 {t("categories.suggest.backToCategories")}
               </Button>
             </div>

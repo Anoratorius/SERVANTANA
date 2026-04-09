@@ -18,9 +18,8 @@ import {
   CheckCircle,
   Loader2,
   ArrowRight,
-  ArrowLeft,
 } from "lucide-react";
-import { useRouter as useI18nRouter } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 
@@ -49,7 +48,6 @@ interface BookingInfo {
 export default function SubstitutesPage() {
   const t = useTranslations();
   const router = useRouter();
-  const i18nRouter = useI18nRouter();
   const params = useParams();
   const { status: authStatus } = useSession();
 
@@ -129,9 +127,7 @@ export default function SubstitutesPage() {
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-4" />
             <h1 className="text-2xl font-bold mb-2">{error}</h1>
-            <Link href="/bookings">
-              <Button className="mt-4">Back to Bookings</Button>
-            </Link>
+            <BackButton href={`/bookings/${bookingId}`} />
           </div>
         </main>
         <Footer />
@@ -147,10 +143,7 @@ export default function SubstitutesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <Button variant="ghost" onClick={() => i18nRouter.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
+          <BackButton href={`/bookings/${bookingId}`} />
           <div className="text-center mb-8">
             <UserCheck className="h-12 w-12 mx-auto text-blue-500 mb-4" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
@@ -295,7 +288,7 @@ export default function SubstitutesPage() {
 
           {/* Skip option */}
           <div className="mt-6 text-center">
-            <Link href="/bookings">
+            <Link href={`/bookings/${bookingId}`}>
               <Button variant="outline">{t("substitutes.skipForNow")}</Button>
             </Link>
           </div>

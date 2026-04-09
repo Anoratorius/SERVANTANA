@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackButton } from "@/components/ui/back-button";
 import {
   Calendar,
   Clock,
@@ -25,7 +26,6 @@ import {
   RotateCcw,
   WifiOff,
   RefreshCw,
-  ArrowLeft,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
@@ -174,10 +174,7 @@ export default function BookingsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
+          <BackButton href="/dashboard" />
 
           {/* Offline indicator */}
           {(isOffline || isFromCache) && (

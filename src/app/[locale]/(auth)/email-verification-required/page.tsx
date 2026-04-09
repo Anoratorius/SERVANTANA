@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Mail, LogOut, CheckCircle, ArrowLeft } from "lucide-react";
+import { Loader2, Mail, LogOut, CheckCircle } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 import { toast } from "sonner";
@@ -54,10 +55,7 @@ export default function EmailVerificationRequiredPage() {
         <HeroBackground />
         <Card className="w-full max-w-md relative z-10">
           <CardHeader className="text-center">
-            <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("common.back")}
-            </Button>
+            <BackButton href="/" />
             <div className="mb-4">
               <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
                 {t("common.appName")}

@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  ArrowLeft,
   Calendar,
   Clock,
   MapPin,
@@ -31,6 +30,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 interface Service {
@@ -213,12 +213,7 @@ export default function BookingPage({
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
-            <Link href="/search">
-              <Button>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t("common.back")}
-              </Button>
-            </Link>
+            <BackButton href={`/worker-profile/${id}`} />
           </div>
         </main>
         <Footer />
@@ -236,12 +231,7 @@ export default function BookingPage({
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4">
           {/* Back button */}
-          <Link href={`/worker-profile/${id}`} className="inline-block mb-6">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t("common.back")}
-            </Button>
-          </Link>
+          <BackButton href={`/worker-profile/${id}`} />
 
           <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             {t("booking.title")}

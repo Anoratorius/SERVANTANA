@@ -15,9 +15,9 @@ import {
   CheckCircle,
   Loader2,
   AlertCircle,
-  ArrowLeft,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { toast } from "sonner";
 
 interface Booking {
@@ -143,9 +143,7 @@ export default function ReviewPage({
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold mb-4">{error || "Booking not found"}</h1>
-            <Link href="/bookings">
-              <Button>Back to Bookings</Button>
-            </Link>
+            <BackButton href={`/bookings/${id}`} />
           </div>
         </main>
         <Footer />
@@ -165,9 +163,7 @@ export default function ReviewPage({
             <p className="text-muted-foreground mb-6">
               Only customers can leave reviews for workers.
             </p>
-            <Link href="/bookings">
-              <Button>Back to Bookings</Button>
-            </Link>
+            <BackButton href={`/bookings/${id}`} />
           </div>
         </main>
         <Footer />
@@ -187,9 +183,7 @@ export default function ReviewPage({
             <p className="text-muted-foreground mb-6">
               You can only review a booking after it has been completed.
             </p>
-            <Link href="/bookings">
-              <Button>Back to Bookings</Button>
-            </Link>
+            <BackButton href={`/bookings/${id}`} />
           </div>
         </main>
         <Footer />
@@ -280,12 +274,7 @@ export default function ReviewPage({
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
-          <Link href="/bookings" className="inline-block mb-6">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              {t("common.back")}
-            </Button>
-          </Link>
+          <BackButton href={`/bookings/${id}`} />
 
           <Card>
             <CardHeader>

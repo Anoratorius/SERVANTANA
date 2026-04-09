@@ -2,13 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { Header, Footer } from "@/components/layout";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function PrivacyPage() {
   const t = useTranslations();
-  const router = useRouter();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -16,10 +13,7 @@ export default function PrivacyPage() {
 
       <main className="flex-1 bg-white py-12">
         <div className="container mx-auto px-4 max-w-3xl">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
+          <BackButton href="/" />
           <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent text-center" style={{ fontFamily: 'var(--font-logo)' }}>{t("legal.privacy.title")}</h1>
 
           <div className="prose prose-gray max-w-none space-y-6">

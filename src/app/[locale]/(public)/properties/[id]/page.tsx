@@ -14,7 +14,6 @@ import {
   MapPin,
   Home,
   Calendar,
-  ArrowLeft,
   Pencil,
   Star,
   Bath,
@@ -22,6 +21,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { SmartLockManager } from "@/components/properties/SmartLockManager";
 
 interface Property {
@@ -100,12 +100,7 @@ export default function PropertyDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("notFound")}</h1>
-            <Link href="/properties">
-              <Button>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {tCommon("back")}
-              </Button>
-            </Link>
+            <BackButton href="/properties" />
           </div>
         </main>
         <Footer />
@@ -120,13 +115,7 @@ export default function PropertyDetailPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Back button */}
-          <Link
-            href="/properties"
-            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {tCommon("back")}
-          </Link>
+          <BackButton href="/properties" />
 
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

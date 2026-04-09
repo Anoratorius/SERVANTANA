@@ -12,8 +12,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Building2, Loader2, MapPin } from "lucide-react";
+import { Building2, Loader2, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { toast } from "sonner";
 
 export default function EditPropertyPage() {
@@ -169,13 +170,7 @@ export default function EditPropertyPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
           {/* Back button */}
-          <Link
-            href={`/properties/${propertyId}`}
-            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {tCommon("back")}
-          </Link>
+          <BackButton href={`/properties/${propertyId}`} />
 
           <Card>
             <CardHeader>

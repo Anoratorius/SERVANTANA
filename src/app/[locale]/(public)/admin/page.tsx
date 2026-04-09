@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+import { BackButton } from "@/components/ui/back-button";
 import {
   Users,
   Briefcase,
@@ -42,7 +43,6 @@ import {
   Download,
   Plus,
   Pencil,
-  ArrowLeft,
   Mail,
   Send,
 } from "lucide-react";
@@ -77,6 +77,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -469,6 +470,10 @@ export default function AdminPage() {
   // User actions state
   const [usersStatusFilter, setUsersStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [bulkSuspendDialogOpen, setBulkSuspendDialogOpen] = useState(false);
+  const [bulkBanDialogOpen, setBulkBanDialogOpen] = useState(false);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [loadingUserDetails, setLoadingUserDetails] = useState(false);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
@@ -1346,6 +1351,186 @@ export default function AdminPage() {
     }
   };
 
+  // Bulk selection helpers
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUsers((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(userId)) {
+        newSet.delete(userId);
+      } else {
+        newSet.add(userId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedUsers.size === users.filter(u => u.id !== session?.user?.id).length) {
+      setSelectedUsers(new Set());
+    } else {
+      setSelectedUsers(new Set(users.filter(u => u.id !== session?.user?.id).map(u => u.id)));
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedUsers(new Set());
+  };
+
+  // Bulk action handlers
+  const handleBulkSuspend = async () => {
+    if (selectedUsers.size === 0) return;
+    setProcessingAction(true);
+
+    let suspendedUntil: string | null = null;
+    if (suspendDuration !== "indefinite") {
+      const now = new Date();
+      const durationMap: Record<string, number> = {
+        "1d": 1, "3d": 3, "7d": 7, "14d": 14, "30d": 30, "90d": 90,
+      };
+      now.setDate(now.getDate() + (durationMap[suspendDuration] || 7));
+      suspendedUntil = now.toISOString();
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const userId of selectedUsers) {
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: "SUSPENDED",
+            suspendedReason: suspendReason || null,
+            suspendedUntil,
+          }),
+        });
+        if (response.ok) successCount++;
+        else failCount++;
+      } catch {
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(`${successCount} user(s) suspended`);
+    }
+    if (failCount > 0) {
+      toast.error(`Failed to suspend ${failCount} user(s)`);
+    }
+
+    setBulkSuspendDialogOpen(false);
+    setSuspendReason("");
+    setSuspendDuration("7d");
+    clearSelection();
+    fetchUsers();
+    setProcessingAction(false);
+  };
+
+  const handleBulkBan = async () => {
+    if (selectedUsers.size === 0) return;
+    setProcessingAction(true);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const userId of selectedUsers) {
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: "BANNED",
+            suspendedReason: banReason || null,
+          }),
+        });
+        if (response.ok) successCount++;
+        else failCount++;
+      } catch {
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(`${successCount} user(s) banned`);
+    }
+    if (failCount > 0) {
+      toast.error(`Failed to ban ${failCount} user(s)`);
+    }
+
+    setBulkBanDialogOpen(false);
+    setBanReason("");
+    clearSelection();
+    fetchUsers();
+    setProcessingAction(false);
+  };
+
+  const handleBulkReactivate = async () => {
+    if (selectedUsers.size === 0) return;
+    setProcessingAction(true);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const userId of selectedUsers) {
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "ACTIVE" }),
+        });
+        if (response.ok) successCount++;
+        else failCount++;
+      } catch {
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(`${successCount} user(s) reactivated`);
+    }
+    if (failCount > 0) {
+      toast.error(`Failed to reactivate ${failCount} user(s)`);
+    }
+
+    clearSelection();
+    fetchUsers();
+    setProcessingAction(false);
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedUsers.size === 0) return;
+    setProcessingAction(true);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const userId of selectedUsers) {
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) successCount++;
+        else failCount++;
+      } catch {
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(`${successCount} user(s) deleted`);
+    }
+    if (failCount > 0) {
+      toast.error(`Failed to delete ${failCount} user(s)`);
+    }
+
+    setBulkDeleteDialogOpen(false);
+    clearSelection();
+    fetchUsers();
+    fetchStats();
+    setProcessingAction(false);
+  };
+
   const exportAuditLogs = async () => {
     try {
       const params = new URLSearchParams({ limit: "1000", offset: "0" });
@@ -1425,10 +1610,7 @@ export default function AdminPage() {
 
       <main className="flex-1 bg-gradient-to-b from-purple-50 to-white py-4 sm:py-8">
         <div className="container mx-auto px-2 sm:px-4 max-w-6xl">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
+          <BackButton href="/dashboard" />
           <div className="text-center mb-4 sm:mb-8">
             <Shield className="h-8 w-8 sm:h-12 sm:w-12 mx-auto text-purple-500 mb-2 sm:mb-4" />
             <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
@@ -1687,19 +1869,94 @@ export default function AdminPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  {/* Bulk Actions Bar */}
+                  {selectedUsers.size > 0 && (
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-blue-800">
+                          {selectedUsers.size} user(s) selected
+                        </span>
+                        <Button variant="ghost" size="sm" onClick={clearSelection}>
+                          Clear
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleBulkReactivate}
+                          disabled={processingAction}
+                        >
+                          <RefreshCw className="h-4 w-4 mr-1" />
+                          Reactivate
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setBulkSuspendDialogOpen(true)}
+                          disabled={processingAction}
+                        >
+                          <Clock className="h-4 w-4 mr-1" />
+                          Suspend
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                          onClick={() => setBulkBanDialogOpen(true)}
+                          disabled={processingAction}
+                        >
+                          <Ban className="h-4 w-4 mr-1" />
+                          Ban
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 border-red-300 hover:bg-red-50"
+                          onClick={() => setBulkDeleteDialogOpen(true)}
+                          disabled={processingAction}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   {loadingUsers ? (
                     <div className="flex justify-center py-8">
                       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                   ) : (
                     <>
+                      {/* Select All Header */}
+                      <div className="flex items-center gap-3 p-3 border-b mb-3">
+                        <Checkbox
+                          checked={selectedUsers.size > 0 && selectedUsers.size === users.filter(u => u.id !== session?.user?.id).length}
+                          onCheckedChange={toggleSelectAll}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          Select all ({users.filter(u => u.id !== session?.user?.id).length} users)
+                        </span>
+                      </div>
+
                       <div className="space-y-3">
                         {users.map((user) => (
                           <div
                             key={user.id}
-                            className="flex items-center justify-between p-3 border rounded-lg"
+                            className={`flex items-center justify-between p-3 border rounded-lg ${selectedUsers.has(user.id) ? 'bg-blue-50 border-blue-300' : ''}`}
                           >
                             <div className="flex items-center gap-3">
+                              {/* Checkbox for selection */}
+                              {user.id !== session?.user?.id && (
+                                <Checkbox
+                                  checked={selectedUsers.has(user.id)}
+                                  onCheckedChange={() => toggleUserSelection(user.id)}
+                                />
+                              )}
+                              {user.id === session?.user?.id && (
+                                <div className="w-4" /> // Placeholder for alignment
+                              )}
                               <Avatar>
                                 <AvatarImage src={user.avatar || undefined} />
                                 <AvatarFallback>
@@ -3718,6 +3975,123 @@ export default function AdminPage() {
             >
               {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {t("admin.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Suspend Dialog */}
+      <Dialog open={bulkSuspendDialogOpen} onOpenChange={setBulkSuspendDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Suspend {selectedUsers.size} User(s)</DialogTitle>
+            <DialogDescription>
+              This will suspend all selected users. They will not be able to access the platform.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("admin.suspendDuration")}</Label>
+              <Select value={suspendDuration} onValueChange={setSuspendDuration}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1d">1 {t("admin.day")}</SelectItem>
+                  <SelectItem value="3d">3 {t("admin.days")}</SelectItem>
+                  <SelectItem value="7d">7 {t("admin.days")}</SelectItem>
+                  <SelectItem value="14d">14 {t("admin.days")}</SelectItem>
+                  <SelectItem value="30d">30 {t("admin.days")}</SelectItem>
+                  <SelectItem value="90d">90 {t("admin.days")}</SelectItem>
+                  <SelectItem value="indefinite">{t("admin.indefinite")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>{t("admin.reason")} ({t("admin.optional")})</Label>
+              <Textarea
+                value={suspendReason}
+                onChange={(e) => setSuspendReason(e.target.value)}
+                placeholder={t("admin.reasonPlaceholder")}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulkSuspendDialogOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkSuspend}
+              disabled={processingAction}
+            >
+              {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Suspend {selectedUsers.size} User(s)
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Ban Dialog */}
+      <Dialog open={bulkBanDialogOpen} onOpenChange={setBulkBanDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ban {selectedUsers.size} User(s)</DialogTitle>
+            <DialogDescription>
+              This will permanently ban all selected users from the platform.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+              {t("admin.banWarning")}
+            </div>
+            <div className="space-y-2">
+              <Label>{t("admin.reason")} ({t("admin.optional")})</Label>
+              <Textarea
+                value={banReason}
+                onChange={(e) => setBanReason(e.target.value)}
+                placeholder={t("admin.reasonPlaceholder")}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulkBanDialogOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkBan}
+              disabled={processingAction}
+            >
+              {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Ban {selectedUsers.size} User(s)
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Delete Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {selectedUsers.size} User(s)</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete all selected users and their data. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            {t("admin.deleteWarning")}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {processingAction && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Delete {selectedUsers.size} User(s)
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -8,12 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Send, Loader2, CheckCircle, ArrowLeft } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
+import { Mail, Send, Loader2, CheckCircle } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function ContactPage() {
   const t = useTranslations();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,10 +43,7 @@ export default function ContactPage() {
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-16">
           <div className="container mx-auto px-4 max-w-4xl">
-            <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("common.back")}
-            </Button>
+            <BackButton href="/" />
             <div className="text-center">
               <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
                 {t("contact.title")}

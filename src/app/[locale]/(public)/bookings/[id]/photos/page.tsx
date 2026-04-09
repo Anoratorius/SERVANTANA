@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PhotoUploader } from "@/components/bookings/PhotoUploader";
 import { PhotoGallery } from "@/components/bookings/PhotoGallery";
-import { ArrowLeft, Camera } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
+import { Camera } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 interface Photo {
@@ -131,12 +132,8 @@ export default function BookingPhotosPage({
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-5xl">
           {/* Header */}
+          <BackButton href={`/bookings/${id}`} />
           <div className="flex items-center gap-4 mb-6">
-            <Link href={`/bookings/${id}`}>
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Camera className="h-6 w-6" />

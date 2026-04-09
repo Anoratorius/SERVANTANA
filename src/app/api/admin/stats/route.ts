@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// Simple in-memory cache for stats (60 second TTL)
+let statsCache: { data: unknown; timestamp: number } | null = null;
+const CACHE_TTL = 60 * 1000; // 60 seconds
+
 export async function GET() {
   try {
     const session = await auth();
@@ -9,107 +13,131 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify admin role
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    });
-
-    if (user?.role !== "ADMIN") {
+    // Check session role directly (skip extra DB call if available)
+    if (session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Get platform statistics
+    // Return cached stats if valid
+    if (statsCache && Date.now() - statsCache.timestamp < CACHE_TTL) {
+      return NextResponse.json(statsCache.data);
+    }
+
+    // Get platform statistics with optimized queries
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
+    // Batch queries - reduce from 15+ to 6 parallel queries
     const [
-      totalUsers,
-      totalCustomers,
-      totalWorkers,
-      verifiedWorkers,
-      pendingVerification,
-      totalBookings,
-      completedBookings,
-      cancelledBookings,
-      totalRevenue,
-      newUsersThisMonth,
-      newBookingsThisWeek,
-      totalReviews,
-      averageRating,
+      userStats,
+      workerStats,
+      bookingStats,
+      reviewStats,
+      recentBookings,
+      recentUsers,
     ] = await Promise.all([
-      prisma.user.count(),
-      prisma.user.count({ where: { role: "CUSTOMER" } }),
-      prisma.user.count({ where: { role: "WORKER" } }),
-      prisma.workerProfile.count({ where: { verified: true } }),
-      prisma.workerProfile.count({ where: { verified: false } }),
-      prisma.booking.count(),
-      prisma.booking.count({ where: { status: "COMPLETED" } }),
-      prisma.booking.count({ where: { status: "CANCELLED" } }),
-      prisma.booking.aggregate({
-        where: { status: "COMPLETED" },
-        _sum: { totalPrice: true },
+      // User counts in single query
+      prisma.user.groupBy({
+        by: ["role"],
+        _count: true,
       }),
-      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
-      prisma.booking.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
-      prisma.review.count(),
-      prisma.review.aggregate({ _avg: { rating: true } }),
+      // Worker verification counts
+      prisma.workerProfile.groupBy({
+        by: ["verified"],
+        _count: true,
+      }),
+      // All booking stats in one query
+      prisma.$queryRaw<Array<{
+        total: bigint;
+        completed: bigint;
+        cancelled: bigint;
+        revenue: number | null;
+        new_this_week: bigint;
+      }>>`
+        SELECT
+          COUNT(*) as total,
+          COUNT(*) FILTER (WHERE status = 'COMPLETED') as completed,
+          COUNT(*) FILTER (WHERE status = 'CANCELLED') as cancelled,
+          SUM(CASE WHEN status = 'COMPLETED' THEN "totalPrice" ELSE 0 END) as revenue,
+          COUNT(*) FILTER (WHERE "createdAt" >= ${sevenDaysAgo}) as new_this_week
+        FROM "Booking"
+      `,
+      // Review stats
+      prisma.review.aggregate({
+        _count: true,
+        _avg: { rating: true },
+      }),
+      // Recent bookings
+      prisma.booking.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          scheduledDate: true,
+          status: true,
+          totalPrice: true,
+          customer: { select: { firstName: true, lastName: true } },
+          cleaner: { select: { firstName: true, lastName: true } },
+          service: { select: { name: true } },
+        },
+      }),
+      // Recent users with new users count
+      prisma.user.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        },
+      }),
     ]);
 
-    // Get bookings by status
-    const bookingsByStatus = await prisma.booking.groupBy({
-      by: ["status"],
-      _count: true,
+    // Process user stats
+    const totalUsers = userStats.reduce((sum, s) => sum + s._count, 0);
+    const totalCustomers = userStats.find(s => s.role === "CUSTOMER")?._count || 0;
+    const totalWorkers = userStats.find(s => s.role === "WORKER")?._count || 0;
+
+    // Process worker stats
+    const verifiedWorkers = workerStats.find(s => s.verified === true)?._count || 0;
+    const pendingVerification = workerStats.find(s => s.verified === false)?._count || 0;
+
+    // Process booking stats
+    const bookingStat = bookingStats[0] || { total: BigInt(0), completed: BigInt(0), cancelled: BigInt(0), revenue: 0, new_this_week: BigInt(0) };
+
+    // Get new users this month (separate light query)
+    const newUsersThisMonth = await prisma.user.count({
+      where: { createdAt: { gte: thirtyDaysAgo } },
     });
 
-    // Get recent activity
-    const recentBookings = await prisma.booking.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: {
-        customer: { select: { firstName: true, lastName: true } },
-        cleaner: { select: { firstName: true, lastName: true } },
-        service: { select: { name: true } },
-      },
-    });
-
-    const recentUsers = await prisma.user.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-
-    return NextResponse.json({
+    const responseData = {
       overview: {
         totalUsers,
         totalCustomers,
         totalWorkers,
         verifiedWorkers,
         pendingVerification,
-        totalBookings,
-        completedBookings,
-        cancelledBookings,
-        totalRevenue: totalRevenue._sum.totalPrice || 0,
+        totalBookings: Number(bookingStat.total),
+        completedBookings: Number(bookingStat.completed),
+        cancelledBookings: Number(bookingStat.cancelled),
+        totalRevenue: bookingStat.revenue || 0,
         newUsersThisMonth,
-        newBookingsThisWeek,
-        totalReviews,
-        averageRating: averageRating._avg.rating || 0,
+        newBookingsThisWeek: Number(bookingStat.new_this_week),
+        totalReviews: reviewStats._count,
+        averageRating: reviewStats._avg.rating || 0,
       },
-      bookingsByStatus: bookingsByStatus.reduce(
-        (acc, item) => ({ ...acc, [item.status]: item._count }),
-        {}
-      ),
       recentBookings,
       recentUsers,
-    });
+    };
+
+    // Cache the result
+    statsCache = { data: responseData, timestamp: Date.now() };
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("Error fetching admin stats:", error);
     return NextResponse.json(

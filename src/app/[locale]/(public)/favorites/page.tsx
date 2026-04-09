@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackButton } from "@/components/ui/back-button";
 import {
   Heart,
   Star,
@@ -18,7 +19,6 @@ import {
   Trash2,
   Calendar,
   Loader2,
-  ArrowLeft,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
@@ -105,10 +105,7 @@ export default function FavoritesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-red-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-5xl">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
+          <BackButton href="/dashboard" />
           <div className="text-center mb-8">
             <Heart className="h-12 w-12 mx-auto text-red-500 fill-red-500 mb-4" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">

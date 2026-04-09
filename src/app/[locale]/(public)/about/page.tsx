@@ -2,13 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { Header, Footer } from "@/components/layout";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function AboutPage() {
   const t = useTranslations();
-  const router = useRouter();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -18,10 +15,7 @@ export default function AboutPage() {
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-16">
           <div className="container mx-auto px-4 max-w-4xl">
-            <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("common.back")}
-            </Button>
+            <BackButton href="/" />
             <div className="text-center">
             <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
               {t("about.title")}

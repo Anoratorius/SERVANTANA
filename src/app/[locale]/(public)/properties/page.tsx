@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackButton } from "@/components/ui/back-button";
 import {
   Building2,
   Plus,
@@ -18,9 +19,7 @@ import {
   MoreVertical,
   Pencil,
   Trash2,
-  ArrowLeft,
 } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import {
@@ -57,7 +56,6 @@ interface Property {
 export default function PropertiesPage() {
   const t = useTranslations("properties");
   const tCommon = useTranslations("common");
-  const router = useRouter();
   const { status: authStatus } = useSession();
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,10 +138,7 @@ export default function PropertiesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-5xl">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {tCommon("back")}
-          </Button>
+          <BackButton href="/dashboard" />
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
