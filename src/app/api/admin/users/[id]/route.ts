@@ -43,6 +43,7 @@ export async function GET(
           include: {
             services: { include: { service: true } },
             availability: true,
+            cryptoWallets: true,
           },
         },
         bookingsAsCustomer: {
@@ -66,6 +67,97 @@ export async function GET(
           orderBy: { createdAt: "desc" },
           include: {
             reviewer: { select: { firstName: true, lastName: true } },
+          },
+        },
+        reviewsGiven: {
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          include: {
+            reviewee: { select: { firstName: true, lastName: true } },
+          },
+        },
+        userSessions: {
+          take: 10,
+          orderBy: { lastActiveAt: "desc" },
+          select: {
+            id: true,
+            ip: true,
+            userAgent: true,
+            country: true,
+            city: true,
+            lastActiveAt: true,
+            createdAt: true,
+            isValid: true,
+          },
+        },
+        userDevices: {
+          take: 10,
+          orderBy: { lastSeenAt: "desc" },
+          select: {
+            id: true,
+            name: true,
+            browser: true,
+            os: true,
+            deviceType: true,
+            isTrusted: true,
+            lastSeenAt: true,
+            lastIp: true,
+            lastCountry: true,
+            createdAt: true,
+          },
+        },
+        properties: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            city: true,
+            isDefault: true,
+          },
+        },
+        disputesAsCustomer: {
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            status: true,
+            subject: true,
+            createdAt: true,
+          },
+        },
+        disputesAsCleaner: {
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            status: true,
+            subject: true,
+            createdAt: true,
+          },
+        },
+        cleanerDocuments: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            type: true,
+            status: true,
+            createdAt: true,
+            verifiedAt: true,
+          },
+        },
+        _count: {
+          select: {
+            bookingsAsCustomer: true,
+            bookingsAsCleaner: true,
+            reviewsReceived: true,
+            reviewsGiven: true,
+            messagesSent: true,
+            messagesReceived: true,
+            properties: true,
+            favoriteCleaners: true,
+            favoritedBy: true,
           },
         },
       },

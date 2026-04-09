@@ -46,6 +46,21 @@ import {
   Pencil,
   Mail,
   Send,
+  MapPin,
+  Globe,
+  Phone,
+  Smartphone,
+  Monitor,
+  Laptop,
+  Tablet,
+  Wifi,
+  CreditCard,
+  Building2,
+  Heart,
+  MessageSquare,
+  Activity,
+  Wallet,
+  Bitcoin,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -143,6 +158,45 @@ interface User {
 }
 
 interface UserDetails extends User {
+  latitude: number | null;
+  longitude: number | null;
+  locationCity: string | null;
+  locationCountry: string | null;
+  locationVerifiedAt: string | null;
+  lastKnownIp: string | null;
+  preferredLanguage: string;
+  emailVerified: string | null;
+  phoneVerified: string | null;
+  updatedAt: string;
+  workerProfile: {
+    id: string;
+    bio: string | null;
+    hourlyRate: number;
+    currency: string;
+    experienceYears: number;
+    verified: boolean;
+    isActive: boolean;
+    onboardingComplete: boolean;
+    availableNow: boolean;
+    ecoFriendly: boolean;
+    petFriendly: boolean;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    country: string | null;
+    serviceRadius: number;
+    timezone: string;
+    paypalEmail: string | null;
+    iban: string | null;
+    accountHolder: string | null;
+    stripeAccountId: string | null;
+    stripeOnboardingComplete: boolean;
+    totalBookings: number;
+    averageRating: number;
+    responseTime: number | null;
+    services: Array<{ service: { id: string; name: string } }>;
+    cryptoWallets: Array<{ id: string; currency: string; address: string }>;
+  } | null;
   bookingsAsCustomer: Array<{
     id: string;
     scheduledDate: string;
@@ -166,6 +220,72 @@ interface UserDetails extends User {
     createdAt: string;
     reviewer: { firstName: string; lastName: string };
   }>;
+  reviewsGiven: Array<{
+    id: string;
+    rating: number;
+    comment: string | null;
+    createdAt: string;
+    reviewee: { firstName: string; lastName: string };
+  }>;
+  userSessions: Array<{
+    id: string;
+    ip: string | null;
+    userAgent: string | null;
+    country: string | null;
+    city: string | null;
+    lastActiveAt: string;
+    createdAt: string;
+    isValid: boolean;
+  }>;
+  userDevices: Array<{
+    id: string;
+    name: string | null;
+    browser: string | null;
+    os: string | null;
+    deviceType: string | null;
+    isTrusted: boolean;
+    lastSeenAt: string;
+    lastIp: string | null;
+    lastCountry: string | null;
+    createdAt: string;
+  }>;
+  properties: Array<{
+    id: string;
+    name: string;
+    address: string;
+    city: string | null;
+    isDefault: boolean;
+  }>;
+  disputesAsCustomer: Array<{
+    id: string;
+    status: string;
+    subject: string;
+    createdAt: string;
+  }>;
+  disputesAsCleaner: Array<{
+    id: string;
+    status: string;
+    subject: string;
+    createdAt: string;
+  }>;
+  cleanerDocuments: Array<{
+    id: string;
+    type: string;
+    status: string;
+    createdAt: string;
+    verifiedAt: string | null;
+  }>;
+  _count: {
+    bookingsAsCustomer: number;
+    bookingsAsCleaner: number;
+    reviewsReceived: number;
+    reviewsGiven: number;
+    messagesSent: number;
+    messagesReceived: number;
+    properties: number;
+    favoriteCleaners: number;
+    favoritedBy: number;
+  };
 }
 
 interface AuditLog {
@@ -3750,7 +3870,7 @@ export default function AdminPage() {
 
       {/* User Details Modal */}
       <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>{t("admin.userDetails")}</DialogTitle>
             <DialogDescription>
@@ -3758,107 +3878,552 @@ export default function AdminPage() {
             </DialogDescription>
           </DialogHeader>
           {userDetails && (
-            <div className="space-y-4">
-              {/* User Info */}
-              <div className="flex items-center gap-4">
+            <div className="flex-1 overflow-hidden">
+              {/* User Header */}
+              <div className="flex items-center gap-4 mb-4 pb-4 border-b">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={userDetails.avatar || undefined} />
                   <AvatarFallback className="text-lg">
                     {userDetails.firstName[0]}{userDetails.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <h3 className="text-lg font-semibold">
-                    {userDetails.firstName} {userDetails.lastName}
-                  </h3>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-lg font-semibold">
+                      {userDetails.firstName} {userDetails.lastName}
+                    </h3>
+                    <Badge variant={getStatusBadgeVariant(userDetails.status)}>
+                      {userDetails.status}
+                    </Badge>
+                    <Badge variant={userDetails.role === "ADMIN" ? "destructive" : "default"}>
+                      {userDetails.role}
+                    </Badge>
+                    {userDetails.role === "WORKER" && userDetails.workerProfile?.verified && (
+                      <Badge className="bg-green-100 text-green-700">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground">{userDetails.email}</p>
                   {userDetails.phone && (
-                    <p className="text-sm text-muted-foreground">{userDetails.phone}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Status & Role */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">{t("admin.status")}</p>
-                  <Badge variant={getStatusBadgeVariant(userDetails.status)}>
-                    {userDetails.status}
-                  </Badge>
-                  {userDetails.suspendedReason && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t("admin.reason")}: {userDetails.suspendedReason}
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Phone className="h-3 w-3" /> {userDetails.phone}
                     </p>
                   )}
                 </div>
-                <div className="p-3 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">{t("admin.role")}</p>
-                  <Badge variant={userDetails.role === "ADMIN" ? "destructive" : "default"}>
-                    {userDetails.role === "WORKER" ? "WORKER" : userDetails.role}
-                  </Badge>
+                <div className="text-right text-sm">
+                  <p className="text-muted-foreground">ID: <span className="font-mono text-xs">{userDetails.id}</span></p>
+                  <p className="text-muted-foreground">Joined: {new Date(userDetails.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
 
-              {/* Registration Date */}
-              <div className="p-3 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-1">{t("admin.registeredOn")}</p>
-                <p className="font-medium">{new Date(userDetails.createdAt).toLocaleDateString()}</p>
-              </div>
+              {/* Tabbed Content */}
+              <Tabs defaultValue="overview" className="flex-1">
+                <TabsList className="mb-4 flex-wrap h-auto">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="activity">Activity</TabsTrigger>
+                  {userDetails.role === "WORKER" && <TabsTrigger value="worker">Worker Profile</TabsTrigger>}
+                  <TabsTrigger value="sessions">Sessions & Devices</TabsTrigger>
+                  <TabsTrigger value="security">Security</TabsTrigger>
+                </TabsList>
 
-              {/* Recent Bookings */}
-              {(userDetails.bookingsAsCustomer.length > 0 || userDetails.bookingsAsCleaner.length > 0) && (
-                <div className="p-3 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-2">{t("admin.recentBookings")}</p>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {[...userDetails.bookingsAsCustomer, ...userDetails.bookingsAsCleaner]
-                      .slice(0, 5)
-                      .map((booking) => (
-                        <div key={booking.id} className="flex justify-between text-sm">
-                          <span>{booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}</span>
-                          <span className="text-muted-foreground">
-                            ${booking.totalPrice} - {booking.status}
-                          </span>
+                <div className="overflow-y-auto max-h-[50vh] pr-2">
+                  {/* Overview Tab */}
+                  <TabsContent value="overview" className="space-y-4 mt-0">
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="p-3 border rounded-lg text-center">
+                        <Calendar className="h-5 w-5 mx-auto text-blue-500 mb-1" />
+                        <p className="text-2xl font-bold">{userDetails._count.bookingsAsCustomer + userDetails._count.bookingsAsCleaner}</p>
+                        <p className="text-xs text-muted-foreground">Total Bookings</p>
+                      </div>
+                      <div className="p-3 border rounded-lg text-center">
+                        <Star className="h-5 w-5 mx-auto text-yellow-500 mb-1" />
+                        <p className="text-2xl font-bold">{userDetails._count.reviewsReceived}</p>
+                        <p className="text-xs text-muted-foreground">Reviews Received</p>
+                      </div>
+                      <div className="p-3 border rounded-lg text-center">
+                        <MessageSquare className="h-5 w-5 mx-auto text-green-500 mb-1" />
+                        <p className="text-2xl font-bold">{userDetails._count.messagesSent + userDetails._count.messagesReceived}</p>
+                        <p className="text-xs text-muted-foreground">Messages</p>
+                      </div>
+                      <div className="p-3 border rounded-lg text-center">
+                        <Building2 className="h-5 w-5 mx-auto text-purple-500 mb-1" />
+                        <p className="text-2xl font-bold">{userDetails._count.properties}</p>
+                        <p className="text-xs text-muted-foreground">Properties</p>
+                      </div>
+                    </div>
+
+                    {/* Contact & Location */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-3 border rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <Mail className="h-4 w-4" /> Contact Info
+                        </h4>
+                        <div className="space-y-1 text-sm">
+                          <p><span className="text-muted-foreground">Email:</span> {userDetails.email}</p>
+                          <p><span className="text-muted-foreground">Verified:</span> {userDetails.emailVerified ? new Date(userDetails.emailVerified).toLocaleDateString() : "No"}</p>
+                          {userDetails.phone && (
+                            <>
+                              <p><span className="text-muted-foreground">Phone:</span> {userDetails.phone}</p>
+                              <p><span className="text-muted-foreground">Verified:</span> {userDetails.phoneVerified ? new Date(userDetails.phoneVerified).toLocaleDateString() : "No"}</p>
+                            </>
+                          )}
+                          <p><span className="text-muted-foreground">Language:</span> {userDetails.preferredLanguage.toUpperCase()}</p>
                         </div>
-                      ))}
-                  </div>
-                </div>
-              )}
+                      </div>
+                      <div className="p-3 border rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <MapPin className="h-4 w-4" /> Location
+                        </h4>
+                        <div className="space-y-1 text-sm">
+                          {userDetails.locationCity || userDetails.locationCountry ? (
+                            <>
+                              <p><span className="text-muted-foreground">City:</span> {userDetails.locationCity || "N/A"}</p>
+                              <p><span className="text-muted-foreground">Country:</span> {userDetails.locationCountry || "N/A"}</p>
+                              {userDetails.latitude && userDetails.longitude && (
+                                <p><span className="text-muted-foreground">Coords:</span> {userDetails.latitude.toFixed(4)}, {userDetails.longitude.toFixed(4)}</p>
+                              )}
+                              <p><span className="text-muted-foreground">Verified:</span> {userDetails.locationVerifiedAt ? new Date(userDetails.locationVerifiedAt).toLocaleDateString() : "No"}</p>
+                            </>
+                          ) : (
+                            <p className="text-muted-foreground">No location data</p>
+                          )}
+                          {userDetails.lastKnownIp && (
+                            <p><span className="text-muted-foreground">Last IP:</span> <span className="font-mono text-xs">{userDetails.lastKnownIp}</span></p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
-              {/* Recent Reviews */}
-              {userDetails.reviewsReceived.length > 0 && (
-                <div className="p-3 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-2">{t("admin.recentReviews")}</p>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {userDetails.reviewsReceived.map((review) => (
-                      <div key={review.id} className="text-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-3 w-3 ${
-                                  i < review.rating
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-gray-300"
-                                }`}
-                              />
+                    {/* Properties */}
+                    {userDetails.properties.length > 0 && (
+                      <div className="p-3 border rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <Building2 className="h-4 w-4" /> Properties
+                        </h4>
+                        <div className="space-y-2">
+                          {userDetails.properties.map((property) => (
+                            <div key={property.id} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+                              <div>
+                                <span className="font-medium">{property.name}</span>
+                                {property.isDefault && <Badge className="ml-2 text-xs">Default</Badge>}
+                                <p className="text-xs text-muted-foreground">{property.address}{property.city ? `, ${property.city}` : ""}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Status Info */}
+                    {userDetails.status !== "ACTIVE" && (
+                      <div className="p-3 border border-orange-200 bg-orange-50 rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2 text-orange-800">
+                          <AlertTriangle className="h-4 w-4" /> Account {userDetails.status}
+                        </h4>
+                        <div className="space-y-1 text-sm text-orange-700">
+                          {userDetails.suspendedReason && (
+                            <p><span className="font-medium">Reason:</span> {userDetails.suspendedReason}</p>
+                          )}
+                          {userDetails.suspendedUntil && (
+                            <p><span className="font-medium">Until:</span> {new Date(userDetails.suspendedUntil).toLocaleString()}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* Activity Tab */}
+                  <TabsContent value="activity" className="space-y-4 mt-0">
+                    {/* Recent Bookings */}
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <Calendar className="h-4 w-4" /> Recent Bookings
+                      </h4>
+                      {(userDetails.bookingsAsCustomer.length > 0 || userDetails.bookingsAsCleaner.length > 0) ? (
+                        <div className="space-y-2 max-h-40 overflow-y-auto">
+                          {[...userDetails.bookingsAsCustomer.map(b => ({...b, type: "customer" as const})),
+                            ...userDetails.bookingsAsCleaner.map(b => ({...b, type: "worker" as const}))]
+                            .sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime())
+                            .slice(0, 10)
+                            .map((booking) => (
+                              <div key={booking.id} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+                                <div>
+                                  <span className="font-medium">{booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}</span>
+                                  <Badge className="ml-2 text-xs" variant="outline">{booking.type}</Badge>
+                                  <p className="text-xs text-muted-foreground">
+                                    {new Date(booking.scheduledDate).toLocaleDateString()} -
+                                    {booking.type === "customer"
+                                      ? ` with ${(booking as typeof userDetails.bookingsAsCustomer[0]).cleaner.firstName}`
+                                      : ` for ${(booking as typeof userDetails.bookingsAsCleaner[0]).customer.firstName}`}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <Badge variant={booking.status === "COMPLETED" ? "default" : booking.status === "CANCELLED" ? "destructive" : "secondary"}>
+                                    {booking.status}
+                                  </Badge>
+                                  <p className="text-sm font-medium">${booking.totalPrice}</p>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No bookings yet</p>
+                      )}
+                    </div>
+
+                    {/* Reviews */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-3 border rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <Star className="h-4 w-4" /> Reviews Received ({userDetails._count.reviewsReceived})
+                        </h4>
+                        {userDetails.reviewsReceived.length > 0 ? (
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {userDetails.reviewsReceived.map((review) => (
+                              <div key={review.id} className="text-sm p-2 bg-gray-50 rounded">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} className={`h-3 w-3 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                                    ))}
+                                  </div>
+                                  <span className="text-muted-foreground text-xs">by {review.reviewer.firstName}</span>
+                                </div>
+                                {review.comment && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{review.comment}</p>}
+                              </div>
                             ))}
                           </div>
-                          <span className="text-muted-foreground">
-                            {review.reviewer.firstName} {review.reviewer.lastName}
-                          </span>
-                        </div>
-                        {review.comment && (
-                          <p className="text-xs text-muted-foreground mt-1">{review.comment}</p>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">No reviews received</p>
                         )}
                       </div>
-                    ))}
-                  </div>
+                      <div className="p-3 border rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <Star className="h-4 w-4" /> Reviews Given ({userDetails._count.reviewsGiven})
+                        </h4>
+                        {userDetails.reviewsGiven.length > 0 ? (
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {userDetails.reviewsGiven.map((review) => (
+                              <div key={review.id} className="text-sm p-2 bg-gray-50 rounded">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} className={`h-3 w-3 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                                    ))}
+                                  </div>
+                                  <span className="text-muted-foreground text-xs">to {review.reviewee.firstName}</span>
+                                </div>
+                                {review.comment && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{review.comment}</p>}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">No reviews given</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Disputes */}
+                    {(userDetails.disputesAsCustomer.length > 0 || userDetails.disputesAsCleaner.length > 0) && (
+                      <div className="p-3 border border-red-200 bg-red-50 rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2 text-red-800">
+                          <AlertTriangle className="h-4 w-4" /> Disputes
+                        </h4>
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          {[...userDetails.disputesAsCustomer.map(d => ({...d, role: "customer"})),
+                            ...userDetails.disputesAsCleaner.map(d => ({...d, role: "worker"}))]
+                            .map((dispute) => (
+                              <div key={dispute.id} className="flex justify-between text-sm p-2 bg-white rounded">
+                                <div>
+                                  <span className="font-medium">{dispute.subject}</span>
+                                  <Badge className="ml-2 text-xs" variant="outline">{dispute.role}</Badge>
+                                </div>
+                                <Badge variant={dispute.status === "RESOLVED" ? "default" : "secondary"}>
+                                  {dispute.status}
+                                </Badge>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* Worker Profile Tab */}
+                  {userDetails.role === "WORKER" && userDetails.workerProfile && (
+                    <TabsContent value="worker" className="space-y-4 mt-0">
+                      {/* Worker Stats */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="p-3 border rounded-lg text-center">
+                          <Star className="h-5 w-5 mx-auto text-yellow-500 mb-1" />
+                          <p className="text-2xl font-bold">{userDetails.workerProfile.averageRating.toFixed(1)}</p>
+                          <p className="text-xs text-muted-foreground">Rating</p>
+                        </div>
+                        <div className="p-3 border rounded-lg text-center">
+                          <Calendar className="h-5 w-5 mx-auto text-blue-500 mb-1" />
+                          <p className="text-2xl font-bold">{userDetails.workerProfile.totalBookings}</p>
+                          <p className="text-xs text-muted-foreground">Jobs Done</p>
+                        </div>
+                        <div className="p-3 border rounded-lg text-center">
+                          <DollarSign className="h-5 w-5 mx-auto text-green-500 mb-1" />
+                          <p className="text-2xl font-bold">{userDetails.workerProfile.currency} {userDetails.workerProfile.hourlyRate}</p>
+                          <p className="text-xs text-muted-foreground">Hourly Rate</p>
+                        </div>
+                        <div className="p-3 border rounded-lg text-center">
+                          <Heart className="h-5 w-5 mx-auto text-red-500 mb-1" />
+                          <p className="text-2xl font-bold">{userDetails._count.favoritedBy}</p>
+                          <p className="text-xs text-muted-foreground">Favorites</p>
+                        </div>
+                      </div>
+
+                      {/* Profile Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-3 border rounded-lg">
+                          <h4 className="font-medium mb-2">Profile Details</h4>
+                          <div className="space-y-1 text-sm">
+                            <p><span className="text-muted-foreground">Experience:</span> {userDetails.workerProfile.experienceYears} years</p>
+                            <p><span className="text-muted-foreground">Timezone:</span> {userDetails.workerProfile.timezone}</p>
+                            <p><span className="text-muted-foreground">Service Radius:</span> {userDetails.workerProfile.serviceRadius} km</p>
+                            {userDetails.workerProfile.responseTime && (
+                              <p><span className="text-muted-foreground">Response Time:</span> {userDetails.workerProfile.responseTime} min</p>
+                            )}
+                            <div className="flex gap-2 mt-2 flex-wrap">
+                              {userDetails.workerProfile.verified && <Badge className="bg-green-100 text-green-700">Verified</Badge>}
+                              {userDetails.workerProfile.isActive && <Badge className="bg-blue-100 text-blue-700">Active</Badge>}
+                              {userDetails.workerProfile.availableNow && <Badge className="bg-purple-100 text-purple-700">Available Now</Badge>}
+                              {userDetails.workerProfile.ecoFriendly && <Badge className="bg-green-100 text-green-700">Eco-Friendly</Badge>}
+                              {userDetails.workerProfile.petFriendly && <Badge className="bg-orange-100 text-orange-700">Pet-Friendly</Badge>}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-3 border rounded-lg">
+                          <h4 className="font-medium mb-2">Service Area</h4>
+                          <div className="space-y-1 text-sm">
+                            {userDetails.workerProfile.address && <p>{userDetails.workerProfile.address}</p>}
+                            <p>
+                              {[userDetails.workerProfile.city, userDetails.workerProfile.state, userDetails.workerProfile.country]
+                                .filter(Boolean).join(", ") || "Not specified"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Services */}
+                      {userDetails.workerProfile.services.length > 0 && (
+                        <div className="p-3 border rounded-lg">
+                          <h4 className="font-medium mb-2">Services Offered</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {userDetails.workerProfile.services.map((s) => (
+                              <Badge key={s.service.id} variant="secondary">
+                                {SERVICE_NAMES[s.service.name] || s.service.name}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Bio */}
+                      {userDetails.workerProfile.bio && (
+                        <div className="p-3 border rounded-lg">
+                          <h4 className="font-medium mb-2">Bio</h4>
+                          <p className="text-sm text-muted-foreground">{userDetails.workerProfile.bio}</p>
+                        </div>
+                      )}
+
+                      {/* Payment Info */}
+                      <div className="p-3 border rounded-lg">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <Wallet className="h-4 w-4" /> Payment Information
+                        </h4>
+                        <div className="space-y-1 text-sm">
+                          <p><span className="text-muted-foreground">PayPal:</span> {userDetails.workerProfile.paypalEmail || "Not set"}</p>
+                          <p><span className="text-muted-foreground">IBAN:</span> {userDetails.workerProfile.iban ? `****${userDetails.workerProfile.iban.slice(-4)}` : "Not set"}</p>
+                          <p><span className="text-muted-foreground">Stripe Connected:</span> {userDetails.workerProfile.stripeOnboardingComplete ? "Yes" : "No"}</p>
+                          {userDetails.workerProfile.cryptoWallets.length > 0 && (
+                            <div className="mt-2">
+                              <p className="text-muted-foreground mb-1">Crypto Wallets:</p>
+                              {userDetails.workerProfile.cryptoWallets.map((wallet) => (
+                                <p key={wallet.id} className="font-mono text-xs">
+                                  <Badge variant="outline" className="mr-2">{wallet.currency}</Badge>
+                                  {wallet.address.slice(0, 10)}...{wallet.address.slice(-8)}
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Documents */}
+                      {userDetails.cleanerDocuments.length > 0 && (
+                        <div className="p-3 border rounded-lg">
+                          <h4 className="font-medium mb-2 flex items-center gap-2">
+                            <FileText className="h-4 w-4" /> Documents
+                          </h4>
+                          <div className="space-y-2">
+                            {userDetails.cleanerDocuments.map((doc) => (
+                              <div key={doc.id} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+                                <span>{doc.type}</span>
+                                <Badge variant={doc.status === "VERIFIED" ? "default" : doc.status === "REJECTED" ? "destructive" : "secondary"}>
+                                  {doc.status}
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </TabsContent>
+                  )}
+
+                  {/* Sessions & Devices Tab */}
+                  <TabsContent value="sessions" className="space-y-4 mt-0">
+                    {/* Active Sessions */}
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <Wifi className="h-4 w-4" /> Active Sessions
+                      </h4>
+                      {userDetails.userSessions.length > 0 ? (
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {userDetails.userSessions.map((session) => (
+                            <div key={session.id} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <Globe className="h-4 w-4 text-muted-foreground" />
+                                  <span>{session.city || "Unknown"}, {session.country || "Unknown"}</span>
+                                  {session.isValid ? (
+                                    <Badge className="bg-green-100 text-green-700 text-xs">Active</Badge>
+                                  ) : (
+                                    <Badge className="bg-red-100 text-red-700 text-xs">Revoked</Badge>
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  IP: <span className="font-mono">{session.ip || "Unknown"}</span>
+                                </p>
+                                <p className="text-xs text-muted-foreground line-clamp-1">
+                                  {session.userAgent || "Unknown browser"}
+                                </p>
+                              </div>
+                              <div className="text-right text-xs text-muted-foreground">
+                                <p>Last active: {new Date(session.lastActiveAt).toLocaleString()}</p>
+                                <p>Created: {new Date(session.createdAt).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No session data</p>
+                      )}
+                    </div>
+
+                    {/* Known Devices */}
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <Smartphone className="h-4 w-4" /> Known Devices
+                      </h4>
+                      {userDetails.userDevices.length > 0 ? (
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {userDetails.userDevices.map((device) => (
+                            <div key={device.id} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+                              <div className="flex items-center gap-2">
+                                {device.deviceType === "mobile" ? <Smartphone className="h-4 w-4" /> :
+                                 device.deviceType === "tablet" ? <Tablet className="h-4 w-4" /> :
+                                 <Monitor className="h-4 w-4" />}
+                                <div>
+                                  <p className="font-medium">{device.name || `${device.browser} on ${device.os}`}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {device.lastCountry || "Unknown"} - <span className="font-mono">{device.lastIp || "Unknown IP"}</span>
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                {device.isTrusted && <Badge className="bg-green-100 text-green-700 text-xs">Trusted</Badge>}
+                                <p className="text-xs text-muted-foreground">Last seen: {new Date(device.lastSeenAt).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No device data</p>
+                      )}
+                    </div>
+                  </TabsContent>
+
+                  {/* Security Tab */}
+                  <TabsContent value="security" className="space-y-4 mt-0">
+                    {/* Account Status */}
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <Shield className="h-4 w-4" /> Account Security
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Account Status</span>
+                          <Badge variant={getStatusBadgeVariant(userDetails.status)}>{userDetails.status}</Badge>
+                        </div>
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Email Verified</span>
+                          <Badge variant={userDetails.emailVerified ? "default" : "secondary"}>
+                            {userDetails.emailVerified ? "Yes" : "No"}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Phone Verified</span>
+                          <Badge variant={userDetails.phoneVerified ? "default" : "secondary"}>
+                            {userDetails.phoneVerified ? "Yes" : "No"}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Location Verified</span>
+                          <Badge variant={userDetails.locationVerifiedAt ? "default" : "secondary"}>
+                            {userDetails.locationVerifiedAt ? "Yes" : "No"}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Active Sessions</span>
+                          <span className="font-medium">{userDetails.userSessions.filter(s => s.isValid).length}</span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Known Devices</span>
+                          <span className="font-medium">{userDetails.userDevices.length}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Timestamps */}
+                    <div className="p-3 border rounded-lg">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <Clock className="h-4 w-4" /> Account Timeline
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Account Created</span>
+                          <span>{new Date(userDetails.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span>Last Updated</span>
+                          <span>{new Date(userDetails.updatedAt).toLocaleString()}</span>
+                        </div>
+                        {userDetails.emailVerified && (
+                          <div className="flex justify-between p-2 bg-gray-50 rounded">
+                            <span>Email Verified</span>
+                            <span>{new Date(userDetails.emailVerified).toLocaleString()}</span>
+                          </div>
+                        )}
+                        {userDetails.locationVerifiedAt && (
+                          <div className="flex justify-between p-2 bg-gray-50 rounded">
+                            <span>Location Verified</span>
+                            <span>{new Date(userDetails.locationVerifiedAt).toLocaleString()}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </TabsContent>
                 </div>
-              )}
+              </Tabs>
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setUserDetailsOpen(false)}>
               {t("common.close")}
             </Button>
