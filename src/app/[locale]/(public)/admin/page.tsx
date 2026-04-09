@@ -1955,7 +1955,7 @@ export default function AdminPage() {
                                 />
                               )}
                               {user.id === session?.user?.id && (
-                                <div className="w-4" /> // Placeholder for alignment
+                                <div className="w-4" />
                               )}
                               <Avatar>
                                 <AvatarImage src={user.avatar || undefined} />
