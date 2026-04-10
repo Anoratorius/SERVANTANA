@@ -2,6 +2,61 @@
 
 Marketplace for finding and booking professional services. Built with Next.js 16, React 19, TypeScript, Prisma ORM, Neon PostgreSQL.
 
+## Project Philosophy
+
+**We never look for easy or fast solutions. We must find the best solution.**
+
+**Goal: Build the best service marketplace app in the world.**
+
+## Platform Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│             BACKEND: Next.js API Routes                 │
+│         (AI, database, auth, payments)                  │
+└───────────────┬─────────────────────┬───────────────────┘
+                │                     │
+       ┌────────▼────────┐   ┌────────▼────────┐
+       │  Android App    │   │    iOS App      │
+       │  Kotlin +       │   │   Swift +       │
+       │  Jetpack        │   │   SwiftUI       │
+       │  Compose        │   │                 │
+       └─────────────────┘   └─────────────────┘
+```
+
+## Mobile Apps
+
+- **Android:** Kotlin + Jetpack Compose (native)
+- **iOS:** Swift + SwiftUI (native)
+- Both consume Next.js API routes
+- No cross-platform shortcuts - true native for best UX
+
+## AI Features (8 Total)
+
+### Core AI
+1. **AI Chat Assistant** - Claude-powered booking help, Q&A, support
+2. **Smart Matching** - 10-factor weighted scoring (rating, experience, distance, price, availability, preferences, reliability, verification, response time, repeat customer)
+3. **Photo Analysis** - Computer vision for before/after cleanliness verification
+4. **Smart Scheduling** - AI time slots with demand forecasting and dynamic pricing
+5. **Review Insights** - NLP sentiment analysis, theme extraction, trust scoring
+
+### Advanced AI
+6. **AI Price Estimator** - Customer uploads photos → AI estimates job size, duration, price
+7. **Fraud & Safety AI** - Detect fake reviews, suspicious accounts, unusual patterns
+8. **Route Optimization** - Workers with multiple bookings get optimal daily route
+
+### AI API Endpoints (to build)
+```
+/api/ai/chat           → Claude assistant
+/api/ai/smart-match    → 10-factor matching
+/api/ai/photo          → Before/after analysis
+/api/ai/schedule       → Demand forecasting
+/api/ai/reviews        → NLP sentiment
+/api/ai/estimate       → Photo-based pricing
+/api/ai/safety         → Fraud detection
+/api/ai/route          → Route optimization
+```
+
 ## Commands
 
 ```bash
