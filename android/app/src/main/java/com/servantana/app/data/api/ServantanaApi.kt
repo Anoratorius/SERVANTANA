@@ -130,4 +130,8 @@ interface ServantanaApi {
 
     @POST("auth/change-password")
     suspend fun changePassword(@Body request: ChangePasswordRequest): ApiResponse
+
+    // ==================== Payments ====================
+    @POST("payments/mobile/create-intent")
+    suspend fun createPaymentIntent(@Body request: PaymentIntentRequest): PaymentIntentResponse
 }

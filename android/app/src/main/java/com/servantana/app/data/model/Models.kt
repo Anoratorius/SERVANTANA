@@ -360,3 +360,17 @@ data class ChangePasswordRequest(
     val currentPassword: String,
     val newPassword: String
 )
+
+// ==================== Payments ====================
+@Serializable
+data class PaymentIntentRequest(
+    val bookingId: String
+)
+
+@Serializable
+data class PaymentIntentResponse(
+    val paymentIntent: String,
+    val ephemeralKey: String,
+    val customer: String,
+    val publishableKey: String
+)

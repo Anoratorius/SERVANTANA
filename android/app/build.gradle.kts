@@ -119,4 +119,7 @@ dependencies {
 
     // Accompanist
     implementation(libs.accompanist.permissions)
+
+    // Payments
+    implementation(libs.stripe.android)
 }

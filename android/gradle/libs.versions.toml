@@ -23,6 +23,7 @@ playServicesMaps = "19.0.0"
 mapsCompose = "6.2.1"
 camerax = "1.4.0"
 splashscreen = "1.0.1"
+stripe = "21.7.0"
 
 [libraries]
 # Core Android
@@ -88,6 +89,9 @@ camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = 
 
 # Accompanist
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+
+# Payments
+stripe-android = { group = "com.stripe", name = "stripe-android", version.ref = "stripe" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
