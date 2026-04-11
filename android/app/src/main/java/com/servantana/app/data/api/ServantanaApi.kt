@@ -134,4 +134,11 @@ interface ServantanaApi {
     // ==================== Payments ====================
     @POST("payments/mobile/create-intent")
     suspend fun createPaymentIntent(@Body request: PaymentIntentRequest): PaymentIntentResponse
+
+    // ==================== Push Notifications ====================
+    @POST("user/notifications/push/mobile")
+    suspend fun registerDeviceToken(@Body request: com.servantana.app.service.RegisterTokenRequest): com.servantana.app.service.RegisterTokenResponse
+
+    @DELETE("user/notifications/push/mobile")
+    suspend fun unregisterDeviceToken(@Query("token") token: String): ApiResponse
 }

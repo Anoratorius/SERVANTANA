@@ -24,6 +24,8 @@ mapsCompose = "6.2.1"
 camerax = "1.4.0"
 splashscreen = "1.0.1"
 stripe = "21.7.0"
+firebaseBom = "33.7.0"
+googleServices = "4.4.2"
 
 [libraries]
 # Core Android
@@ -93,6 +95,11 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 # Payments
 stripe-android = { group = "com.stripe", name = "stripe-android", version.ref = "stripe" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -100,3 +107,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }

@@ -8,6 +8,7 @@ import { NotificationType, NotificationChannel } from "@prisma/client";
 import { getNotificationTemplate } from "./templates";
 import { sendSMSWithTemplate } from "./sms";
 import { sendPushNotification, PushPayload } from "./push";
+import { sendFCMNotification } from "./fcm";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -121,6 +122,7 @@ export async function sendNotification(
       },
     };
 
+    // Send web push (browsers)
     sendPromises.push(
       sendPushNotification(userId, pushPayload)
         .then((res) => {
@@ -131,6 +133,26 @@ export async function sendNotification(
         })
         .catch((error) => {
           result.channels.push = { sent: false, error: error.message };
+        })
+    );
+
+    // Send FCM (mobile apps)
+    const fcmData: Record<string, string> = {
+      type,
+      ...(options?.actionUrl && { url: options.actionUrl }),
+      ...(data.bookingId && { bookingId: data.bookingId }),
+    };
+
+    sendPromises.push(
+      sendFCMNotification(userId, { title, body, data: fcmData })
+        .then((res) => {
+          // Merge with web push result
+          if (result.channels.push) {
+            result.channels.push.sent = result.channels.push.sent || res.success;
+          }
+        })
+        .catch(() => {
+          // FCM errors don't override web push success
         })
     );
   }

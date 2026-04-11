@@ -243,6 +243,7 @@ model User {
   // Notification relations
   notificationPreferences NotificationPreference[] @relation("NotificationPreferences")
   pushSubscriptions       PushSubscription[] @relation("PushSubscriptions")
+  mobileDeviceTokens      MobileDeviceToken[] @relation("MobileDeviceTokens")
   notificationLogs        NotificationLog[] @relation("NotificationLogs")
   reminderPreference      ReminderPreference? @relation("ReminderPreferences")
   bookingReminders        BookingReminder[] @relation("BookingReminders")
@@ -855,6 +856,24 @@ model PushSubscription {
   user        User     @relation("PushSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model MobileDeviceToken {
+  id          String    @id @default(cuid())
+  userId      String
+  token       String    @unique
+  platform    String    // "ios" or "android"
+  deviceName  String?
+  deviceModel String?
+  appVersion  String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation("MobileDeviceTokens", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
 }
 
 model NotificationLog {
