@@ -15,6 +15,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.servantana.app.ui.components.BottomNavBar
 import com.servantana.app.ui.screens.ai.AIChatScreen
+import com.servantana.app.ui.screens.ai.PhotoAnalysisScreen
 import com.servantana.app.ui.screens.ai.ReviewInsightsScreen
 import com.servantana.app.ui.screens.ai.SmartMatchScreen
 import com.servantana.app.ui.screens.ai.SmartScheduleScreen
@@ -394,6 +395,13 @@ fun ServantanaNavHost(
                     onReviewSubmitted = {
                         navController.popBackStack()
                     }
+                )
+            }
+
+            // Photo Analysis
+            composable<PhotoAnalysis> {
+                PhotoAnalysisScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }

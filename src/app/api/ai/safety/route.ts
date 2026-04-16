@@ -17,7 +17,7 @@ interface SafetyReport {
   reviewAnalysis: {
     suspiciousReviews: number;
     patterns: string[];
-    authenticitySc: number;
+    authenticityScore: number;
   };
   accountAnalysis: {
     ageInDays: number;
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
     let reviewAnalysis = {
       suspiciousReviews: 0,
       patterns: [] as string[],
-      authenticitySc: 80,
+      authenticityScore: 80,
     };
 
     if (analyzeReviews && user.reviewsReceived.length > 5) {
@@ -272,7 +272,7 @@ Return JSON:
             reviewAnalysis = {
               suspiciousReviews: parsed.suspiciousCount || 0,
               patterns: parsed.patterns || [],
-              authenticitySc: parsed.authenticity || 80,
+              authenticityScore: parsed.authenticity || 80,
             };
 
             if (parsed.suspiciousCount > 0) {

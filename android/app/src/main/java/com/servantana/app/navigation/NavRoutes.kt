@@ -82,6 +82,9 @@ data class ReviewInsights(val workerId: String)
 @Serializable
 data class ReviewSubmission(val bookingId: String)
 
+@Serializable
+object PhotoAnalysis
+
 // Worker Routes (for worker role)
 @Serializable
 object WorkerDashboard

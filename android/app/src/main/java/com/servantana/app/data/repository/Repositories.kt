@@ -373,6 +373,7 @@ interface AIRepository {
         maxDistance: Double
     ): Result<List<SmartMatchResult>>
     suspend fun smartSchedule(date: String, categoryId: String): Result<SmartScheduleResponse>
+    suspend fun analyzePhotos(imageUrls: List<String>, analysisType: String): Result<PhotoAnalysisResponse>
 }
 
 class AIRepositoryImpl @Inject constructor(
@@ -413,6 +414,16 @@ class AIRepositoryImpl @Inject constructor(
         return try {
             val request = SmartScheduleRequest(date = date, professionId = categoryId)
             val response = api.smartSchedule(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun analyzePhotos(imageUrls: List<String>, analysisType: String): Result<PhotoAnalysisResponse> {
+        return try {
+            val request = PhotoAnalysisRequest(imageUrls = imageUrls, analysisType = analysisType)
+            val response = api.analyzePhoto(request)
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)

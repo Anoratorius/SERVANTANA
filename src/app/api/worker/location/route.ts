@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { reverseGeocode } from "@/lib/geocoding";
 
 const updateLocationSchema = z.object({
   latitude: z.number().min(-90).max(90),
@@ -38,8 +39,8 @@ export async function POST(request: NextRequest) {
 
     const { latitude, longitude } = validationResult.data;
 
-    // Reverse geocode to get city/country (simplified - in production use a geocoding service)
-    const locationCity = await reverseGeocodeCity(latitude, longitude);
+    // Reverse geocode to get city/country
+    const locationData = await reverseGeocode(latitude, longitude);
 
     // Update worker profile location
     const profile = await prisma.workerProfile.update({
@@ -56,8 +57,8 @@ export async function POST(request: NextRequest) {
       data: {
         latitude,
         longitude,
-        locationCity: locationCity?.city,
-        locationCountry: locationCity?.country,
+        locationCity: locationData?.city,
+        locationCountry: locationData?.country,
         locationVerifiedAt: new Date(),
       },
     });
@@ -67,8 +68,9 @@ export async function POST(request: NextRequest) {
       location: {
         latitude: profile.latitude,
         longitude: profile.longitude,
-        city: locationCity?.city,
-        country: locationCity?.country,
+        city: locationData?.city,
+        country: locationData?.country,
+        state: locationData?.state,
         updatedAt: new Date().toISOString(),
       },
     });
@@ -139,38 +141,5 @@ export async function GET() {
       { error: "Failed to get location" },
       { status: 500 }
     );
-  }
-}
-
-// Simple reverse geocoding (in production, use a proper service like Google Maps, Mapbox, etc.)
-async function reverseGeocodeCity(
-  latitude: number,
-  longitude: number
-): Promise<{ city: string; country: string } | null> {
-  try {
-    // Using OpenStreetMap Nominatim (free, but rate-limited)
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`,
-      {
-        headers: {
-          "User-Agent": "Servantana App",
-        },
-      }
-    );
-
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    return {
-      city:
-        data.address?.city ||
-        data.address?.town ||
-        data.address?.village ||
-        data.address?.municipality ||
-        "",
-      country: data.address?.country || "",
-    };
-  } catch {
-    return null;
   }
 }
