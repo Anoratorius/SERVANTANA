@@ -2,14 +2,50 @@ import SwiftUI
 import StripePaymentSheet
 
 struct PaymentView: View {
-    let booking: Booking
+    let bookingId: String
     let onPaymentComplete: () -> Void
 
+    @StateObject private var viewModel: PaymentViewModel
     @StateObject private var paymentManager = PaymentManager.shared
     @Environment(\.dismiss) private var dismiss
-    @State private var showingPaymentSheet = false
+
+    init(bookingId: String, onPaymentComplete: @escaping () -> Void) {
+        self.bookingId = bookingId
+        self.onPaymentComplete = onPaymentComplete
+        _viewModel = StateObject(wrappedValue: PaymentViewModel(bookingId: bookingId))
+    }
 
     var body: some View {
+        NavigationStack {
+            Group {
+                if viewModel.isLoading {
+                    ProgressView("Loading...")
+                } else if let booking = viewModel.booking {
+                    paymentContent(booking: booking)
+                } else if let error = viewModel.error {
+                    VStack(spacing: 16) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.largeTitle)
+                            .foregroundStyle(.red)
+                        Text(error)
+                            .foregroundStyle(.secondary)
+                        Button("Retry") {
+                            Task { await viewModel.loadBooking() }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Payment")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func paymentContent(booking: Booking) -> some View {
         VStack(spacing: 24) {
             // Booking Summary
             VStack(spacing: 16) {
@@ -21,22 +57,31 @@ struct PaymentView: View {
                     HStack {
                         Text("Service")
                         Spacer()
-                        Text(booking.serviceName ?? "Service")
+                        Text(booking.service?.name ?? "Service")
                             .foregroundStyle(.secondary)
                     }
 
                     HStack {
                         Text("Date")
                         Spacer()
-                        Text(booking.scheduledDate, style: .date)
+                        Text(booking.formattedDate)
                             .foregroundStyle(.secondary)
                     }
 
                     HStack {
                         Text("Time")
                         Spacer()
-                        Text(booking.scheduledTime)
+                        Text(booking.formattedTime)
                             .foregroundStyle(.secondary)
+                    }
+
+                    if let worker = booking.cleaner {
+                        HStack {
+                            Text("Worker")
+                            Spacer()
+                            Text("\(worker.firstName) \(worker.lastName)")
+                                .foregroundStyle(.secondary)
+                        }
                     }
 
                     Divider()
@@ -45,10 +90,10 @@ struct PaymentView: View {
                         Text("Total")
                             .font(.headline)
                         Spacer()
-                        Text(formattedPrice)
+                        Text(formattedPrice(booking))
                             .font(.title3)
                             .fontWeight(.bold)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.green)
                     }
                 }
                 .padding()
@@ -77,7 +122,7 @@ struct PaymentView: View {
                                 .tint(.white)
                         } else {
                             Image(systemName: "creditcard.fill")
-                            Text("Pay \(formattedPrice)")
+                            Text("Pay \(formattedPrice(booking))")
                         }
                     }
                     .font(.headline)
@@ -99,20 +144,18 @@ struct PaymentView: View {
             }
             .padding()
         }
-        .navigationTitle("Payment")
-        .navigationBarTitleDisplayMode(.inline)
     }
 
-    private var formattedPrice: String {
+    private func formattedPrice(_ booking: Booking) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = booking.currency
-        return formatter.string(from: NSNumber(value: booking.totalPrice)) ?? "\(booking.currency) \(booking.totalPrice)"
+        return formatter.string(from: NSNumber(value: booking.totalPrice)) ?? "€\(booking.totalPrice)"
     }
 
     private func initiatePayment() async {
         // Prepare payment
-        let prepared = await paymentManager.preparePayment(for: booking.id)
+        let prepared = await paymentManager.preparePayment(for: bookingId)
         guard prepared else { return }
 
         // Get the root view controller
@@ -133,23 +176,36 @@ struct PaymentView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        PaymentView(
-            booking: Booking(
-                id: "1",
-                customerId: "c1",
-                cleanerId: "w1",
-                status: .pending,
-                scheduledDate: Date(),
-                scheduledTime: "10:00",
-                duration: 2,
-                totalPrice: 80,
-                currency: "EUR",
-                address: "123 Main St",
-                createdAt: Date()
-            ),
-            onPaymentComplete: {}
-        )
+// MARK: - Payment ViewModel
+
+@MainActor
+class PaymentViewModel: ObservableObject {
+    @Published var booking: Booking?
+    @Published var isLoading = false
+    @Published var error: String?
+
+    private let bookingId: String
+
+    init(bookingId: String) {
+        self.bookingId = bookingId
+        Task { await loadBooking() }
     }
+
+    func loadBooking() async {
+        isLoading = true
+        error = nil
+
+        do {
+            let response = try await APIClient.shared.getBooking(id: bookingId)
+            booking = response.booking
+        } catch {
+            self.error = error.localizedDescription
+        }
+
+        isLoading = false
+    }
+}
+
+#Preview {
+    PaymentView(bookingId: "1") {}
 }

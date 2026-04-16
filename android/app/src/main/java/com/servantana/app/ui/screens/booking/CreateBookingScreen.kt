@@ -30,16 +30,27 @@ import java.time.format.DateTimeFormatter
 fun CreateBookingScreen(
     onNavigateBack: () -> Unit,
     onBookingSuccess: () -> Unit,
+    onNavigateToPayment: (String) -> Unit,
     viewModel: CreateBookingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            onBookingSuccess()
-        }
+    // Show confirmation dialog when booking is created
+    if (uiState.showConfirmation && uiState.createdBookingId != null) {
+        BookingConfirmationDialog(
+            estimatedPrice = uiState.estimatedPrice,
+            workerName = uiState.worker?.let { "${it.firstName} ${it.lastName}" } ?: "",
+            onPayNow = {
+                viewModel.dismissConfirmation()
+                onNavigateToPayment(uiState.createdBookingId!!)
+            },
+            onPayLater = {
+                viewModel.dismissConfirmation()
+                onBookingSuccess()
+            }
+        )
     }
 
     if (showDatePicker) {
@@ -443,6 +454,88 @@ fun TimePickerDialog(
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
                 Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+fun BookingConfirmationDialog(
+    estimatedPrice: Double,
+    workerName: String,
+    onPayNow: () -> Unit,
+    onPayLater: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = Color(0xFF4CAF50),
+                modifier = Modifier.size(64.dp)
+            )
+        },
+        title = {
+            Text(
+                text = "Booking Created!",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Your booking request has been sent to $workerName.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Total",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = String.format("€%.2f", estimatedPrice),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Primary
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onPayNow,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.CreditCard, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Pay Now")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onPayLater,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Pay Later")
             }
         }
     )

@@ -7,7 +7,11 @@ struct ContentView: View {
     var body: some View {
         Group {
             if authManager.isAuthenticated {
-                MainTabView()
+                if authManager.currentUser?.needsWorkerOnboarding == true {
+                    WorkerOnboardingView()
+                } else {
+                    MainTabView()
+                }
             } else {
                 AuthNavigationView()
             }

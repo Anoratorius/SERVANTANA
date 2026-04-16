@@ -35,6 +35,14 @@ data class TokenUsage(
     val outputTokens: Int
 )
 
+// UI-friendly chat message with additional metadata
+data class AIChatMessage(
+    val id: String,
+    val role: String, // "user" or "assistant"
+    val content: String,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
 // ==================== Smart Match ====================
 @Serializable
 data class SmartMatchRequest(
@@ -78,6 +86,24 @@ data class MatchFactors(
     val verification: Float = 0f,
     val responseTime: Float = 0f,
     val repeatCustomer: Float = 0f
+)
+
+// UI-friendly wrapper for smart match results
+typealias SmartMatchResult = WorkerMatch
+
+// Extension properties for UI compatibility
+val SmartMatchResult.score: Int get() = matchPercentage
+val SmartMatchResult.breakdown: Map<String, Double> get() = mapOf(
+    "rating" to (factors.rating * 100).toDouble(),
+    "experience" to (factors.experience * 100).toDouble(),
+    "distance" to (factors.distance * 100).toDouble(),
+    "price" to (factors.price * 100).toDouble(),
+    "availability" to (factors.availability * 100).toDouble(),
+    "preferences" to (factors.preferences * 100).toDouble(),
+    "reliability" to (factors.reliability * 100).toDouble(),
+    "verification" to (factors.verification * 100).toDouble(),
+    "responseTime" to (factors.responseTime * 100).toDouble(),
+    "repeatCustomer" to (factors.repeatCustomer * 100).toDouble()
 )
 
 // ==================== Smart Schedule ====================

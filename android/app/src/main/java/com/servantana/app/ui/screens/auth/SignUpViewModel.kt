@@ -14,7 +14,9 @@ import javax.inject.Inject
 data class SignUpUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isWorker: Boolean = false,
+    val registeredUser: com.servantana.app.data.model.User? = null
 )
 
 @HiltViewModel
@@ -24,6 +26,10 @@ class SignUpViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
+
+    fun setIsWorker(isWorker: Boolean) {
+        _uiState.update { it.copy(isWorker = isWorker) }
+    }
 
     fun signUp(email: String, password: String, firstName: String, lastName: String) {
         if (email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()) {
@@ -36,12 +42,14 @@ class SignUpViewModel @Inject constructor(
             return
         }
 
+        val role = if (_uiState.value.isWorker) "WORKER" else "CUSTOMER"
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            authRepository.register(email, password, firstName, lastName)
-                .onSuccess {
-                    _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+            authRepository.register(email, password, firstName, lastName, role)
+                .onSuccess { user ->
+                    _uiState.update { it.copy(isLoading = false, isSuccess = true, registeredUser = user) }
                 }
                 .onFailure { exception ->
                     _uiState.update {

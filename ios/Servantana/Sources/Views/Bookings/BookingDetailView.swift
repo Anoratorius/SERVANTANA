@@ -4,6 +4,7 @@ struct BookingDetailView: View {
     let bookingId: String
     @StateObject private var viewModel: BookingDetailViewModel
     @State private var showCancelAlert = false
+    @State private var showReviewSheet = false
 
     init(bookingId: String) {
         self.bookingId = bookingId
@@ -50,6 +51,13 @@ struct BookingDetailView: View {
             Button("Keep Booking", role: .cancel) {}
         } message: {
             Text("Are you sure you want to cancel this booking?")
+        }
+        .sheet(isPresented: $showReviewSheet) {
+            ReviewSubmissionView(bookingId: bookingId) {
+                Task {
+                    await viewModel.loadBooking()
+                }
+            }
         }
     }
 
@@ -155,6 +163,25 @@ struct BookingDetailView: View {
 
     private func actionsSection(booking: Booking) -> some View {
         VStack(spacing: 12) {
+            // Leave review button for completed bookings without review
+            if booking.status == .completed && booking.review == nil {
+                Button {
+                    showReviewSheet = true
+                } label: {
+                    Label("Leave a Review", systemImage: "star.fill")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.yellow.opacity(0.2))
+                        .foregroundStyle(.orange)
+                        .cornerRadius(12)
+                }
+            }
+
+            // Show existing review
+            if let review = booking.review {
+                reviewCard(review: review)
+            }
+
             if let worker = booking.cleaner {
                 NavigationLink {
                     ChatView(userId: worker.id)
@@ -181,6 +208,37 @@ struct BookingDetailView: View {
                 }
             }
         }
+    }
+
+    private func reviewCard(review: Review) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Your Review")
+                    .font(.headline)
+                Spacer()
+                HStack(spacing: 2) {
+                    ForEach(1...5, id: \.self) { star in
+                        Image(systemName: star <= review.rating ? "star.fill" : "star")
+                            .font(.caption)
+                            .foregroundStyle(star <= review.rating ? .yellow : Color(.systemGray3))
+                    }
+                }
+            }
+
+            if let comment = review.comment, !comment.isEmpty {
+                Text(comment)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Text(review.formattedDate)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
     }
 }
 

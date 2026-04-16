@@ -11,6 +11,7 @@ struct SignUpView: View {
     @State private var confirmPassword = ""
     @State private var showPassword = false
     @State private var errorMessage: String?
+    @State private var isWorker = false
 
     var body: some View {
         ScrollView {
@@ -25,6 +26,34 @@ struct SignUpView: View {
                         .foregroundStyle(.secondary)
                 }
                 .padding(.top, 20)
+
+                // Account type selector
+                VStack(spacing: 8) {
+                    Text("I want to...")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    HStack(spacing: 12) {
+                        AccountTypeButton(
+                            title: "Find Services",
+                            subtitle: "Book professionals",
+                            icon: "magnifyingglass",
+                            isSelected: !isWorker
+                        ) {
+                            isWorker = false
+                        }
+
+                        AccountTypeButton(
+                            title: "Offer Services",
+                            subtitle: "Become a pro",
+                            icon: "briefcase.fill",
+                            isSelected: isWorker
+                        ) {
+                            isWorker = true
+                        }
+                    }
+                }
+                .padding(.bottom, 8)
 
                 // Form
                 VStack(spacing: 16) {
@@ -156,15 +185,59 @@ struct SignUpView: View {
 
         Task {
             do {
-                try await authManager.register(
-                    email: email,
-                    password: password,
-                    firstName: firstName,
-                    lastName: lastName
-                )
+                if isWorker {
+                    try await authManager.registerAsWorker(
+                        email: email,
+                        password: password,
+                        firstName: firstName,
+                        lastName: lastName
+                    )
+                } else {
+                    try await authManager.register(
+                        email: email,
+                        password: password,
+                        firstName: firstName,
+                        lastName: lastName
+                    )
+                }
             } catch {
                 errorMessage = error.localizedDescription
             }
+        }
+    }
+}
+
+struct AccountTypeButton: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(isSelected ? .white : .blue)
+
+                VStack(spacing: 2) {
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(isSelected ? Color.blue : Color(.systemGray6))
+            .foregroundColor(isSelected ? .white : .primary)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+            )
         }
     }
 }

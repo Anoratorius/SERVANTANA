@@ -14,7 +14,7 @@ interface AuthRepository {
     val userId: Flow<String?>
     val userRole: Flow<String?>
     suspend fun login(email: String, password: String): Result<User>
-    suspend fun register(email: String, password: String, firstName: String, lastName: String): Result<User>
+    suspend fun register(email: String, password: String, firstName: String, lastName: String, role: String = "CUSTOMER"): Result<User>
     suspend fun logout()
     suspend fun getCurrentUser(): Result<User>
     suspend fun sendPasswordResetEmail(email: String): Result<Unit>
@@ -45,10 +45,11 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
         firstName: String,
-        lastName: String
+        lastName: String,
+        role: String
     ): Result<User> {
         return try {
-            val response = api.register(RegisterRequest(email, password, firstName, lastName))
+            val response = api.register(RegisterRequest(email, password, firstName, lastName, role))
             tokenManager.saveToken(response.token)
             tokenManager.saveUser(response.user.id, response.user.role)
             Result.success(response.user)
@@ -260,7 +261,8 @@ class BookingRepositoryImpl @Inject constructor(
                 address = address,
                 worker = cleaner ?: return null,
                 service = service ?: return null,
-                notes = notes
+                notes = notes,
+                review = review
             )
         } catch (e: Exception) {
             null
@@ -295,6 +297,7 @@ class ServiceRepositoryImpl @Inject constructor(
 // ==================== Review Repository ====================
 interface ReviewRepository {
     suspend fun getReviews(workerId: String): Result<List<Review>>
+    suspend fun createReview(bookingId: String, rating: Int, comment: String?): Result<Review>
 }
 
 class ReviewRepositoryImpl @Inject constructor(
@@ -305,6 +308,16 @@ class ReviewRepositoryImpl @Inject constructor(
         return try {
             val response = api.getWorkerReviews(workerId)
             Result.success(response.reviews)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun createReview(bookingId: String, rating: Int, comment: String?): Result<Review> {
+        return try {
+            val request = CreateReviewRequest(bookingId, rating, comment)
+            val response = api.createReview(request)
+            Result.success(response.review)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -390,7 +403,7 @@ class AIRepositoryImpl @Inject constructor(
                 maxDistance = maxDistance.toInt()
             )
             val response = api.smartMatch(request)
-            Result.success(response.results)
+            Result.success(response.matches)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -450,5 +463,114 @@ class FavoritesRepositoryImpl @Inject constructor(
 
     override suspend fun removeFavorite(workerId: String) {
         api.removeFavorite(workerId)
+    }
+}
+
+// ==================== Location Repository ====================
+interface LocationRepository {
+    suspend fun updateUserLocation(
+        latitude: Double,
+        longitude: Double,
+        city: String? = null,
+        country: String? = null
+    ): Result<LocationUpdateResponse>
+
+    suspend fun getUserLocation(): Result<UserLocationResponse>
+
+    suspend fun updateWorkerLocation(
+        latitude: Double,
+        longitude: Double
+    ): Result<WorkerLocationUpdateResponse>
+
+    suspend fun getWorkerLocation(): Result<WorkerLocationResponse>
+
+    suspend fun updateBookingETA(
+        bookingId: String,
+        status: String,
+        latitude: Double? = null,
+        longitude: Double? = null,
+        estimatedArrival: String? = null
+    ): Result<BookingETAUpdateResponse>
+
+    suspend fun getBookingETA(bookingId: String): Result<BookingETAResponse>
+}
+
+class LocationRepositoryImpl @Inject constructor(
+    private val api: ServantanaApi
+) : LocationRepository {
+
+    override suspend fun updateUserLocation(
+        latitude: Double,
+        longitude: Double,
+        city: String?,
+        country: String?
+    ): Result<LocationUpdateResponse> {
+        return try {
+            val response = api.updateUserLocation(
+                UpdateLocationRequest(latitude, longitude, city, country)
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getUserLocation(): Result<UserLocationResponse> {
+        return try {
+            val response = api.getUserLocation()
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateWorkerLocation(
+        latitude: Double,
+        longitude: Double
+    ): Result<WorkerLocationUpdateResponse> {
+        return try {
+            val response = api.updateWorkerLocation(
+                WorkerLocationUpdateRequest(latitude, longitude)
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getWorkerLocation(): Result<WorkerLocationResponse> {
+        return try {
+            val response = api.getWorkerLocation()
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateBookingETA(
+        bookingId: String,
+        status: String,
+        latitude: Double?,
+        longitude: Double?,
+        estimatedArrival: String?
+    ): Result<BookingETAUpdateResponse> {
+        return try {
+            val response = api.updateBookingETA(
+                bookingId,
+                UpdateETARequest(status, latitude, longitude, estimatedArrival)
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getBookingETA(bookingId: String): Result<BookingETAResponse> {
+        return try {
+            val response = api.getBookingETA(bookingId)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

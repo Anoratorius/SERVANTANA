@@ -112,6 +112,20 @@ class AIChatViewModel: ObservableObject {
     @Published var suggestions = ["Find a cleaner near me", "What services are available?", "How do I book?"]
     @Published var isLoading = false
 
+    init() {
+        // Add welcome message
+        let welcomeMessage = AIMessage(
+            content: "Hello! I'm your Servantana AI assistant. I can help you:\n\n" +
+                     "• Find the perfect worker for your needs\n" +
+                     "• Get instant price estimates\n" +
+                     "• Answer questions about services\n" +
+                     "• Help schedule appointments\n\n" +
+                     "What can I help you with today?",
+            isUser: false
+        )
+        messages.append(welcomeMessage)
+    }
+
     func sendMessage(_ text: String) async {
         messages.append(AIMessage(content: text, isUser: true))
         isLoading = true
@@ -120,8 +134,10 @@ class AIChatViewModel: ObservableObject {
             let history = messages.dropLast().map { ChatMessage(role: $0.isUser ? "user" : "assistant", content: $0.content) }
             let request = AIChatRequest(message: text, history: Array(history))
             let response = try await APIClient.shared.aiChat(request)
-            messages.append(AIMessage(content: response.response, isUser: false))
-            if let newSuggestions = response.suggestions { suggestions = newSuggestions }
+            messages.append(AIMessage(content: response.message, isUser: false))
+            if let newSuggestions = response.suggestedActions?.map({ $0.label }) {
+                suggestions = newSuggestions
+            }
         } catch {
             messages.append(AIMessage(content: "Sorry, I couldn't process that. Please try again.", isUser: false))
         }

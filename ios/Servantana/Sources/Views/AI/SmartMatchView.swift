@@ -55,7 +55,7 @@ struct SmartMatchRow: View {
             // Match score
             ZStack {
                 Circle().stroke(Color.accentColor, lineWidth: 3).frame(width: 50, height: 50)
-                Text("\(Int(result.matchScore))%").font(.caption).fontWeight(.bold)
+                Text("\(result.matchPercentage)%").font(.caption).fontWeight(.bold)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -103,7 +103,7 @@ class SmartMatchViewModel: ObservableObject {
                 maxDistance: 50, preferences: nil
             )
             let response = try await APIClient.shared.smartMatch(request)
-            results = response.results.sorted { $0.matchScore > $1.matchScore }
+            results = response.matches.sorted { $0.matchScore > $1.matchScore }
         } catch {}
         isLoading = false
     }

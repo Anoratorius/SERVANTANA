@@ -141,4 +141,81 @@ interface ServantanaApi {
 
     @DELETE("user/notifications/push/mobile")
     suspend fun unregisterDeviceToken(@Query("token") token: String): ApiResponse
+
+    // ==================== Worker Onboarding ====================
+    @GET("worker/profile")
+    suspend fun getWorkerProfile(): WorkerProfileResponse
+
+    @PUT("worker/profile")
+    suspend fun updateWorkerProfile(@Body request: WorkerProfileUpdateRequest): WorkerProfileUpdateResponse
+
+    @POST("worker/profile")
+    suspend fun completeOnboarding(): OnboardingCompleteResponse
+
+    @GET("worker/professions")
+    suspend fun getWorkerProfessions(): WorkerProfessionsResponse
+
+    @POST("worker/professions")
+    suspend fun addWorkerProfession(@Body request: AddProfessionRequest): WorkerProfessionsResponse
+
+    @DELETE("worker/professions")
+    suspend fun removeWorkerProfession(@Query("professionId") professionId: String): ApiResponse
+
+    @PUT("worker/professions")
+    suspend fun setPrimaryProfession(@Body request: UpdatePrimaryProfessionRequest): WorkerProfessionsResponse
+
+    @GET("worker/availability")
+    suspend fun getWorkerAvailability(): AvailabilityResponse
+
+    @PUT("worker/availability")
+    suspend fun setWorkerAvailability(@Body request: SetAvailabilityRequest): AvailabilityResponse
+
+    @GET("worker/documents")
+    suspend fun getWorkerDocuments(): DocumentsResponse
+
+    @Multipart
+    @POST("worker/documents")
+    suspend fun uploadDocument(
+        @Part file: okhttp3.MultipartBody.Part,
+        @Part("type") type: okhttp3.RequestBody,
+        @Part("expiresAt") expiresAt: okhttp3.RequestBody? = null
+    ): DocumentUploadResponse
+
+    @DELETE("worker/documents/{id}")
+    suspend fun deleteDocument(@Path("id") documentId: String): ApiResponse
+
+    @GET("stripe/connect")
+    suspend fun getStripeConnectStatus(): StripeConnectStatus
+
+    @POST("stripe/connect")
+    suspend fun createStripeConnectAccount(@Body request: CreateStripeAccountRequest): StripeConnectLinkResponse
+
+    @PUT("stripe/connect")
+    suspend fun refreshStripeOnboardingLink(@Body request: RefreshStripeRequest): StripeConnectLinkResponse
+
+    @PUT("stripe/connect")
+    suspend fun checkStripeConnectStatus(@Body request: CheckStripeRequest): StripeConnectStatus
+
+    // ==================== Location ====================
+    @POST("user/location")
+    suspend fun updateUserLocation(@Body request: UpdateLocationRequest): LocationUpdateResponse
+
+    @GET("user/location")
+    suspend fun getUserLocation(): UserLocationResponse
+
+    @POST("worker/location")
+    suspend fun updateWorkerLocation(@Body request: WorkerLocationUpdateRequest): WorkerLocationUpdateResponse
+
+    @GET("worker/location")
+    suspend fun getWorkerLocation(): WorkerLocationResponse
+
+    // ==================== Booking ETA ====================
+    @POST("bookings/{id}/eta")
+    suspend fun updateBookingETA(
+        @Path("id") bookingId: String,
+        @Body request: UpdateETARequest
+    ): BookingETAUpdateResponse
+
+    @GET("bookings/{id}/eta")
+    suspend fun getBookingETA(@Path("id") bookingId: String): BookingETAResponse
 }

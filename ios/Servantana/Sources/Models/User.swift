@@ -11,14 +11,19 @@ struct User: Codable, Identifiable {
     let isEmailVerified: Bool
     let locationCity: String?
     let locationCountry: String?
+    let onboardingComplete: Bool?
 
     var fullName: String {
         "\(firstName) \(lastName)"
     }
 
+    var needsWorkerOnboarding: Bool {
+        role == .worker && !(onboardingComplete ?? false)
+    }
+
     enum CodingKeys: String, CodingKey {
         case id, email, firstName, lastName, avatar, role, phone
-        case isEmailVerified, locationCity, locationCountry
+        case isEmailVerified, locationCity, locationCountry, onboardingComplete
     }
 }
 

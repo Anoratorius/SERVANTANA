@@ -3,7 +3,10 @@ package com.servantana.app.ui.screens.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servantana.app.data.model.Worker
+import com.servantana.app.data.repository.LocationRepository
 import com.servantana.app.data.repository.WorkerRepository
+import com.servantana.app.service.LocationResult
+import com.servantana.app.service.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,23 +24,40 @@ data class SearchUiState(
     val selectedCategoryId: String? = null,
     val minRating: Float? = null,
     val maxPrice: Double? = null,
-    val sortBy: SortOption = SortOption.RATING,
-    val error: String? = null
+    val sortBy: SortOption = SortOption.DISTANCE,
+    val error: String? = null,
+    // Location state
+    val useLocation: Boolean = true,
+    val currentLatitude: Double? = null,
+    val currentLongitude: Double? = null,
+    val maxDistance: Int = 25,
+    val isLoadingLocation: Boolean = false,
+    val locationError: String? = null,
+    val hasLocationPermission: Boolean = false
 )
 
 enum class SortOption {
-    RATING, PRICE_LOW, PRICE_HIGH, REVIEWS
+    DISTANCE, RATING, PRICE_LOW, PRICE_HIGH, REVIEWS
 }
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val workerRepository: WorkerRepository
+    private val workerRepository: WorkerRepository,
+    private val locationService: LocationService,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
+
+    init {
+        // Check if location permission is granted
+        _uiState.update {
+            it.copy(hasLocationPermission = locationService.hasLocationPermission())
+        }
+    }
 
     fun search(query: String) {
         _uiState.update { it.copy(query = query) }
@@ -47,6 +67,83 @@ class SearchViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
             delay(300) // 300ms debounce
             performSearch()
+        }
+    }
+
+    fun searchWithLocation(query: String = "", categoryId: String? = null) {
+        viewModelScope.launch {
+            val state = _uiState.value
+            if (state.useLocation && state.currentLatitude == null) {
+                fetchCurrentLocation()
+            }
+            _uiState.update {
+                it.copy(
+                    query = query,
+                    selectedCategoryId = categoryId ?: it.selectedCategoryId
+                )
+            }
+            performSearch()
+        }
+    }
+
+    fun fetchCurrentLocation() {
+        viewModelScope.launch {
+            if (!locationService.hasLocationPermission()) {
+                _uiState.update {
+                    it.copy(
+                        locationError = "Location permission required to find nearby workers",
+                        hasLocationPermission = false
+                    )
+                }
+                return@launch
+            }
+
+            _uiState.update {
+                it.copy(
+                    isLoadingLocation = true,
+                    locationError = null,
+                    hasLocationPermission = true
+                )
+            }
+
+            when (val result = locationService.getCurrentLocationWithGeocoding()) {
+                is LocationResult.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            currentLatitude = result.location.latitude,
+                            currentLongitude = result.location.longitude,
+                            isLoadingLocation = false
+                        )
+                    }
+                    // Sync location to server
+                    locationRepository.updateUserLocation(
+                        latitude = result.location.latitude,
+                        longitude = result.location.longitude,
+                        city = result.location.city,
+                        country = result.location.country
+                    )
+                }
+                is LocationResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            locationError = result.message,
+                            isLoadingLocation = false
+                        )
+                    }
+                }
+                LocationResult.PermissionDenied -> {
+                    _uiState.update {
+                        it.copy(
+                            locationError = "Location permission denied",
+                            isLoadingLocation = false,
+                            hasLocationPermission = false
+                        )
+                    }
+                }
+                LocationResult.Loading -> {
+                    // Already handled
+                }
+            }
         }
     }
 
@@ -70,6 +167,29 @@ class SearchViewModel @Inject constructor(
         performSearch()
     }
 
+    fun toggleLocationFilter() {
+        _uiState.update { it.copy(useLocation = !it.useLocation) }
+        viewModelScope.launch {
+            if (_uiState.value.useLocation) {
+                searchWithLocation()
+            } else {
+                performSearch()
+            }
+        }
+    }
+
+    fun updateMaxDistance(distance: Int) {
+        _uiState.update { it.copy(maxDistance = distance) }
+        performSearch()
+    }
+
+    fun onLocationPermissionResult(granted: Boolean) {
+        _uiState.update { it.copy(hasLocationPermission = granted) }
+        if (granted && _uiState.value.useLocation) {
+            fetchCurrentLocation()
+        }
+    }
+
     private fun performSearch() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
@@ -79,7 +199,10 @@ class SearchViewModel @Inject constructor(
             workerRepository.getWorkers(
                 search = state.query.takeIf { it.isNotBlank() },
                 categoryId = state.selectedCategoryId,
-                minRating = state.minRating
+                minRating = state.minRating,
+                latitude = if (state.useLocation) state.currentLatitude else null,
+                longitude = if (state.useLocation) state.currentLongitude else null,
+                maxDistance = if (state.useLocation) state.maxDistance else null
             )
                 .onSuccess { workers ->
                     var filtered = workers
@@ -93,6 +216,19 @@ class SearchViewModel @Inject constructor(
 
                     // Apply sorting
                     filtered = when (state.sortBy) {
+                        SortOption.DISTANCE -> {
+                            // Sort by distance (closest first) - only if location enabled
+                            if (state.useLocation && state.currentLatitude != null) {
+                                filtered.sortedBy { worker ->
+                                    worker.workerProfile?.distance ?: Float.MAX_VALUE
+                                }
+                            } else {
+                                // Fall back to rating if no location
+                                filtered.sortedByDescending {
+                                    it.workerProfile?.averageRating ?: 0.0
+                                }
+                            }
+                        }
                         SortOption.RATING -> filtered.sortedByDescending {
                             it.workerProfile?.averageRating ?: 0.0
                         }
@@ -128,7 +264,8 @@ class SearchViewModel @Inject constructor(
                 selectedCategoryId = null,
                 minRating = null,
                 maxPrice = null,
-                sortBy = SortOption.RATING
+                sortBy = if (it.useLocation) SortOption.DISTANCE else SortOption.RATING,
+                maxDistance = 25
             )
         }
         performSearch()
@@ -136,5 +273,9 @@ class SearchViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    fun clearLocationError() {
+        _uiState.update { it.copy(locationError = null) }
     }
 }

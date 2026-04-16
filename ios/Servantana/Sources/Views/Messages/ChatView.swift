@@ -59,6 +59,21 @@ struct ChatView: View {
         }
         .navigationTitle(viewModel.otherUserName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if viewModel.isPolling {
+                    Image(systemName: "antenna.radiowaves.left.and.right")
+                        .foregroundStyle(.green)
+                        .font(.caption)
+                }
+            }
+        }
+        .onAppear {
+            viewModel.startPolling()
+        }
+        .onDisappear {
+            viewModel.stopPolling()
+        }
     }
 
     private func sendMessage() {

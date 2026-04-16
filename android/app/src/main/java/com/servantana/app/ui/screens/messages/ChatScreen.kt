@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +52,14 @@ fun ChatScreen(
         }
     }
 
+    // Start/stop polling when screen is visible
+    DisposableEffect(Unit) {
+        viewModel.startPolling()
+        onDispose {
+            viewModel.stopPolling()
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -75,11 +84,26 @@ fun ChatScreen(
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
-                                Text(
-                                    text = "Online",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (uiState.isPolling) {
+                                        Icon(
+                                            imageVector = Icons.Default.Wifi,
+                                            contentDescription = "Connected",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                    }
+                                    Text(
+                                        text = if (uiState.isPolling) "Live" else "Offline",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = if (uiState.isPolling) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

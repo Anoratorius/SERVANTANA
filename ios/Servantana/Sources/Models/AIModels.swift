@@ -3,7 +3,12 @@ import Foundation
 // MARK: - AI Chat
 struct AIChatRequest: Codable {
     let message: String
-    let history: [ChatMessage]
+    let conversationHistory: [ChatMessage]
+
+    init(message: String, history: [ChatMessage]) {
+        self.message = message
+        self.conversationHistory = history
+    }
 }
 
 struct ChatMessage: Codable {
@@ -12,8 +17,20 @@ struct ChatMessage: Codable {
 }
 
 struct AIChatResponse: Codable {
-    let response: String
-    let suggestions: [String]?
+    let message: String
+    let suggestedActions: [SuggestedAction]?
+
+    // Computed property for backward compatibility
+    var response: String { message }
+    var suggestions: [String]? {
+        suggestedActions?.map { $0.label }
+    }
+}
+
+struct SuggestedAction: Codable {
+    let label: String
+    let action: String
+    let url: String?
 }
 
 // MARK: - Smart Match
@@ -35,17 +52,25 @@ struct MatchPreferences: Codable {
 }
 
 struct SmartMatchResponse: Codable {
-    let results: [SmartMatchResult]
-    let explanation: String?
+    let matches: [SmartMatchResult]
+    let totalCandidates: Int?
+    let scoringWeights: [String: Double]?
+
+    // Alias for backward compatibility
+    var results: [SmartMatchResult] { matches }
 }
 
 struct SmartMatchResult: Codable, Identifiable {
     let worker: Worker
-    let matchScore: Double
+    let matchScore: Int
+    let matchPercentage: Int
     let factors: MatchFactors
-    let recommendation: String?
+    let matchReasons: [String]
 
     var id: String { worker.id }
+
+    // UI helper
+    var recommendation: String? { matchReasons.first }
 }
 
 struct MatchFactors: Codable {
@@ -128,25 +153,42 @@ struct ReviewInsight: Codable, Identifiable {
 
 // MARK: - Photo Analysis
 struct PhotoAnalysisRequest: Codable {
-    let beforeImage: String
-    let afterImage: String
+    let imageUrls: [String]
+    let analysisType: String // "single" or "before_after"
     let bookingId: String?
+
+    init(imageUrls: [String], analysisType: String = "single", bookingId: String? = nil) {
+        self.imageUrls = imageUrls
+        self.analysisType = analysisType
+        self.bookingId = bookingId
+    }
 }
 
 struct PhotoAnalysisResponse: Codable {
-    let cleanlinessScore: Double
-    let improvementPercentage: Double
-    let areasAnalyzed: [AreaAnalysis]
-    let overallAssessment: String
+    let type: String
+    let summary: PhotoAnalysisSummary?
+    let comparison: BeforeAfterComparison?
+    let bookingId: String?
 }
 
-struct AreaAnalysis: Codable, Identifiable {
-    let area: String
-    let beforeScore: Double
-    let afterScore: Double
-    let improvement: Double
+struct PhotoAnalysisSummary: Codable {
+    let averageCleanlinessScore: Double
+    let overallCondition: String
+    let allConcerns: [String]
+    let allPositives: [String]
+    let averageJobComplexity: String
+    let totalEstimatedTime: Int
+    let averageConfidence: Int
+}
 
-    var id: String { area }
+struct BeforeAfterComparison: Codable {
+    let improvementScore: Int
+    let beforeScore: Int
+    let afterScore: Int
+    let improvements: [String]
+    let remainingIssues: [String]
+    let qualityVerified: Bool
+    let verificationNotes: String
 }
 
 // MARK: - Price Estimate

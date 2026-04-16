@@ -18,6 +18,7 @@ import com.servantana.app.ui.screens.ai.AIChatScreen
 import com.servantana.app.ui.screens.ai.ReviewInsightsScreen
 import com.servantana.app.ui.screens.ai.SmartMatchScreen
 import com.servantana.app.ui.screens.ai.SmartScheduleScreen
+import com.servantana.app.ui.screens.reviews.ReviewSubmissionScreen
 import com.servantana.app.ui.screens.invoices.InvoicesScreen
 import com.servantana.app.ui.screens.properties.PropertiesScreen
 import com.servantana.app.ui.screens.properties.PropertyDetailScreen
@@ -27,6 +28,7 @@ import com.servantana.app.ui.screens.auth.SignUpScreen
 import com.servantana.app.ui.screens.booking.BookingDetailScreen
 import com.servantana.app.ui.screens.booking.BookingsScreen
 import com.servantana.app.ui.screens.booking.CreateBookingScreen
+import com.servantana.app.ui.payment.PaymentScreen
 import com.servantana.app.ui.screens.favorites.FavoritesScreen
 import com.servantana.app.ui.screens.home.HomeScreen
 import com.servantana.app.ui.screens.messages.ChatScreen
@@ -277,6 +279,22 @@ fun ServantanaNavHost(
                         navController.navigate(Bookings) {
                             popUpTo(Home)
                         }
+                    },
+                    onNavigateToPayment = { bookingId ->
+                        navController.navigate(Payment(bookingId)) {
+                            popUpTo(Home)
+                        }
+                    }
+                )
+            }
+
+            composable<Payment> {
+                PaymentScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onPaymentSuccess = {
+                        navController.navigate(Bookings) {
+                            popUpTo(Home)
+                        }
                     }
                 )
             }
@@ -289,6 +307,9 @@ fun ServantanaNavHost(
                     },
                     onNavigateToWorker = { workerId ->
                         navController.navigate(WorkerProfile(workerId))
+                    },
+                    onNavigateToReview = { bookingId ->
+                        navController.navigate(ReviewSubmission(bookingId))
                     }
                 )
             }
@@ -363,6 +384,16 @@ fun ServantanaNavHost(
             composable<ReviewInsights> {
                 ReviewInsightsScreen(
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Review Submission
+            composable<ReviewSubmission> {
+                ReviewSubmissionScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onReviewSubmitted = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }

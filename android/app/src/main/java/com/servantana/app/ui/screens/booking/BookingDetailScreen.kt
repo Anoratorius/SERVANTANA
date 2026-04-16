@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.servantana.app.data.model.Booking
 import com.servantana.app.data.model.BookingStatus
+import com.servantana.app.data.model.Review
 import com.servantana.app.ui.theme.Primary
 import java.time.format.DateTimeFormatter
 
@@ -32,6 +33,7 @@ fun BookingDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToChat: (String) -> Unit,
     onNavigateToWorker: (String) -> Unit,
+    onNavigateToReview: (String) -> Unit = {},
     viewModel: BookingDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -307,6 +309,29 @@ fun BookingDetailScreen(
                         }
                     }
 
+                    // Leave review button for completed bookings
+                    if (booking.status == BookingStatus.COMPLETED && booking.review == null) {
+                        Button(
+                            onClick = { onNavigateToReview(booking.id) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFFFF3E0),
+                                contentColor = Color(0xFFFF9800)
+                            )
+                        ) {
+                            Icon(Icons.Default.Star, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Leave a Review")
+                        }
+                    }
+
+                    // Show existing review
+                    booking.review?.let { review ->
+                        ReviewCard(review = review)
+                    }
+
                     // Action buttons
                     if (booking.status == BookingStatus.PENDING ||
                         booking.status == BookingStatus.CONFIRMED) {
@@ -429,5 +454,71 @@ fun DetailRow(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
+    }
+}
+
+@Composable
+fun ReviewCard(review: Review) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Your Review",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                    repeat(5) { index ->
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = if (index < review.rating) Color(0xFFFFC107)
+                                   else MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+
+            review.comment?.let { comment ->
+                if (comment.isNotBlank()) {
+                    Text(
+                        text = comment,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Text(
+                text = formatReviewDate(review.createdAt),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+private fun formatReviewDate(isoDate: String): String {
+    return try {
+        val instant = java.time.Instant.parse(isoDate)
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy")
+            .withZone(java.time.ZoneId.systemDefault())
+        formatter.format(instant)
+    } catch (e: Exception) {
+        isoDate.take(10)
     }
 }

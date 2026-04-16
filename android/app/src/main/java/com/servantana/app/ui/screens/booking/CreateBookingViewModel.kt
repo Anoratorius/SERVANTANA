@@ -31,6 +31,8 @@ data class CreateBookingUiState(
     val estimatedPrice: Double = 0.0,
     val isSubmitting: Boolean = false,
     val isSuccess: Boolean = false,
+    val createdBookingId: String? = null,
+    val showConfirmation: Boolean = false,
     val error: String? = null
 )
 
@@ -141,8 +143,15 @@ class CreateBookingViewModel @Inject constructor(
                 address = state.address,
                 notes = state.notes.takeIf { it.isNotBlank() }
             )
-                .onSuccess {
-                    _uiState.update { it.copy(isSubmitting = false, isSuccess = true) }
+                .onSuccess { booking ->
+                    _uiState.update {
+                        it.copy(
+                            isSubmitting = false,
+                            isSuccess = true,
+                            createdBookingId = booking.id,
+                            showConfirmation = true
+                        )
+                    }
                 }
                 .onFailure { exception ->
                     _uiState.update {
@@ -153,6 +162,10 @@ class CreateBookingViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun dismissConfirmation() {
+        _uiState.update { it.copy(showConfirmation = false) }
     }
 
     fun clearError() {

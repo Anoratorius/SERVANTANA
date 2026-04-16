@@ -32,6 +32,9 @@ data class BookingDetail(val bookingId: String)
 data class CreateBooking(val workerId: String)
 
 @Serializable
+data class Payment(val bookingId: String)
+
+@Serializable
 object Messages
 
 @Serializable
@@ -76,6 +79,9 @@ data class SmartSchedule(
 @Serializable
 data class ReviewInsights(val workerId: String)
 
+@Serializable
+data class ReviewSubmission(val bookingId: String)
+
 // Worker Routes (for worker role)
 @Serializable
 object WorkerDashboard
@@ -101,3 +107,25 @@ object NotificationSettings
 
 @Serializable
 object SecuritySettings
+
+// Worker Onboarding
+@Serializable
+object WorkerOnboarding
+
+@Serializable
+object WorkerOnboardingProfile
+
+@Serializable
+object WorkerOnboardingProfessions
+
+@Serializable
+object WorkerOnboardingAvailability
+
+@Serializable
+object WorkerOnboardingDocuments
+
+@Serializable
+object WorkerOnboardingStripe
+
+@Serializable
+object WorkerOnboardingGoLive

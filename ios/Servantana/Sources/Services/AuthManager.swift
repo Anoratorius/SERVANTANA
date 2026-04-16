@@ -47,6 +47,21 @@ class AuthManager: ObservableObject {
         isAuthenticated = true
     }
 
+    func registerAsWorker(email: String, password: String, firstName: String, lastName: String) async throws {
+        isLoading = true
+        defer { isLoading = false }
+
+        let response = try await APIClient.shared.registerAsWorker(
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        )
+        KeychainManager.shared.saveToken(response.token)
+        currentUser = response.user
+        isAuthenticated = true
+    }
+
     func logout() async {
         isLoading = true
         defer { isLoading = false }

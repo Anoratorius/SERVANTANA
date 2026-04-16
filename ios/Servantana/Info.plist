@@ -24,6 +24,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Servantana needs your location to find nearby service providers.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Servantana uses your location to show customers your ETA when traveling to jobs.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Servantana needs camera access to take photos for service requests.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
