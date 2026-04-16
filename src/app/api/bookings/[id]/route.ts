@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendNotification } from "@/lib/notifications";
 
 export async function GET(
   request: NextRequest,
@@ -191,6 +192,32 @@ export async function PATCH(
         },
       },
     });
+
+    // Send notifications based on status change
+    const notificationData = {
+      bookingId: id,
+      workerName: `${updatedBooking.cleaner.firstName} ${updatedBooking.cleaner.lastName}`,
+      customerName: `${updatedBooking.customer.firstName} ${updatedBooking.customer.lastName}`,
+      serviceName: updatedBooking.service?.name || "Service",
+      scheduledDate: updatedBooking.scheduledDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      }),
+      scheduledTime: updatedBooking.scheduledTime,
+    };
+
+    if (status === "CONFIRMED") {
+      // Notify customer that worker confirmed their booking
+      sendNotification(booking.customerId, "BOOKING_CONFIRMED", notificationData, {
+        actionUrl: `/bookings/${id}`,
+      }).catch(console.error);
+    } else if (status === "COMPLETED") {
+      // Notify customer that booking is complete (prompt for review)
+      sendNotification(booking.customerId, "BOOKING_COMPLETED", notificationData, {
+        actionUrl: `/bookings/${id}`,
+      }).catch(console.error);
+    }
 
     return NextResponse.json({ booking: updatedBooking });
   } catch (error) {

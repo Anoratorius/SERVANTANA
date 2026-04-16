@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BookingStatus, Role } from "@prisma/client";
 import { applyRateLimit } from "@/lib/rate-limit";
+import { sendNotification } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   try {
@@ -170,6 +171,22 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Send notification to worker about new booking request
+    const bookingDate = new Date(scheduledDate);
+    sendNotification(cleanerId, "BOOKING_CREATED", {
+      bookingId: booking.id,
+      customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
+      serviceName: booking.service?.name || "Service",
+      scheduledDate: bookingDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      }),
+      scheduledTime,
+    }, {
+      actionUrl: `/bookings/${booking.id}`,
+    }).catch(console.error); // Fire and forget
 
     return NextResponse.json({ booking }, { status: 201 });
   } catch (error) {

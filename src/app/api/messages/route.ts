@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { emitNewMessage } from "@/lib/message-events";
 import { applyRateLimit } from "@/lib/rate-limit";
+import { sendNotification } from "@/lib/notifications";
 
 const sendMessageSchema = z.object({
   receiverId: z.string().min(1, "Receiver ID is required"),
@@ -222,6 +223,15 @@ export async function POST(request: NextRequest) {
       sender: message.sender,
       receiver: message.receiver,
     });
+
+    // Send push notification to receiver
+    const senderName = `${message.sender.firstName} ${message.sender.lastName}`;
+    sendNotification(receiverId, "MESSAGE_RECEIVED", {
+      senderName,
+    }, {
+      actionUrl: `/messages/${session.user.id}`,
+      forceChannels: ["PUSH"], // Messages should only trigger push, not email
+    }).catch(console.error);
 
     return NextResponse.json({ message }, { status: 201 });
   } catch (error) {

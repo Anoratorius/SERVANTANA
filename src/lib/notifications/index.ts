@@ -29,6 +29,8 @@ interface NotificationData {
   senderName?: string;
   otherPartyName?: string;
   minutesUntil?: number;
+  etaStatus?: string;
+  etaMinutes?: number;
 }
 
 interface NotificationResult {

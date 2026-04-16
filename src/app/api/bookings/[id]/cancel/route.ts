@@ -6,6 +6,7 @@ import {
   calculateRefundAmount,
   getHoursUntilBooking,
 } from "@/lib/booking-policies";
+import { sendNotification } from "@/lib/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -25,6 +26,15 @@ export async function POST(
       where: { id },
       include: {
         payment: true,
+        customer: {
+          select: { firstName: true, lastName: true },
+        },
+        cleaner: {
+          select: { firstName: true, lastName: true },
+        },
+        service: {
+          select: { name: true },
+        },
       },
     });
 
@@ -101,6 +111,39 @@ export async function POST(
 
     // If worker cancelled, provide substitute URL for customer
     const substituteUrl = isWorker ? `/bookings/${id}/substitutes` : null;
+
+    // Notify the other party about the cancellation
+    const notificationData = {
+      bookingId: id,
+      workerName: `${booking.cleaner.firstName} ${booking.cleaner.lastName}`,
+      customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
+      serviceName: booking.service?.name || "Service",
+      scheduledDate: booking.scheduledDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      }),
+      scheduledTime: booking.scheduledTime,
+      reason: reason || undefined,
+    };
+
+    if (isWorker) {
+      // Worker cancelled - notify customer
+      sendNotification(booking.customerId, "BOOKING_CANCELLED", {
+        ...notificationData,
+        otherPartyName: notificationData.workerName,
+      }, {
+        actionUrl: substituteUrl || `/bookings`,
+      }).catch(console.error);
+    } else {
+      // Customer cancelled - notify worker
+      sendNotification(booking.cleanerId, "BOOKING_CANCELLED", {
+        ...notificationData,
+        otherPartyName: notificationData.customerName,
+      }, {
+        actionUrl: `/bookings`,
+      }).catch(console.error);
+    }
 
     return NextResponse.json({
       change: bookingChange,

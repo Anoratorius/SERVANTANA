@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { applyRateLimit } from "@/lib/rate-limit";
+import { sendNotification } from "@/lib/notifications";
 
 const createReviewSchema = z.object({
   bookingId: z.string().min(1, "Booking ID is required"),
@@ -38,6 +39,12 @@ export async function POST(request: NextRequest) {
       where: { id: bookingId },
       include: {
         review: true,
+        customer: {
+          select: { firstName: true, lastName: true },
+        },
+        service: {
+          select: { name: true },
+        },
       },
     });
 
@@ -93,6 +100,15 @@ export async function POST(request: NextRequest) {
       where: { userId: booking.cleanerId },
       data: { averageRating },
     });
+
+    // Notify the worker about the new review
+    sendNotification(booking.cleanerId, "REVIEW_RECEIVED", {
+      customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
+      serviceName: booking.service?.name || "Service",
+      bookingId,
+    }, {
+      actionUrl: `/reviews`,
+    }).catch(console.error);
 
     return NextResponse.json({ review }, { status: 201 });
   } catch (error) {

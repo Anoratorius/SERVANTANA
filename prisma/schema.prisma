@@ -34,6 +34,13 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum EtaStatus {
+  ON_THE_WAY
+  ARRIVED
+  STARTED
+  COMPLETED
+}
+
 enum PaymentStatus {
   PENDING
   PROCESSING
@@ -129,6 +136,7 @@ enum NotificationType {
   BOOKING_CANCELLED
   BOOKING_REMINDER
   BOOKING_COMPLETED
+  BOOKING_ETA_UPDATE
   PAYMENT_RECEIVED
   PAYOUT_SENT
   DISPUTE_OPENED
@@ -209,6 +217,9 @@ model User {
   locationCountry   String?    // Reverse geocoded country
   locationVerifiedAt DateTime? // When location was verified
   lastKnownIp       String?    // Last known IP for fraud detection
+
+  // Stripe Customer ID (for customers to save payment methods)
+  stripeCustomerId  String?    @unique
 
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -510,6 +521,7 @@ model Booking {
   cleanerLongitude    Float?
   lastLocationUpdate  DateTime?
   estimatedArrival    DateTime?
+  etaStatus           EtaStatus?
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

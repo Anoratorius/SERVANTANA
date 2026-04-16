@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       where: { bookingId: booking.id },
       update: {
         provider: "stripe",
-        stripePaymentIntentId: paymentIntent.id,
+        stripePaymentId: paymentIntent.id,
         amount: booking.totalPrice,
         currency: booking.currency,
         status: "PROCESSING",
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       create: {
         bookingId: booking.id,
         provider: "stripe",
-        stripePaymentIntentId: paymentIntent.id,
+        stripePaymentId: paymentIntent.id,
         amount: booking.totalPrice,
         currency: booking.currency,
         status: "PROCESSING",
