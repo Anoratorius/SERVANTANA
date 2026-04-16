@@ -49,35 +49,75 @@ struct HomeView: View {
     }
 
     private var quickActionsSection: some View {
-        HStack(spacing: 12) {
-            NavigationLink {
-                AIChatView()
-            } label: {
-                QuickActionCard(
-                    icon: "sparkles",
-                    title: "AI Assistant",
-                    color: .purple
-                )
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                NavigationLink {
+                    AIChatView()
+                } label: {
+                    QuickActionCard(
+                        icon: "sparkles",
+                        title: "AI Assistant",
+                        color: .purple
+                    )
+                }
+
+                NavigationLink {
+                    SmartMatchView()
+                } label: {
+                    QuickActionCard(
+                        icon: "person.2.fill",
+                        title: "Smart Match",
+                        color: .blue
+                    )
+                }
+
+                NavigationLink {
+                    SmartScheduleView()
+                } label: {
+                    QuickActionCard(
+                        icon: "calendar.badge.clock",
+                        title: "Schedule",
+                        color: .green
+                    )
+                }
             }
 
-            NavigationLink {
-                SmartMatchView()
-            } label: {
-                QuickActionCard(
-                    icon: "person.2.fill",
-                    title: "Smart Match",
-                    color: .blue
-                )
-            }
+            HStack(spacing: 12) {
+                NavigationLink {
+                    PriceEstimateView()
+                } label: {
+                    QuickActionCard(
+                        icon: "dollarsign.circle",
+                        title: "Price Estimate",
+                        color: .orange
+                    )
+                }
 
-            NavigationLink {
-                SmartScheduleView()
-            } label: {
-                QuickActionCard(
-                    icon: "calendar.badge.clock",
-                    title: "Schedule",
-                    color: .green
-                )
+                NavigationLink {
+                    PhotoAnalysisView()
+                } label: {
+                    QuickActionCard(
+                        icon: "photo.badge.checkmark",
+                        title: "Photo Analysis",
+                        color: .teal
+                    )
+                }
+
+                if authManager.currentUser?.role == "WORKER" {
+                    NavigationLink {
+                        RouteOptimizerView()
+                    } label: {
+                        QuickActionCard(
+                            icon: "map",
+                            title: "Route Optimizer",
+                            color: .indigo
+                        )
+                    }
+                } else {
+                    // Placeholder to maintain layout
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                }
             }
         }
     }

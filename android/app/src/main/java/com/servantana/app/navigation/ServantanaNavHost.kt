@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.servantana.app.ui.components.BottomNavBar
 import com.servantana.app.ui.screens.ai.AIChatScreen
 import com.servantana.app.ui.screens.ai.PhotoAnalysisScreen
+import com.servantana.app.ui.screens.ai.PriceEstimateScreen
 import com.servantana.app.ui.screens.ai.ReviewInsightsScreen
 import com.servantana.app.ui.screens.ai.SmartMatchScreen
 import com.servantana.app.ui.screens.ai.SmartScheduleScreen
@@ -401,6 +402,13 @@ fun ServantanaNavHost(
             // Photo Analysis
             composable<PhotoAnalysis> {
                 PhotoAnalysisScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Price Estimate
+            composable<PriceEstimate> {
+                PriceEstimateScreen(
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

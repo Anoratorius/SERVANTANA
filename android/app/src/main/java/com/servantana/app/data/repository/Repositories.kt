@@ -374,6 +374,19 @@ interface AIRepository {
     ): Result<List<SmartMatchResult>>
     suspend fun smartSchedule(date: String, categoryId: String): Result<SmartScheduleResponse>
     suspend fun analyzePhotos(imageUrls: List<String>, analysisType: String): Result<PhotoAnalysisResponse>
+    suspend fun estimatePrice(
+        imageUrls: List<String>,
+        serviceType: String,
+        professionId: String? = null,
+        additionalInfo: String? = null,
+        currency: String = "USD"
+    ): Result<PriceEstimateResponse>
+    suspend fun optimizeRoute(
+        date: String,
+        bookingIds: List<String>? = null,
+        startLatitude: Double? = null,
+        startLongitude: Double? = null
+    ): Result<RouteOptimizeResponse>
 }
 
 class AIRepositoryImpl @Inject constructor(
@@ -424,6 +437,50 @@ class AIRepositoryImpl @Inject constructor(
         return try {
             val request = PhotoAnalysisRequest(imageUrls = imageUrls, analysisType = analysisType)
             val response = api.analyzePhoto(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun estimatePrice(
+        imageUrls: List<String>,
+        serviceType: String,
+        professionId: String?,
+        additionalInfo: String?,
+        currency: String
+    ): Result<PriceEstimateResponse> {
+        return try {
+            val request = PriceEstimateRequest(
+                imageUrls = imageUrls,
+                serviceType = serviceType,
+                professionId = professionId,
+                additionalInfo = additionalInfo,
+                userCurrency = currency
+            )
+            val response = api.estimatePrice(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun optimizeRoute(
+        date: String,
+        bookingIds: List<String>?,
+        startLatitude: Double?,
+        startLongitude: Double?
+    ): Result<RouteOptimizeResponse> {
+        return try {
+            val startLocation = if (startLatitude != null && startLongitude != null) {
+                Location(startLatitude, startLongitude)
+            } else null
+            val request = RouteOptimizeRequest(
+                date = date,
+                bookingIds = bookingIds,
+                startLocation = startLocation
+            )
+            val response = api.optimizeRoute(request)
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
