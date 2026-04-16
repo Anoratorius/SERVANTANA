@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
@@ -25,22 +26,18 @@ data class DayAvailability(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkerAvailabilityScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: WorkerAvailabilityViewModel = hiltViewModel()
 ) {
-    var availabilities by remember {
-        mutableStateOf(
-            DayOfWeek.entries.map { day ->
-                DayAvailability(
-                    dayOfWeek = day,
-                    isEnabled = day != DayOfWeek.SUNDAY,
-                    startTime = "09:00",
-                    endTime = "17:00"
-                )
-            }
-        )
+    val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.message) {
+        state.message?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearMessage()
+        }
     }
-    var hasChanges by remember { mutableStateOf(false) }
-    var isSaving by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -56,15 +53,10 @@ fun WorkerAvailabilityScreen(
                 },
                 actions = {
                     TextButton(
-                        onClick = {
-                            isSaving = true
-                            // TODO: Save availability
-                            isSaving = false
-                            hasChanges = false
-                        },
-                        enabled = hasChanges && !isSaving
+                        onClick = { viewModel.saveAvailability() },
+                        enabled = state.hasChanges && !state.isSaving
                     ) {
-                        if (isSaving) {
+                        if (state.isSaving) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(16.dp),
                                 strokeWidth = 2.dp
@@ -75,46 +67,82 @@ fun WorkerAvailabilityScreen(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                Text(
-                    text = "Set your weekly availability",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    Text(
+                        text = "Set your weekly availability",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
-            itemsIndexed(availabilities) { index, availability ->
-                DayAvailabilityCard(
-                    availability = availability,
-                    onToggle = { enabled ->
-                        availabilities = availabilities.toMutableList().apply {
-                            set(index, availability.copy(isEnabled = enabled))
+                itemsIndexed(state.availabilities) { index, availability ->
+                    DayAvailabilityCard(
+                        availability = availability,
+                        onToggle = { enabled ->
+                            viewModel.updateAvailability(index, availability.copy(isEnabled = enabled))
+                        },
+                        onStartTimeChange = { time ->
+                            viewModel.updateAvailability(index, availability.copy(startTime = time))
+                        },
+                        onEndTimeChange = { time ->
+                            viewModel.updateAvailability(index, availability.copy(endTime = time))
                         }
-                        hasChanges = true
-                    },
-                    onStartTimeChange = { time ->
-                        availabilities = availabilities.toMutableList().apply {
-                            set(index, availability.copy(startTime = time))
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Tips",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "• Set consistent hours to build customer trust",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "• Update availability when you go on vacation",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "• More availability = more booking opportunities",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                        hasChanges = true
-                    },
-                    onEndTimeChange = { time ->
-                        availabilities = availabilities.toMutableList().apply {
-                            set(index, availability.copy(endTime = time))
-                        }
-                        hasChanges = true
                     }
-                )
+                }
             }
         }
     }
