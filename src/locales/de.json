@@ -85,24 +85,61 @@
       "searchJobs": "Berufe suchen...",
       "noJobsFound": "Keine Berufe gefunden"
     },
+    "stats": {
+      "happyCustomers": "Zufriedene Kunden",
+      "verifiedWorkers": "Verifizierte Fachkräfte",
+      "completedJobs": "Abgeschlossene Aufträge",
+      "avgRating": "Durchschnittsbewertung"
+    },
     "features": {
-      "title": "Servantana wählen",
+      "badge": "Warum wir",
+      "title": "Der smarte Weg Services zu buchen",
+      "subtitle": "Erleben Sie einen nahtlosen Service-Marktplatz mit Funktionen für das moderne Leben.",
       "verified": {
         "title": "Verifizierte Fachkräfte",
-        "description": "Alle Fachkräfte sind überprüft und verifiziert für Ihre Sicherheit."
+        "desc": "Alle Fachkräfte durchlaufen Hintergrundprüfungen und Identitätsverifizierung."
       },
-      "transparent": {
-        "title": "Transparente Preise",
-        "description": "Sehen Sie Preise im Voraus. Keine versteckten Gebühren oder Überraschungen."
-      },
-      "flexible": {
-        "title": "Flexible Terminplanung",
-        "description": "Buchen Sie, wann es Ihnen passt. Buchungen am selben Tag möglich."
-      },
-      "secure": {
+      "payment": {
         "title": "Sichere Zahlungen",
-        "description": "Zahlen Sie sicher über unsere Plattform. Ihre Zahlung ist geschützt."
+        "desc": "Zahlen Sie sicher mit Stripe, PayPal oder Krypto. Geld-zurück-Garantie inklusive."
+      },
+      "ai": {
+        "title": "KI-gestützt",
+        "desc": "Intelligentes Matching, sofortige Kostenvoranschläge und intelligente Terminplanung."
+      },
+      "booking": {
+        "title": "Sofortbuchung",
+        "desc": "Buchen Sie in unter einer Minute. Service am selben Tag verfügbar."
+      },
+      "local": {
+        "title": "Lokale Fachkräfte",
+        "desc": "Verbinden Sie sich mit vertrauenswürdigen Fachleuten in Ihrer Nachbarschaft."
+      },
+      "reviews": {
+        "title": "Echte Bewertungen",
+        "desc": "Verifizierte Bewertungen von echten Kunden. Keine gefälschten Bewertungen."
       }
+    },
+    "ai": {
+      "badge": "KI-gestützt",
+      "title": "Smartere Buchungen mit KI",
+      "subtitle": "Unsere fortschrittliche KI hilft Ihnen, den perfekten Match zu finden, sofortige Preisschätzungen zu erhalten und zu den besten Zeiten zu buchen.",
+      "feature1": "KI Smart Matching findet Ihren perfekten Dienstleister",
+      "feature2": "Fotobasierte sofortige Preisschätzungen",
+      "feature3": "Nachfrageprognose für beste Terminplanung",
+      "feature4": "Intelligente Bewertungsanalyse und Vertrauenswerte",
+      "cta": "KI-Funktionen entdecken",
+      "card1": "Smart Match",
+      "card2": "Fachkräfte finden",
+      "card3": "Beste Zeiten",
+      "card4": "Vertrauenswerte"
+    },
+    "app": {
+      "badge": "Mobile Apps",
+      "title": "Services unterwegs buchen",
+      "subtitle": "Laden Sie unsere nativen Apps für iOS und Android für das beste mobile Erlebnis herunter.",
+      "appStore": "App Store",
+      "playStore": "Google Play"
     },
     "howItWorks": {
       "title": "So funktioniert's",
@@ -126,7 +163,7 @@
     },
     "cta": {
       "title": "Bereit loszulegen?",
-      "subtitle": "Schließen Sie sich Tausenden zufriedener Kunden an.",
+      "subtitle": "Schließen Sie sich Tausenden zufriedener Kunden an, die Servantana für alle ihre Service-Bedürfnisse vertrauen.",
       "customerButton": "Fachkraft buchen",
       "workerButton": "Ich bin Fachkraft"
     }

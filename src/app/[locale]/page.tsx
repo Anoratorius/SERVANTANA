@@ -7,10 +7,24 @@ import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
 import { ServiceGuaranteeBadge } from "@/components/guarantee";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   Search,
   UserCheck,
   CalendarCheck,
+  Shield,
+  Clock,
+  Star,
+  Sparkles,
+  CheckCircle,
+  ArrowRight,
+  Users,
+  MapPin,
+  CreditCard,
+  Smartphone,
 } from "lucide-react";
 
 type Props = {
@@ -122,12 +136,213 @@ function HomeContent() {
           </div>
         </section>
 
+        {/* Stats Section */}
+        <section className="py-16 bg-white w-full">
+          <div className="w-full px-4 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <div>
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
+                  50K+
+                </div>
+                <p className="text-muted-foreground">{t("home.stats.happyCustomers")}</p>
+              </div>
+              <div>
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
+                  5K+
+                </div>
+                <p className="text-muted-foreground">{t("home.stats.verifiedWorkers")}</p>
+              </div>
+              <div>
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
+                  100K+
+                </div>
+                <p className="text-muted-foreground">{t("home.stats.completedJobs")}</p>
+              </div>
+              <div>
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
+                  4.9
+                </div>
+                <p className="text-muted-foreground">{t("home.stats.avgRating")}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-16 bg-muted/30 w-full">
+          <div className="w-full px-4 max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <Badge className="mb-4">{t("home.features.badge")}</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
+                {t("home.features.title")}
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                {t("home.features.subtitle")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Shield className="h-7 w-7 text-blue-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{t("home.features.verified.title")}</h3>
+                  <p className="text-muted-foreground text-sm">{t("home.features.verified.desc")}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CreditCard className="h-7 w-7 text-green-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{t("home.features.payment.title")}</h3>
+                  <p className="text-muted-foreground text-sm">{t("home.features.payment.desc")}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="h-7 w-7 text-purple-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{t("home.features.ai.title")}</h3>
+                  <p className="text-muted-foreground text-sm">{t("home.features.ai.desc")}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Clock className="h-7 w-7 text-orange-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{t("home.features.booking.title")}</h3>
+                  <p className="text-muted-foreground text-sm">{t("home.features.booking.desc")}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="h-7 w-7 text-teal-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{t("home.features.local.title")}</h3>
+                  <p className="text-muted-foreground text-sm">{t("home.features.local.desc")}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Star className="h-7 w-7 text-yellow-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{t("home.features.reviews.title")}</h3>
+                  <p className="text-muted-foreground text-sm">{t("home.features.reviews.desc")}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* AI Section */}
+        <section className="py-16 bg-white w-full">
+          <div className="w-full px-4 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <Badge className="mb-4 bg-purple-100 text-purple-700 hover:bg-purple-100">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  {t("home.ai.badge")}
+                </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
+                  {t("home.ai.title")}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {t("home.ai.subtitle")}
+                </p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span>{t("home.ai.feature1")}</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span>{t("home.ai.feature2")}</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span>{t("home.ai.feature3")}</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span>{t("home.ai.feature4")}</span>
+                  </li>
+                </ul>
+                <Button asChild>
+                  <Link href="/ai">
+                    {t("home.ai.cta")}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="relative">
+                <div className="aspect-square bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl p-8 flex items-center justify-center">
+                  <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
+                    <div className="bg-white rounded-xl p-4 shadow-lg text-center">
+                      <Sparkles className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                      <p className="text-xs font-medium">{t("home.ai.card1")}</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 shadow-lg text-center">
+                      <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                      <p className="text-xs font-medium">{t("home.ai.card2")}</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 shadow-lg text-center">
+                      <Clock className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                      <p className="text-xs font-medium">{t("home.ai.card3")}</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 shadow-lg text-center">
+                      <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                      <p className="text-xs font-medium">{t("home.ai.card4")}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile App Section */}
+        <section className="py-16 bg-muted/30 w-full">
+          <div className="w-full px-4 max-w-5xl mx-auto text-center">
+            <Badge className="mb-4">{t("home.app.badge")}</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
+              {t("home.app.title")}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              {t("home.app.subtitle")}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button size="lg" className="bg-black hover:bg-gray-800 text-white">
+                <Smartphone className="h-5 w-5 mr-2" />
+                {t("home.app.appStore")}
+              </Button>
+              <Button size="lg" className="bg-black hover:bg-gray-800 text-white">
+                <Smartphone className="h-5 w-5 mr-2" />
+                {t("home.app.playStore")}
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
-        <section className="py-12 bg-gradient-to-r from-blue-600 to-green-600 text-white w-full">
+        <section className="py-16 bg-gradient-to-r from-blue-600 to-green-600 text-white w-full">
           <div className="w-full px-4 text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold mb-8" style={{ fontFamily: 'var(--font-logo)' }}>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
               {t("home.cta.title")}
             </h2>
+            <p className="text-white/80 mb-8 max-w-xl mx-auto">
+              {t("home.cta.subtitle")}
+            </p>
             <CTAButtons
               customerLabel={t("home.cta.customerButton")}
               workerLabel={t("home.cta.workerButton")}

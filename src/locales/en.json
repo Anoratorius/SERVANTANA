@@ -85,24 +85,61 @@
       "searchJobs": "Search professions...",
       "noJobsFound": "No professions found"
     },
+    "stats": {
+      "happyCustomers": "Happy Customers",
+      "verifiedWorkers": "Verified Workers",
+      "completedJobs": "Completed Jobs",
+      "avgRating": "Average Rating"
+    },
     "features": {
-      "title": "Choose Servantana",
+      "badge": "Why Choose Us",
+      "title": "The Smarter Way to Book Services",
+      "subtitle": "Experience a seamless service marketplace with features designed for modern life.",
       "verified": {
         "title": "Verified Professionals",
-        "description": "All workers are background-checked and verified for your peace of mind."
+        "desc": "All workers undergo background checks and identity verification."
       },
-      "transparent": {
-        "title": "Transparent Pricing",
-        "description": "See prices upfront. No hidden fees or surprises."
-      },
-      "flexible": {
-        "title": "Flexible Scheduling",
-        "description": "Book when it suits you. Same-day bookings available."
-      },
-      "secure": {
+      "payment": {
         "title": "Secure Payments",
-        "description": "Pay securely through our platform. Your payment is protected."
+        "desc": "Pay safely with Stripe, PayPal, or crypto. Money-back guarantee included."
+      },
+      "ai": {
+        "title": "AI-Powered",
+        "desc": "Smart matching, instant estimates, and intelligent scheduling."
+      },
+      "booking": {
+        "title": "Instant Booking",
+        "desc": "Book in under a minute. Same-day service available."
+      },
+      "local": {
+        "title": "Local Workers",
+        "desc": "Connect with trusted professionals in your neighborhood."
+      },
+      "reviews": {
+        "title": "Real Reviews",
+        "desc": "Verified reviews from real customers. No fake ratings."
       }
+    },
+    "ai": {
+      "badge": "AI-Powered",
+      "title": "Smarter Bookings with AI",
+      "subtitle": "Our advanced AI helps you find the perfect match, get instant price estimates, and book at the best times.",
+      "feature1": "AI Smart Matching finds your perfect service provider",
+      "feature2": "Photo-based instant price estimates",
+      "feature3": "Demand forecasting for best scheduling",
+      "feature4": "Intelligent review analysis and trust scores",
+      "cta": "Explore AI Features",
+      "card1": "Smart Match",
+      "card2": "Find Workers",
+      "card3": "Best Times",
+      "card4": "Trust Scores"
+    },
+    "app": {
+      "badge": "Mobile Apps",
+      "title": "Book Services On The Go",
+      "subtitle": "Download our native apps for iOS and Android for the best mobile experience.",
+      "appStore": "App Store",
+      "playStore": "Google Play"
     },
     "howItWorks": {
       "title": "How It Works",
@@ -126,7 +163,7 @@
     },
     "cta": {
       "title": "Ready to Get Started?",
-      "subtitle": "Join thousands of happy customers who trust Servantana.",
+      "subtitle": "Join thousands of happy customers who trust Servantana for all their service needs.",
       "customerButton": "Book a Worker",
       "workerButton": "I am a Worker"
     }
