@@ -1771,5 +1771,51 @@
       "WORKER_WARNING": "Anbieter verwarnt",
       "WORKER_SUSPENDED": "Anbieter gesperrt"
     }
+  },
+  "aiHub": {
+    "title": "KI-gestützte Funktionen",
+    "subtitle": "Erleben Sie smartere Servicebuchungen mit unserer KI-Tool-Suite, die Ihnen Zeit spart und den perfekten Match findet.",
+    "tryNow": "Jetzt ausprobieren",
+    "features": {
+      "chat": {
+        "title": "KI-Chat-Assistent",
+        "desc": "Erhalten Sie sofortige Antworten zu Services, Buchungen und Empfehlungen"
+      },
+      "smartMatch": {
+        "title": "Smart Match",
+        "desc": "Finden Sie den perfekten Dienstleister basierend auf Ihren Bedürfnissen"
+      },
+      "estimate": {
+        "title": "Preisschätzer",
+        "desc": "Laden Sie Fotos hoch und erhalten Sie KI-basierte Preisschätzungen"
+      },
+      "photo": {
+        "title": "Fotoanalyse",
+        "desc": "Analysieren Sie Vorher/Nachher-Fotos zur Qualitätsprüfung"
+      },
+      "schedule": {
+        "title": "Smart Scheduling",
+        "desc": "Finden Sie die besten Zeitfenster mit KI-Nachfrageprognosen"
+      },
+      "reviews": {
+        "title": "Bewertungs-Insights",
+        "desc": "Erhalten Sie KI-Analysen von Bewertungen und Vertrauenswerten"
+      }
+    },
+    "howItWorks": {
+      "title": "So funktioniert unsere KI",
+      "step1": {
+        "title": "Teilen Sie Ihre Bedürfnisse",
+        "desc": "Sagen Sie uns, wonach Sie suchen, oder laden Sie Fotos Ihres Raums hoch"
+      },
+      "step2": {
+        "title": "KI-Analyse",
+        "desc": "Unsere KI analysiert Ihre Anfrage mit fortschrittlichem Machine Learning"
+      },
+      "step3": {
+        "title": "Ergebnisse erhalten",
+        "desc": "Erhalten Sie sofort personalisierte Empfehlungen, Schätzungen oder Matches"
+      }
+    }
   }
 }

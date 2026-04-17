@@ -1771,5 +1771,51 @@
       "WORKER_WARNING": "Provider Warned",
       "WORKER_SUSPENDED": "Provider Suspended"
     }
+  },
+  "aiHub": {
+    "title": "AI-Powered Features",
+    "subtitle": "Experience smarter service booking with our suite of AI tools designed to save you time and help you find the perfect match.",
+    "tryNow": "Try it now",
+    "features": {
+      "chat": {
+        "title": "AI Chat Assistant",
+        "desc": "Get instant answers about services, bookings, and recommendations"
+      },
+      "smartMatch": {
+        "title": "Smart Match",
+        "desc": "Find the perfect service provider based on your needs and preferences"
+      },
+      "estimate": {
+        "title": "Price Estimator",
+        "desc": "Upload photos and get instant AI-powered price estimates"
+      },
+      "photo": {
+        "title": "Photo Analysis",
+        "desc": "Analyze before/after photos to verify cleaning quality"
+      },
+      "schedule": {
+        "title": "Smart Scheduling",
+        "desc": "Find the best time slots with AI-powered demand forecasting"
+      },
+      "reviews": {
+        "title": "Review Insights",
+        "desc": "Get AI analysis of service provider reviews and trust scores"
+      }
+    },
+    "howItWorks": {
+      "title": "How Our AI Works",
+      "step1": {
+        "title": "Share Your Needs",
+        "desc": "Tell us what you're looking for or upload photos of your space"
+      },
+      "step2": {
+        "title": "AI Analysis",
+        "desc": "Our AI analyzes your request using advanced machine learning"
+      },
+      "step3": {
+        "title": "Get Results",
+        "desc": "Receive personalized recommendations, estimates, or matches instantly"
+      }
+    }
   }
 }
