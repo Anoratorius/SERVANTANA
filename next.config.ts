@@ -5,16 +5,51 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   experimental: {
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "date-fns",
+      "recharts",
+      "zod",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tabs",
+    ],
   },
+  // Optimize production builds
+  productionBrowserSourceMaps: false,
+  // Enable React strict mode for better development
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**" },
     ],
   },
-  // Security headers for production
+  // Security and caching headers for production
   async headers() {
     return [
+      // Cache static assets for 1 year
+      {
+        source: "/:path*.(ico|svg|jpg|jpeg|png|gif|webp|woff|woff2)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Cache JS/CSS for 1 year (versioned by hashes)
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Security headers for all routes
       {
         source: "/(.*)",
         headers: [
