@@ -70,9 +70,11 @@ export default function AIChatPage() {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to get response");
-
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.details || data.error || "Failed to get response");
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -84,12 +86,13 @@ export default function AIChatPage() {
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Unknown error";
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "I'm sorry, I encountered an error. Please try again.",
+          content: `I'm sorry, I encountered an error: ${errorMsg}`,
           timestamp: new Date(),
         },
       ]);

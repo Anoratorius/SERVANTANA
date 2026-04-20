@@ -5,7 +5,6 @@ import { routing } from "@/i18n/routing";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 import { Toaster } from "@/components/ui/sonner";
-import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { PermissionsOnboarding } from "@/components/onboarding/PermissionsOnboarding";
 import { SplashController } from "@/components/layout/SplashController";
 import LocationVerificationProvider from "@/components/location/LocationVerificationProvider";
@@ -41,7 +40,6 @@ export default async function LocaleLayout({ children, params }: Props) {
               {children}
               <Toaster />
               <PermissionsOnboarding locale={locale} />
-              <InstallPrompt />
             </ProfessionOnboardingProvider>
           </LocationVerificationProvider>
         </CurrencyProvider>
