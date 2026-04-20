@@ -20,7 +20,7 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.79.0",
+    "@anthropic-ai/sdk": "^0.90.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@hookform/resolvers": "^5.2.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
@@ -59,7 +59,7 @@
     "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.563.0",
-    "next": "16.1.4",
+    "next": "^16.2.4",
     "next-auth": "^5.0.0-beta.30",
     "next-intl": "^4.7.0",
     "next-themes": "^0.4.6",
