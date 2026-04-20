@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Servantana</string>
+
+    <!-- API Key - Replace with your actual key -->
+    <string name="google_maps_key">YOUR_GOOGLE_MAPS_API_KEY</string>
+
+    <!-- Auth -->
+    <string name="login">Log In</string>
+    <string name="register">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone">Phone Number</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="have_account">Already have an account?</string>
+
+    <!-- Navigation -->
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="bookings">Bookings</string>
+    <string name="messages">Messages</string>
+    <string name="profile">Profile</string>
+
+    <!-- Bookings -->
+    <string name="upcoming_bookings">Upcoming Bookings</string>
+    <string name="past_bookings">Past Bookings</string>
+    <string name="book_now">Book Now</string>
+    <string name="cancel_booking">Cancel Booking</string>
+    <string name="track_worker">Track Worker</string>
+    <string name="booking_confirmed">Booking Confirmed</string>
+    <string name="booking_completed">Booking Completed</string>
+
+    <!-- Worker -->
+    <string name="worker_dashboard">Worker Dashboard</string>
+    <string name="my_earnings">My Earnings</string>
+    <string name="availability">Availability</string>
+    <string name="start_tracking">Start Tracking</string>
+    <string name="stop_tracking">Stop Tracking</string>
+    <string name="on_my_way">On My Way</string>
+    <string name="arrived">I\'ve Arrived</string>
+    <string name="complete_job">Complete Job</string>
+
+    <!-- Common -->
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="close">Close</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+    <string name="submit">Submit</string>
+    <string name="logout">Log Out</string>
+    <string name="settings">Settings</string>
+
+    <!-- Errors -->
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_auth">Authentication failed. Please log in again.</string>
+    <string name="error_invalid_email">Please enter a valid email address.</string>
+    <string name="error_password_short">Password must be at least 8 characters.</string>
+    <string name="error_passwords_mismatch">Passwords do not match.</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_default">General</string>
+    <string name="notification_channel_bookings">Bookings</string>
+    <string name="notification_channel_messages">Messages</string>
+</resources>
