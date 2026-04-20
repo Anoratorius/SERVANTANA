@@ -18,25 +18,31 @@ describe("PLATFORM_FEES", () => {
 });
 
 describe("calculateFees", () => {
+  // New fee model:
+  // - Customer: €0.99 fixed + 2.5% of booking price
+  // - Worker: 15% of booking price (subscription-based, no fixed fee)
+
   it("calculates fees for a €50 booking", () => {
     const result = calculateFees(50, "EUR");
 
-    // Fixed fee: €0.99
+    // Customer fixed fee: €0.99
     expect(result.customerFixedFee).toBe(0.99);
-    expect(result.workerFixedFee).toBe(0.99);
+    // Worker has no fixed fee in new model
+    expect(result.workerFixedFee).toBe(0);
 
-    // Percentage fee: 2.5% of 50 = €1.25
+    // Customer percentage fee: 2.5% of 50 = €1.25
     expect(result.customerPercentageFee).toBe(1.25);
-    expect(result.workerPercentageFee).toBe(1.25);
+    // Worker percentage fee: 15% of 50 = €7.50
+    expect(result.workerPercentageFee).toBe(7.5);
 
     // Customer pays: 50 + 0.99 + 1.25 = €52.24
     expect(result.customerTotal).toBe(52.24);
 
-    // Worker receives: 50 - 0.99 - 1.25 = €47.76
-    expect(result.workerReceives).toBe(47.76);
+    // Worker receives: 50 - 7.50 = €42.50
+    expect(result.workerReceives).toBe(42.5);
 
-    // Platform total: (0.99 + 1.25) * 2 = €4.48
-    expect(result.platformTotal).toBe(4.48);
+    // Platform total: 0.99 + 1.25 + 7.50 = €9.74
+    expect(result.platformTotal).toBe(9.74);
 
     expect(result.currency).toBe("EUR");
   });
@@ -44,20 +50,20 @@ describe("calculateFees", () => {
   it("calculates fees for a €100 booking", () => {
     const result = calculateFees(100, "EUR");
 
-    // Percentage fee: 2.5% of 100 = €2.50
+    // Customer percentage fee: 2.5% of 100 = €2.50
     expect(result.customerPercentageFee).toBe(2.5);
 
     // Customer pays: 100 + 0.99 + 2.50 = €103.49
     expect(result.customerTotal).toBe(103.49);
 
-    // Worker receives: 100 - 0.99 - 2.50 = €96.51
-    expect(result.workerReceives).toBe(96.51);
+    // Worker receives: 100 - 15% = €85.00
+    expect(result.workerReceives).toBe(85);
   });
 
   it("calculates fees for a small €20 booking", () => {
     const result = calculateFees(20, "EUR");
 
-    // Percentage fee: 2.5% of 20 = €0.50
+    // Customer percentage fee: 2.5% of 20 = €0.50
     expect(result.customerPercentageFee).toBe(0.5);
 
     // Customer pays: 20 + 0.99 + 0.50 = €21.49
@@ -78,14 +84,14 @@ describe("calculateFees", () => {
   it("handles large bookings correctly", () => {
     const result = calculateFees(1000, "EUR");
 
-    // Percentage fee: 2.5% of 1000 = €25.00
+    // Customer percentage fee: 2.5% of 1000 = €25.00
     expect(result.customerPercentageFee).toBe(25);
 
     // Customer pays: 1000 + 0.99 + 25 = €1025.99
     expect(result.customerTotal).toBe(1025.99);
 
-    // Worker receives: 1000 - 0.99 - 25 = €974.01
-    expect(result.workerReceives).toBe(974.01);
+    // Worker receives: 1000 - 15% = €850.00
+    expect(result.workerReceives).toBe(850);
   });
 
   it("maintains mathematical consistency", () => {

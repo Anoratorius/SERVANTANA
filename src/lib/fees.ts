@@ -1,15 +1,53 @@
 // Platform fee structure
-// Fixed: €0.99 from customer + €0.99 from worker
-// Percentage: 2.5% from customer + 2.5% from worker
+// Default: 15% total platform fee (split between customer and worker)
+// Pro subscribers: 10% total platform fee
+// Business subscribers: 8% total platform fee
 
-import { calculateTax, getVATRate, type TaxBreakdown } from "./tax";
+import { calculateTax, getVATRate } from "./tax";
+import { prisma } from "./prisma";
+import { SubscriptionStatus, SubscriptionTier } from "@prisma/client";
+import { SUBSCRIPTION_TIERS } from "./subscriptions";
 
 export const PLATFORM_FEES = {
   // Fixed service fee in cents (to avoid floating point issues)
   FIXED_FEE_CENTS: 99, // €0.99
-  // Percentage fee (as decimal)
-  PERCENTAGE_FEE: 0.025, // 2.5%
+  // Default percentage fee (as decimal) - used for customer side
+  PERCENTAGE_FEE: 0.025, // 2.5% from customer
+  // Default worker platform fee percentage
+  DEFAULT_WORKER_FEE_PERCENT: 15, // 15% total from worker
 } as const;
+
+/**
+ * Get the platform fee percentage for a worker based on their subscription
+ * @param workerId - The worker's user ID
+ * @returns Platform fee percentage (e.g., 15 for 15%)
+ */
+export async function getWorkerPlatformFee(workerId: string): Promise<number> {
+  const subscription = await prisma.subscription.findUnique({
+    where: { userId: workerId },
+    select: {
+      tier: true,
+      status: true,
+      platformFeePercent: true,
+    },
+  });
+
+  // If no subscription or not active, use default
+  if (!subscription || subscription.status !== SubscriptionStatus.ACTIVE) {
+    return PLATFORM_FEES.DEFAULT_WORKER_FEE_PERCENT;
+  }
+
+  // Return the cached platform fee from subscription
+  return subscription.platformFeePercent;
+}
+
+/**
+ * Get platform fee percentage by tier (without database lookup)
+ * Useful when you already know the tier
+ */
+export function getPlatformFeeByTier(tier: SubscriptionTier): number {
+  return SUBSCRIPTION_TIERS[tier].platformFeePercent;
+}
 
 export interface FeeBreakdown {
   // Original booking price (worker's rate)
@@ -39,7 +77,7 @@ export interface FeeBreakdownWithTax extends FeeBreakdown {
 }
 
 /**
- * Calculate fee breakdown for a booking
+ * Calculate fee breakdown for a booking (default fees)
  * @param bookingPrice - The worker's rate for the job (in currency units, e.g., euros)
  * @param currency - Currency code (e.g., "EUR", "USD")
  * @returns Detailed fee breakdown
@@ -48,27 +86,58 @@ export function calculateFees(
   bookingPrice: number,
   currency: string = "EUR"
 ): FeeBreakdown {
+  return calculateFeesWithWorkerRate(bookingPrice, currency, PLATFORM_FEES.DEFAULT_WORKER_FEE_PERCENT);
+}
+
+/**
+ * Calculate fee breakdown with custom worker platform fee
+ * @param bookingPrice - The worker's rate for the job
+ * @param currency - Currency code
+ * @param workerFeePercent - Worker's platform fee percentage (e.g., 15 for 15%)
+ * @returns Detailed fee breakdown
+ */
+export function calculateFeesWithWorkerRate(
+  bookingPrice: number,
+  currency: string = "EUR",
+  workerFeePercent: number = PLATFORM_FEES.DEFAULT_WORKER_FEE_PERCENT
+): FeeBreakdown {
   const fixedFee = PLATFORM_FEES.FIXED_FEE_CENTS / 100;
-  const percentageFee = bookingPrice * PLATFORM_FEES.PERCENTAGE_FEE;
+  const customerPercentageFee = Math.round(bookingPrice * PLATFORM_FEES.PERCENTAGE_FEE * 100) / 100;
 
-  // Round to 2 decimal places
-  const roundedPercentageFee = Math.round(percentageFee * 100) / 100;
+  // Worker fee is based on their subscription tier
+  const workerPercentageFee = Math.round(bookingPrice * (workerFeePercent / 100) * 100) / 100;
 
-  const customerTotal = bookingPrice + fixedFee + roundedPercentageFee;
-  const workerReceives = bookingPrice - fixedFee - roundedPercentageFee;
-  const platformTotal = (fixedFee + roundedPercentageFee) * 2;
+  const customerTotal = bookingPrice + fixedFee + customerPercentageFee;
+  const workerReceives = bookingPrice - workerPercentageFee;
+  const platformTotal = fixedFee + customerPercentageFee + workerPercentageFee;
 
   return {
     bookingPrice,
     customerFixedFee: fixedFee,
-    customerPercentageFee: roundedPercentageFee,
+    customerPercentageFee,
     customerTotal: Math.round(customerTotal * 100) / 100,
-    workerFixedFee: fixedFee,
-    workerPercentageFee: roundedPercentageFee,
+    workerFixedFee: 0, // No fixed fee for workers with subscription model
+    workerPercentageFee,
     workerReceives: Math.round(workerReceives * 100) / 100,
     platformTotal: Math.round(platformTotal * 100) / 100,
     currency,
   };
+}
+
+/**
+ * Calculate fees for a booking with worker's actual subscription rate
+ * @param bookingPrice - The worker's rate for the job
+ * @param workerId - The worker's user ID
+ * @param currency - Currency code
+ * @returns Detailed fee breakdown based on worker's subscription
+ */
+export async function calculateFeesForWorker(
+  bookingPrice: number,
+  workerId: string,
+  currency: string = "EUR"
+): Promise<FeeBreakdown> {
+  const workerFeePercent = await getWorkerPlatformFee(workerId);
+  return calculateFeesWithWorkerRate(bookingPrice, currency, workerFeePercent);
 }
 
 /**

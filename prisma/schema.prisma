@@ -294,6 +294,10 @@ model User {
   guaranteeClaimsAsCustomer GuaranteeClaim[] @relation("CustomerClaims")
   guaranteeClaimsAsCleaner  GuaranteeClaim[] @relation("CleanerClaims")
   guaranteeClaimsResolved   GuaranteeClaim[] @relation("ResolvedClaims")
+
+  // Subscription relations
+  subscription              Subscription?
+  subscriptionInvoices      SubscriptionInvoice[]
 }
 
 // NextAuth.js Account model
@@ -1200,6 +1204,30 @@ enum SmartLockAccessStatus {
 }
 
 // ============================================
+// SUBSCRIPTION ENUMS
+// ============================================
+
+enum SubscriptionTier {
+  FREE           // Default tier - standard fees
+  WORKER_PRO     // Lower fees, priority search, badge
+  BUSINESS       // Bulk discounts, multiple employees
+  ENTERPRISE     // Custom pricing, dedicated support
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE       // Payment failed, grace period
+  CANCELED       // User canceled, still active until period end
+  EXPIRED        // Subscription ended
+  TRIALING       // Free trial period
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+// ============================================
 // PROPERTY MANAGEMENT MODEL
 // ============================================
 
@@ -1385,4 +1413,92 @@ model GuaranteeClaim {
   @@index([customerId])
   @@index([cleanerId])
   @@index([status])
+}
+
+// ============================================
+// SUBSCRIPTION MODEL
+// ============================================
+
+model Subscription {
+  id                    String             @id @default(cuid())
+  userId                String             @unique
+
+  // Subscription details
+  tier                  SubscriptionTier   @default(FREE)
+  status                SubscriptionStatus @default(ACTIVE)
+  billingInterval       BillingInterval?   // null for FREE tier
+
+  // Stripe subscription data
+  stripeSubscriptionId  String?            @unique
+  stripePriceId         String?
+  stripeCurrentPeriodStart DateTime?
+  stripeCurrentPeriodEnd   DateTime?
+
+  // Trial info
+  trialEndsAt           DateTime?
+
+  // Cancellation
+  cancelAtPeriodEnd     Boolean            @default(false)
+  canceledAt            DateTime?
+  cancellationReason    String?
+
+  // Tier-specific benefits (cached for quick access)
+  platformFeePercent    Float              @default(15)  // Standard is 15%, Pro is 10%
+  prioritySearchBoost   Int                @default(0)   // 0-100 boost in search ranking
+  maxEmployees          Int                @default(1)   // For business accounts
+
+  // Timestamps
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  // Relations
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices              SubscriptionInvoice[]
+
+  @@index([tier])
+  @@index([status])
+  @@index([stripeSubscriptionId])
+}
+
+// ============================================
+// SUBSCRIPTION INVOICE MODEL (for record keeping)
+// ============================================
+
+model SubscriptionInvoice {
+  id                    String   @id @default(cuid())
+  subscriptionId        String
+  userId                String
+
+  // Stripe invoice data
+  stripeInvoiceId       String   @unique
+  stripePaymentIntentId String?
+
+  // Amount
+  amountDue             Float
+  amountPaid            Float
+  currency              String   @default("EUR")
+
+  // Status
+  status                String   // draft, open, paid, void, uncollectible
+  paid                  Boolean  @default(false)
+
+  // Period
+  periodStart           DateTime
+  periodEnd             DateTime
+
+  // URLs
+  hostedInvoiceUrl      String?  // Stripe hosted invoice page
+  invoicePdf            String?  // PDF download URL
+
+  // Timestamps
+  createdAt             DateTime @default(now())
+  paidAt                DateTime?
+
+  // Relations
+  subscription          Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([userId])
+  @@index([stripeInvoiceId])
 }
