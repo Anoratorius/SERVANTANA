@@ -134,6 +134,11 @@
       "card3": "Best Times",
       "card4": "Trust Scores"
     },
+    "aiChat": {
+      "title": "AI Chat Assistant",
+      "subtitle": "Get instant answers to your questions. Our AI assistant helps you find services, get information, and book appointments.",
+      "cta": "Start Chatting"
+    },
     "app": {
       "badge": "Mobile Apps",
       "title": "Book Services On The Go",

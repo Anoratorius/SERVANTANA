@@ -134,6 +134,11 @@
       "card3": "Beste Zeiten",
       "card4": "Vertrauenswerte"
     },
+    "aiChat": {
+      "title": "KI-Chat-Assistent",
+      "subtitle": "Erhalten Sie sofortige Antworten auf Ihre Fragen. Unser KI-Assistent hilft Ihnen, Dienstleistungen zu finden, Informationen zu erhalten und Termine zu buchen.",
+      "cta": "Chat starten"
+    },
     "app": {
       "badge": "Mobile Apps",
       "title": "Services unterwegs buchen",
