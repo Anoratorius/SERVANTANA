@@ -2,6 +2,8 @@
 // Fixed: €0.99 from customer + €0.99 from worker
 // Percentage: 2.5% from customer + 2.5% from worker
 
+import { calculateTax, getVATRate, type TaxBreakdown } from "./tax";
+
 export const PLATFORM_FEES = {
   // Fixed service fee in cents (to avoid floating point issues)
   FIXED_FEE_CENTS: 99, // €0.99
@@ -24,6 +26,16 @@ export interface FeeBreakdown {
   platformTotal: number; // Total platform revenue before Stripe
   // Currency
   currency: string;
+}
+
+export interface FeeBreakdownWithTax extends FeeBreakdown {
+  // Tax details
+  taxRate: number;           // Percentage (e.g., 19)
+  taxAmount: number;         // Tax on customer total
+  customerTotalWithTax: number; // Final amount customer pays
+  // Country info
+  countryCode: string;
+  taxLabel: string;          // "VAT", "GST", etc.
 }
 
 /**
@@ -109,4 +121,72 @@ export function formatPrice(
     style: "currency",
     currency: currency.toUpperCase(),
   }).format(amount);
+}
+
+/**
+ * Calculate fee breakdown with tax for a booking
+ * @param bookingPrice - The worker's rate for the job
+ * @param currency - Currency code
+ * @param countryCode - ISO 3166-1 alpha-2 country code for tax calculation
+ * @returns Detailed fee breakdown including tax
+ */
+export function calculateFeesWithTax(
+  bookingPrice: number,
+  currency: string = "EUR",
+  countryCode: string = "DE"
+): FeeBreakdownWithTax {
+  // Calculate base fees
+  const baseFees = calculateFees(bookingPrice, currency);
+
+  // Calculate tax on customer total
+  const taxBreakdown = calculateTax(baseFees.customerTotal, countryCode);
+
+  return {
+    ...baseFees,
+    taxRate: taxBreakdown.taxRate,
+    taxAmount: taxBreakdown.taxAmount,
+    customerTotalWithTax: taxBreakdown.totalWithTax,
+    countryCode: taxBreakdown.countryCode,
+    taxLabel: taxBreakdown.taxLabel,
+  };
+}
+
+/**
+ * Calculate invoice amounts with proper tax handling
+ * @param subtotal - Service subtotal (before fees)
+ * @param tipAmount - Optional tip amount
+ * @param countryCode - Country for tax calculation
+ * @returns Invoice amounts breakdown
+ */
+export function calculateInvoiceAmounts(
+  subtotal: number,
+  tipAmount: number = 0,
+  countryCode: string = "DE"
+): {
+  subtotal: number;
+  tipAmount: number;
+  taxRate: number;
+  taxAmount: number;
+  totalAmount: number;
+  taxLabel: string;
+} {
+  const taxRate = getVATRate(countryCode);
+  // Tax is calculated on the service subtotal (not on tips in most jurisdictions)
+  const taxAmount = Math.round((subtotal * taxRate / 100) * 100) / 100;
+  const totalAmount = Math.round((subtotal + tipAmount + taxAmount) * 100) / 100;
+
+  const taxLabels: Record<string, string> = {
+    DE: "VAT", FR: "VAT", IT: "VAT", ES: "VAT", // EU
+    GB: "VAT", CH: "VAT", // Non-EU Europe
+    US: "Tax", AU: "GST", CA: "GST", JP: "Tax",
+  };
+
+  return {
+    subtotal,
+    tipAmount,
+    taxRate,
+    taxAmount,
+    totalAmount,
+    taxLabel: taxLabels[countryCode.toUpperCase()] || "VAT",
+  };
 }

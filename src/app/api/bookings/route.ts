@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   // Rate limiting: 10 booking creations per minute
-  const rateLimited = applyRateLimit(request, "createBooking");
+  const rateLimited = await applyRateLimit(request, "createBooking");
   if (rateLimited) return rateLimited;
 
   try {

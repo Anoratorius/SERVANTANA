@@ -1,25 +1,133 @@
 /**
- * Simple in-memory rate limiter for API protection
- * For production with multiple instances, use Redis-based solution like @upstash/ratelimit
+ * Redis-backed rate limiter using Upstash
+ * Provides distributed rate limiting that works across multiple Vercel function instances
  */
+
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// ============================================
+// REDIS CLIENT
+// ============================================
+
+let redis: Redis | null = null;
+let redisInitialized = false;
+
+function getRedis(): Redis | null {
+  if (redisInitialized) return redis;
+
+  redisInitialized = true;
+
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    console.warn("[RATE-LIMIT] Upstash Redis not configured - falling back to in-memory (not suitable for production)");
+    return null;
+  }
+
+  try {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+    return redis;
+  } catch (error) {
+    console.error("[RATE-LIMIT] Failed to initialize Redis:", error);
+    return null;
+  }
+}
+
+// Export for use in other modules (health check, IP blocking, etc.)
+export function getRedisClient(): Redis | null {
+  return getRedis();
+}
+
+// ============================================
+// RATE LIMITERS (Redis-backed)
+// ============================================
+
+// Cache for Ratelimit instances (one per config)
+const rateLimiterCache = new Map<string, Ratelimit>();
+
+function createRateLimiter(config: RateLimitConfig, prefix: string): Ratelimit | null {
+  const redis = getRedis();
+  if (!redis) return null;
+
+  const cacheKey = `${prefix}:${config.maxRequests}:${config.windowMs}`;
+
+  if (rateLimiterCache.has(cacheKey)) {
+    return rateLimiterCache.get(cacheKey)!;
+  }
+
+  const limiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(config.maxRequests, `${config.windowMs}ms`),
+    prefix: `ratelimit:${prefix}`,
+    analytics: true,
+  });
+
+  rateLimiterCache.set(cacheKey, limiter);
+  return limiter;
+}
+
+// ============================================
+// IN-MEMORY FALLBACK (for development/missing config)
+// ============================================
 
 interface RateLimitEntry {
   count: number;
   resetTime: number;
 }
 
-// In-memory store - cleared on server restart
-const rateLimitStore = new Map<string, RateLimitEntry>();
+const inMemoryStore = new Map<string, RateLimitEntry>();
 
-// Clean up expired entries periodically (every 5 minutes)
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetTime) {
-      rateLimitStore.delete(key);
+// Clean up expired entries periodically
+if (typeof setInterval !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of inMemoryStore.entries()) {
+      if (now > entry.resetTime) {
+        inMemoryStore.delete(key);
+      }
     }
+  }, 5 * 60 * 1000);
+}
+
+function checkRateLimitInMemory(identifier: string, config: RateLimitConfig): RateLimitResult {
+  const now = Date.now();
+  const entry = inMemoryStore.get(identifier);
+
+  if (!entry || now > entry.resetTime) {
+    inMemoryStore.set(identifier, {
+      count: 1,
+      resetTime: now + config.windowMs,
+    });
+    return {
+      success: true,
+      remaining: config.maxRequests - 1,
+      resetTime: now + config.windowMs,
+    };
   }
-}, 5 * 60 * 1000);
+
+  if (entry.count >= config.maxRequests) {
+    return {
+      success: false,
+      remaining: 0,
+      resetTime: entry.resetTime,
+    };
+  }
+
+  entry.count += 1;
+  inMemoryStore.set(identifier, entry);
+
+  return {
+    success: true,
+    remaining: config.maxRequests - entry.count,
+    resetTime: entry.resetTime,
+  };
+}
+
+// ============================================
+// PUBLIC INTERFACES
+// ============================================
 
 export interface RateLimitConfig {
   maxRequests: number;
@@ -32,52 +140,56 @@ export interface RateLimitResult {
   resetTime: number;
 }
 
+// ============================================
+// MAIN RATE LIMIT FUNCTION
+// ============================================
+
 /**
  * Check if a request should be rate limited
+ * Uses Redis when available, falls back to in-memory
  * @param identifier - Unique identifier (IP address, user ID, etc.)
  * @param config - Rate limit configuration
  * @returns Whether the request is allowed and remaining quota
  */
-export function checkRateLimit(
+export async function checkRateLimit(
+  identifier: string,
+  config: RateLimitConfig
+): Promise<RateLimitResult> {
+  const limiter = createRateLimiter(config, "api");
+
+  if (!limiter) {
+    // Fallback to in-memory
+    return checkRateLimitInMemory(identifier, config);
+  }
+
+  try {
+    const result = await limiter.limit(identifier);
+    return {
+      success: result.success,
+      remaining: result.remaining,
+      resetTime: result.reset,
+    };
+  } catch (error) {
+    console.error("[RATE-LIMIT] Redis error, falling back to in-memory:", error);
+    return checkRateLimitInMemory(identifier, config);
+  }
+}
+
+/**
+ * Synchronous rate limit check (in-memory only)
+ * Use this only when async is not possible
+ * @deprecated Prefer async checkRateLimit for production
+ */
+export function checkRateLimitSync(
   identifier: string,
   config: RateLimitConfig
 ): RateLimitResult {
-  const now = Date.now();
-  const key = identifier;
-  const entry = rateLimitStore.get(key);
-
-  // No existing entry or window expired - create new entry
-  if (!entry || now > entry.resetTime) {
-    rateLimitStore.set(key, {
-      count: 1,
-      resetTime: now + config.windowMs,
-    });
-    return {
-      success: true,
-      remaining: config.maxRequests - 1,
-      resetTime: now + config.windowMs,
-    };
-  }
-
-  // Within window - check count
-  if (entry.count >= config.maxRequests) {
-    return {
-      success: false,
-      remaining: 0,
-      resetTime: entry.resetTime,
-    };
-  }
-
-  // Increment count
-  entry.count += 1;
-  rateLimitStore.set(key, entry);
-
-  return {
-    success: true,
-    remaining: config.maxRequests - entry.count,
-    resetTime: entry.resetTime,
-  };
+  return checkRateLimitInMemory(identifier, config);
 }
+
+// ============================================
+// IP EXTRACTION
+// ============================================
 
 /**
  * Get client IP from request headers
@@ -91,7 +203,6 @@ export function getClientIP(request: Request): string {
   }
 
   // Fallback for local development only
-  // These headers CAN be spoofed in production - only use for dev
   if (process.env.NODE_ENV === "development") {
     const forwarded = request.headers.get("x-forwarded-for");
     if (forwarded) {
@@ -107,7 +218,10 @@ export function getClientIP(request: Request): string {
   return "unknown";
 }
 
-// Pre-configured rate limiters for common use cases
+// ============================================
+// PRE-CONFIGURED RATE LIMITERS
+// ============================================
+
 export const rateLimiters = {
   // Authentication - strict limits
   login: { maxRequests: 5, windowMs: 60 * 1000 },           // 5 per minute
@@ -143,6 +257,10 @@ export const rateLimiters = {
   auth: { maxRequests: 10, windowMs: 15 * 60 * 1000 },
 };
 
+// ============================================
+// RESPONSE HELPERS
+// ============================================
+
 /**
  * Create rate limit error response
  */
@@ -164,25 +282,18 @@ export function rateLimitResponse(resetTime: number) {
 }
 
 /**
- * Apply rate limiting to a request
+ * Apply rate limiting to a request (async version)
  * Returns null if allowed, or a 429 Response if rate limited
- *
- * Usage:
- * ```ts
- * const limited = applyRateLimit(request, "login");
- * if (limited) return limited;
- * // ... rest of handler
- * ```
  */
-export function applyRateLimit(
+export async function applyRateLimit(
   request: Request,
   limitType: keyof typeof rateLimiters,
   customKey?: string
-): Response | null {
+): Promise<Response | null> {
   const ip = getClientIP(request);
   const key = customKey ? `${limitType}:${customKey}` : `${limitType}:${ip}`;
   const config = rateLimiters[limitType];
-  const result = checkRateLimit(key, config);
+  const result = await checkRateLimit(key, config);
 
   if (!result.success) {
     return rateLimitResponse(result.resetTime);
@@ -190,6 +301,32 @@ export function applyRateLimit(
 
   return null;
 }
+
+/**
+ * Apply rate limiting synchronously (in-memory only)
+ * Use applyRateLimit for production - this is for compatibility
+ * @deprecated Prefer async applyRateLimit
+ */
+export function applyRateLimitSync(
+  request: Request,
+  limitType: keyof typeof rateLimiters,
+  customKey?: string
+): Response | null {
+  const ip = getClientIP(request);
+  const key = customKey ? `${limitType}:${customKey}` : `${limitType}:${ip}`;
+  const config = rateLimiters[limitType];
+  const result = checkRateLimitSync(key, config);
+
+  if (!result.success) {
+    return rateLimitResponse(result.resetTime);
+  }
+
+  return null;
+}
+
+// ============================================
+// BODY SIZE VALIDATION
+// ============================================
 
 /**
  * Check request body size limit

@@ -1,0 +1,1815 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Laden...",
+    "error": "Er is een fout opgetreden",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "sort": "Sorteren",
+    "viewAll": "Alles bekijken",
+    "learnMore": "Meer informatie",
+    "getStarted": "Aan de slag",
+    "back": "Terug",
+    "next": "Volgende",
+    "submit": "Verzenden",
+    "confirm": "Bevestigen",
+    "close": "Sluiten"
+  },
+  "professionOnboarding": {
+    "title": "Wat doe je?",
+    "description": "Selecteer de beroepen die je werk beschrijven. Dit helpt klanten je te vinden. Je kunt meerdere beroepen selecteren.",
+    "searchProfessions": "Zoek beroepen...",
+    "selected": "geselecteerd",
+    "clickToSetPrimary": "Dubbelklik om als primair in te stellen",
+    "primary": "Primair",
+    "selectAtLeastOne": "Selecteer minimaal één beroep",
+    "saved": "Beroepen succesvol opgeslagen!",
+    "saveFailed": "Kan beroepen niet opslaan",
+    "suggestNew": "Zie je je beroep niet? Stel er een voor",
+    "newProfessionName": "Naam van het beroep",
+    "enterProfessionName": "Voer de naam van het beroep in",
+    "suggestionSubmitted": "Suggestie ingediend! Het wordt beoordeeld door een beheerder.",
+    "suggestionFailed": "Kan suggestie niet indienen",
+    "suggestionNote": "Je suggestie wordt beoordeeld door ons team en toegevoegd indien goedgekeurd.",
+    "continue": "Doorgaan",
+    "noResults": "Geen beroepen gevonden die overeenkomen met je zoekopdracht",
+    "noProfessions": "Nog geen beroepen beschikbaar"
+  },
+  "location": {
+    "verifyYourLocation": "Verifieer je locatie",
+    "verificationExplanation": "Om nauwkeurige service-matching te garanderen en onze community te beschermen, moeten we je locatie verifiëren. Dit helpt je te verbinden met werknemers en klanten in de buurt.",
+    "whyRequired": "Waarom is dit vereist?",
+    "reason1": "Je koppelen met werknemers/klanten in jouw regio",
+    "reason2": "Fraude voorkomen en servicekwaliteit waarborgen",
+    "reason3": "Nauwkeurige afstandsschattingen bieden",
+    "selectedLocation": "Geselecteerde locatie",
+    "confirmLocation": "Bevestig mijn locatie",
+    "pleaseSelectLocation": "Selecteer je locatie op de kaart",
+    "locationVerified": "Locatie succesvol geverifieerd!",
+    "verificationFailed": "Kan locatie niet verifiëren. Probeer opnieuw.",
+    "updateLocation": "Locatie bijwerken",
+    "currentLocation": "Huidige locatie",
+    "notVerified": "Niet geverifieerd"
+  },
+  "nav": {
+    "home": "Home",
+    "findWorkers": "Vind werknemers",
+    "howItWorks": "Hoe het werkt",
+    "about": "Over ons",
+    "contact": "Contact",
+    "login": "Inloggen",
+    "signup": "Registreren",
+    "logout": "Uitloggen",
+    "dashboard": "Dashboard",
+    "profile": "Profiel",
+    "settings": "Instellingen",
+    "bookings": "Boekingen",
+    "messages": "Berichten",
+    "favorites": "Favorieten"
+  },
+  "home": {
+    "hero": {
+      "title": "DE GROOTSTE ARBEIDSMARKTPLAATS",
+      "subtitle": "Vind professionals bij jou in de buurt",
+      "searchPlaceholder": "Voer je locatie in...",
+      "searchButton": "Vind werknemers",
+      "detectingLocation": "Je locatie detecteren...",
+      "selectCategory": "Selecteer categorie...",
+      "searchCategories": "Zoek categorieën...",
+      "noCategoriesFound": "Geen categorieën gevonden",
+      "selectJob": "Selecteer beroep...",
+      "searchJobs": "Zoek beroepen...",
+      "noJobsFound": "Geen beroepen gevonden"
+    },
+    "stats": {
+      "happyCustomers": "Tevreden klanten",
+      "verifiedWorkers": "Geverifieerde werknemers",
+      "completedJobs": "Voltooide opdrachten",
+      "avgRating": "Gemiddelde beoordeling"
+    },
+    "features": {
+      "badge": "Waarom voor ons kiezen",
+      "title": "De slimmere manier om diensten te boeken",
+      "subtitle": "Ervaar een naadloze diensten marktplaats met functies ontworpen voor het moderne leven.",
+      "verified": {
+        "title": "Geverifieerde professionals",
+        "desc": "Alle werknemers ondergaan achtergrond- en identiteitscontroles."
+      },
+      "payment": {
+        "title": "Veilige betalingen",
+        "desc": "Betaal veilig met Stripe, PayPal of crypto. Geld-terug-garantie inbegrepen."
+      },
+      "ai": {
+        "title": "AI-aangedreven",
+        "desc": "Slimme matching, directe schattingen en intelligente planning."
+      },
+      "booking": {
+        "title": "Directe boeking",
+        "desc": "Boek in minder dan een minuut. Same-day service beschikbaar."
+      },
+      "local": {
+        "title": "Lokale werknemers",
+        "desc": "Verbind met betrouwbare professionals in jouw buurt."
+      },
+      "reviews": {
+        "title": "Echte reviews",
+        "desc": "Geverifieerde reviews van echte klanten. Geen nep beoordelingen."
+      }
+    },
+    "ai": {
+      "badge": "AI-aangedreven",
+      "title": "Slimmere boekingen met AI",
+      "subtitle": "Onze geavanceerde AI helpt je de perfecte match te vinden, directe prijsschattingen te krijgen en op de beste momenten te boeken.",
+      "feature1": "Smart Match vindt jouw ideale dienstverlener",
+      "feature2": "Directe prijsschattingen op basis van foto's",
+      "feature3": "Vraagvoorspelling voor betere planning",
+      "feature4": "Intelligente review-analyse en vertrouwensscores",
+      "cta": "Ontdek AI-functies",
+      "card1": "Slimme match",
+      "card2": "Vind werknemers",
+      "card3": "Beste tijden",
+      "card4": "Vertrouwensscores"
+    },
+    "app": {
+      "badge": "Mobiele apps",
+      "title": "Boek diensten onderweg",
+      "subtitle": "Download onze native apps voor iOS en Android voor de beste mobiele ervaring.",
+      "appStore": "App Store",
+      "playStore": "Google Play"
+    },
+    "howItWorks": {
+      "title": "Hoe het werkt",
+      "subtitle": "Je ruimte laten schoonmaken is zo makkelijk als 1-2-3-4",
+      "step1": {
+        "title": "Zoeken",
+        "description": "Voer je locatie in om beschikbare werknemers in jouw regio te vinden."
+      },
+      "step2": {
+        "title": "Kiezen",
+        "description": "Vergelijk werknemers op basis van beoordelingen, reviews en prijzen."
+      },
+      "step3": {
+        "title": "Boeken",
+        "description": "Selecteer je gewenste datum, tijd en diensten."
+      },
+      "step4": {
+        "title": "Ontspannen",
+        "description": "Ontspan terwijl je ruimte professioneel wordt schoongemaakt."
+      }
+    },
+    "cta": {
+      "title": "Klaar om te beginnen?",
+      "subtitle": "Sluit je aan bij duizenden tevreden klanten die Servantana vertrouwen voor al hun servicebehoeften.",
+      "customerButton": "Boek een werknemer",
+      "workerButton": "Ik ben een werknemer"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welkom terug",
+      "subtitle": "Log in op je account",
+      "email": "E-mail",
+      "password": "Wachtwoord",
+      "rememberMe": "Onthoud mij",
+      "forgotPassword": "Wachtwoord vergeten?",
+      "loginButton": "Inloggen",
+      "noAccount": "Heb je geen account?",
+      "signupLink": "Registreer"
+    },
+    "signup": {
+      "title": "Account aanmaken",
+      "subtitle": "Word nu lid",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "phone": "Telefoonnummer",
+      "password": "Wachtwoord",
+      "confirmPassword": "Bevestig wachtwoord",
+      "accountType": "Ik wil:",
+      "customer": "Een werknemer boeken",
+      "worker": "Ik ben een werknemer",
+      "terms": "Ik ga akkoord met de Servicevoorwaarden en het Privacybeleid",
+      "termsPrefix": "Ik ga akkoord met de",
+      "termsAnd": "en",
+      "signupButton": "Account aanmaken",
+      "hasAccount": "Heb je al een account?",
+      "loginLink": "Log in"
+    },
+    "phone": {
+      "title": "Verifieer telefoonnummer",
+      "subtitle": "We sturen je een verificatiecode",
+      "sendCode": "Stuur code",
+      "verifyCode": "Voer verificatiecode in",
+      "resend": "Code opnieuw versturen",
+      "verify": "Verifiëren"
+    },
+    "forgotPassword": {
+      "title": "Wachtwoord vergeten?",
+      "subtitle": "Geen probleem! Voer je e-mail of telefoonnummer in en we sturen je een resetcode.",
+      "emailTab": "E-mail",
+      "phoneTab": "Telefoon",
+      "emailLabel": "E-mailadres",
+      "phoneLabel": "Telefoonnummer",
+      "sendCode": "Stuur resetcode",
+      "backToLogin": "Terug naar inloggen",
+      "verifyTitle": "Voer verificatiecode in",
+      "codeLabel": "6-cijferige code",
+      "verifyCode": "Verifieer code",
+      "changeMethod": "Wijzigen",
+      "resendCode": "Code opnieuw versturen",
+      "resetTitle": "Nieuw wachtwoord aanmaken",
+      "resetSubtitle": "Kies een sterk wachtwoord met minimaal 8 tekens.",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmPassword": "Bevestig wachtwoord",
+      "passwordHint": "Moet hoofdletters, kleine letters en een cijfer bevatten",
+      "resetButton": "Wachtwoord resetten",
+      "successTitle": "Wachtwoord gereset!",
+      "successMessage": "Je wachtwoord is succesvol gereset. Je kunt nu inloggen met je nieuwe wachtwoord.",
+      "goToLogin": "Ga naar inloggen"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Werknemersprofiel",
+      "about": "Over",
+      "services": "Diensten",
+      "reviews": "Reviews",
+      "availability": "Beschikbaarheid",
+      "hourlyRate": "Uurtarief",
+      "experience": "Ervaring",
+      "years": "jaar",
+      "verified": "Geverifieerd",
+      "rating": "Beoordeling",
+      "bookings": "Voltooide boekingen",
+      "responseTime": "Reactietijd",
+      "bookNow": "Nu boeken",
+      "ecoFriendly": "Milieuvriendelijk",
+      "petFriendly": "Huisdiervriendelijk",
+      "introVideo": "Introductievideo"
+    },
+    "dashboard": {
+      "title": "Werknemersdashboard",
+      "earnings": "Inkomsten",
+      "todayBookings": "Boekingen vandaag",
+      "pendingRequests": "Lopende verzoeken",
+      "completedJobs": "Voltooide opdrachten",
+      "upcomingBookings": "Komende boekingen",
+      "recentReviews": "Recente reviews"
+    },
+    "services": {
+      "regular": "Reguliere schoonmaak",
+      "deep": "Diepte schoonmaak",
+      "moveInOut": "Verhuisschoonmaak",
+      "office": "Kantoorschoonmaak",
+      "window": "Ramen wassen",
+      "carpet": "Tapijt reinigen",
+      "laundry": "Wasservice",
+      "organizing": "Organiseren",
+      "postConstruction": "Na-bouw schoonmaak",
+      "airbnb": "Airbnb turnover"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "title": "Mijn dashboard",
+      "upcomingBookings": "Komende boekingen",
+      "pastBookings": "Eerdere boekingen",
+      "favoriteWorkers": "Favoriete werknemers",
+      "quickBook": "Snel boeken"
+    },
+    "search": {
+      "title": "Vind werknemers",
+      "location": "Locatie",
+      "service": "Servicetype",
+      "date": "Datum",
+      "priceRange": "Prijsbereik",
+      "rating": "Minimale beoordeling",
+      "results": "werknemers gevonden",
+      "noResults": "Geen werknemers gevonden in jouw regio",
+      "ecoFriendly": "Milieuvriendelijk",
+      "petFriendly": "Huisdiervriendelijk",
+      "specialtyServices": "Gespecialiseerde diensten"
+    }
+  },
+  "booking": {
+    "title": "Boek schoonmaakservice",
+    "selectService": "Selecteer service",
+    "selectDate": "Selecteer datum & tijd",
+    "address": "Serviceadres",
+    "notes": "Aanvullende notities",
+    "notesPlaceholder": "Speciale instructies of vereisten...",
+    "summary": "Boekingsoverzicht",
+    "worker": "Werknemer",
+    "service": "Service",
+    "dateTime": "Datum & tijd",
+    "duration": "Duur",
+    "hours": "uur",
+    "total": "Totaal",
+    "confirmBooking": "Bevestig boeking",
+    "upcoming": "Komend",
+    "past": "Eerder",
+    "paid": "Betaald",
+    "paymentDue": "Betaling verschuldigd",
+    "payNow": "Nu betalen",
+    "message": "Bericht",
+    "confirm": "Bevestigen",
+    "startJob": "Start opdracht",
+    "complete": "Voltooien",
+    "cancel": "Annuleren",
+    "leaveReview": "Laat review achter",
+    "reviewed": "Beoordeeld",
+    "bookAgain": "Opnieuw boeken",
+    "rebookingInfo": "Herboeking van je vorige bestelling - adres en service vooraf ingevuld",
+    "noUpcoming": "Geen komende boekingen",
+    "noUpcomingDesc": "Je hebt nog geen komende boekingen.",
+    "findWorker": "Vind een werknemer",
+    "noPast": "Geen eerdere boekingen",
+    "noPastDesc": "Je voltooide en geannuleerde boekingen verschijnen hier.",
+    "status": {
+      "pending": "In behandeling",
+      "confirmed": "Bevestigd",
+      "inProgress": "Bezig",
+      "completed": "Voltooid",
+      "cancelled": "Geannuleerd"
+    },
+    "details": "Boekingsdetails",
+    "date": "Datum",
+    "time": "Tijd",
+    "location": "Locatie",
+    "customer": "Klant",
+    "notFound": "Boeking niet gevonden"
+  },
+  "tracking": {
+    "title": "Live tracking",
+    "workerDescription": "Deel je locatie zodat de klant kan zien wanneer je aankomt",
+    "startSharing": "Start locatie delen",
+    "stopSharing": "Stop delen",
+    "sharingActive": "Locatie delen actief",
+    "navigate": "Navigeren",
+    "started": "Locatie delen gestart",
+    "stopped": "Locatie delen gestopt",
+    "startFailed": "Kan tracking niet starten",
+    "stopFailed": "Kan tracking niet stoppen",
+    "gpsNotSupported": "GPS wordt niet ondersteund op dit apparaat",
+    "locationError": "Kan je locatie niet verkrijgen",
+    "workerEnRoute": "{name} is onderweg",
+    "distance": "Afstand",
+    "eta": "Geschatte aankomst",
+    "lastUpdate": "Laatst bijgewerkt",
+    "notStarted": "Tracking niet gestart",
+    "notStartedDesc": "De werknemer zal zijn locatie delen wanneer hij onderweg is"
+  },
+  "chat": {
+    "title": "Chat",
+    "noMessages": "Nog geen berichten. Start het gesprek!",
+    "placeholder": "Typ je bericht...",
+    "sendError": "Kan bericht niet verzenden",
+    "today": "Vandaag",
+    "yesterday": "Gisteren"
+  },
+  "properties": {
+    "title": "Mijn eigendommen",
+    "subtitle": "Beheer je eigendommen en boek schoonmaakdiensten",
+    "addProperty": "Eigendom toevoegen",
+    "addFirst": "Voeg je eerste eigendom toe",
+    "noProperties": "Nog geen eigendommen",
+    "noPropertiesDesc": "Voeg je eigendommen toe om eenvoudig schoonmaakdiensten te boeken",
+    "propertyName": "Naam eigendom",
+    "propertyNamePlaceholder": "bijv. Strandhuis, Hoofdappartement",
+    "address": "Adres",
+    "addressPlaceholder": "Straatnaam",
+    "city": "Stad",
+    "state": "Provincie",
+    "postalCode": "Postcode",
+    "country": "Land",
+    "rooms": "Kamers",
+    "bathrooms": "Badkamers",
+    "size": "Grootte",
+    "notes": "Speciale instructies",
+    "notesPlaceholder": "bijv. Poortcode, parkeerinstructies, huisdieren...",
+    "default": "Standaard",
+    "setDefault": "Als standaard instellen",
+    "setAsDefault": "Instellen als standaard eigendom",
+    "setAsDefaultLabel": "Gebruik als standaard eigendom voor nieuwe boekingen",
+    "createProperty": "Eigendom aanmaken",
+    "editProperty": "Eigendom bewerken",
+    "viewDetails": "Details bekijken",
+    "book": "Boek schoonmaak",
+    "bookings": "boekingen",
+    "details": "Eigendomsdetails",
+    "statistics": "Statistieken",
+    "totalBookings": "Totaal boekingen",
+    "recentBookings": "Recente boekingen",
+    "noBookingsYet": "Nog geen boekingen voor dit eigendom",
+    "created": "Eigendom succesvol aangemaakt",
+    "updated": "Eigendom succesvol bijgewerkt",
+    "deleted": "Eigendom verwijderd",
+    "createFailed": "Kan eigendom niet aanmaken",
+    "updateFailed": "Kan eigendom niet bijwerken",
+    "deleteFailed": "Kan eigendom niet verwijderen",
+    "deleteConfirm": "Eigendom verwijderen?",
+    "deleteConfirmDesc": "Deze actie kan niet ongedaan worden gemaakt. Boekingsgeschiedenis blijft behouden.",
+    "deleting": "Verwijderen...",
+    "notFound": "Eigendom niet gevonden",
+    "requiredFields": "Naam en adres zijn verplicht",
+    "gpsNotSupported": "GPS wordt niet ondersteund op dit apparaat",
+    "locationDetected": "Locatiecoördinaten opgeslagen",
+    "locationError": "Kan locatie niet detecteren",
+    "coordinatesSaved": "GPS-coördinaten opgeslagen"
+  },
+  "team": {
+    "title": "Schoonmaakteam",
+    "lead": "Teamleider",
+    "verified": "Geverifieerd",
+    "confirmed": "Bevestigd",
+    "pending": "In behandeling",
+    "addMember": "Lid toevoegen",
+    "findWorkers": "Vind beschikbare werknemers",
+    "noAvailable": "Geen werknemers beschikbaar voor dit tijdslot",
+    "memberAdded": "Teamlid toegevoegd",
+    "memberRemoved": "Teamlid verwijderd",
+    "addFailed": "Kan teamlid niet toevoegen",
+    "removeFailed": "Kan teamlid niet verwijderen",
+    "invitedToTeam": "Je bent uitgenodigd om deel te nemen aan dit schoonmaakteam",
+    "accept": "Accepteren",
+    "decline": "Weigeren",
+    "confirmFailed": "Kan deelname niet bevestigen",
+    "declineFailed": "Kan niet weigeren",
+    "spotsRemaining": "{count} plek(ken) over",
+    "teamSize": "Teamgrootte",
+    "selectTeamSize": "Hoeveel werknemers heb je nodig?",
+    "solo": "1 Werknemer",
+    "duo": "2 Werknemers",
+    "trio": "3 Werknemers",
+    "quad": "4 Werknemers",
+    "teamBooking": "Teamboeking",
+    "largeJobNote": "Aanbevolen voor grote eigendommen of dieptereiniging"
+  },
+  "tip": {
+    "title": "Fooi toevoegen",
+    "addTip": "Fooi toevoegen",
+    "description": "Toon je waardering voor het geweldige werk van {name}!",
+    "satisfied": "Tevreden met de service?",
+    "showAppreciation": "Toon je waardering met een fooi",
+    "alreadyTipped": "Je gaf ${amount} fooi - Bedankt!",
+    "percentageOf": "Percentage van ${price}",
+    "orFixed": "Of een vast bedrag",
+    "orCustom": "Of voer een aangepast bedrag in",
+    "selectAmount": "Selecteer een fooibedrag",
+    "selectToTip": "Selecteer bedrag voor fooi",
+    "sendTip": "Stuur ${amount} fooi",
+    "sent": "Fooi van ${amount} verzonden!",
+    "thankYou": "Bedankt! ${amount} fooi verzonden naar je werknemer",
+    "failed": "Kan fooi niet verwerken",
+    "goesToWorker": "100% van je fooi gaat direct naar de werknemer"
+  },
+  "invoice": {
+    "title": "Facturen",
+    "subtitle": "Bekijk en download je facturen",
+    "invoiceTitle": "FACTUUR",
+    "noInvoices": "Nog geen facturen",
+    "noInvoicesDesc": "Facturen verschijnen hier nadat je boekingen zijn voltooid",
+    "view": "Bekijken",
+    "print": "Afdrukken / PDF opslaan",
+    "download": "Downloaden",
+    "notFound": "Factuur niet gevonden",
+    "from": "Van",
+    "to": "Factureren aan",
+    "serviceDetails": "Servicedetails",
+    "description": "Beschrijving",
+    "date": "Datum",
+    "duration": "Duur",
+    "amount": "Bedrag",
+    "subtotal": "Subtotaal",
+    "tipLabel": "Fooi",
+    "tax": "BTW",
+    "total": "Totaal",
+    "issuedOn": "Uitgegeven op",
+    "thankYou": "Bedankt voor je vertrouwen!",
+    "status": {
+      "issued": "Uitgegeven",
+      "paid": "Betaald",
+      "cancelled": "Geannuleerd"
+    },
+    "generate": "Factuur genereren",
+    "generated": "Factuur succesvol gegenereerd"
+  },
+  "review": {
+    "title": "Laat een review achter",
+    "rating": "Beoordeling",
+    "comment": "Jouw review",
+    "commentPlaceholder": "Deel je ervaring...",
+    "submit": "Review indienen",
+    "thankYou": "Bedankt voor je review!"
+  },
+  "smartLock": {
+    "title": "Slimme sloten",
+    "keylessEntry": "Sleutelloze toegang",
+    "addLock": "Slot toevoegen",
+    "addNewLock": "Nieuw slim slot toevoegen",
+    "addLockDescription": "Verbind een slim slot om sleutelloze toegang voor werknemers mogelijk te maken.",
+    "lockName": "Slotnaam",
+    "lockNamePlaceholder": "bijv. Voordeur, Achterdeur",
+    "provider": "Aanbieder",
+    "selectProvider": "Selecteer aanbieder",
+    "deviceId": "Apparaat-ID (optioneel)",
+    "deviceIdPlaceholder": "Voer apparaat-ID van je slot-app in",
+    "nameProviderRequired": "Naam en aanbieder zijn verplicht",
+    "lockAdded": "Slim slot succesvol toegevoegd",
+    "lockDeleted": "Slim slot verwijderd",
+    "addFailed": "Kan slim slot niet toevoegen",
+    "deleteFailed": "Kan slim slot niet verwijderen",
+    "confirmDelete": "Weet je zeker dat je dit slimme slot wilt verwijderen?",
+    "noLocks": "Geen slimme sloten geconfigureerd",
+    "addFirstLock": "Voeg een slim slot toe om sleutelloze toegang voor werknemers mogelijk te maken",
+    "active": "Actief",
+    "inactive": "Inactief",
+    "viewCodes": "Codes",
+    "accessCodes": "Toegangscodes",
+    "noAccessCodes": "Nog geen toegangscodes gegenereerd",
+    "codeCopied": "Code gekopieerd naar klembord",
+    "noCodesYet": "Nog geen toegangscode beschikbaar",
+    "ownerWillShare": "De eigenaar zal de toegangscode delen voor je boeking",
+    "valid": "Geldig",
+    "invalid": "Ongeldig",
+    "expired": "Verlopen",
+    "expiresIn": "Verloopt over {time}",
+    "accessInstructions": "Voer deze code in op het toetsenbord van het slimme slot. De code is alleen geldig tijdens je boekingsvenster."
+  },
+  "customerReview": {
+    "title": "Beoordeel klant",
+    "rateCustomer": "Beoordeel klant",
+    "description": "Hoe was je ervaring met {name}?",
+    "punctuality": "Punctualiteit",
+    "cleanliness": "Netheid van woning",
+    "communication": "Communicatie",
+    "overall": "Algemene ervaring",
+    "commentLabel": "Aanvullende opmerkingen (optioneel)",
+    "commentPlaceholder": "Deel aanvullende feedback...",
+    "submit": "Beoordeling indienen",
+    "rateAll": "Beoordeel alle categorieën",
+    "submitted": "Beoordeling succesvol ingediend!",
+    "failed": "Kan beoordeling niet indienen",
+    "thankYou": "Bedankt voor je feedback!",
+    "onlyWorkers": "Alleen werknemers kunnen klantbeoordelingen zien"
+  },
+  "messages": {
+    "title": "Berichten",
+    "noMessages": "Nog geen berichten",
+    "placeholder": "Typ een bericht...",
+    "send": "Verzenden",
+    "newMessageFrom": "Nieuw bericht van",
+    "reply": "Antwoorden",
+    "fullChat": "Volledige chat",
+    "unread": "ongelezen",
+    "noNewMessages": "Geen nieuwe berichten",
+    "markAsRead": "Markeer als gelezen",
+    "viewAllMessages": "Bekijk alle berichten",
+    "justNow": "Zojuist",
+    "minutesAgo": "min geleden",
+    "hoursAgo": "u geleden"
+  },
+  "admin": {
+    "title": "Admin dashboard",
+    "subtitle": "Beheer je marktplaats",
+    "overview": "Overzicht",
+    "users": "Gebruikers",
+    "verification": "Verificatie",
+    "reviews": "Reviews",
+    "totalUsers": "Totaal gebruikers",
+    "totalWorkers": "Totaal werknemers",
+    "verified": "geverifieerd",
+    "totalBookings": "Totaal boekingen",
+    "completed": "voltooid",
+    "totalRevenue": "Totale omzet",
+    "pendingVerification": "Verificatie in behandeling",
+    "newUsers30d": "Nieuwe gebruikers (30d)",
+    "totalReviews": "Totaal reviews",
+    "avg": "Gem",
+    "cancelled": "Geannuleerd",
+    "recentUsers": "Recente gebruikers",
+    "recentBookings": "Recente boekingen",
+    "userManagement": "Gebruikersbeheer",
+    "searchUsers": "Zoek gebruikers...",
+    "allRoles": "Alle rollen",
+    "customers": "Klanten",
+    "workers": "Werknemers",
+    "admins": "Beheerders",
+    "bookings": "boekingen",
+    "page": "Pagina",
+    "of": "van",
+    "workerVerification": "Werknemersverificatie",
+    "pendingVerificationFilter": "Verificatie in behandeling",
+    "verifiedFilter": "Geverifieerd",
+    "noWorkersPending": "Geen werknemers wachtend op verificatie",
+    "noWorkersVerified": "Geen geverifieerde werknemers",
+    "revoke": "Intrekken",
+    "verify": "Verifiëren",
+    "reviewModeration": "Review moderatie",
+    "noReviews": "Geen reviews om te modereren",
+    "reviewed": "beoordeeld",
+    "delete": "Verwijderen",
+    "accessDenied": "Toegang geweigerd. Alleen beheerders.",
+    "workerVerified": "Werknemer geverifieerd!",
+    "verificationRevoked": "Verificatie ingetrokken",
+    "failedVerification": "Kan verificatie niet bijwerken",
+    "reviewDeleted": "Review verwijderd",
+    "failedDeleteReview": "Kan review niet verwijderen",
+    "confirmDeleteReview": "Weet je zeker dat je deze review wilt verwijderen?",
+    "categories": "Categorieën",
+    "categoryManagement": "Categoriebeheer",
+    "pendingCategories": "In behandeling",
+    "approvedCategories": "Goedgekeurd",
+    "rejectedCategories": "Afgewezen",
+    "noCategories": "Geen categorieën gevonden",
+    "approve": "Goedkeuren",
+    "reject": "Afwijzen",
+    "categoryApproved": "Categorie goedgekeurd!",
+    "categoryRejected": "Categorie afgewezen",
+    "failedCategoryAction": "Kan categorie niet bijwerken",
+    "documentsTab": "Documenten",
+    "disputesTab": "Geschillen",
+    "bookingsManagement": "Boekingenbeheer",
+    "allBookings": "Alle boekingen",
+    "noBookings": "Geen boekingen gevonden",
+    "documentVerification": "Documentverificatie",
+    "noDocuments": "Geen documenten om te beoordelen",
+    "viewDocument": "Bekijken",
+    "documentVerified": "Document geverifieerd!",
+    "documentRejected": "Document afgewezen",
+    "failedDocumentAction": "Kan document niet bijwerken",
+    "disputeManagement": "Geschillenbeheer",
+    "noDisputes": "Geen geschillen gevonden",
+    "viewDetails": "Details bekijken",
+    "allStatuses": "Alle statussen",
+    "statusActive": "Actief",
+    "statusSuspended": "Geschorst",
+    "statusBanned": "Verbannen",
+    "suspendedUntil": "Geschorst tot",
+    "actions": "Acties",
+    "changeRole": "Rol wijzigen",
+    "suspend": "Schorsen",
+    "ban": "Verbannen",
+    "reactivate": "Reactiveren",
+    "userSuspended": "Gebruiker succesvol geschorst",
+    "userBanned": "Gebruiker succesvol verbannen",
+    "userReactivated": "Gebruiker succesvol gereactiveerd",
+    "userDeleted": "Gebruiker succesvol verwijderd",
+    "roleChanged": "Gebruikersrol succesvol gewijzigd",
+    "failedUserAction": "Kan actie niet uitvoeren",
+    "failedFetchUser": "Kan gebruikersdetails niet ophalen",
+    "suspendUser": "Schors gebruiker",
+    "suspendUserDesc": "Schors {name} tijdelijk van toegang tot het platform.",
+    "suspendDuration": "Schorsingstijd",
+    "day": "dag",
+    "days": "dagen",
+    "indefinite": "Onbepaald",
+    "reason": "Reden",
+    "optional": "optioneel",
+    "reasonPlaceholder": "Voer reden in voor deze actie...",
+    "banUser": "Verban gebruiker",
+    "banUserDesc": "Verban {name} permanent van het platform.",
+    "banWarning": "Deze actie verbant de gebruiker permanent. Ze kunnen niet meer inloggen of nieuwe accounts aanmaken.",
+    "deleteUser": "Verwijder gebruiker",
+    "deleteUserDesc": "Verwijder {name} en al hun gegevens permanent.",
+    "deleteWarning": "Deze actie kan niet ongedaan worden gemaakt. Alle gebruikersgegevens, boekingen, reviews en berichten worden permanent verwijderd.",
+    "userDetails": "Gebruikersdetails",
+    "userDetailsDesc": "Bekijk volledig gebruikersprofiel en activiteit.",
+    "status": "Status",
+    "role": "Rol",
+    "registeredOn": "Geregistreerd op",
+    "auditLogs": "Audit logs",
+    "auditLogsTitle": "Audit logs",
+    "allActions": "Alle acties",
+    "actionSuspend": "Gebruiker geschorst",
+    "actionBan": "Gebruiker verbannen",
+    "actionReactivate": "Gebruiker gereactiveerd",
+    "actionDelete": "Gebruiker verwijderd",
+    "actionRoleChange": "Rol gewijzigd",
+    "actionVerify": "Werknemer geverifieerd",
+    "actionDocVerify": "Document geverifieerd",
+    "allSeverities": "Alle ernstniveaus",
+    "severityLow": "Laag",
+    "severityMedium": "Gemiddeld",
+    "severityHigh": "Hoog",
+    "severityCritical": "Kritiek",
+    "exportCsv": "Exporteer CSV",
+    "noAuditLogs": "Geen audit logs gevonden",
+    "showing": "Toont",
+    "exportSuccess": "Export succesvol",
+    "exportFailed": "Export mislukt",
+    "settingsTab": "Instellingen",
+    "systemSettings": "Systeeminstellingen",
+    "platformFees": "Platformkosten",
+    "customerFee": "Klantkosten",
+    "workerFee": "Werknemerskosten",
+    "bookingSettings": "Boekingsinstellingen",
+    "minBookingValue": "Minimale boekingswaarde",
+    "defaultCurrency": "Standaard valuta",
+    "cancellationPolicy": "Annuleringsbeleid",
+    "freeCancel24h": "Meer dan 24 uur van tevoren",
+    "cancel12to24h": "12-24 uur van tevoren",
+    "cancelUnder12h": "Minder dan 12 uur",
+    "systemStatus": "Systeemstatus",
+    "maintenanceMode": "Onderhoudsmodus",
+    "newRegistrations": "Nieuwe registraties",
+    "off": "Uit",
+    "enabled": "Ingeschakeld",
+    "settingsReadOnly": "Instellingen zijn alleen-lezen. Neem contact op met het ontwikkelteam om te wijzigen.",
+    "professions": "Beroepen",
+    "professionManagement": "Beroepenbeheer",
+    "createProfession": "Beroep aanmaken",
+    "editProfession": "Beroep bewerken",
+    "deleteProfession": "Beroep verwijderen",
+    "noProfessions": "Geen beroepen gevonden",
+    "professionApproved": "Beroep goedgekeurd!",
+    "professionRejected": "Beroep afgewezen",
+    "professionCreated": "Beroep aangemaakt",
+    "professionUpdated": "Beroep bijgewerkt",
+    "professionDeleted": "Beroep verwijderd",
+    "failedProfessionAction": "Kan beroep niet bijwerken",
+    "professionName": "Naam (Engels)",
+    "professionNameDE": "Naam (Duits)",
+    "professionEmoji": "Emoji",
+    "assignToCategory": "Toewijzen aan categorie",
+    "noCategory": "Geen categorie",
+    "preview": "Voorbeeld",
+    "workersAssigned": "werknemers",
+    "suggestedBy": "Voorgesteld door",
+    "createProfessionDesc": "Vul de details in om een nieuw beroep aan te maken.",
+    "editProfessionDesc": "Werk de beroepsdetails hieronder bij.",
+    "deleteProfessionDesc": "Weet je zeker dat je \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    "emailsTab": "E-mails",
+    "composeEmail": "E-mail opstellen",
+    "recipientType": "Type ontvanger",
+    "individualUser": "Individuele gebruiker",
+    "allUsers": "Alle gebruikers",
+    "allWorkers": "Alle werknemers",
+    "allCustomers": "Alle klanten",
+    "searchUser": "Zoek gebruiker",
+    "searchUserPlaceholder": "Zoek op naam of e-mail...",
+    "recipientSelected": "Ontvanger geselecteerd",
+    "emailSubject": "Onderwerp",
+    "emailSubjectPlaceholder": "Voer e-mail onderwerp in...",
+    "emailBody": "Bericht",
+    "emailBodyPlaceholder": "Schrijf je bericht hier...",
+    "bulkEmailWarning": "Deze e-mail wordt verzonden naar alle gebruikers in de geselecteerde groep. Controleer voor verzending.",
+    "sending": "Verzenden...",
+    "sendEmail": "Verzend e-mail",
+    "emailHistory": "E-mailgeschiedenis",
+    "noEmailHistory": "Nog geen e-mails verzonden",
+    "sent": "Verzonden",
+    "failed": "Mislukt",
+    "individual": "Individueel",
+    "announcement": "Aankondiging",
+    "to": "Aan",
+    "sentBy": "Verzonden door"
+  },
+  "legal": {
+    "terms": {
+      "title": "Servicevoorwaarden",
+      "lastUpdated": "Laatst bijgewerkt",
+      "acceptance": {
+        "title": "1. Acceptatie van voorwaarden",
+        "content": "Door Servantana te gebruiken, ga je akkoord met deze Voorwaarden. Als je niet akkoord gaat, gebruik ons platform dan niet."
+      },
+      "service": {
+        "title": "2. Servicebeschrijving",
+        "content": "Servantana is een marktplaats die klanten verbindt met onafhankelijke professionals. We zijn geen werkgever van de werknemers en zijn niet verantwoordelijk voor de kwaliteit van de geleverde diensten."
+      },
+      "accounts": {
+        "title": "3. Gebruikersaccounts",
+        "content": "Je bent verantwoordelijk voor het vertrouwelijk houden van je accountgegevens en voor alle activiteiten onder je account. Je moet nauwkeurige informatie verstrekken en minimaal 18 jaar oud zijn."
+      },
+      "payments": {
+        "title": "4. Betalingen",
+        "content": "Alle betalingen worden verwerkt via externe aanbieders. Kosten zijn niet restitueerbaar tenzij wettelijk vereist. Werknemers stellen hun eigen tarieven vast en zijn verantwoordelijk voor hun eigen belastingen."
+      },
+      "liability": {
+        "title": "5. Beperking van aansprakelijkheid",
+        "content": "Servantana wordt geleverd \"zoals het is\" zonder garanties. We zijn niet aansprakelijk voor schade voortvloeiend uit het gebruik van het platform, geschillen tussen gebruikers of acties van dienstverleners. Onze totale aansprakelijkheid overschrijdt niet de kosten die aan ons zijn betaald in de afgelopen 12 maanden."
+      },
+      "termination": {
+        "title": "6. Beëindiging",
+        "content": "We kunnen accounts schorsen of beëindigen naar eigen goeddunken voor schendingen van deze voorwaarden of om welke reden dan ook met of zonder kennisgeving."
+      },
+      "changes": {
+        "title": "7. Wijzigingen in voorwaarden",
+        "content": "We kunnen deze voorwaarden op elk moment wijzigen. Voortgezet gebruik na wijzigingen betekent acceptatie van de nieuwe voorwaarden."
+      }
+    },
+    "privacy": {
+      "title": "Privacybeleid",
+      "lastUpdated": "Laatst bijgewerkt",
+      "collection": {
+        "title": "1. Informatie die we verzamelen",
+        "content": "We verzamelen informatie die je verstrekt (naam, e-mail, telefoon, adres) en automatisch verzamelde gegevens (IP-adres, apparaatinfo, gebruiksgegevens) om onze diensten te exploiteren."
+      },
+      "use": {
+        "title": "2. Hoe we informatie gebruiken",
+        "content": "We gebruiken je informatie om onze diensten te leveren en te verbeteren, betalingen te verwerken, met je te communiceren en platformveiligheid te waarborgen."
+      },
+      "sharing": {
+        "title": "3. Informatie delen",
+        "content": "We delen informatie met dienstverleners voor boekingen, betalingsverwerkers en zoals wettelijk vereist. We verkopen je persoonlijke gegevens niet."
+      },
+      "security": {
+        "title": "4. Gegevensbeveiliging",
+        "content": "We implementeren redelijke beveiligingsmaatregelen maar kunnen geen absolute veiligheid garanderen. Je bent verantwoordelijk voor het veilig houden van je accountgegevens."
+      },
+      "rights": {
+        "title": "5. Jouw rechten",
+        "content": "Je kunt je accountinformatie op elk moment inzien, bijwerken of verwijderen. Neem contact met ons op om je gegevensrechten uit te oefenen."
+      },
+      "contact": {
+        "title": "6. Contact",
+        "content": "Voor privacyvragen, neem contact met ons op via het platform of via support@servantana.com."
+      }
+    },
+    "cookies": {
+      "title": "Cookiebeleid",
+      "lastUpdated": "Laatst bijgewerkt",
+      "what": {
+        "title": "1. Wat zijn cookies?",
+        "content": "Cookies zijn kleine tekstbestanden die op je apparaat worden opgeslagen wanneer je onze website bezoekt. Ze helpen ons je voorkeuren te onthouden en te begrijpen hoe je ons platform gebruikt."
+      },
+      "types": {
+        "title": "2. Soorten cookies die we gebruiken",
+        "content": "We gebruiken verschillende soorten cookies voor verschillende doeleinden:",
+        "essential": {
+          "title": "Essentiële cookies",
+          "content": "Noodzakelijk voor het correct functioneren van de website. Deze kunnen niet worden uitgeschakeld."
+        },
+        "functional": {
+          "title": "Functionele cookies",
+          "content": "Onthouden je voorkeuren zoals taal- en locatie-instellingen."
+        },
+        "analytics": {
+          "title": "Analytische cookies",
+          "content": "Helpen ons te begrijpen hoe bezoekers met onze website omgaan om de gebruikerservaring te verbeteren."
+        },
+        "marketing": {
+          "title": "Marketing cookies",
+          "content": "Gebruikt om relevante advertenties te leveren en campagneprestaties te volgen."
+        }
+      },
+      "manage": {
+        "title": "3. Cookies beheren",
+        "content": "Je kunt cookies beheren via je browserinstellingen. Let op dat het uitschakelen van bepaalde cookies de websitefunctionaliteit kan beïnvloeden. De meeste browsers staan je toe cookies te blokkeren of te verwijderen."
+      },
+      "thirdParty": {
+        "title": "4. Cookies van derden",
+        "content": "Sommige cookies worden geplaatst door externe diensten die we gebruiken, zoals analytics-aanbieders en betalingsverwerkers. Deze partijen hebben hun eigen privacybeleid."
+      },
+      "contact": {
+        "title": "5. Neem contact op",
+        "content": "Als je vragen hebt over ons cookiebeleid, neem dan contact met ons op via support@servantana.com."
+      }
+    }
+  },
+  "categories": {
+    "pageTitle": "Selecteer een categorie",
+    "pageSubtitle": "Kies een categorie om professionals te vinden",
+    "selectProfession": "Selecteer een beroep",
+    "notFound": "Categorie niet gevonden",
+    "home_services": "Huishoudelijke diensten",
+    "construction": "Bouw en vakwerk",
+    "automotive": "Automotive",
+    "personal_care": "Persoonlijke verzorging",
+    "care_services": "Zorgdiensten",
+    "delivery_moving": "Bezorging en verhuizing",
+    "tech_it": "Tech en IT",
+    "events_entertainment": "Evenementen en entertainment",
+    "education_tutoring": "Onderwijs en bijles",
+    "professional_services": "Professionele diensten",
+    "fashion_tailoring": "Mode en kleermakerij",
+    "food_cooking": "Eten en koken",
+    "security": "Beveiliging",
+    "agriculture": "Landbouw",
+    "suggest_new": "Maak de jouwe",
+    "workersAvailable": "werknemers beschikbaar",
+    "findWorkers": "Vind professionals in deze categorie",
+    "noWorkersYet": "Nog geen werknemers",
+    "beFirstWorker": "Wees de eerste professional in deze categorie!",
+    "becomeWorker": "Ik ben een werknemer",
+    "workerTitle": "Kies je categorieën",
+    "workerSubtitle": "Selecteer de categorieën die bij je vaardigheden passen. Je kunt meerdere categorieën kiezen als je verschillende diensten aanbiedt.",
+    "categoriesSelected": "categorieën geselecteerd",
+    "continueToSetup": "Doorgaan naar profielinstelling",
+    "suggest": {
+      "title": "Stel een categorie voor",
+      "subtitle": "Help ons groeien door nieuwe categorieën voor te stellen",
+      "categoryName": "Categorienaam",
+      "categoryPlaceholder": "bijv. Huisdierdiensten, Huisautomatisering...",
+      "description": "Beschrijving (optioneel)",
+      "descriptionPlaceholder": "Welke soorten professionals zouden in deze categorie zitten?",
+      "submit": "Suggestie indienen",
+      "thankYou": "Bedankt!",
+      "submitted": "Je suggestie is ingediend ter beoordeling.",
+      "backToCategories": "Terug naar categorieën"
+    }
+  },
+  "jobs": {
+    "cleaner": "Schoonmaker",
+    "housekeeper": "Huishoudster",
+    "maid": "Huishoudelijke hulp",
+    "gardener": "Tuinman",
+    "landscaper": "Hovenier",
+    "pool_cleaner": "Zwembadtechnicus",
+    "window_cleaner": "Glazenwasser",
+    "carpet_cleaner": "Tapijtreniger",
+    "pressure_washer": "Hogedrukreiniger",
+    "pest_control": "Ongediertebestrijder",
+    "plumber": "Loodgieter",
+    "electrician": "Elektricien",
+    "carpenter": "Timmerman",
+    "painter": "Schilder",
+    "roofer": "Dakdekker",
+    "mason": "Metselaar",
+    "welder": "Lasser",
+    "tiler": "Tegelzetter",
+    "plasterer": "Stukadoor",
+    "glazier": "Glazenier",
+    "flooring_installer": "Vloerlegger",
+    "drywall_installer": "Gipsplaatmonteur",
+    "insulation_worker": "Isolatiemonteur",
+    "hvac_technician": "HVAC-technicus",
+    "locksmith": "Slotenmaker",
+    "mechanic": "Monteur",
+    "auto_electrician": "Auto-elektricien",
+    "car_washer": "Autowasser",
+    "auto_detailer": "Auto detailer",
+    "tire_technician": "Bandentechnicus",
+    "body_repair": "Carrosseriehersteller",
+    "tow_truck_driver": "Sleepwagenchauffeur",
+    "barber": "Kapper",
+    "hairdresser": "Kapper/Kapster",
+    "beautician": "Schoonheidsspecialist",
+    "makeup_artist": "Visagist",
+    "nail_technician": "Nagelstylist",
+    "massage_therapist": "Masseur",
+    "personal_trainer": "Personal trainer",
+    "tattoo_artist": "Tatoeëerder",
+    "babysitter": "Babysitter",
+    "nanny": "Kindermeisje",
+    "elderly_caregiver": "Ouderenverzorger",
+    "pet_sitter": "Huisdierpas",
+    "dog_walker": "Hondenuitlater",
+    "pet_groomer": "Trimsalon",
+    "nurse": "Verpleegkundige",
+    "home_health_aide": "Thuiszorgmedewerker",
+    "mover": "Verhuizer",
+    "delivery_driver": "Bezorger",
+    "courier": "Koerier",
+    "truck_driver": "Vrachtwagenchauffeur",
+    "furniture_assembler": "Meubelmonteur",
+    "computer_technician": "Computertechnicus",
+    "phone_repair": "Telefoonreparateur",
+    "network_technician": "Netwerktechnicus",
+    "security_installer": "Beveiligingsinstallateur",
+    "smart_home_installer": "Smart home installateur",
+    "appliance_repair": "Apparaatmonteur",
+    "photographer": "Fotograaf",
+    "videographer": "Videograaf",
+    "dj": "DJ",
+    "musician": "Muzikant",
+    "event_planner": "Evenementenplanner",
+    "caterer": "Cateraar",
+    "bartender": "Barman",
+    "waiter": "Ober",
+    "tutor": "Bijlesleraar",
+    "music_teacher": "Muziekleraar",
+    "language_teacher": "Taalleraar",
+    "driving_instructor": "Rijinstructeur",
+    "sports_coach": "Sportcoach",
+    "yoga_instructor": "Yoga-instructeur",
+    "accountant": "Accountant",
+    "lawyer": "Advocaat",
+    "translator": "Vertaler",
+    "notary": "Notaris",
+    "real_estate_agent": "Makelaar",
+    "insurance_agent": "Verzekeringsagent",
+    "tailor": "Kleermaker",
+    "seamstress": "Naaister",
+    "shoe_repair": "Schoenmaker",
+    "dry_cleaner": "Stomerij",
+    "laundry_service": "Wasservice",
+    "chef": "Chef-kok",
+    "cook": "Kok",
+    "baker": "Bakker",
+    "butcher": "Slager",
+    "personal_chef": "Privéchef",
+    "security_guard": "Beveiliger",
+    "bodyguard": "Lijfwacht",
+    "private_investigator": "Privédetective",
+    "farmer": "Boer",
+    "farmhand": "Landarbeider",
+    "veterinarian": "Dierenarts",
+    "beekeeper": "Imker"
+  },
+  "footer": {
+    "description": "We verbinden je met betrouwbare schoonmaakprofessionals.",
+    "company": "Bedrijf",
+    "support": "Ondersteuning",
+    "legal": "Juridisch",
+    "aboutUs": "Over ons",
+    "careers": "Carrières",
+    "press": "Pers",
+    "helpCenter": "Helpcentrum",
+    "contactUs": "Neem contact op",
+    "faq": "FAQ",
+    "termsOfService": "Servicevoorwaarden",
+    "privacyPolicy": "Privacybeleid",
+    "cookiePolicy": "Cookiebeleid",
+    "allRightsReserved": "Alle rechten voorbehouden."
+  },
+  "about": {
+    "title": "Over Servantana",
+    "subtitle": "Wij zijn de grootste arbeidsmarktplaats om gekwalificeerde professionals te verbinden met mensen die hun diensten nodig hebben.",
+    "mission": {
+      "title": "Onze missie",
+      "content": "We geloven dat iedereen toegang verdient tot betrouwbare, gekwalificeerde professionals. Onze missie is het creëren van zinvolle werkmogelijkheden en het gemakkelijk maken om betrouwbare hulp te vinden voor elke taak."
+    },
+    "stats": {
+      "professionals": "Professionals",
+      "bookings": "Boekingen",
+      "satisfaction": "Tevredenheid",
+      "cities": "Steden"
+    },
+    "story": {
+      "title": "Ons verhaal",
+      "content1": "Servantana werd in 2024 opgericht met een eenvoudig idee: het gemakkelijker maken voor mensen om betrouwbare hulp te vinden. We merkten dat hoewel gekwalificeerde professionals overal waren, het verbinden van hen met klanten die hun diensten nodig hadden onnodig moeilijk was.",
+      "content2": "Vandaag zijn we trots dat we een platform hebben gebouwd dat duizenden professionals in staat stelt hun bedrijf te laten groeien terwijl we klanten helpen zaken gedaan te krijgen met vertrouwen."
+    },
+    "values": {
+      "title": "Onze waarden",
+      "trust": {
+        "title": "Vertrouwen",
+        "content": "We verifiëren elke professional en beschermen elke transactie om gemoedsrust te garanderen."
+      },
+      "quality": {
+        "title": "Kwaliteit",
+        "content": "We handhaven hoge standaarden en werken alleen met gekwalificeerde, betrouwbare professionals."
+      },
+      "innovation": {
+        "title": "Innovatie",
+        "content": "We verbeteren continu ons platform om het inhuren van hulp gemakkelijker dan ooit te maken."
+      }
+    }
+  },
+  "careers": {
+    "title": "Word lid van ons team",
+    "subtitle": "Help ons de toekomst van werk te bouwen. We zoeken gepassioneerde mensen die het verschil willen maken.",
+    "why": {
+      "title": "WAAROM WIJ?",
+      "growth": {
+        "title": "Carrièregroei",
+        "content": "Ontwikkel je vaardigheden en maak carrière in een snel bewegende startup-omgeving."
+      },
+      "remote": {
+        "title": "Remote first",
+        "content": "Werk vanuit overal. We geloven in flexibiliteit en werk-privébalans."
+      },
+      "benefits": {
+        "title": "Geweldige voordelen",
+        "content": "Competitief salaris, aandelen, ziektekostenverzekering en onbeperkte vrije dagen."
+      }
+    },
+    "positions": {
+      "title": "Open posities",
+      "frontend": {
+        "title": "Senior Frontend Developer"
+      },
+      "backend": {
+        "title": "Backend Developer"
+      },
+      "designer": {
+        "title": "Product Designer"
+      },
+      "marketing": {
+        "title": "Marketing Manager"
+      },
+      "support": {
+        "title": "Customer Support Specialist"
+      }
+    },
+    "departments": {
+      "engineering": "Engineering",
+      "design": "Design",
+      "marketing": "Marketing",
+      "support": "Support"
+    },
+    "locations": {
+      "remote": "Remote",
+      "hybrid": "Hybride"
+    },
+    "types": {
+      "fullTime": "Fulltime",
+      "partTime": "Parttime"
+    },
+    "apply": "Solliciteer nu",
+    "noPosition": {
+      "title": "Zie je geen passende functie?",
+      "content": "We zijn altijd op zoek naar getalenteerde mensen. Stuur ons je CV en we houden je in gedachten voor toekomstige mogelijkheden.",
+      "button": "Stuur CV"
+    }
+  },
+  "press": {
+    "title": "Pers en media",
+    "subtitle": "Nieuws, updates en bronnen voor journalisten en mediaprofessionals.",
+    "kit": {
+      "title": "Perskit",
+      "logos": {
+        "title": "Merklogo's",
+        "content": "Download ons logo in verschillende formaten voor persgebruik."
+      },
+      "photos": {
+        "title": "Productfoto's",
+        "content": "Hoge resolutie screenshots en productafbeeldingen."
+      }
+    },
+    "download": "Downloaden",
+    "facts": {
+      "title": "Bedrijfsfeiten",
+      "founded": "Opgericht",
+      "headquarters": "Hoofdkantoor",
+      "employees": "Medewerkers",
+      "users": "Geregistreerde gebruikers"
+    },
+    "contact": {
+      "title": "Perscontact",
+      "content": "Voor mediaverzoeken, interviewaanvragen of toegang tot de perskit, neem contact op met ons persteam."
+    }
+  },
+  "help": {
+    "title": "Helpcentrum",
+    "subtitle": "Vind antwoorden op je vragen",
+    "searchPlaceholder": "Zoek naar hulp...",
+    "categories": {
+      "title": "Blader per categorie",
+      "account": {
+        "title": "Account en profiel",
+        "articles": "12 artikelen"
+      },
+      "booking": {
+        "title": "Boeken en plannen",
+        "articles": "15 artikelen"
+      },
+      "payments": {
+        "title": "Betalingen en facturering",
+        "articles": "10 artikelen"
+      },
+      "safety": {
+        "title": "Veiligheid en vertrouwen",
+        "articles": "8 artikelen"
+      },
+      "communication": {
+        "title": "Communicatie",
+        "articles": "6 artikelen"
+      },
+      "settings": {
+        "title": "Instellingen",
+        "articles": "9 artikelen"
+      }
+    },
+    "popular": {
+      "title": "Populaire artikelen",
+      "article1": "Hoe boek ik een professional?",
+      "article2": "Hoe annuleer of verzet ik een boeking?",
+      "article3": "Hoe werken betalingen?",
+      "article4": "Hoe worden professionals geverifieerd?",
+      "article5": "Hoe word ik een professional op Servantana?"
+    },
+    "contact": {
+      "title": "Nog steeds hulp nodig?",
+      "content": "Ons supportteam staat klaar om je te helpen met alle vragen.",
+      "button": "Contact support"
+    }
+  },
+  "contact": {
+    "title": "Neem contact op",
+    "subtitle": "We horen graag van je. Stuur ons een bericht en we reageren zo snel mogelijk.",
+    "email": {
+      "title": "E-mail"
+    },
+    "phone": {
+      "title": "Telefoon"
+    },
+    "address": {
+      "title": "Adres"
+    },
+    "form": {
+      "name": "Je naam",
+      "email": "E-mailadres",
+      "subject": "Onderwerp",
+      "message": "Bericht",
+      "submit": "Bericht versturen"
+    },
+    "success": {
+      "title": "Bericht verzonden!",
+      "message": "Bedankt voor je bericht. We reageren binnen 24 uur."
+    }
+  },
+  "pwa": {
+    "installTitle": "Installeer Servantana",
+    "installDescription": "Voeg toe aan je startscherm voor de beste ervaring",
+    "installButton": "Installeren"
+  },
+  "offline": {
+    "youAreOffline": "Je bent offline",
+    "viewingCached": "Bekijkt gecachte gegevens",
+    "lastSynced": "Laatst gesynchroniseerd",
+    "refresh": "Vernieuwen",
+    "refreshed": "Gegevens succesvol vernieuwd",
+    "refreshFailed": "Kan gegevens niet vernieuwen",
+    "cannotRefresh": "Kan niet vernieuwen terwijl offline",
+    "usingCachedData": "Gebruikt gecachte gegevens - je lijkt offline te zijn"
+  },
+  "route": {
+    "title": "Route van vandaag",
+    "stops": "Stops",
+    "totalDistance": "Totale afstand",
+    "travelTime": "Reistijd",
+    "finishBy": "Klaar voor",
+    "openFullRoute": "Open volledige route in Maps",
+    "startLocation": "Start",
+    "yourLocation": "Jouw locatie",
+    "navigate": "Navigeren",
+    "routeComplete": "Route voltooid",
+    "estimatedFinish": "Geschatte eindtijd",
+    "noBookings": "Geen boekingen vandaag",
+    "noBookingsDesc": "Je hebt geen bevestigde boekingen voor vandaag"
+  },
+  "substitutes": {
+    "title": "Vind een vervanger",
+    "subtitle": "Kies een beschikbare werknemer om je geannuleerde boeking te vervangen",
+    "originalCancelled": "{name} heeft je boeking geannuleerd",
+    "availableCount": "{count} werknemers beschikbaar",
+    "bookings": "boekingen",
+    "accept": "Accepteren",
+    "accepted": "Vervanger geaccepteerd! Nieuwe boeking aangemaakt.",
+    "noAvailable": "Geen vervangers beschikbaar",
+    "noAvailableDesc": "Helaas zijn er geen werknemers beschikbaar voor dit tijdslot",
+    "findNewWorker": "Vind een nieuwe werknemer",
+    "skipForNow": "Sla voorlopig over"
+  },
+  "faq": {
+    "title": "Veelgestelde vragen",
+    "subtitle": "Vind antwoorden op de meest gestelde vragen over Servantana.",
+    "items": {
+      "whatIsServantana": {
+        "question": "Wat is Servantana?",
+        "answer": "Servantana is een marktplaats die klanten verbindt met gekwalificeerde professionals voor diverse diensten waaronder schoonmaak, reparaties, persoonlijke verzorging en meer. We verifiëren alle professionals en bieden veilige betalingsverwerking."
+      },
+      "howToBook": {
+        "question": "Hoe boek ik een professional?",
+        "answer": "Selecteer eenvoudig een categorie, kies een beroep, blader door beschikbare professionals in je regio, selecteer er een op basis van beoordelingen en reviews, kies je gewenste datum en tijd, en bevestig je boeking. Zo makkelijk is het!"
+      },
+      "paymentMethods": {
+        "question": "Welke betaalmethoden worden geaccepteerd?",
+        "answer": "We accepteren alle belangrijke creditcards, debitcards en PayPal. Betalingen worden veilig verwerkt via ons platform, en je wordt pas in rekening gebracht nadat de service is voltooid."
+      },
+      "cancellation": {
+        "question": "Wat is het annuleringsbeleid?",
+        "answer": "Je kunt een boeking tot 24 uur voor de geplande tijd kosteloos annuleren of verzetten. Annuleringen binnen 24 uur kunnen onderhevig zijn aan annuleringskosten."
+      },
+      "workerVerification": {
+        "question": "Hoe worden professionals geverifieerd?",
+        "answer": "Alle professionals doorlopen een verificatieproces dat identiteitsverificatie, achtergrondcontrole en vaardigheidsbeoordeling omvat. We verzamelen en tonen ook reviews van eerdere klanten."
+      },
+      "becomeWorker": {
+        "question": "Hoe word ik een professional op Servantana?",
+        "answer": "Registreer voor een professioneel account, vul je profiel in, dien de vereiste documenten in voor verificatie, en zodra goedgekeurd kun je beginnen met het accepteren van boekingen en het laten groeien van je bedrijf."
+      },
+      "pricing": {
+        "question": "Hoe worden prijzen bepaald?",
+        "answer": "Professionals stellen hun eigen tarieven vast op basis van hun ervaring en de diensten die ze aanbieden. Alle prijzen worden vooraf getoond voor boeking, zonder verborgen kosten."
+      },
+      "safety": {
+        "question": "Is Servantana veilig om te gebruiken?",
+        "answer": "Ja! We geven prioriteit aan veiligheid met geverifieerde professionals, veilige betalingen en een beoordelingssysteem. We bieden ook klantenservice en een tevredenheidsgarantie op alle boekingen."
+      }
+    },
+    "contact": {
+      "title": "Heb je nog vragen?",
+      "content": "Kun je niet vinden wat je zoekt? Ons supportteam helpt je graag.",
+      "button": "Neem contact op"
+    }
+  },
+  "errors": {
+    "somethingWentWrong": "Er is iets misgegaan",
+    "tryAgainLater": "Onze excuses voor het ongemak. Probeer het opnieuw of neem contact op met support als het probleem aanhoudt.",
+    "tryAgain": "Probeer opnieuw",
+    "goHome": "Ga naar home",
+    "pageNotFound": "Pagina niet gevonden",
+    "pageNotFoundDescription": "De pagina die je zoekt bestaat niet of is verplaatst.",
+    "browseServices": "Blader door diensten"
+  },
+  "analytics": {
+    "title": "Analytics dashboard",
+    "overview": "Overzicht",
+    "earnings": "Inkomsten",
+    "bookings": "Boekingen",
+    "services": "Diensten",
+    "totalEarnings": "Totale inkomsten",
+    "totalBookings": "Totale boekingen",
+    "averageRating": "Gemiddelde beoordeling",
+    "completionRate": "Voltooiingspercentage",
+    "earningsStatus": "Inkomstenstatus",
+    "pending": "In behandeling",
+    "available": "Beschikbaar",
+    "paidOut": "Uitbetaald",
+    "earningsTrend": "Inkomstentrend",
+    "bookingTrend": "Boekingstrend",
+    "earningsByService": "Inkomsten per service",
+    "topServices": "Top diensten",
+    "bookingsByStatus": "Boekingen per status",
+    "revenueBreakdown": "Omzetverdeling",
+    "grossRevenue": "Bruto-omzet",
+    "refunds": "Terugbetalingen",
+    "netRevenue": "Netto-omzet",
+    "platformFees": "Platformkosten",
+    "avgOrderValue": "Gem. bestelwaarde",
+    "totalRevenue": "Totale omzet",
+    "totalUsers": "Totaal gebruikers",
+    "export": "Exporteren",
+    "exportBookings": "Exporteer boekingen",
+    "exportRevenue": "Exporteer omzet",
+    "period": {
+      "today": "Vandaag",
+      "week": "Laatste 7 dagen",
+      "month": "Laatste 30 dagen",
+      "quarter": "Laatste 3 maanden",
+      "year": "Laatste jaar"
+    }
+  },
+  "notifications": {
+    "title": "Notificatievoorkeuren",
+    "subtitle": "Kies hoe je op de hoogte wilt worden gehouden",
+    "channels": {
+      "email": "E-mail",
+      "sms": "SMS",
+      "push": "Push-notificaties"
+    },
+    "types": {
+      "bookingCreated": "Nieuwe boekingsverzoeken",
+      "bookingConfirmed": "Boekingsbevestigingen",
+      "bookingCancelled": "Boekingsannuleringen",
+      "bookingReminder": "Boekingsherinneringen",
+      "bookingCompleted": "Voltooide boekingen",
+      "paymentReceived": "Betaling ontvangen",
+      "payoutSent": "Uitbetalingen verzonden",
+      "messageReceived": "Nieuwe berichten",
+      "reviewReceived": "Nieuwe reviews",
+      "documentVerified": "Document geverifieerd",
+      "documentRejected": "Document afgewezen",
+      "disputeOpened": "Geschil geopend",
+      "disputeResolved": "Geschil opgelost"
+    },
+    "pushNotifications": "Push-notificaties",
+    "enablePush": "Push-notificaties inschakelen",
+    "disablePush": "Push-notificaties uitschakelen",
+    "pushEnabled": "Push-notificaties zijn ingeschakeld",
+    "pushDisabled": "Push-notificaties zijn uitgeschakeld",
+    "pushNotSupported": "Push-notificaties worden niet ondersteund in deze browser",
+    "smsNotice": "SMS-notificaties vereisen een geverifieerd telefoonnummer",
+    "addPhone": "Telefoonnummer toevoegen",
+    "reminderTiming": "Timing boekingsherinnering",
+    "reminderTimingDesc": "Kies wanneer je herinneringen wilt ontvangen voor je boekingen",
+    "reminderEnabled": "Herinneringen zijn ingeschakeld",
+    "reminderDisabled": "Herinneringen zijn uitgeschakeld",
+    "selectReminderTimes": "Selecteer herinneringstijden",
+    "beforeBooking": "voor boeking",
+    "addReminderTime": "Herinneringstijd toevoegen",
+    "noRemindersSelected": "Geen herinneringstijden geselecteerd"
+  },
+  "documents": {
+    "title": "Mijn documenten",
+    "subtitle": "Upload en beheer je verificatiedocumenten",
+    "upload": "Document uploaden",
+    "uploadNew": "Nieuw document uploaden",
+    "noDocuments": "Nog geen documenten geüpload",
+    "noDocumentsDesc": "Upload je ID, licenties of certificeringen om geverifieerd te worden",
+    "types": {
+      "governmentId": "Overheids-ID",
+      "driversLicense": "Rijbewijs",
+      "passport": "Paspoort",
+      "proofOfAddress": "Adresbewijs",
+      "insurance": "Verzekeringscertificaat",
+      "certification": "Professionele certificering",
+      "backgroundCheck": "Achtergrondcontrole",
+      "other": "Ander document"
+    },
+    "status": {
+      "pending": "In behandeling",
+      "approved": "Goedgekeurd",
+      "rejected": "Afgewezen",
+      "expired": "Verlopen"
+    },
+    "uploadedOn": "Geüpload op",
+    "expiresOn": "Verloopt op",
+    "verifiedOn": "Geverifieerd op",
+    "rejectionReason": "Reden voor afwijzing",
+    "reupload": "Opnieuw uploaden",
+    "delete": "Document verwijderen",
+    "deleteConfirm": "Weet je zeker dat je dit document wilt verwijderen?"
+  },
+  "calendar": {
+    "title": "Kalendersynchronisatie",
+    "subtitle": "Verbind je agenda's om boekingen automatisch te synchroniseren",
+    "connected": "Verbonden",
+    "notConnected": "Niet verbonden",
+    "connect": "Verbinden",
+    "disconnect": "Verbreken",
+    "lastSynced": "Laatst gesynchroniseerd",
+    "syncNow": "Nu synchroniseren",
+    "syncing": "Synchroniseren...",
+    "google": {
+      "title": "Google Calendar",
+      "description": "Verbind je Google Calendar om je boekingen automatisch te synchroniseren."
+    },
+    "outlook": {
+      "title": "Outlook Calendar",
+      "description": "Verbind je Outlook Calendar om je boekingen automatisch te synchroniseren."
+    },
+    "syncSettings": "Synchronisatie-instellingen",
+    "autoSync": "Automatisch nieuwe boekingen synchroniseren",
+    "syncDirection": "Synchronisatierichting",
+    "twoWay": "Tweerichtingssynchronisatie",
+    "oneWay": "Eenrichting (Servantana naar Agenda)"
+  },
+  "support": {
+    "title": "Supportcentrum",
+    "subtitle": "Krijg hulp en beheer je geschillen",
+    "helpCenter": "Helpcentrum",
+    "helpCenterDesc": "Vind antwoorden op veelgestelde vragen",
+    "contactSupport": "Contact support",
+    "contactSupportDesc": "Neem contact op met ons supportteam",
+    "disputes": "Mijn geschillen",
+    "disputesDesc": "Bekijk en beheer je geschillen",
+    "openDispute": "Open een geschil",
+    "noDisputes": "Nog geen geschillen",
+    "noDisputesDesc": "Je hebt nog geen geschillen",
+    "dispute": {
+      "title": "Geschildetails",
+      "create": "Geschil aanmaken",
+      "selectBooking": "Selecteer boeking",
+      "noBookingsToDispute": "Geen voltooide of geannuleerde boekingen gevonden om te betwisten",
+      "type": "Type geschil",
+      "types": {
+        "serviceQuality": "Servicekwaliteit",
+        "paymentIssue": "Betalingsprobleem",
+        "noShow": "Niet verschenen",
+        "propertyDamage": "Eigendomsschade",
+        "unprofessionalBehavior": "Onprofessioneel gedrag",
+        "other": "Anders"
+      },
+      "subject": "Onderwerp",
+      "subjectPlaceholder": "Korte samenvatting van je probleem",
+      "description": "Beschrijving",
+      "descriptionPlaceholder": "Beschrijf je probleem in detail",
+      "evidence": "Bewijs",
+      "uploadEvidence": "Upload bewijs",
+      "evidenceTypes": "Afbeeldingen, video's of documenten",
+      "submit": "Geschil indienen",
+      "status": {
+        "open": "Open",
+        "inProgress": "In behandeling",
+        "resolved": "Opgelost",
+        "closed": "Gesloten"
+      },
+      "resolution": {
+        "fullRefund": "Volledige terugbetaling",
+        "partialRefund": "Gedeeltelijke terugbetaling",
+        "noRefund": "Geen terugbetaling",
+        "rebooking": "Gratis herboeking",
+        "other": "Andere oplossing"
+      },
+      "messages": "Berichten",
+      "sendMessage": "Bericht verzenden",
+      "messagePlaceholder": "Typ je bericht...",
+      "adminResponse": "Beheerder reactie",
+      "awaitingResponse": "Wacht op reactie",
+      "resolvedOn": "Opgelost op"
+    }
+  },
+  "photos": {
+    "title": "Boekingsfoto's",
+    "before": "Voor",
+    "after": "Na",
+    "upload": "Foto's uploaden",
+    "uploadBefore": "Upload voor-foto's",
+    "uploadAfter": "Upload na-foto's",
+    "noPhotos": "Nog geen foto's geüpload",
+    "noPhotosDesc": "Foto's helpen het voltooide werk te documenteren",
+    "comparison": "Voor- en na-vergelijking",
+    "viewAll": "Bekijk alle foto's",
+    "delete": "Foto verwijderen",
+    "deleteConfirm": "Weet je zeker dat je deze foto wilt verwijderen?",
+    "maxPhotos": "Maximaal 10 foto's per categorie",
+    "uploadSuccess": "Foto succesvol geüpload",
+    "uploadError": "Kan foto niet uploaden"
+  },
+  "emailVerification": {
+    "title": "Verifieer je e-mail",
+    "subtitle": "Verifieer je e-mailadres om door te gaan",
+    "description": "We hebben een verificatielink naar je e-mailadres gestuurd. Klik op de link om je account te verifiëren.",
+    "resendButton": "Verificatie-e-mail opnieuw versturen",
+    "checkButton": "Ik heb geverifieerd, doorgaan",
+    "resendSuccess": "Verificatie-e-mail verzonden! Controleer je inbox.",
+    "resendFailed": "Kan verificatie-e-mail niet verzenden. Probeer opnieuw.",
+    "emailSent": "Verificatie-e-mail verzonden! Controleer je inbox en spam-map.",
+    "wrongAccount": "Ingelogd op het verkeerde account?"
+  },
+  "workerOnboarding": {
+    "step": "Stap",
+    "of": "van",
+    "step1Title": "In welke categorieën specialiseer je je?",
+    "step1Desc": "Selecteer de categorieën die bij je vaardigheden passen. Je kunt er meerdere kiezen.",
+    "step2Title": "Wat doe je?",
+    "step2Desc": "Selecteer je specifieke beroepen binnen deze categorieën.",
+    "step3Title": "Stel je uurtarief in",
+    "step3Desc": "Hoeveel wil je per uur verdienen?",
+    "step4Title": "Wanneer ben je beschikbaar?",
+    "step4Desc": "Stel je werkdagen en -uren in.",
+    "step5Title": "Vertel ons over jezelf",
+    "step5Desc": "Help klanten je beter te leren kennen.",
+    "step6PaymentTitle": "Betalingen instellen",
+    "step6PaymentDesc": "Hoe wil je je inkomsten ontvangen?",
+    "step7Title": "Bekijk je profiel",
+    "step7Desc": "Zorg ervoor dat alles goed ziet eruit voordat je live gaat.",
+    "categoriesSelected": "categorieën geselecteerd",
+    "professionsSelected": "beroepen geselecteerd",
+    "noProfessions": "Geen beroepen beschikbaar voor geselecteerde categorieën",
+    "noProfessionsInCategory": "Nog geen beroepen. Voeg de jouwe hieronder toe!",
+    "hour": "uur",
+    "years": "jaar",
+    "year": "jaar",
+    "rateHint": "Je kunt dit later wijzigen. De meeste werknemers rekenen €20-50/uur.",
+    "aboutYou": "Over jou",
+    "bio": "Bio",
+    "bioPlaceholder": "Vertel klanten over je ervaring, vaardigheden en wat je uitstekend maakt in wat je doet...",
+    "experience": "Jaren ervaring",
+    "serviceRadius": "Serviceradius",
+    "ecoFriendly": "Milieuvriendelijk",
+    "ecoFriendlyDesc": "Ik gebruik milieuvriendelijke producten en methoden",
+    "petFriendly": "Huisdiervriendelijk",
+    "petFriendlyDesc": "Ik voel me comfortabel om te werken in huizen met huisdieren",
+    "reviewCategories": "Categorieën",
+    "reviewProfessions": "Beroepen",
+    "reviewRates": "Je tarieven",
+    "reviewAvailability": "Beschikbaarheid",
+    "reviewProfile": "Profieldetails",
+    "hourlyRate": "Uurtarief",
+    "workingDays": "Werkdagen",
+    "workingHours": "Werkuren",
+    "otherProfessions": "Andere beroepen",
+    "quickSetAll": "Snel alle tarieven instellen:",
+    "readyToGo": "Je bent klaar!",
+    "profileWillBeVisible": "Na het voltooien van de setup, wordt je profiel zichtbaar voor klanten.",
+    "completeSetup": "Voltooi setup",
+    "completeStep": "Voltooi deze stap voordat je doorgaat",
+    "fetchError": "Kan gegevens niet laden. Probeer opnieuw.",
+    "saveFailed": "Kan niet opslaan. Probeer opnieuw.",
+    "completed": "Welkom! Je profiel is nu live.",
+    "createYours": "Maak de jouwe",
+    "suggestCategory": "Stel een categorie voor",
+    "categoryName": "Categorienaam",
+    "categoryNamePlaceholder": "bijv. Huisdierdiensten",
+    "categoryEmoji": "Emoji (optioneel)",
+    "suggestionNote": "Je suggestie wordt beoordeeld door ons team en toegevoegd indien goedgekeurd.",
+    "categorySuggestionSubmitted": "Categoriesuggestie ingediend! Het wordt binnenkort beoordeeld.",
+    "suggestionFailed": "Kan suggestie niet indienen",
+    "enterCategoryName": "Voer een categorienaam in",
+    "addYours": "Voeg de jouwe toe",
+    "suggestProfession": "Stel een beroep voor",
+    "professionName": "Beroepsnaam",
+    "professionNamePlaceholder": "bijv. Zwembadtechnicus",
+    "professionEmoji": "Emoji (optioneel)",
+    "professionSuggestionNote": "Je beroepssuggestie wordt beoordeeld en aan deze categorie toegevoegd indien goedgekeurd.",
+    "professionSuggestionSubmitted": "Beroepssuggestie ingediend! Het wordt binnenkort beoordeeld.",
+    "enterProfessionName": "Voer een beroepsnaam in",
+    "paymentSetup": "Betalingsinstelling",
+    "paymentSetupDesc": "Verbind je betalingsaccount om betalingen van klanten te ontvangen.",
+    "stripeConnect": "Stripe Connect",
+    "stripeConnectDesc": "Ontvang veilig betalingen rechtstreeks op je bankrekening. Stripe handelt alle betalingsverwerking af.",
+    "setupStripe": "Stripe-account instellen",
+    "stripeSetupComplete": "Stripe-account verbonden",
+    "stripeRedirect": "Stripe-setup openen in nieuw tabblad...",
+    "stripeSetupFailed": "Kan Stripe niet instellen. Probeer opnieuw.",
+    "stripeSetupPending": "Voltooi de setup in het Stripe-tabblad en controleer dan de status hieronder.",
+    "stripeVerified": "Stripe-account succesvol geverifieerd!",
+    "stripeStillPending": "Setup nog niet voltooid. Voltooi de Stripe-setup.",
+    "checkStatus": "Controleer setup-status",
+    "checkFailed": "Kan status niet controleren. Probeer opnieuw.",
+    "skipPaymentNote": "Je kunt deze stap overslaan en betalingen later instellen vanuit je dashboard-instellingen.",
+    "reviewPayment": "Betaling",
+    "connected": "Verbonden",
+    "notSetup": "Niet ingesteld",
+    "canSetupLater": "Je kunt dit later instellen in je dashboard-instellingen.",
+    "step1TitleNew": "Wat doe je?",
+    "step1DescNew": "Selecteer je categorieën en beroepen",
+    "step2TitleNew": "Stel je tarieven in",
+    "step2DescNew": "Hoeveel reken je per uur?",
+    "step3TitleNew": "Je schema",
+    "step3DescNew": "Wanneer ben je beschikbaar om te werken?",
+    "step4TitleNew": "Ontvang je betaling",
+    "step4DescNew": "Hoe moeten we je inkomsten sturen?",
+    "step5TitleNew": "Afronden",
+    "step5DescNew": "Voeg laatste details toe en bekijk je profiel",
+    "selectProfessions": "Selecteer beroepen",
+    "backToCategories": "Terug naar categorieën",
+    "presetWeekdays": "Werkdagen 9-17",
+    "presetFlexible": "Flexibel",
+    "presetWeekends": "Weekenden",
+    "paypalDesc": "Snelle en gemakkelijke betalingen wereldwijd",
+    "paypalEmailPlaceholder": "jouw@email.com",
+    "or": "of",
+    "bankAccount": "Bankrekening",
+    "bankDesc": "Directe overschrijving naar je bank (SEPA)",
+    "ibanPlaceholder": "NL91 ABNA 0417 1643 00",
+    "accountHolderPlaceholder": "Naam rekeninghouder",
+    "paymentSkipNote": "Je kunt dit overslaan en betalingsgegevens later toevoegen in Instellingen",
+    "preview": "Voorbeeld",
+    "previewDesc": "Hoe je profiel eruit zal zien"
+  },
+  "days": {
+    "sunday": "Zondag",
+    "monday": "Maandag",
+    "tuesday": "Dinsdag",
+    "wednesday": "Woensdag",
+    "thursday": "Donderdag",
+    "friday": "Vrijdag",
+    "saturday": "Zaterdag"
+  },
+  "bookingChanges": {
+    "reschedule": "Verzetten",
+    "cancel": "Boeking annuleren",
+    "rescheduleTitle": "Boeking verzetten",
+    "cancelTitle": "Boeking annuleren",
+    "selectNewDate": "Selecteer nieuwe datum",
+    "selectNewTime": "Selecteer nieuwe tijd",
+    "noSlotsAvailable": "Geen beschikbare slots op deze datum",
+    "rescheduleReason": "Reden voor verzetten",
+    "cancelReason": "Reden voor annulering",
+    "confirmReschedule": "Bevestig verzetten",
+    "confirmCancel": "Bevestig annulering",
+    "refundInfo": "Terugbetalingsinformatie",
+    "fullRefund": "Volledige terugbetaling",
+    "partialRefund": "Gedeeltelijke terugbetaling",
+    "noRefund": "Geen terugbetaling",
+    "refundAmount": "Terugbetalingsbedrag",
+    "refundPolicy": "Annuleringsbeleid",
+    "policyFree": "Gratis annulering (meer dan 24 uur van tevoren)",
+    "policyPartial": "Gedeeltelijke terugbetaling (12-24 uur van tevoren)",
+    "policyNone": "Geen terugbetaling (minder dan 12 uur van tevoren)",
+    "rescheduleSuccess": "Boeking succesvol verzet",
+    "cancelSuccess": "Boeking succesvol geannuleerd",
+    "pendingApproval": "In afwachting van goedkeuring",
+    "awaitingWorkerApproval": "In afwachting van goedkeuring werknemer"
+  },
+  "guarantee": {
+    "badge": "Servicegarantie",
+    "title": "Servicegarantie",
+    "shortDescription": "Je tevredenheid is beschermd",
+    "back": "Terug",
+    "pageTitle": "Servicegarantie",
+    "pageSubtitle": "Boek met vertrouwen. Elke service op Servantana wordt gedekt door onze uitgebreide tevredenheidsgarantie.",
+    "promiseTitle": "Onze belofte",
+    "promiseDescription": "Als je service niet aan je verwachtingen voldoet, maken we het goed — via een gratis herservice, gedeeltelijke terugbetaling of volledige terugbetaling.",
+    "coverageTitle": "Wat is gedekt",
+    "coverage": {
+      "noShow": {
+        "title": "No-show bescherming",
+        "description": "Als je dienstverlener niet opdaagt, ontvang je een volledige terugbetaling en prioriteitsherboeking."
+      },
+      "incompleteWork": {
+        "title": "Onvolledig werk",
+        "description": "Als het werk niet wordt voltooid zoals afgesproken, regelen we voltooiing of een terugbetaling."
+      },
+      "poorQuality": {
+        "title": "Kwaliteitsgarantie",
+        "description": "Niet tevreden met de kwaliteit? We sturen een andere professional of betalen je terug."
+      },
+      "propertyDamage": {
+        "title": "Eigendomsbescherming",
+        "description": "Schade veroorzaakt door de dienstverlener tijdens het werk is gedekt tot $1.000."
+      },
+      "unprofessional": {
+        "title": "Professionele normen",
+        "description": "Alle aanbieders moeten professioneel gedrag handhaven. Meld problemen voor onmiddellijke actie."
+      }
+    },
+    "processTitle": "Hoe het werkt",
+    "process": {
+      "fileReport": {
+        "title": "Meld het probleem",
+        "description": "Dien een claim in binnen 7 dagen na je service met details over wat er mis ging."
+      },
+      "review": {
+        "title": "Snelle beoordeling",
+        "description": "Ons team beoordeelt je claim en neemt binnen 24 uur contact op met de dienstverlener."
+      },
+      "resolution": {
+        "title": "Krijg oplossing",
+        "description": "Ontvang een herservice, tegoed of terugbetaling op basis van je situatie — meestal binnen 48 uur."
+      }
+    },
+    "termsTitle": "Algemene voorwaarden",
+    "terms": {
+      "timeLimit": "Claims moeten binnen 7 dagen na de servicedatum worden ingediend",
+      "bookingOnly": "Alleen van toepassing op services geboekt en betaald via Servantana",
+      "evidence": "Foto- of videobewijs kan worden gevraagd om claims te verwerken",
+      "onePerBooking": "Eén claim toegestaan per boeking"
+    },
+    "ctaText": "Klaar om met vertrouwen te boeken?",
+    "ctaButton": "Vind dienstverleners",
+    "claimForm": {
+      "title": "Dien een garantieclaim in",
+      "selectReason": "Selecteer een reden",
+      "reasons": {
+        "NO_SHOW": "Dienstverlener kwam niet opdagen",
+        "INCOMPLETE_SERVICE": "Service werd niet voltooid zoals afgesproken",
+        "POOR_QUALITY": "Kwaliteit was onder verwachting",
+        "PROPERTY_DAMAGE": "Eigendom werd beschadigd tijdens service",
+        "LATE_ARRIVAL": "Dienstverlener arriveerde te laat",
+        "UNPROFESSIONAL": "Onprofessioneel gedrag",
+        "OTHER": "Ander probleem"
+      },
+      "descriptionLabel": "Beschrijf het probleem",
+      "descriptionPlaceholder": "Geef details over wat er gebeurde en waarom je deze claim indient...",
+      "evidenceLabel": "Upload bewijs (optioneel)",
+      "evidenceHint": "Foto's of video's die je claim ondersteunen",
+      "submitClaim": "Claim indienen",
+      "submitting": "Indienen...",
+      "submitSuccess": "Claim succesvol ingediend. We beoordelen het binnen 24 uur.",
+      "submitError": "Kan claim niet indienen. Probeer opnieuw."
+    },
+    "claimStatus": {
+      "PENDING": "In afwachting van beoordeling",
+      "UNDER_REVIEW": "In beoordeling",
+      "APPROVED": "Goedgekeurd",
+      "DENIED": "Afgewezen",
+      "RESOLVED": "Opgelost"
+    },
+    "resolution": {
+      "FULL_REFUND": "Volledige terugbetaling",
+      "PARTIAL_REFUND": "Gedeeltelijke terugbetaling",
+      "SERVICE_CREDIT": "Servicetegoed",
+      "FREE_REBOOK": "Gratis herboeking",
+      "NO_ACTION": "Geen actie vereist",
+      "WORKER_WARNING": "Aanbieder gewaarschuwd",
+      "WORKER_SUSPENDED": "Aanbieder geschorst"
+    }
+  },
+  "aiHub": {
+    "title": "AI-aangedreven functies",
+    "subtitle": "Ervaar slimmere serviceboekingen met onze suite van AI-tools ontworpen om je tijd te besparen en je te helpen de perfecte match te vinden.",
+    "tryNow": "Probeer het nu",
+    "features": {
+      "chat": {
+        "title": "AI-assistent",
+        "desc": "Krijg direct antwoorden over services, boekingen en aanbevelingen"
+      },
+      "smartMatch": {
+        "title": "Slimme match",
+        "desc": "Vind de perfecte dienstverlener op basis van je behoeften en voorkeuren"
+      },
+      "estimate": {
+        "title": "Prijsschatter",
+        "desc": "Upload foto's en krijg directe AI-aangedreven prijsschattingen"
+      },
+      "photo": {
+        "title": "Foto-analyse",
+        "desc": "Analyseer voor/na-foto's om schoonmaakkwaliteit te verifiëren"
+      },
+      "schedule": {
+        "title": "Slimme planning",
+        "desc": "Vind de beste tijdslots met AI-aangedreven vraagvoorspelling"
+      },
+      "reviews": {
+        "title": "Review-inzichten",
+        "desc": "Krijg AI-analyse van dienstverlenersreviews en vertrouwensscores"
+      }
+    },
+    "howItWorks": {
+      "title": "Hoe onze AI werkt",
+      "step1": {
+        "title": "Deel je behoeften",
+        "desc": "Vertel ons wat je zoekt of upload foto's van je ruimte"
+      },
+      "step2": {
+        "title": "AI-analyse",
+        "desc": "Onze AI analyseert je verzoek met geavanceerde machine learning"
+      },
+      "step3": {
+        "title": "Krijg resultaten",
+        "desc": "Ontvang direct gepersonaliseerde aanbevelingen, schattingen of matches"
+      }
+    }
+  }
+}

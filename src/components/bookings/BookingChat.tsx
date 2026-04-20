@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Send, MessageCircle, Loader2 } from "lucide-react";
+import { Send, MessageCircle, Loader2, Wifi, WifiOff } from "lucide-react";
 import { toast } from "sonner";
+import { useMessageStream, StreamMessage } from "@/hooks/useMessageStream";
 
 interface Message {
   id: string;
@@ -36,17 +37,57 @@ export function BookingChat({ bookingId }: BookingChatProps) {
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messageIdsRef = useRef<Set<string>>(new Set());
+
+  // Handle new messages from SSE stream
+  const handleNewStreamMessage = useCallback((streamMessage: StreamMessage) => {
+    // Only add if not already in the list
+    if (!messageIdsRef.current.has(streamMessage.id)) {
+      messageIdsRef.current.add(streamMessage.id);
+      setMessages((prev) => {
+        // Double-check for duplicates
+        if (prev.some((m) => m.id === streamMessage.id)) {
+          return prev;
+        }
+        return [
+          ...prev,
+          {
+            id: streamMessage.id,
+            senderId: streamMessage.senderId,
+            content: streamMessage.content,
+            read: streamMessage.read,
+            createdAt: streamMessage.createdAt,
+            sender: {
+              firstName: streamMessage.sender.firstName,
+              lastName: streamMessage.sender.lastName,
+              avatar: streamMessage.sender.avatar,
+            },
+          },
+        ];
+      });
+    }
+  }, []);
+
+  // Subscribe to real-time message stream for this booking
+  const { isConnected, error: streamError } = useMessageStream({
+    bookingId,
+    onNewMessage: handleNewStreamMessage,
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Fetch initial messages (only once on mount)
   const fetchMessages = useCallback(async () => {
     try {
       const response = await fetch(`/api/bookings/${bookingId}/chat`);
       if (response.ok) {
         const data = await response.json();
-        setMessages(data.messages);
+        // Track existing message IDs
+        const fetchedMessages = data.messages as Message[];
+        fetchedMessages.forEach((m) => messageIdsRef.current.add(m.id));
+        setMessages(fetchedMessages);
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -55,11 +96,9 @@ export function BookingChat({ bookingId }: BookingChatProps) {
     }
   }, [bookingId]);
 
+  // Fetch messages on mount only (no polling - SSE handles real-time)
   useEffect(() => {
     fetchMessages();
-    // Poll for new messages every 5 seconds
-    const interval = setInterval(fetchMessages, 5000);
-    return () => clearInterval(interval);
   }, [fetchMessages]);
 
   useEffect(() => {
@@ -80,7 +119,10 @@ export function BookingChat({ bookingId }: BookingChatProps) {
 
       if (response.ok) {
         const data = await response.json();
-        setMessages((prev) => [...prev, data.message]);
+        const sentMessage = data.message as Message;
+        // Track the sent message ID to avoid duplicate from SSE
+        messageIdsRef.current.add(sentMessage.id);
+        setMessages((prev) => [...prev, sentMessage]);
         setNewMessage("");
         inputRef.current?.focus();
       } else {
@@ -150,10 +192,31 @@ export function BookingChat({ bookingId }: BookingChatProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          {t("title")}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5" />
+            {t("title")}
+          </CardTitle>
+          {/* Real-time connection indicator */}
+          <div
+            className="flex items-center gap-1.5 text-xs"
+            title={isConnected ? "Real-time updates active" : streamError || "Connecting..."}
+          >
+            {isConnected ? (
+              <>
+                <Wifi className="h-3.5 w-3.5 text-green-500" />
+                <span className="text-green-600 dark:text-green-400 hidden sm:inline">Live</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="h-3.5 w-3.5 text-yellow-500" />
+                <span className="text-yellow-600 dark:text-yellow-400 hidden sm:inline">
+                  {streamError ? "Reconnecting" : "Connecting"}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Messages container */}

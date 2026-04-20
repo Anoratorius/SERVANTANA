@@ -19,14 +19,14 @@ export async function POST(request: Request) {
   const clientIP = getClientIP(request);
 
   // Check if IP is blocked
-  const ipBlock = checkIPBlock(clientIP);
+  const ipBlock = await checkIPBlock(clientIP);
   if (ipBlock) return ipBlock;
 
   // Rate limiting: 3 registrations per hour per IP
-  const rateLimit = checkRateLimit(`register:${clientIP}`, rateLimiters.register);
+  const rateLimit = await checkRateLimit(`register:${clientIP}`, rateLimiters.register);
 
   if (!rateLimit.success) {
-    recordIPViolation(clientIP, "Registration rate limit exceeded");
+    await recordIPViolation(clientIP, "Registration rate limit exceeded");
     return rateLimitResponse(rateLimit.resetTime);
   }
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     // Honeypot check - if filled, silently reject (likely bot)
     if (!checkHoneypot(website)) {
-      recordIPViolation(clientIP, "Honeypot triggered on registration");
+      await recordIPViolation(clientIP, "Honeypot triggered on registration");
       // Return fake success to not tip off bots
       return NextResponse.json(
         { user: { id: "fake", email } },

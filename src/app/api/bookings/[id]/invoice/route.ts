@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { calculateInvoiceAmounts } from "@/lib/fees";
 
 // Generate invoice number
 async function generateInvoiceNumber(): Promise<string> {
@@ -128,7 +129,15 @@ export async function POST(
         invoice: true,
         service: true,
         customer: true,
-        cleaner: true,
+        cleaner: {
+          include: {
+            workerProfile: {
+              select: {
+                country: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -161,9 +170,13 @@ export async function POST(
     const invoiceNumber = await generateInvoiceNumber();
     const subtotal = booking.totalPrice;
     const tipAmount = booking.tipAmount || 0;
-    const taxRate = 0; // Can be made configurable
-    const taxAmount = subtotal * (taxRate / 100);
-    const totalAmount = subtotal + tipAmount + taxAmount;
+
+    // Determine country for tax calculation
+    // Priority: worker's country > default to Germany
+    const countryCode = booking.cleaner.workerProfile?.country || "DE";
+
+    // Calculate tax based on country
+    const invoiceAmounts = calculateInvoiceAmounts(subtotal, tipAmount, countryCode);
 
     const invoice = await prisma.invoice.create({
       data: {
@@ -171,13 +184,13 @@ export async function POST(
         bookingId: booking.id,
         customerId: booking.customerId,
         cleanerId: booking.cleanerId,
-        subtotal,
-        tipAmount,
-        taxRate,
-        taxAmount,
-        totalAmount,
+        subtotal: invoiceAmounts.subtotal,
+        tipAmount: invoiceAmounts.tipAmount,
+        taxRate: invoiceAmounts.taxRate,
+        taxAmount: invoiceAmounts.taxAmount,
+        totalAmount: invoiceAmounts.totalAmount,
         currency: booking.currency,
-        serviceName: booking.service?.name || "Cleaning Service",
+        serviceName: booking.service?.name || "Service",
         serviceDate: booking.scheduledDate,
         serviceTime: booking.scheduledTime,
         duration: booking.duration,

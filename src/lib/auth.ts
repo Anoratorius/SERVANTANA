@@ -12,13 +12,13 @@ const failedLoginAttempts = new Map<string, { count: number; lockedUntil: number
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
-function trackFailedLogin(email: string, ip?: string): void {
+async function trackFailedLogin(email: string, ip?: string): Promise<void> {
   const attempts = failedLoginAttempts.get(email);
   const now = Date.now();
 
   // Record IP violation for security tracking
   if (ip) {
-    recordIPViolation(ip, `Failed login for ${email}`);
+    await recordIPViolation(ip, `Failed login for ${email}`);
   }
 
   // Audit log failed login (non-blocking database write)
@@ -83,7 +83,7 @@ export const authOptions: NextAuthConfig = {
         const email = (credentials.email as string).toLowerCase();
 
         // Check rate limit per email
-        const rateLimit = checkRateLimit(`login:${email}`, rateLimiters.strict);
+        const rateLimit = await checkRateLimit(`login:${email}`, rateLimiters.strict);
         if (!rateLimit.success) {
           throw new Error("Too many login attempts. Please try again later.");
         }
@@ -101,7 +101,7 @@ export const authOptions: NextAuthConfig = {
 
         if (!user || !user.password) {
           // Track failed attempt
-          trackFailedLogin(email);
+          await trackFailedLogin(email);
           // Add random delay to prevent timing attacks
           await randomDelay(200, 500);
           return null;
@@ -114,7 +114,7 @@ export const authOptions: NextAuthConfig = {
 
         if (!isPasswordValid) {
           // Track failed attempt
-          trackFailedLogin(email);
+          await trackFailedLogin(email);
           return null;
         }
 

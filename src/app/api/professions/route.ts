@@ -52,7 +52,7 @@ const suggestProfessionSchema = z.object({
 // POST - worker suggests a new profession
 export async function POST(request: NextRequest) {
   // Rate limiting: 3 suggestions per hour
-  const rateLimited = applyRateLimit(request, "suggestProfession");
+  const rateLimited = await applyRateLimit(request, "suggestProfession");
   if (rateLimited) return rateLimited;
 
   try {

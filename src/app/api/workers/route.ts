@@ -18,7 +18,7 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export async function GET(request: NextRequest) {
   // Rate limiting: 30 searches per minute
-  const rateLimited = applyRateLimit(request, "search");
+  const rateLimited = await applyRateLimit(request, "search");
   if (rateLimited) return rateLimited;
 
   try {

@@ -4,6 +4,9 @@ import localFont from "next/font/local";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
 
+// Validate environment variables at startup (fails fast in production)
+import "@/lib/env";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

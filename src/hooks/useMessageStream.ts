@@ -37,6 +37,7 @@ interface MessageEvent {
 
 interface UseMessageStreamOptions {
   partnerId?: string;
+  bookingId?: string;
   onNewMessage?: (message: StreamMessage) => void;
 }
 
@@ -53,7 +54,7 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 export function useMessageStream(
   options: UseMessageStreamOptions = {}
 ): UseMessageStreamReturn {
-  const { partnerId, onNewMessage } = options;
+  const { partnerId, bookingId, onNewMessage } = options;
   const { status: authStatus } = useSession();
 
   const [messages, setMessages] = useState<StreamMessage[]>([]);
@@ -105,6 +106,13 @@ export function useMessageStream(
 
           if (data.type === "new_message" && data.message) {
             const message = data.message;
+
+            // Filter by bookingId if provided
+            if (bookingId) {
+              if (message.booking?.id !== bookingId) {
+                return;
+              }
+            }
 
             // Filter by partnerId if provided
             if (partnerId) {
@@ -172,7 +180,7 @@ export function useMessageStream(
         reconnectTimeoutRef.current = null;
       }
     };
-  }, [authStatus, partnerId, onNewMessage]);
+  }, [authStatus, partnerId, bookingId, onNewMessage]);
 
   return {
     messages,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { emitNewMessage } from "@/lib/message-events";
 
 // GET - Fetch messages for a completed booking
 export async function GET(
@@ -119,9 +120,13 @@ export async function POST(
     const booking = await prisma.booking.findUnique({
       where: { id },
       select: {
+        id: true,
         customerId: true,
         cleanerId: true,
         status: true,
+        service: {
+          select: { name: true },
+        },
       },
     });
 
@@ -151,7 +156,7 @@ export async function POST(
         ? booking.cleanerId
         : booking.customerId;
 
-    // Create message
+    // Create message with full details for SSE event
     const message = await prisma.message.create({
       data: {
         senderId: session.user.id,
@@ -162,16 +167,42 @@ export async function POST(
       select: {
         id: true,
         senderId: true,
+        receiverId: true,
         content: true,
         read: true,
         createdAt: true,
         sender: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
             avatar: true,
           },
         },
+        receiver: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // Emit real-time event to receiver (distributed via Redis)
+    await emitNewMessage(receiverId, {
+      id: message.id,
+      content: message.content,
+      createdAt: message.createdAt,
+      senderId: message.senderId,
+      receiverId: message.receiverId,
+      read: message.read,
+      sender: message.sender,
+      receiver: message.receiver,
+      booking: {
+        id: booking.id,
+        service: { name: booking.service?.name || "Service" },
       },
     });
 

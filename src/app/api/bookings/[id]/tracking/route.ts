@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import {
+  emitLocationUpdate,
+  emitTrackingStarted,
+  emitTrackingStopped,
+} from "@/lib/tracking-events";
 
 // Calculate distance between two coordinates using Haversine formula
 function calculateDistance(
@@ -175,6 +180,13 @@ export async function POST(
 
     // Handle start/stop tracking
     if (action === "start") {
+      const estimatedArrival =
+        latitude && longitude && booking.latitude && booking.longitude
+          ? estimateArrival(
+              calculateDistance(latitude, longitude, booking.latitude, booking.longitude)
+            )
+          : null;
+
       await prisma.booking.update({
         where: { id },
         data: {
@@ -182,19 +194,24 @@ export async function POST(
           cleanerLatitude: latitude,
           cleanerLongitude: longitude,
           lastLocationUpdate: new Date(),
-          estimatedArrival:
-            latitude && longitude && booking.latitude && booking.longitude
-              ? estimateArrival(
-                  calculateDistance(
-                    latitude,
-                    longitude,
-                    booking.latitude,
-                    booking.longitude
-                  )
-                )
-              : null,
+          estimatedArrival,
         },
       });
+
+      // Emit real-time event
+      await emitTrackingStarted(id);
+      if (latitude && longitude) {
+        const distanceKm =
+          booking.latitude && booking.longitude
+            ? calculateDistance(latitude, longitude, booking.latitude, booking.longitude)
+            : null;
+        await emitLocationUpdate(
+          id,
+          { latitude, longitude },
+          estimatedArrival,
+          distanceKm
+        );
+      }
 
       return NextResponse.json({
         message: "Tracking started",
@@ -214,6 +231,9 @@ export async function POST(
         },
       });
 
+      // Emit real-time event
+      await emitTrackingStopped(id);
+
       return NextResponse.json({
         message: "Tracking stopped",
         trackingActive: false,
@@ -222,15 +242,15 @@ export async function POST(
 
     // Update location
     if (latitude !== undefined && longitude !== undefined) {
+      const distanceKm =
+        booking.latitude && booking.longitude
+          ? calculateDistance(latitude, longitude, booking.latitude, booking.longitude)
+          : null;
+
       const estimatedArrival =
         booking.latitude && booking.longitude
           ? estimateArrival(
-              calculateDistance(
-                latitude,
-                longitude,
-                booking.latitude,
-                booking.longitude
-              )
+              calculateDistance(latitude, longitude, booking.latitude, booking.longitude)
             )
           : null;
 
@@ -243,6 +263,9 @@ export async function POST(
           estimatedArrival,
         },
       });
+
+      // Emit real-time location update
+      await emitLocationUpdate(id, { latitude, longitude }, estimatedArrival, distanceKm);
 
       return NextResponse.json({
         message: "Location updated",

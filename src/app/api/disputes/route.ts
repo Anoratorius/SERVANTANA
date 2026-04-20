@@ -6,7 +6,7 @@ import { applyRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   // Rate limiting: 3 disputes per hour
-  const rateLimited = applyRateLimit(request, "createDispute");
+  const rateLimited = await applyRateLimit(request, "createDispute");
   if (rateLimited) return rateLimited;
 
   try {

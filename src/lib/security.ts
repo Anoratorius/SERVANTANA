@@ -1,66 +1,159 @@
 /**
  * Comprehensive Security Utilities
  * Production-grade security measures for Servantana
+ * Uses Redis for distributed IP blocking across Vercel function instances
  */
+
+import { getRedisClient } from "./rate-limit";
 
 // ============================================
 // IP BLOCKING - Block IPs after repeated abuse
 // ============================================
 
+const IP_VIOLATION_THRESHOLD = 20; // violations before blocking
+const IP_VIOLATION_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+const IP_BLOCK_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hour block
+
+// In-memory fallback (for when Redis is unavailable)
 interface BlockedIP {
   blockedUntil: number;
   reason: string;
   violations: number;
 }
 
-const blockedIPs = new Map<string, BlockedIP>();
-const ipViolations = new Map<string, { count: number; firstViolation: number }>();
-
-const IP_VIOLATION_THRESHOLD = 20; // violations before blocking
-const IP_VIOLATION_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
-const IP_BLOCK_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hour block
+const blockedIPsFallback = new Map<string, BlockedIP>();
+const ipViolationsFallback = new Map<string, { count: number; firstViolation: number }>();
 
 /**
  * Record an IP violation (failed login, rate limit hit, etc.)
+ * Uses Redis when available, falls back to in-memory
  */
-export function recordIPViolation(ip: string, reason: string): void {
+export async function recordIPViolation(ip: string, reason: string): Promise<void> {
   if (ip === "unknown") return;
 
+  const redis = getRedisClient();
+
+  if (!redis) {
+    // Fallback to in-memory
+    recordIPViolationInMemory(ip, reason);
+    return;
+  }
+
+  try {
+    const violationKey = `ip:violations:${ip}`;
+    const blockKey = `ip:blocked:${ip}`;
+
+    // Increment violation count
+    const count = await redis.incr(violationKey);
+
+    // Set expiry on first violation
+    if (count === 1) {
+      await redis.expire(violationKey, Math.ceil(IP_VIOLATION_WINDOW_MS / 1000));
+    }
+
+    // Block IP after threshold
+    if (count >= IP_VIOLATION_THRESHOLD) {
+      const blockData = {
+        blockedUntil: Date.now() + IP_BLOCK_DURATION_MS,
+        reason,
+        violations: count,
+      };
+
+      await redis.set(blockKey, JSON.stringify(blockData), {
+        px: IP_BLOCK_DURATION_MS,
+      });
+
+      // Clear violations after blocking
+      await redis.del(violationKey);
+
+      console.warn(`[SECURITY] IP blocked: ${ip} - Reason: ${reason} - Violations: ${count}`);
+    }
+  } catch (error) {
+    console.error("[SECURITY] Redis error recording violation:", error);
+    // Fallback to in-memory
+    recordIPViolationInMemory(ip, reason);
+  }
+}
+
+/**
+ * In-memory fallback for IP violation recording
+ */
+function recordIPViolationInMemory(ip: string, reason: string): void {
   const now = Date.now();
-  const violations = ipViolations.get(ip);
+  const violations = ipViolationsFallback.get(ip);
 
   if (!violations || now - violations.firstViolation > IP_VIOLATION_WINDOW_MS) {
-    ipViolations.set(ip, { count: 1, firstViolation: now });
+    ipViolationsFallback.set(ip, { count: 1, firstViolation: now });
     return;
   }
 
   violations.count += 1;
-  ipViolations.set(ip, violations);
+  ipViolationsFallback.set(ip, violations);
 
   // Block IP after threshold
   if (violations.count >= IP_VIOLATION_THRESHOLD) {
-    blockedIPs.set(ip, {
+    blockedIPsFallback.set(ip, {
       blockedUntil: now + IP_BLOCK_DURATION_MS,
       reason,
       violations: violations.count,
     });
-    ipViolations.delete(ip);
-    console.warn(`[SECURITY] IP blocked: ${ip} - Reason: ${reason}`);
+    ipViolationsFallback.delete(ip);
+    console.warn(`[SECURITY] IP blocked (in-memory): ${ip} - Reason: ${reason}`);
   }
 }
 
 /**
  * Check if an IP is blocked
+ * Uses Redis when available, falls back to in-memory
  */
-export function isIPBlocked(ip: string): { blocked: boolean; reason?: string; until?: number } {
-  const blocked = blockedIPs.get(ip);
+export async function isIPBlocked(ip: string): Promise<{ blocked: boolean; reason?: string; until?: number }> {
+  const redis = getRedisClient();
+
+  if (!redis) {
+    // Fallback to in-memory
+    return isIPBlockedInMemory(ip);
+  }
+
+  try {
+    const blockKey = `ip:blocked:${ip}`;
+    const data = await redis.get(blockKey);
+
+    if (!data) {
+      return { blocked: false };
+    }
+
+    const blockInfo = JSON.parse(data as string) as BlockedIP;
+
+    // Double-check expiry (Redis TTL should handle this, but be safe)
+    if (Date.now() > blockInfo.blockedUntil) {
+      await redis.del(blockKey);
+      return { blocked: false };
+    }
+
+    return {
+      blocked: true,
+      reason: blockInfo.reason,
+      until: blockInfo.blockedUntil,
+    };
+  } catch (error) {
+    console.error("[SECURITY] Redis error checking block:", error);
+    // Fallback to in-memory
+    return isIPBlockedInMemory(ip);
+  }
+}
+
+/**
+ * In-memory fallback for IP block checking
+ */
+function isIPBlockedInMemory(ip: string): { blocked: boolean; reason?: string; until?: number } {
+  const blocked = blockedIPsFallback.get(ip);
 
   if (!blocked) {
     return { blocked: false };
   }
 
   if (Date.now() > blocked.blockedUntil) {
-    blockedIPs.delete(ip);
+    blockedIPsFallback.delete(ip);
     return { blocked: false };
   }
 
@@ -74,8 +167,8 @@ export function isIPBlocked(ip: string): { blocked: boolean; reason?: string; un
 /**
  * Middleware-style IP check that returns a Response if blocked
  */
-export function checkIPBlock(ip: string): Response | null {
-  const status = isIPBlocked(ip);
+export async function checkIPBlock(ip: string): Promise<Response | null> {
+  const status = await isIPBlocked(ip);
 
   if (status.blocked) {
     return new Response(
@@ -92,6 +185,62 @@ export function checkIPBlock(ip: string): Response | null {
   }
 
   return null;
+}
+
+/**
+ * Manually block an IP (for admin use)
+ */
+export async function blockIP(ip: string, reason: string, durationMs?: number): Promise<void> {
+  const duration = durationMs || IP_BLOCK_DURATION_MS;
+  const redis = getRedisClient();
+
+  if (!redis) {
+    blockedIPsFallback.set(ip, {
+      blockedUntil: Date.now() + duration,
+      reason,
+      violations: 0,
+    });
+    return;
+  }
+
+  try {
+    const blockData = {
+      blockedUntil: Date.now() + duration,
+      reason,
+      violations: 0,
+    };
+
+    await redis.set(`ip:blocked:${ip}`, JSON.stringify(blockData), {
+      px: duration,
+    });
+
+    console.warn(`[SECURITY] IP manually blocked: ${ip} - Reason: ${reason}`);
+  } catch (error) {
+    console.error("[SECURITY] Redis error blocking IP:", error);
+    blockedIPsFallback.set(ip, {
+      blockedUntil: Date.now() + duration,
+      reason,
+      violations: 0,
+    });
+  }
+}
+
+/**
+ * Manually unblock an IP (for admin use)
+ */
+export async function unblockIP(ip: string): Promise<void> {
+  const redis = getRedisClient();
+
+  blockedIPsFallback.delete(ip);
+
+  if (!redis) return;
+
+  try {
+    await redis.del(`ip:blocked:${ip}`);
+    console.info(`[SECURITY] IP unblocked: ${ip}`);
+  } catch (error) {
+    console.error("[SECURITY] Redis error unblocking IP:", error);
+  }
 }
 
 // ============================================
@@ -397,17 +546,19 @@ export function addSecurityHeaders(response: Response): Response {
   });
 }
 
-// Cleanup expired blocks periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, data] of blockedIPs.entries()) {
-    if (now > data.blockedUntil) {
-      blockedIPs.delete(ip);
+// Cleanup expired blocks periodically (for in-memory fallback)
+if (typeof setInterval !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, data] of blockedIPsFallback.entries()) {
+      if (now > data.blockedUntil) {
+        blockedIPsFallback.delete(ip);
+      }
     }
-  }
-  for (const [ip, data] of ipViolations.entries()) {
-    if (now - data.firstViolation > IP_VIOLATION_WINDOW_MS) {
-      ipViolations.delete(ip);
+    for (const [ip, data] of ipViolationsFallback.entries()) {
+      if (now - data.firstViolation > IP_VIOLATION_WINDOW_MS) {
+        ipViolationsFallback.delete(ip);
+      }
     }
-  }
-}, 5 * 60 * 1000); // Every 5 minutes
+  }, 5 * 60 * 1000); // Every 5 minutes
+}

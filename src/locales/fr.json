@@ -1,0 +1,1815 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "viewAll": "Tout voir",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "confirm": "Confirmer",
+    "close": "Fermer"
+  },
+  "professionOnboarding": {
+    "title": "Que faites-vous ?",
+    "description": "Sélectionnez les professions qui décrivent votre travail. Cela aide les clients à vous trouver. Vous pouvez sélectionner plusieurs professions.",
+    "searchProfessions": "Rechercher des professions...",
+    "selected": "sélectionné(s)",
+    "clickToSetPrimary": "Double-cliquez pour définir comme principale",
+    "primary": "Principale",
+    "selectAtLeastOne": "Veuillez sélectionner au moins une profession",
+    "saved": "Professions enregistrées avec succès !",
+    "saveFailed": "Échec de l'enregistrement des professions",
+    "suggestNew": "Vous ne trouvez pas votre profession ? Suggérez-en une",
+    "newProfessionName": "Nom de la profession",
+    "enterProfessionName": "Entrez le nom de la profession",
+    "suggestionSubmitted": "Suggestion soumise ! Elle sera examinée par un administrateur.",
+    "suggestionFailed": "Échec de la soumission de la suggestion",
+    "suggestionNote": "Votre suggestion sera examinée par notre équipe et ajoutée si elle est approuvée.",
+    "continue": "Continuer",
+    "noResults": "Aucune profession trouvée correspondant à votre recherche",
+    "noProfessions": "Aucune profession disponible pour le moment"
+  },
+  "location": {
+    "verifyYourLocation": "Vérifiez votre emplacement",
+    "verificationExplanation": "Pour garantir une correspondance précise des services et protéger notre communauté, nous devons vérifier votre emplacement. Cela permet de vous connecter avec des travailleurs et des clients à proximité.",
+    "whyRequired": "Pourquoi est-ce nécessaire ?",
+    "reason1": "Vous mettre en relation avec des travailleurs/clients de votre région",
+    "reason2": "Prévenir la fraude et garantir la qualité du service",
+    "reason3": "Fournir des estimations de distance précises",
+    "selectedLocation": "Emplacement sélectionné",
+    "confirmLocation": "Confirmer mon emplacement",
+    "pleaseSelectLocation": "Veuillez sélectionner votre emplacement sur la carte",
+    "locationVerified": "Emplacement vérifié avec succès !",
+    "verificationFailed": "Échec de la vérification de l'emplacement. Veuillez réessayer.",
+    "updateLocation": "Mettre à jour l'emplacement",
+    "currentLocation": "Emplacement actuel",
+    "notVerified": "Non vérifié"
+  },
+  "nav": {
+    "home": "Accueil",
+    "findWorkers": "Trouver des travailleurs",
+    "howItWorks": "Comment ça marche",
+    "about": "À propos",
+    "contact": "Contact",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "logout": "Déconnexion",
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "bookings": "Réservations",
+    "messages": "Messages",
+    "favorites": "Favoris"
+  },
+  "home": {
+    "hero": {
+      "title": "LA PLUS GRANDE MARKETPLACE DE MAIN-D'ŒUVRE",
+      "subtitle": "Trouvez des professionnels près de chez vous",
+      "searchPlaceholder": "Entrez votre emplacement...",
+      "searchButton": "Trouver des travailleurs",
+      "detectingLocation": "Détection de votre emplacement...",
+      "selectCategory": "Sélectionner une catégorie...",
+      "searchCategories": "Rechercher des catégories...",
+      "noCategoriesFound": "Aucune catégorie trouvée",
+      "selectJob": "Sélectionner une profession...",
+      "searchJobs": "Rechercher des professions...",
+      "noJobsFound": "Aucune profession trouvée"
+    },
+    "stats": {
+      "happyCustomers": "Clients satisfaits",
+      "verifiedWorkers": "Travailleurs vérifiés",
+      "completedJobs": "Travaux terminés",
+      "avgRating": "Note moyenne"
+    },
+    "features": {
+      "badge": "Pourquoi nous choisir",
+      "title": "La façon intelligente de réserver des services",
+      "subtitle": "Découvrez une marketplace de services fluide avec des fonctionnalités conçues pour la vie moderne.",
+      "verified": {
+        "title": "Professionnels vérifiés",
+        "desc": "Tous les travailleurs font l'objet de vérifications d'antécédents et d'identité."
+      },
+      "payment": {
+        "title": "Paiements sécurisés",
+        "desc": "Payez en toute sécurité avec Stripe, PayPal ou crypto. Garantie de remboursement incluse."
+      },
+      "ai": {
+        "title": "Propulsé par l'IA",
+        "desc": "Correspondance intelligente, estimations instantanées et planification intelligente."
+      },
+      "booking": {
+        "title": "Réservation instantanée",
+        "desc": "Réservez en moins d'une minute. Service le jour même disponible."
+      },
+      "local": {
+        "title": "Travailleurs locaux",
+        "desc": "Connectez-vous avec des professionnels de confiance dans votre quartier."
+      },
+      "reviews": {
+        "title": "Vrais avis",
+        "desc": "Avis vérifiés de vrais clients. Pas de fausses notes."
+      }
+    },
+    "ai": {
+      "badge": "Propulsé par l'IA",
+      "title": "Réservations plus intelligentes avec l'IA",
+      "subtitle": "Notre IA avancée vous aide à trouver la correspondance parfaite, obtenir des estimations de prix instantanées et réserver aux meilleurs moments.",
+      "feature1": "Smart Match trouve votre prestataire de services idéal",
+      "feature2": "Estimations de prix instantanées basées sur des photos",
+      "feature3": "Prévision de la demande pour une meilleure planification",
+      "feature4": "Analyse intelligente des avis et scores de confiance",
+      "cta": "Explorer les fonctionnalités IA",
+      "card1": "Correspondance intelligente",
+      "card2": "Trouver des travailleurs",
+      "card3": "Meilleurs moments",
+      "card4": "Scores de confiance"
+    },
+    "app": {
+      "badge": "Applications mobiles",
+      "title": "Réservez des services en déplacement",
+      "subtitle": "Téléchargez nos applications natives pour iOS et Android pour la meilleure expérience mobile.",
+      "appStore": "App Store",
+      "playStore": "Google Play"
+    },
+    "howItWorks": {
+      "title": "Comment ça marche",
+      "subtitle": "Faire nettoyer votre espace est aussi simple que 1-2-3-4",
+      "step1": {
+        "title": "Rechercher",
+        "description": "Entrez votre emplacement pour trouver des travailleurs disponibles dans votre région."
+      },
+      "step2": {
+        "title": "Choisir",
+        "description": "Comparez les travailleurs en fonction des notes, des avis et des tarifs."
+      },
+      "step3": {
+        "title": "Réserver",
+        "description": "Sélectionnez votre date, heure et services préférés."
+      },
+      "step4": {
+        "title": "Détendez-vous",
+        "description": "Relaxez-vous pendant que votre espace est nettoyé professionnellement."
+      }
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "subtitle": "Rejoignez des milliers de clients satisfaits qui font confiance à Servantana pour tous leurs besoins de services.",
+      "customerButton": "Réserver un travailleur",
+      "workerButton": "Je suis un travailleur"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte",
+      "email": "Email",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "loginButton": "Connexion",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signupLink": "S'inscrire"
+    },
+    "signup": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous maintenant",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "phone": "Numéro de téléphone",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "accountType": "Je veux :",
+      "customer": "Réserver un travailleur",
+      "worker": "Je suis un travailleur",
+      "terms": "J'accepte les Conditions d'utilisation et la Politique de confidentialité",
+      "termsPrefix": "J'accepte les",
+      "termsAnd": "et",
+      "signupButton": "Créer un compte",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "loginLink": "Connexion"
+    },
+    "phone": {
+      "title": "Vérifier le numéro de téléphone",
+      "subtitle": "Nous vous enverrons un code de vérification",
+      "sendCode": "Envoyer le code",
+      "verifyCode": "Entrez le code de vérification",
+      "resend": "Renvoyer le code",
+      "verify": "Vérifier"
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié ?",
+      "subtitle": "Pas de souci ! Entrez votre email ou numéro de téléphone et nous vous enverrons un code de réinitialisation.",
+      "emailTab": "Email",
+      "phoneTab": "Téléphone",
+      "emailLabel": "Adresse email",
+      "phoneLabel": "Numéro de téléphone",
+      "sendCode": "Envoyer le code de réinitialisation",
+      "backToLogin": "Retour à la connexion",
+      "verifyTitle": "Entrez le code de vérification",
+      "codeLabel": "Code à 6 chiffres",
+      "verifyCode": "Vérifier le code",
+      "changeMethod": "Changer",
+      "resendCode": "Renvoyer le code",
+      "resetTitle": "Créer un nouveau mot de passe",
+      "resetSubtitle": "Choisissez un mot de passe fort avec au moins 8 caractères.",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "passwordHint": "Doit contenir une majuscule, une minuscule et un chiffre",
+      "resetButton": "Réinitialiser le mot de passe",
+      "successTitle": "Mot de passe réinitialisé !",
+      "successMessage": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "goToLogin": "Aller à la connexion"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Profil du travailleur",
+      "about": "À propos",
+      "services": "Services",
+      "reviews": "Avis",
+      "availability": "Disponibilité",
+      "hourlyRate": "Tarif horaire",
+      "experience": "Expérience",
+      "years": "ans",
+      "verified": "Vérifié",
+      "rating": "Note",
+      "bookings": "Réservations terminées",
+      "responseTime": "Temps de réponse",
+      "bookNow": "Réserver maintenant",
+      "ecoFriendly": "Écologique",
+      "petFriendly": "Accepte les animaux",
+      "introVideo": "Vidéo d'introduction"
+    },
+    "dashboard": {
+      "title": "Tableau de bord du travailleur",
+      "earnings": "Revenus",
+      "todayBookings": "Réservations du jour",
+      "pendingRequests": "Demandes en attente",
+      "completedJobs": "Travaux terminés",
+      "upcomingBookings": "Prochaines réservations",
+      "recentReviews": "Avis récents"
+    },
+    "services": {
+      "regular": "Ménage régulier",
+      "deep": "Nettoyage en profondeur",
+      "moveInOut": "Nettoyage déménagement",
+      "office": "Nettoyage de bureaux",
+      "window": "Nettoyage de vitres",
+      "carpet": "Nettoyage de tapis",
+      "laundry": "Service de blanchisserie",
+      "organizing": "Organisation",
+      "postConstruction": "Nettoyage post-construction",
+      "airbnb": "Rotation Airbnb"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "title": "Mon tableau de bord",
+      "upcomingBookings": "Prochaines réservations",
+      "pastBookings": "Réservations passées",
+      "favoriteWorkers": "Travailleurs favoris",
+      "quickBook": "Réservation rapide"
+    },
+    "search": {
+      "title": "Trouver des travailleurs",
+      "location": "Emplacement",
+      "service": "Type de service",
+      "date": "Date",
+      "priceRange": "Gamme de prix",
+      "rating": "Note minimum",
+      "results": "travailleurs trouvés",
+      "noResults": "Aucun travailleur trouvé dans votre région",
+      "ecoFriendly": "Écologique",
+      "petFriendly": "Accepte les animaux",
+      "specialtyServices": "Services spécialisés"
+    }
+  },
+  "booking": {
+    "title": "Réserver un service de nettoyage",
+    "selectService": "Sélectionner un service",
+    "selectDate": "Sélectionner date et heure",
+    "address": "Adresse du service",
+    "notes": "Notes supplémentaires",
+    "notesPlaceholder": "Instructions ou exigences particulières...",
+    "summary": "Récapitulatif de la réservation",
+    "worker": "Travailleur",
+    "service": "Service",
+    "dateTime": "Date et heure",
+    "duration": "Durée",
+    "hours": "heures",
+    "total": "Total",
+    "confirmBooking": "Confirmer la réservation",
+    "upcoming": "À venir",
+    "past": "Passées",
+    "paid": "Payé",
+    "paymentDue": "Paiement dû",
+    "payNow": "Payer maintenant",
+    "message": "Message",
+    "confirm": "Confirmer",
+    "startJob": "Démarrer le travail",
+    "complete": "Terminer",
+    "cancel": "Annuler",
+    "leaveReview": "Laisser un avis",
+    "reviewed": "Avis laissé",
+    "bookAgain": "Réserver à nouveau",
+    "rebookingInfo": "Nouvelle réservation basée sur votre commande précédente - adresse et service pré-remplis",
+    "noUpcoming": "Aucune réservation à venir",
+    "noUpcomingDesc": "Vous n'avez pas encore de réservations à venir.",
+    "findWorker": "Trouver un travailleur",
+    "noPast": "Aucune réservation passée",
+    "noPastDesc": "Vos réservations terminées et annulées apparaîtront ici.",
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmée",
+      "inProgress": "En cours",
+      "completed": "Terminée",
+      "cancelled": "Annulée"
+    },
+    "details": "Détails de la réservation",
+    "date": "Date",
+    "time": "Heure",
+    "location": "Emplacement",
+    "customer": "Client",
+    "notFound": "Réservation introuvable"
+  },
+  "tracking": {
+    "title": "Suivi en direct",
+    "workerDescription": "Partagez votre position pour que le client puisse voir quand vous arriverez",
+    "startSharing": "Commencer le partage de position",
+    "stopSharing": "Arrêter le partage",
+    "sharingActive": "Partage de position actif",
+    "navigate": "Naviguer",
+    "started": "Partage de position démarré",
+    "stopped": "Partage de position arrêté",
+    "startFailed": "Échec du démarrage du suivi",
+    "stopFailed": "Échec de l'arrêt du suivi",
+    "gpsNotSupported": "Le GPS n'est pas pris en charge sur cet appareil",
+    "locationError": "Impossible d'obtenir votre position",
+    "workerEnRoute": "{name} est en route",
+    "distance": "Distance",
+    "eta": "Arrivée estimée",
+    "lastUpdate": "Dernière mise à jour",
+    "notStarted": "Suivi non démarré",
+    "notStartedDesc": "Le travailleur partagera sa position quand il sera en route"
+  },
+  "chat": {
+    "title": "Discussion",
+    "noMessages": "Aucun message pour le moment. Commencez la conversation !",
+    "placeholder": "Tapez votre message...",
+    "sendError": "Échec de l'envoi du message",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
+  },
+  "properties": {
+    "title": "Mes propriétés",
+    "subtitle": "Gérez vos propriétés et réservez des services de nettoyage",
+    "addProperty": "Ajouter une propriété",
+    "addFirst": "Ajoutez votre première propriété",
+    "noProperties": "Aucune propriété pour le moment",
+    "noPropertiesDesc": "Ajoutez vos propriétés pour réserver facilement des services de nettoyage",
+    "propertyName": "Nom de la propriété",
+    "propertyNamePlaceholder": "ex. Maison de plage, Appartement principal",
+    "address": "Adresse",
+    "addressPlaceholder": "Adresse postale",
+    "city": "Ville",
+    "state": "Région/État",
+    "postalCode": "Code postal",
+    "country": "Pays",
+    "rooms": "Pièces",
+    "bathrooms": "Salles de bain",
+    "size": "Superficie",
+    "notes": "Instructions particulières",
+    "notesPlaceholder": "ex. Code du portail, instructions de stationnement, animaux présents...",
+    "default": "Par défaut",
+    "setDefault": "Définir par défaut",
+    "setAsDefault": "Définir comme propriété par défaut",
+    "setAsDefaultLabel": "Utiliser comme propriété par défaut pour les nouvelles réservations",
+    "createProperty": "Créer la propriété",
+    "editProperty": "Modifier la propriété",
+    "viewDetails": "Voir les détails",
+    "book": "Réserver un nettoyage",
+    "bookings": "réservations",
+    "details": "Détails de la propriété",
+    "statistics": "Statistiques",
+    "totalBookings": "Total des réservations",
+    "recentBookings": "Réservations récentes",
+    "noBookingsYet": "Pas encore de réservations pour cette propriété",
+    "created": "Propriété créée avec succès",
+    "updated": "Propriété mise à jour avec succès",
+    "deleted": "Propriété supprimée",
+    "createFailed": "Échec de la création de la propriété",
+    "updateFailed": "Échec de la mise à jour de la propriété",
+    "deleteFailed": "Échec de la suppression de la propriété",
+    "deleteConfirm": "Supprimer la propriété ?",
+    "deleteConfirmDesc": "Cette action ne peut pas être annulée. L'historique des réservations sera conservé.",
+    "deleting": "Suppression...",
+    "notFound": "Propriété introuvable",
+    "requiredFields": "Le nom et l'adresse sont requis",
+    "gpsNotSupported": "Le GPS n'est pas pris en charge sur cet appareil",
+    "locationDetected": "Coordonnées de localisation enregistrées",
+    "locationError": "Impossible de détecter l'emplacement",
+    "coordinatesSaved": "Coordonnées GPS enregistrées"
+  },
+  "team": {
+    "title": "Équipe de nettoyage",
+    "lead": "Chef d'équipe",
+    "verified": "Vérifié",
+    "confirmed": "Confirmé",
+    "pending": "En attente",
+    "addMember": "Ajouter un membre",
+    "findWorkers": "Trouver des travailleurs disponibles",
+    "noAvailable": "Aucun travailleur disponible pour ce créneau horaire",
+    "memberAdded": "Membre de l'équipe ajouté",
+    "memberRemoved": "Membre de l'équipe retiré",
+    "addFailed": "Échec de l'ajout du membre",
+    "removeFailed": "Échec du retrait du membre",
+    "invitedToTeam": "Vous avez été invité à rejoindre cette équipe de nettoyage",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "confirmFailed": "Échec de la confirmation de participation",
+    "declineFailed": "Échec du refus",
+    "spotsRemaining": "{count} place(s) restante(s)",
+    "teamSize": "Taille de l'équipe",
+    "selectTeamSize": "De combien de travailleurs avez-vous besoin ?",
+    "solo": "1 Travailleur",
+    "duo": "2 Travailleurs",
+    "trio": "3 Travailleurs",
+    "quad": "4 Travailleurs",
+    "teamBooking": "Réservation d'équipe",
+    "largeJobNote": "Recommandé pour les grandes propriétés ou le nettoyage en profondeur"
+  },
+  "tip": {
+    "title": "Ajouter un pourboire",
+    "addTip": "Ajouter un pourboire",
+    "description": "Montrez votre appréciation pour l'excellent travail de {name} !",
+    "satisfied": "Satisfait du service ?",
+    "showAppreciation": "Montrez votre appréciation avec un pourboire",
+    "alreadyTipped": "Vous avez donné {amount}€ de pourboire - Merci !",
+    "percentageOf": "Pourcentage de {price}€",
+    "orFixed": "Ou un montant fixe",
+    "orCustom": "Ou entrez un montant personnalisé",
+    "selectAmount": "Veuillez sélectionner un montant de pourboire",
+    "selectToTip": "Sélectionnez le montant du pourboire",
+    "sendTip": "Envoyer {amount}€ de pourboire",
+    "sent": "Pourboire de {amount}€ envoyé !",
+    "thankYou": "Merci ! {amount}€ de pourboire envoyé à votre travailleur",
+    "failed": "Échec du traitement du pourboire",
+    "goesToWorker": "100% de votre pourboire va directement au travailleur"
+  },
+  "invoice": {
+    "title": "Factures",
+    "subtitle": "Consultez et téléchargez vos factures",
+    "invoiceTitle": "FACTURE",
+    "noInvoices": "Aucune facture pour le moment",
+    "noInvoicesDesc": "Les factures apparaîtront ici après la fin de vos réservations",
+    "view": "Voir",
+    "print": "Imprimer / Enregistrer PDF",
+    "download": "Télécharger",
+    "notFound": "Facture introuvable",
+    "from": "De",
+    "to": "Facturer à",
+    "serviceDetails": "Détails du service",
+    "description": "Description",
+    "date": "Date",
+    "duration": "Durée",
+    "amount": "Montant",
+    "subtotal": "Sous-total",
+    "tipLabel": "Pourboire",
+    "tax": "Taxe",
+    "total": "Total",
+    "issuedOn": "Émise le",
+    "thankYou": "Merci pour votre confiance !",
+    "status": {
+      "issued": "Émise",
+      "paid": "Payée",
+      "cancelled": "Annulée"
+    },
+    "generate": "Générer une facture",
+    "generated": "Facture générée avec succès"
+  },
+  "review": {
+    "title": "Laisser un avis",
+    "rating": "Note",
+    "comment": "Votre avis",
+    "commentPlaceholder": "Partagez votre expérience...",
+    "submit": "Soumettre l'avis",
+    "thankYou": "Merci pour votre avis !"
+  },
+  "smartLock": {
+    "title": "Serrures intelligentes",
+    "keylessEntry": "Entrée sans clé",
+    "addLock": "Ajouter une serrure",
+    "addNewLock": "Ajouter une nouvelle serrure intelligente",
+    "addLockDescription": "Connectez une serrure intelligente pour permettre l'entrée sans clé aux travailleurs.",
+    "lockName": "Nom de la serrure",
+    "lockNamePlaceholder": "ex. Porte d'entrée, Porte arrière",
+    "provider": "Fournisseur",
+    "selectProvider": "Sélectionner un fournisseur",
+    "deviceId": "ID de l'appareil (optionnel)",
+    "deviceIdPlaceholder": "Entrez l'ID de l'appareil depuis votre application de serrure",
+    "nameProviderRequired": "Le nom et le fournisseur sont requis",
+    "lockAdded": "Serrure intelligente ajoutée avec succès",
+    "lockDeleted": "Serrure intelligente retirée",
+    "addFailed": "Échec de l'ajout de la serrure intelligente",
+    "deleteFailed": "Échec du retrait de la serrure intelligente",
+    "confirmDelete": "Êtes-vous sûr de vouloir retirer cette serrure intelligente ?",
+    "noLocks": "Aucune serrure intelligente configurée",
+    "addFirstLock": "Ajoutez une serrure intelligente pour permettre l'entrée sans clé aux travailleurs",
+    "active": "Active",
+    "inactive": "Inactive",
+    "viewCodes": "Codes",
+    "accessCodes": "Codes d'accès",
+    "noAccessCodes": "Aucun code d'accès généré pour le moment",
+    "codeCopied": "Code copié dans le presse-papiers",
+    "noCodesYet": "Aucun code d'accès disponible pour le moment",
+    "ownerWillShare": "Le propriétaire partagera le code d'accès avant votre réservation",
+    "valid": "Valide",
+    "invalid": "Invalide",
+    "expired": "Expiré",
+    "expiresIn": "Expire dans {time}",
+    "accessInstructions": "Entrez ce code sur le clavier de la serrure intelligente. Le code n'est valide que pendant votre créneau de réservation."
+  },
+  "customerReview": {
+    "title": "Noter le client",
+    "rateCustomer": "Noter le client",
+    "description": "Comment s'est passée votre expérience avec {name} ?",
+    "punctuality": "Ponctualité",
+    "cleanliness": "Propreté du domicile",
+    "communication": "Communication",
+    "overall": "Expérience globale",
+    "commentLabel": "Commentaires supplémentaires (optionnel)",
+    "commentPlaceholder": "Partagez des commentaires supplémentaires...",
+    "submit": "Soumettre la note",
+    "rateAll": "Veuillez noter toutes les catégories",
+    "submitted": "Note soumise avec succès !",
+    "failed": "Échec de la soumission de la note",
+    "thankYou": "Merci pour vos commentaires !",
+    "onlyWorkers": "Seuls les travailleurs peuvent voir les notes des clients"
+  },
+  "messages": {
+    "title": "Messages",
+    "noMessages": "Aucun message pour le moment",
+    "placeholder": "Tapez un message...",
+    "send": "Envoyer",
+    "newMessageFrom": "Nouveau message de",
+    "reply": "Répondre",
+    "fullChat": "Discussion complète",
+    "unread": "non lu(s)",
+    "noNewMessages": "Aucun nouveau message",
+    "markAsRead": "Marquer comme lu",
+    "viewAllMessages": "Voir tous les messages",
+    "justNow": "À l'instant",
+    "minutesAgo": "min",
+    "hoursAgo": "h"
+  },
+  "admin": {
+    "title": "Tableau de bord admin",
+    "subtitle": "Gérez votre marketplace",
+    "overview": "Aperçu",
+    "users": "Utilisateurs",
+    "verification": "Vérification",
+    "reviews": "Avis",
+    "totalUsers": "Total utilisateurs",
+    "totalWorkers": "Total travailleurs",
+    "verified": "vérifié(s)",
+    "totalBookings": "Total réservations",
+    "completed": "terminée(s)",
+    "totalRevenue": "Revenu total",
+    "pendingVerification": "Vérification en attente",
+    "newUsers30d": "Nouveaux utilisateurs (30j)",
+    "totalReviews": "Total avis",
+    "avg": "Moy",
+    "cancelled": "Annulée(s)",
+    "recentUsers": "Utilisateurs récents",
+    "recentBookings": "Réservations récentes",
+    "userManagement": "Gestion des utilisateurs",
+    "searchUsers": "Rechercher des utilisateurs...",
+    "allRoles": "Tous les rôles",
+    "customers": "Clients",
+    "workers": "Travailleurs",
+    "admins": "Administrateurs",
+    "bookings": "réservations",
+    "page": "Page",
+    "of": "sur",
+    "workerVerification": "Vérification des travailleurs",
+    "pendingVerificationFilter": "Vérification en attente",
+    "verifiedFilter": "Vérifié",
+    "noWorkersPending": "Aucun travailleur en attente de vérification",
+    "noWorkersVerified": "Aucun travailleur vérifié",
+    "revoke": "Révoquer",
+    "verify": "Vérifier",
+    "reviewModeration": "Modération des avis",
+    "noReviews": "Aucun avis à modérer",
+    "reviewed": "examiné(s)",
+    "delete": "Supprimer",
+    "accessDenied": "Accès refusé. Administrateurs uniquement.",
+    "workerVerified": "Travailleur vérifié !",
+    "verificationRevoked": "Vérification révoquée",
+    "failedVerification": "Échec de la mise à jour de la vérification",
+    "reviewDeleted": "Avis supprimé",
+    "failedDeleteReview": "Échec de la suppression de l'avis",
+    "confirmDeleteReview": "Êtes-vous sûr de vouloir supprimer cet avis ?",
+    "categories": "Catégories",
+    "categoryManagement": "Gestion des catégories",
+    "pendingCategories": "En attente",
+    "approvedCategories": "Approuvées",
+    "rejectedCategories": "Rejetées",
+    "noCategories": "Aucune catégorie trouvée",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "categoryApproved": "Catégorie approuvée !",
+    "categoryRejected": "Catégorie rejetée",
+    "failedCategoryAction": "Échec de la mise à jour de la catégorie",
+    "documentsTab": "Documents",
+    "disputesTab": "Litiges",
+    "bookingsManagement": "Gestion des réservations",
+    "allBookings": "Toutes les réservations",
+    "noBookings": "Aucune réservation trouvée",
+    "documentVerification": "Vérification des documents",
+    "noDocuments": "Aucun document à examiner",
+    "viewDocument": "Voir",
+    "documentVerified": "Document vérifié !",
+    "documentRejected": "Document rejeté",
+    "failedDocumentAction": "Échec de la mise à jour du document",
+    "disputeManagement": "Gestion des litiges",
+    "noDisputes": "Aucun litige trouvé",
+    "viewDetails": "Voir les détails",
+    "allStatuses": "Tous les statuts",
+    "statusActive": "Actif",
+    "statusSuspended": "Suspendu",
+    "statusBanned": "Banni",
+    "suspendedUntil": "Suspendu jusqu'au",
+    "actions": "Actions",
+    "changeRole": "Changer le rôle",
+    "suspend": "Suspendre",
+    "ban": "Bannir",
+    "reactivate": "Réactiver",
+    "userSuspended": "Utilisateur suspendu avec succès",
+    "userBanned": "Utilisateur banni avec succès",
+    "userReactivated": "Utilisateur réactivé avec succès",
+    "userDeleted": "Utilisateur supprimé avec succès",
+    "roleChanged": "Rôle de l'utilisateur modifié avec succès",
+    "failedUserAction": "Échec de l'action",
+    "failedFetchUser": "Échec de la récupération des détails de l'utilisateur",
+    "suspendUser": "Suspendre l'utilisateur",
+    "suspendUserDesc": "Suspendre temporairement {name} de l'accès à la plateforme.",
+    "suspendDuration": "Durée de suspension",
+    "day": "jour",
+    "days": "jours",
+    "indefinite": "Indéfinie",
+    "reason": "Raison",
+    "optional": "optionnel",
+    "reasonPlaceholder": "Entrez la raison de cette action...",
+    "banUser": "Bannir l'utilisateur",
+    "banUserDesc": "Bannir définitivement {name} de la plateforme.",
+    "banWarning": "Cette action bannira définitivement l'utilisateur. Il ne pourra plus accéder à la plateforme ni créer de nouveaux comptes.",
+    "deleteUser": "Supprimer l'utilisateur",
+    "deleteUserDesc": "Supprimer définitivement {name} et toutes ses données.",
+    "deleteWarning": "Cette action ne peut pas être annulée. Toutes les données utilisateur, réservations, avis et messages seront définitivement supprimés.",
+    "userDetails": "Détails de l'utilisateur",
+    "userDetailsDesc": "Voir le profil complet et l'activité de l'utilisateur.",
+    "status": "Statut",
+    "role": "Rôle",
+    "registeredOn": "Inscrit le",
+    "auditLogs": "Journaux d'audit",
+    "auditLogsTitle": "Journaux d'audit",
+    "allActions": "Toutes les actions",
+    "actionSuspend": "Utilisateur suspendu",
+    "actionBan": "Utilisateur banni",
+    "actionReactivate": "Utilisateur réactivé",
+    "actionDelete": "Utilisateur supprimé",
+    "actionRoleChange": "Rôle modifié",
+    "actionVerify": "Travailleur vérifié",
+    "actionDocVerify": "Document vérifié",
+    "allSeverities": "Toutes les sévérités",
+    "severityLow": "Faible",
+    "severityMedium": "Moyenne",
+    "severityHigh": "Élevée",
+    "severityCritical": "Critique",
+    "exportCsv": "Exporter CSV",
+    "noAuditLogs": "Aucun journal d'audit trouvé",
+    "showing": "Affichage de",
+    "exportSuccess": "Export réussi",
+    "exportFailed": "Échec de l'export",
+    "settingsTab": "Paramètres",
+    "systemSettings": "Paramètres système",
+    "platformFees": "Frais de plateforme",
+    "customerFee": "Frais client",
+    "workerFee": "Frais travailleur",
+    "bookingSettings": "Paramètres de réservation",
+    "minBookingValue": "Valeur minimale de réservation",
+    "defaultCurrency": "Devise par défaut",
+    "cancellationPolicy": "Politique d'annulation",
+    "freeCancel24h": "Plus de 24 heures avant",
+    "cancel12to24h": "12-24 heures avant",
+    "cancelUnder12h": "Moins de 12 heures",
+    "systemStatus": "État du système",
+    "maintenanceMode": "Mode maintenance",
+    "newRegistrations": "Nouvelles inscriptions",
+    "off": "Désactivé",
+    "enabled": "Activé",
+    "settingsReadOnly": "Les paramètres sont en lecture seule. Contactez l'équipe de développement pour les modifier.",
+    "professions": "Professions",
+    "professionManagement": "Gestion des professions",
+    "createProfession": "Créer une profession",
+    "editProfession": "Modifier la profession",
+    "deleteProfession": "Supprimer la profession",
+    "noProfessions": "Aucune profession trouvée",
+    "professionApproved": "Profession approuvée !",
+    "professionRejected": "Profession rejetée",
+    "professionCreated": "Profession créée",
+    "professionUpdated": "Profession mise à jour",
+    "professionDeleted": "Profession supprimée",
+    "failedProfessionAction": "Échec de la mise à jour de la profession",
+    "professionName": "Nom (Anglais)",
+    "professionNameDE": "Nom (Allemand)",
+    "professionEmoji": "Emoji",
+    "assignToCategory": "Assigner à une catégorie",
+    "noCategory": "Aucune catégorie",
+    "preview": "Aperçu",
+    "workersAssigned": "travailleurs",
+    "suggestedBy": "Suggéré par",
+    "createProfessionDesc": "Remplissez les détails pour créer une nouvelle profession.",
+    "editProfessionDesc": "Mettez à jour les détails de la profession ci-dessous.",
+    "deleteProfessionDesc": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action ne peut pas être annulée.",
+    "emailsTab": "Emails",
+    "composeEmail": "Composer un email",
+    "recipientType": "Type de destinataire",
+    "individualUser": "Utilisateur individuel",
+    "allUsers": "Tous les utilisateurs",
+    "allWorkers": "Tous les travailleurs",
+    "allCustomers": "Tous les clients",
+    "searchUser": "Rechercher un utilisateur",
+    "searchUserPlaceholder": "Rechercher par nom ou email...",
+    "recipientSelected": "Destinataire sélectionné",
+    "emailSubject": "Objet",
+    "emailSubjectPlaceholder": "Entrez l'objet de l'email...",
+    "emailBody": "Message",
+    "emailBodyPlaceholder": "Écrivez votre message ici...",
+    "bulkEmailWarning": "Cet email sera envoyé à tous les utilisateurs du groupe sélectionné. Veuillez vérifier avant d'envoyer.",
+    "sending": "Envoi en cours...",
+    "sendEmail": "Envoyer l'email",
+    "emailHistory": "Historique des emails",
+    "noEmailHistory": "Aucun email envoyé pour le moment",
+    "sent": "Envoyé",
+    "failed": "Échoué",
+    "individual": "Individuel",
+    "announcement": "Annonce",
+    "to": "À",
+    "sentBy": "Envoyé par"
+  },
+  "legal": {
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "lastUpdated": "Dernière mise à jour",
+      "acceptance": {
+        "title": "1. Acceptation des conditions",
+        "content": "En accédant ou en utilisant Servantana, vous acceptez d'être lié par ces Conditions. Si vous n'êtes pas d'accord, n'utilisez pas notre plateforme."
+      },
+      "service": {
+        "title": "2. Description du service",
+        "content": "Servantana est une marketplace connectant les clients avec des professionnels indépendants. Nous n'employons pas directement les travailleurs et ne sommes pas responsables de la qualité des services fournis."
+      },
+      "accounts": {
+        "title": "3. Comptes utilisateurs",
+        "content": "Vous êtes responsable du maintien de la confidentialité de vos identifiants de compte et de toutes les activités sous votre compte. Vous devez fournir des informations exactes et avoir au moins 18 ans."
+      },
+      "payments": {
+        "title": "4. Paiements",
+        "content": "Tous les paiements sont traités via des fournisseurs tiers. Les frais ne sont pas remboursables sauf si requis par la loi. Les travailleurs fixent leurs propres tarifs et sont responsables de leurs propres impôts."
+      },
+      "liability": {
+        "title": "5. Limitation de responsabilité",
+        "content": "Servantana est fourni \"tel quel\" sans garanties. Nous ne sommes pas responsables des dommages résultant de l'utilisation de la plateforme, des litiges entre utilisateurs ou des actions des prestataires de services. Notre responsabilité totale ne dépassera pas les frais qui nous ont été payés au cours des 12 derniers mois."
+      },
+      "termination": {
+        "title": "6. Résiliation",
+        "content": "Nous pouvons suspendre ou résilier les comptes à notre discrétion pour violation de ces conditions ou pour toute raison avec ou sans préavis."
+      },
+      "changes": {
+        "title": "7. Modifications des conditions",
+        "content": "Nous pouvons modifier ces conditions à tout moment. L'utilisation continue après les modifications constitue une acceptation des nouvelles conditions."
+      }
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "lastUpdated": "Dernière mise à jour",
+      "collection": {
+        "title": "1. Informations que nous collectons",
+        "content": "Nous collectons les informations que vous fournissez (nom, email, téléphone, adresse) et les données collectées automatiquement (adresse IP, informations sur l'appareil, données d'utilisation) pour exploiter nos services."
+      },
+      "use": {
+        "title": "2. Comment nous utilisons les informations",
+        "content": "Nous utilisons vos informations pour fournir et améliorer nos services, traiter les paiements, communiquer avec vous et assurer la sécurité de la plateforme."
+      },
+      "sharing": {
+        "title": "3. Partage d'informations",
+        "content": "Nous partageons des informations avec les prestataires de services pour les réservations, les processeurs de paiement et comme requis par la loi. Nous ne vendons pas vos données personnelles."
+      },
+      "security": {
+        "title": "4. Sécurité des données",
+        "content": "Nous mettons en œuvre des mesures de sécurité raisonnables mais ne pouvons garantir une sécurité absolue. Vous êtes responsable de la sécurité de vos identifiants de compte."
+      },
+      "rights": {
+        "title": "5. Vos droits",
+        "content": "Vous pouvez accéder, mettre à jour ou supprimer les informations de votre compte à tout moment. Contactez-nous pour exercer vos droits sur les données."
+      },
+      "contact": {
+        "title": "6. Contact",
+        "content": "Pour les questions de confidentialité, contactez-nous via la plateforme ou à support@servantana.com."
+      }
+    },
+    "cookies": {
+      "title": "Politique de cookies",
+      "lastUpdated": "Dernière mise à jour",
+      "what": {
+        "title": "1. Que sont les cookies ?",
+        "content": "Les cookies sont de petits fichiers texte stockés sur votre appareil lorsque vous visitez notre site web. Ils nous aident à mémoriser vos préférences et à comprendre comment vous utilisez notre plateforme."
+      },
+      "types": {
+        "title": "2. Types de cookies que nous utilisons",
+        "content": "Nous utilisons plusieurs types de cookies à des fins différentes :",
+        "essential": {
+          "title": "Cookies essentiels",
+          "content": "Nécessaires au bon fonctionnement du site web. Ils ne peuvent pas être désactivés."
+        },
+        "functional": {
+          "title": "Cookies fonctionnels",
+          "content": "Mémorisent vos préférences comme la langue et les paramètres de localisation."
+        },
+        "analytics": {
+          "title": "Cookies analytiques",
+          "content": "Nous aident à comprendre comment les visiteurs interagissent avec notre site web pour améliorer l'expérience utilisateur."
+        },
+        "marketing": {
+          "title": "Cookies marketing",
+          "content": "Utilisés pour diffuser des publicités pertinentes et suivre les performances des campagnes."
+        }
+      },
+      "manage": {
+        "title": "3. Gestion des cookies",
+        "content": "Vous pouvez contrôler les cookies via les paramètres de votre navigateur. Notez que la désactivation de certains cookies peut affecter la fonctionnalité du site web. La plupart des navigateurs vous permettent de bloquer ou de supprimer les cookies."
+      },
+      "thirdParty": {
+        "title": "4. Cookies tiers",
+        "content": "Certains cookies sont placés par des services tiers que nous utilisons, tels que les fournisseurs d'analyses et les processeurs de paiement. Ces parties ont leurs propres politiques de confidentialité."
+      },
+      "contact": {
+        "title": "5. Nous contacter",
+        "content": "Si vous avez des questions sur notre politique de cookies, veuillez nous contacter à support@servantana.com."
+      }
+    }
+  },
+  "categories": {
+    "pageTitle": "Sélectionner une catégorie",
+    "pageSubtitle": "Choisissez une catégorie pour trouver des professionnels",
+    "selectProfession": "Sélectionner une profession",
+    "notFound": "Catégorie introuvable",
+    "home_services": "Services à domicile",
+    "construction": "Construction et métiers",
+    "automotive": "Automobile",
+    "personal_care": "Soins personnels",
+    "care_services": "Services de soins",
+    "delivery_moving": "Livraison et déménagement",
+    "tech_it": "Tech et informatique",
+    "events_entertainment": "Événements et divertissement",
+    "education_tutoring": "Éducation et tutorat",
+    "professional_services": "Services professionnels",
+    "fashion_tailoring": "Mode et couture",
+    "food_cooking": "Alimentation et cuisine",
+    "security": "Sécurité",
+    "agriculture": "Agriculture",
+    "suggest_new": "Créer la vôtre",
+    "workersAvailable": "travailleurs disponibles",
+    "findWorkers": "Trouver des professionnels dans cette catégorie",
+    "noWorkersYet": "Pas encore de travailleurs",
+    "beFirstWorker": "Soyez le premier professionnel dans cette catégorie !",
+    "becomeWorker": "Je suis un travailleur",
+    "workerTitle": "Choisissez vos catégories",
+    "workerSubtitle": "Sélectionnez les catégories qui correspondent à vos compétences. Vous pouvez choisir plusieurs catégories si vous offrez différents services.",
+    "categoriesSelected": "catégories sélectionnées",
+    "continueToSetup": "Continuer vers la configuration du profil",
+    "suggest": {
+      "title": "Suggérer une catégorie",
+      "subtitle": "Aidez-nous à grandir en suggérant de nouvelles catégories",
+      "categoryName": "Nom de la catégorie",
+      "categoryPlaceholder": "ex. Services pour animaux, Domotique...",
+      "description": "Description (optionnel)",
+      "descriptionPlaceholder": "Quels types de professionnels seraient dans cette catégorie ?",
+      "submit": "Soumettre la suggestion",
+      "thankYou": "Merci !",
+      "submitted": "Votre suggestion a été soumise pour examen.",
+      "backToCategories": "Retour aux catégories"
+    }
+  },
+  "jobs": {
+    "cleaner": "Agent de nettoyage",
+    "housekeeper": "Gouvernant(e)",
+    "maid": "Femme/Homme de ménage",
+    "gardener": "Jardinier",
+    "landscaper": "Paysagiste",
+    "pool_cleaner": "Technicien piscine",
+    "window_cleaner": "Laveur de vitres",
+    "carpet_cleaner": "Nettoyeur de tapis",
+    "pressure_washer": "Nettoyeur haute pression",
+    "pest_control": "Dératiseur",
+    "plumber": "Plombier",
+    "electrician": "Électricien",
+    "carpenter": "Menuisier",
+    "painter": "Peintre",
+    "roofer": "Couvreur",
+    "mason": "Maçon",
+    "welder": "Soudeur",
+    "tiler": "Carreleur",
+    "plasterer": "Plâtrier",
+    "glazier": "Vitrier",
+    "flooring_installer": "Poseur de sols",
+    "drywall_installer": "Plaquiste",
+    "insulation_worker": "Poseur d'isolation",
+    "hvac_technician": "Technicien CVC",
+    "locksmith": "Serrurier",
+    "mechanic": "Mécanicien",
+    "auto_electrician": "Électricien auto",
+    "car_washer": "Laveur auto",
+    "auto_detailer": "Préparateur auto",
+    "tire_technician": "Technicien pneus",
+    "body_repair": "Carrossier",
+    "tow_truck_driver": "Dépanneur",
+    "barber": "Barbier",
+    "hairdresser": "Coiffeur/Coiffeuse",
+    "beautician": "Esthéticien(ne)",
+    "makeup_artist": "Maquilleur/Maquilleuse",
+    "nail_technician": "Prothésiste ongulaire",
+    "massage_therapist": "Massothérapeute",
+    "personal_trainer": "Coach sportif",
+    "tattoo_artist": "Tatoueur",
+    "babysitter": "Baby-sitter",
+    "nanny": "Nounou",
+    "elderly_caregiver": "Aide aux personnes âgées",
+    "pet_sitter": "Pet-sitter",
+    "dog_walker": "Promeneur de chiens",
+    "pet_groomer": "Toiletteur",
+    "nurse": "Infirmier/Infirmière",
+    "home_health_aide": "Aide-soignant à domicile",
+    "mover": "Déménageur",
+    "delivery_driver": "Livreur",
+    "courier": "Coursier",
+    "truck_driver": "Chauffeur poids lourd",
+    "furniture_assembler": "Monteur de meubles",
+    "computer_technician": "Technicien informatique",
+    "phone_repair": "Réparateur de téléphones",
+    "network_technician": "Technicien réseau",
+    "security_installer": "Installateur sécurité",
+    "smart_home_installer": "Installateur domotique",
+    "appliance_repair": "Réparateur électroménager",
+    "photographer": "Photographe",
+    "videographer": "Vidéaste",
+    "dj": "DJ",
+    "musician": "Musicien",
+    "event_planner": "Organisateur d'événements",
+    "caterer": "Traiteur",
+    "bartender": "Barman",
+    "waiter": "Serveur",
+    "tutor": "Tuteur",
+    "music_teacher": "Professeur de musique",
+    "language_teacher": "Professeur de langues",
+    "driving_instructor": "Moniteur auto-école",
+    "sports_coach": "Coach sportif",
+    "yoga_instructor": "Professeur de yoga",
+    "accountant": "Comptable",
+    "lawyer": "Avocat",
+    "translator": "Traducteur",
+    "notary": "Notaire",
+    "real_estate_agent": "Agent immobilier",
+    "insurance_agent": "Agent d'assurance",
+    "tailor": "Tailleur",
+    "seamstress": "Couturière",
+    "shoe_repair": "Cordonnier",
+    "dry_cleaner": "Pressing",
+    "laundry_service": "Service de blanchisserie",
+    "chef": "Chef cuisinier",
+    "cook": "Cuisinier",
+    "baker": "Boulanger",
+    "butcher": "Boucher",
+    "personal_chef": "Chef privé",
+    "security_guard": "Agent de sécurité",
+    "bodyguard": "Garde du corps",
+    "private_investigator": "Détective privé",
+    "farmer": "Agriculteur",
+    "farmhand": "Ouvrier agricole",
+    "veterinarian": "Vétérinaire",
+    "beekeeper": "Apiculteur"
+  },
+  "footer": {
+    "description": "Nous vous connectons avec des professionnels du nettoyage de confiance.",
+    "company": "Entreprise",
+    "support": "Support",
+    "legal": "Mentions légales",
+    "aboutUs": "À propos",
+    "careers": "Carrières",
+    "press": "Presse",
+    "helpCenter": "Centre d'aide",
+    "contactUs": "Nous contacter",
+    "faq": "FAQ",
+    "termsOfService": "Conditions d'utilisation",
+    "privacyPolicy": "Politique de confidentialité",
+    "cookiePolicy": "Politique de cookies",
+    "allRightsReserved": "Tous droits réservés."
+  },
+  "about": {
+    "title": "À propos de Servantana",
+    "subtitle": "Nous sommes la plus grande marketplace de main-d'œuvre pour connecter les professionnels qualifiés avec les personnes qui ont besoin de leurs services.",
+    "mission": {
+      "title": "Notre mission",
+      "content": "Nous croyons que tout le monde mérite d'avoir accès à des professionnels fiables et qualifiés. Notre mission est de créer des opportunités de travail significatives tout en facilitant la recherche d'aide de confiance pour toute tâche."
+    },
+    "stats": {
+      "professionals": "Professionnels",
+      "bookings": "Réservations",
+      "satisfaction": "Satisfaction",
+      "cities": "Villes"
+    },
+    "story": {
+      "title": "Notre histoire",
+      "content1": "Servantana a été fondée en 2024 avec une idée simple : faciliter la recherche d'aide fiable. Nous avons remarqué que bien que les professionnels qualifiés soient partout, les connecter avec les clients qui avaient besoin de leurs services était inutilement difficile.",
+      "content2": "Aujourd'hui, nous sommes fiers d'avoir construit une plateforme qui permet à des milliers de professionnels de développer leur activité tout en aidant les clients à faire avancer les choses en toute confiance."
+    },
+    "values": {
+      "title": "Nos valeurs",
+      "trust": {
+        "title": "Confiance",
+        "content": "Nous vérifions chaque professionnel et protégeons chaque transaction pour garantir la tranquillité d'esprit."
+      },
+      "quality": {
+        "title": "Qualité",
+        "content": "Nous maintenons des normes élevées et ne travaillons qu'avec des professionnels qualifiés et fiables."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "content": "Nous améliorons continuellement notre plateforme pour rendre l'embauche d'aide plus facile que jamais."
+      }
+    }
+  },
+  "careers": {
+    "title": "Rejoignez notre équipe",
+    "subtitle": "Aidez-nous à construire l'avenir du travail. Nous recherchons des personnes passionnées qui veulent faire la différence.",
+    "why": {
+      "title": "POURQUOI NOUS ?",
+      "growth": {
+        "title": "Évolution de carrière",
+        "content": "Développez vos compétences et faites avancer votre carrière dans un environnement de startup dynamique."
+      },
+      "remote": {
+        "title": "Télétravail d'abord",
+        "content": "Travaillez de n'importe où. Nous croyons en la flexibilité et l'équilibre travail-vie personnelle."
+      },
+      "benefits": {
+        "title": "Excellents avantages",
+        "content": "Salaire compétitif, participation au capital, assurance santé et congés illimités."
+      }
+    },
+    "positions": {
+      "title": "Postes ouverts",
+      "frontend": {
+        "title": "Développeur Frontend Senior"
+      },
+      "backend": {
+        "title": "Développeur Backend"
+      },
+      "designer": {
+        "title": "Designer Produit"
+      },
+      "marketing": {
+        "title": "Responsable Marketing"
+      },
+      "support": {
+        "title": "Spécialiste Support Client"
+      }
+    },
+    "departments": {
+      "engineering": "Ingénierie",
+      "design": "Design",
+      "marketing": "Marketing",
+      "support": "Support"
+    },
+    "locations": {
+      "remote": "Télétravail",
+      "hybrid": "Hybride"
+    },
+    "types": {
+      "fullTime": "Temps plein",
+      "partTime": "Temps partiel"
+    },
+    "apply": "Postuler",
+    "noPosition": {
+      "title": "Vous ne trouvez pas de poste qui vous convient ?",
+      "content": "Nous sommes toujours à la recherche de personnes talentueuses. Envoyez-nous votre CV et nous vous garderons en mémoire pour de futures opportunités.",
+      "button": "Envoyer un CV"
+    }
+  },
+  "press": {
+    "title": "Presse et médias",
+    "subtitle": "Actualités, mises à jour et ressources pour les journalistes et professionnels des médias.",
+    "kit": {
+      "title": "Kit presse",
+      "logos": {
+        "title": "Logos de marque",
+        "content": "Téléchargez notre logo dans différents formats pour la presse."
+      },
+      "photos": {
+        "title": "Photos produit",
+        "content": "Captures d'écran et images produit en haute résolution."
+      }
+    },
+    "download": "Télécharger",
+    "facts": {
+      "title": "Faits sur l'entreprise",
+      "founded": "Fondée",
+      "headquarters": "Siège social",
+      "employees": "Employés",
+      "users": "Utilisateurs inscrits"
+    },
+    "contact": {
+      "title": "Contact presse",
+      "content": "Pour les demandes médias, demandes d'interview ou accès au kit presse, veuillez contacter notre équipe presse."
+    }
+  },
+  "help": {
+    "title": "Centre d'aide",
+    "subtitle": "Trouvez des réponses à vos questions",
+    "searchPlaceholder": "Rechercher de l'aide...",
+    "categories": {
+      "title": "Parcourir par catégorie",
+      "account": {
+        "title": "Compte et profil",
+        "articles": "12 articles"
+      },
+      "booking": {
+        "title": "Réservation et planification",
+        "articles": "15 articles"
+      },
+      "payments": {
+        "title": "Paiements et facturation",
+        "articles": "10 articles"
+      },
+      "safety": {
+        "title": "Sécurité et confiance",
+        "articles": "8 articles"
+      },
+      "communication": {
+        "title": "Communication",
+        "articles": "6 articles"
+      },
+      "settings": {
+        "title": "Paramètres",
+        "articles": "9 articles"
+      }
+    },
+    "popular": {
+      "title": "Articles populaires",
+      "article1": "Comment réserver un professionnel ?",
+      "article2": "Comment annuler ou reporter une réservation ?",
+      "article3": "Comment fonctionnent les paiements ?",
+      "article4": "Comment les professionnels sont-ils vérifiés ?",
+      "article5": "Comment devenir professionnel sur Servantana ?"
+    },
+    "contact": {
+      "title": "Besoin d'aide supplémentaire ?",
+      "content": "Notre équipe de support est là pour vous aider avec toutes vos questions.",
+      "button": "Contacter le support"
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Nous aimerions avoir de vos nouvelles. Envoyez-nous un message et nous vous répondrons dès que possible.",
+    "email": {
+      "title": "Email"
+    },
+    "phone": {
+      "title": "Téléphone"
+    },
+    "address": {
+      "title": "Adresse"
+    },
+    "form": {
+      "name": "Votre nom",
+      "email": "Adresse email",
+      "subject": "Objet",
+      "message": "Message",
+      "submit": "Envoyer le message"
+    },
+    "success": {
+      "title": "Message envoyé !",
+      "message": "Merci de nous avoir contactés. Nous vous répondrons dans les 24 heures."
+    }
+  },
+  "pwa": {
+    "installTitle": "Installer Servantana",
+    "installDescription": "Ajoutez à votre écran d'accueil pour la meilleure expérience",
+    "installButton": "Installer"
+  },
+  "offline": {
+    "youAreOffline": "Vous êtes hors ligne",
+    "viewingCached": "Affichage des données en cache",
+    "lastSynced": "Dernière synchronisation",
+    "refresh": "Actualiser",
+    "refreshed": "Données actualisées avec succès",
+    "refreshFailed": "Échec de l'actualisation des données",
+    "cannotRefresh": "Impossible d'actualiser hors ligne",
+    "usingCachedData": "Utilisation des données en cache - vous semblez être hors ligne"
+  },
+  "route": {
+    "title": "Itinéraire du jour",
+    "stops": "Arrêts",
+    "totalDistance": "Distance totale",
+    "travelTime": "Temps de trajet",
+    "finishBy": "Terminer avant",
+    "openFullRoute": "Ouvrir l'itinéraire complet dans Maps",
+    "startLocation": "Départ",
+    "yourLocation": "Votre position",
+    "navigate": "Naviguer",
+    "routeComplete": "Itinéraire terminé",
+    "estimatedFinish": "Fin estimée",
+    "noBookings": "Aucune réservation aujourd'hui",
+    "noBookingsDesc": "Vous n'avez aucune réservation confirmée pour aujourd'hui"
+  },
+  "substitutes": {
+    "title": "Trouver un remplaçant",
+    "subtitle": "Choisissez un travailleur disponible pour remplacer votre réservation annulée",
+    "originalCancelled": "{name} a annulé votre réservation",
+    "availableCount": "{count} travailleurs disponibles",
+    "bookings": "réservations",
+    "accept": "Accepter",
+    "accepted": "Remplaçant accepté ! Nouvelle réservation créée.",
+    "noAvailable": "Aucun remplaçant disponible",
+    "noAvailableDesc": "Malheureusement, aucun travailleur n'est disponible pour ce créneau horaire",
+    "findNewWorker": "Trouver un nouveau travailleur",
+    "skipForNow": "Passer pour le moment"
+  },
+  "faq": {
+    "title": "Questions fréquemment posées",
+    "subtitle": "Trouvez des réponses aux questions les plus courantes sur Servantana.",
+    "items": {
+      "whatIsServantana": {
+        "question": "Qu'est-ce que Servantana ?",
+        "answer": "Servantana est une marketplace qui connecte les clients avec des professionnels qualifiés pour divers services, notamment le nettoyage, les réparations, les soins personnels et plus encore. Nous vérifions tous les professionnels et fournissons un traitement de paiement sécurisé."
+      },
+      "howToBook": {
+        "question": "Comment réserver un professionnel ?",
+        "answer": "Sélectionnez simplement une catégorie, choisissez une profession, parcourez les professionnels disponibles dans votre région, sélectionnez-en un en fonction de ses notes et avis, choisissez votre date et heure préférées, et confirmez votre réservation. C'est aussi simple que ça !"
+      },
+      "paymentMethods": {
+        "question": "Quels modes de paiement sont acceptés ?",
+        "answer": "Nous acceptons toutes les principales cartes de crédit, cartes de débit et PayPal. Les paiements sont traités de manière sécurisée via notre plateforme, et vous n'êtes facturé qu'après la fin du service."
+      },
+      "cancellation": {
+        "question": "Quelle est la politique d'annulation ?",
+        "answer": "Vous pouvez annuler ou reporter une réservation jusqu'à 24 heures avant l'heure prévue sans frais. Les annulations dans les 24 heures peuvent être soumises à des frais d'annulation."
+      },
+      "workerVerification": {
+        "question": "Comment les professionnels sont-ils vérifiés ?",
+        "answer": "Tous les professionnels passent par un processus de vérification qui comprend la vérification d'identité, la vérification des antécédents et l'évaluation des compétences. Nous collectons et affichons également les avis des clients précédents."
+      },
+      "becomeWorker": {
+        "question": "Comment devenir professionnel sur Servantana ?",
+        "answer": "Inscrivez-vous pour un compte professionnel, complétez votre profil, soumettez les documents requis pour la vérification, et une fois approuvé, vous pouvez commencer à accepter des réservations et développer votre activité."
+      },
+      "pricing": {
+        "question": "Comment les prix sont-ils déterminés ?",
+        "answer": "Les professionnels fixent leurs propres tarifs en fonction de leur expérience et des services qu'ils offrent. Tous les prix sont affichés à l'avance avant la réservation, sans frais cachés."
+      },
+      "safety": {
+        "question": "Servantana est-il sûr à utiliser ?",
+        "answer": "Oui ! Nous priorisons la sécurité avec des professionnels vérifiés, des paiements sécurisés et un système de notation. Nous fournissons également un support client et une garantie de satisfaction sur toutes les réservations."
+      }
+    },
+    "contact": {
+      "title": "Vous avez encore des questions ?",
+      "content": "Vous ne trouvez pas ce que vous cherchez ? Notre équipe de support est heureuse de vous aider.",
+      "button": "Contactez-nous"
+    }
+  },
+  "errors": {
+    "somethingWentWrong": "Une erreur s'est produite",
+    "tryAgainLater": "Nous nous excusons pour le désagrément. Veuillez réessayer ou contacter le support si le problème persiste.",
+    "tryAgain": "Réessayer",
+    "goHome": "Retour à l'accueil",
+    "pageNotFound": "Page introuvable",
+    "pageNotFoundDescription": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "browseServices": "Parcourir les services"
+  },
+  "analytics": {
+    "title": "Tableau de bord analytique",
+    "overview": "Aperçu",
+    "earnings": "Revenus",
+    "bookings": "Réservations",
+    "services": "Services",
+    "totalEarnings": "Total des revenus",
+    "totalBookings": "Total des réservations",
+    "averageRating": "Note moyenne",
+    "completionRate": "Taux de complétion",
+    "earningsStatus": "État des revenus",
+    "pending": "En attente",
+    "available": "Disponible",
+    "paidOut": "Versé",
+    "earningsTrend": "Tendance des revenus",
+    "bookingTrend": "Tendance des réservations",
+    "earningsByService": "Revenus par service",
+    "topServices": "Meilleurs services",
+    "bookingsByStatus": "Réservations par statut",
+    "revenueBreakdown": "Répartition des revenus",
+    "grossRevenue": "Revenu brut",
+    "refunds": "Remboursements",
+    "netRevenue": "Revenu net",
+    "platformFees": "Frais de plateforme",
+    "avgOrderValue": "Valeur moyenne de commande",
+    "totalRevenue": "Revenu total",
+    "totalUsers": "Total utilisateurs",
+    "export": "Exporter",
+    "exportBookings": "Exporter les réservations",
+    "exportRevenue": "Exporter les revenus",
+    "period": {
+      "today": "Aujourd'hui",
+      "week": "7 derniers jours",
+      "month": "30 derniers jours",
+      "quarter": "3 derniers mois",
+      "year": "Dernière année"
+    }
+  },
+  "notifications": {
+    "title": "Préférences de notification",
+    "subtitle": "Choisissez comment vous souhaitez être notifié",
+    "channels": {
+      "email": "Email",
+      "sms": "SMS",
+      "push": "Notifications push"
+    },
+    "types": {
+      "bookingCreated": "Nouvelles demandes de réservation",
+      "bookingConfirmed": "Confirmations de réservation",
+      "bookingCancelled": "Annulations de réservation",
+      "bookingReminder": "Rappels de réservation",
+      "bookingCompleted": "Réservations terminées",
+      "paymentReceived": "Paiement reçu",
+      "payoutSent": "Versements envoyés",
+      "messageReceived": "Nouveaux messages",
+      "reviewReceived": "Nouveaux avis",
+      "documentVerified": "Document vérifié",
+      "documentRejected": "Document rejeté",
+      "disputeOpened": "Litige ouvert",
+      "disputeResolved": "Litige résolu"
+    },
+    "pushNotifications": "Notifications push",
+    "enablePush": "Activer les notifications push",
+    "disablePush": "Désactiver les notifications push",
+    "pushEnabled": "Les notifications push sont activées",
+    "pushDisabled": "Les notifications push sont désactivées",
+    "pushNotSupported": "Les notifications push ne sont pas prises en charge dans ce navigateur",
+    "smsNotice": "Les notifications SMS nécessitent un numéro de téléphone vérifié",
+    "addPhone": "Ajouter un numéro de téléphone",
+    "reminderTiming": "Délai de rappel de réservation",
+    "reminderTimingDesc": "Choisissez quand vous souhaitez recevoir des rappels avant vos réservations",
+    "reminderEnabled": "Les rappels sont activés",
+    "reminderDisabled": "Les rappels sont désactivés",
+    "selectReminderTimes": "Sélectionner les délais de rappel",
+    "beforeBooking": "avant la réservation",
+    "addReminderTime": "Ajouter un délai de rappel",
+    "noRemindersSelected": "Aucun délai de rappel sélectionné"
+  },
+  "documents": {
+    "title": "Mes documents",
+    "subtitle": "Téléchargez et gérez vos documents de vérification",
+    "upload": "Télécharger un document",
+    "uploadNew": "Télécharger un nouveau document",
+    "noDocuments": "Aucun document téléchargé pour le moment",
+    "noDocumentsDesc": "Téléchargez votre pièce d'identité, licences ou certifications pour être vérifié",
+    "types": {
+      "governmentId": "Pièce d'identité",
+      "driversLicense": "Permis de conduire",
+      "passport": "Passeport",
+      "proofOfAddress": "Justificatif de domicile",
+      "insurance": "Certificat d'assurance",
+      "certification": "Certification professionnelle",
+      "backgroundCheck": "Vérification des antécédents",
+      "other": "Autre document"
+    },
+    "status": {
+      "pending": "En attente d'examen",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "expired": "Expiré"
+    },
+    "uploadedOn": "Téléchargé le",
+    "expiresOn": "Expire le",
+    "verifiedOn": "Vérifié le",
+    "rejectionReason": "Raison du rejet",
+    "reupload": "Télécharger à nouveau",
+    "delete": "Supprimer le document",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce document ?"
+  },
+  "calendar": {
+    "title": "Synchronisation du calendrier",
+    "subtitle": "Connectez vos calendriers pour synchroniser automatiquement les réservations",
+    "connected": "Connecté",
+    "notConnected": "Non connecté",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "lastSynced": "Dernière synchronisation",
+    "syncNow": "Synchroniser maintenant",
+    "syncing": "Synchronisation...",
+    "google": {
+      "title": "Google Calendar",
+      "description": "Connectez votre Google Calendar pour synchroniser automatiquement vos réservations."
+    },
+    "outlook": {
+      "title": "Outlook Calendar",
+      "description": "Connectez votre Outlook Calendar pour synchroniser automatiquement vos réservations."
+    },
+    "syncSettings": "Paramètres de synchronisation",
+    "autoSync": "Synchronisation automatique des nouvelles réservations",
+    "syncDirection": "Direction de synchronisation",
+    "twoWay": "Synchronisation bidirectionnelle",
+    "oneWay": "Unidirectionnelle (Servantana vers Calendrier)"
+  },
+  "support": {
+    "title": "Centre de support",
+    "subtitle": "Obtenez de l'aide et gérez vos litiges",
+    "helpCenter": "Centre d'aide",
+    "helpCenterDesc": "Trouvez des réponses aux questions courantes",
+    "contactSupport": "Contacter le support",
+    "contactSupportDesc": "Contactez notre équipe de support",
+    "disputes": "Mes litiges",
+    "disputesDesc": "Consultez et gérez vos litiges",
+    "openDispute": "Ouvrir un litige",
+    "noDisputes": "Aucun litige pour le moment",
+    "noDisputesDesc": "Vous n'avez aucun litige pour le moment",
+    "dispute": {
+      "title": "Détails du litige",
+      "create": "Créer un litige",
+      "selectBooking": "Sélectionner une réservation",
+      "noBookingsToDispute": "Aucune réservation terminée ou annulée trouvée à contester",
+      "type": "Type de litige",
+      "types": {
+        "serviceQuality": "Qualité du service",
+        "paymentIssue": "Problème de paiement",
+        "noShow": "Non-présentation",
+        "propertyDamage": "Dommages matériels",
+        "unprofessionalBehavior": "Comportement non professionnel",
+        "other": "Autre"
+      },
+      "subject": "Objet",
+      "subjectPlaceholder": "Bref résumé de votre problème",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrivez votre problème en détail",
+      "evidence": "Preuves",
+      "uploadEvidence": "Télécharger des preuves",
+      "evidenceTypes": "Images, vidéos ou documents",
+      "submit": "Soumettre le litige",
+      "status": {
+        "open": "Ouvert",
+        "inProgress": "En cours",
+        "resolved": "Résolu",
+        "closed": "Fermé"
+      },
+      "resolution": {
+        "fullRefund": "Remboursement intégral",
+        "partialRefund": "Remboursement partiel",
+        "noRefund": "Pas de remboursement",
+        "rebooking": "Nouvelle réservation gratuite",
+        "other": "Autre résolution"
+      },
+      "messages": "Messages",
+      "sendMessage": "Envoyer un message",
+      "messagePlaceholder": "Tapez votre message...",
+      "adminResponse": "Réponse de l'administrateur",
+      "awaitingResponse": "En attente de réponse",
+      "resolvedOn": "Résolu le"
+    }
+  },
+  "photos": {
+    "title": "Photos de réservation",
+    "before": "Avant",
+    "after": "Après",
+    "upload": "Télécharger des photos",
+    "uploadBefore": "Télécharger des photos avant",
+    "uploadAfter": "Télécharger des photos après",
+    "noPhotos": "Aucune photo téléchargée pour le moment",
+    "noPhotosDesc": "Les photos aident à documenter le travail accompli",
+    "comparison": "Comparaison avant et après",
+    "viewAll": "Voir toutes les photos",
+    "delete": "Supprimer la photo",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette photo ?",
+    "maxPhotos": "Maximum 10 photos par catégorie",
+    "uploadSuccess": "Photo téléchargée avec succès",
+    "uploadError": "Échec du téléchargement de la photo"
+  },
+  "emailVerification": {
+    "title": "Vérifiez votre email",
+    "subtitle": "Veuillez vérifier votre adresse email pour continuer",
+    "description": "Nous avons envoyé un lien de vérification à votre adresse email. Cliquez sur le lien pour vérifier votre compte.",
+    "resendButton": "Renvoyer l'email de vérification",
+    "checkButton": "J'ai vérifié, continuer",
+    "resendSuccess": "Email de vérification envoyé ! Vérifiez votre boîte de réception.",
+    "resendFailed": "Échec de l'envoi de l'email de vérification. Veuillez réessayer.",
+    "emailSent": "Email de vérification envoyé ! Veuillez vérifier votre boîte de réception et votre dossier spam.",
+    "wrongAccount": "Connecté au mauvais compte ?"
+  },
+  "workerOnboarding": {
+    "step": "Étape",
+    "of": "sur",
+    "step1Title": "Dans quelles catégories vous spécialisez-vous ?",
+    "step1Desc": "Sélectionnez les catégories qui correspondent à vos compétences. Vous pouvez en choisir plusieurs.",
+    "step2Title": "Que faites-vous ?",
+    "step2Desc": "Sélectionnez vos professions spécifiques dans ces catégories.",
+    "step3Title": "Définissez votre tarif horaire",
+    "step3Desc": "Combien voulez-vous gagner par heure ?",
+    "step4Title": "Quand êtes-vous disponible ?",
+    "step4Desc": "Définissez vos jours et heures de travail.",
+    "step5Title": "Parlez-nous de vous",
+    "step5Desc": "Aidez les clients à mieux vous connaître.",
+    "step6PaymentTitle": "Configurer les paiements",
+    "step6PaymentDesc": "Comment souhaitez-vous recevoir vos revenus ?",
+    "step7Title": "Vérifiez votre profil",
+    "step7Desc": "Assurez-vous que tout est correct avant de vous lancer.",
+    "categoriesSelected": "catégories sélectionnées",
+    "professionsSelected": "professions sélectionnées",
+    "noProfessions": "Aucune profession disponible pour les catégories sélectionnées",
+    "noProfessionsInCategory": "Pas encore de professions. Ajoutez la vôtre ci-dessous !",
+    "hour": "heure",
+    "years": "ans",
+    "year": "an",
+    "rateHint": "Vous pouvez le modifier plus tard. La plupart des travailleurs facturent 20-50€/heure.",
+    "aboutYou": "À propos de vous",
+    "bio": "Biographie",
+    "bioPlaceholder": "Parlez aux clients de votre expérience, de vos compétences et de ce qui vous rend excellent dans ce que vous faites...",
+    "experience": "Années d'expérience",
+    "serviceRadius": "Rayon d'intervention",
+    "ecoFriendly": "Écologique",
+    "ecoFriendlyDesc": "J'utilise des produits et méthodes respectueux de l'environnement",
+    "petFriendly": "Accepte les animaux",
+    "petFriendlyDesc": "Je suis à l'aise pour travailler dans des maisons avec des animaux",
+    "reviewCategories": "Catégories",
+    "reviewProfessions": "Professions",
+    "reviewRates": "Vos tarifs",
+    "reviewAvailability": "Disponibilité",
+    "reviewProfile": "Détails du profil",
+    "hourlyRate": "Tarif horaire",
+    "workingDays": "Jours de travail",
+    "workingHours": "Heures de travail",
+    "otherProfessions": "Autres professions",
+    "quickSetAll": "Définir rapidement tous les tarifs :",
+    "readyToGo": "Vous êtes prêt !",
+    "profileWillBeVisible": "Après avoir terminé la configuration, votre profil sera visible par les clients.",
+    "completeSetup": "Terminer la configuration",
+    "completeStep": "Veuillez terminer cette étape avant de continuer",
+    "fetchError": "Échec du chargement des données. Veuillez réessayer.",
+    "saveFailed": "Échec de l'enregistrement. Veuillez réessayer.",
+    "completed": "Bienvenue ! Votre profil est maintenant en ligne.",
+    "createYours": "Créez le vôtre",
+    "suggestCategory": "Suggérer une catégorie",
+    "categoryName": "Nom de la catégorie",
+    "categoryNamePlaceholder": "ex. Services pour animaux",
+    "categoryEmoji": "Emoji (optionnel)",
+    "suggestionNote": "Votre suggestion sera examinée par notre équipe et ajoutée si elle est approuvée.",
+    "categorySuggestionSubmitted": "Suggestion de catégorie soumise ! Elle sera examinée prochainement.",
+    "suggestionFailed": "Échec de la soumission de la suggestion",
+    "enterCategoryName": "Veuillez entrer un nom de catégorie",
+    "addYours": "Ajoutez la vôtre",
+    "suggestProfession": "Suggérer une profession",
+    "professionName": "Nom de la profession",
+    "professionNamePlaceholder": "ex. Technicien piscine",
+    "professionEmoji": "Emoji (optionnel)",
+    "professionSuggestionNote": "Votre suggestion de profession sera examinée et ajoutée à cette catégorie si elle est approuvée.",
+    "professionSuggestionSubmitted": "Suggestion de profession soumise ! Elle sera examinée prochainement.",
+    "enterProfessionName": "Veuillez entrer un nom de profession",
+    "paymentSetup": "Configuration des paiements",
+    "paymentSetupDesc": "Connectez votre compte de paiement pour recevoir les paiements des clients.",
+    "stripeConnect": "Stripe Connect",
+    "stripeConnectDesc": "Recevez des paiements en toute sécurité directement sur votre compte bancaire. Stripe gère tout le traitement des paiements.",
+    "setupStripe": "Configurer le compte Stripe",
+    "stripeSetupComplete": "Compte Stripe connecté",
+    "stripeRedirect": "Ouverture de la configuration Stripe dans un nouvel onglet...",
+    "stripeSetupFailed": "Échec de la configuration Stripe. Veuillez réessayer.",
+    "stripeSetupPending": "Terminez la configuration dans l'onglet Stripe, puis vérifiez le statut ci-dessous.",
+    "stripeVerified": "Compte Stripe vérifié avec succès !",
+    "stripeStillPending": "Configuration pas encore terminée. Veuillez terminer la configuration Stripe.",
+    "checkStatus": "Vérifier le statut de la configuration",
+    "checkFailed": "Échec de la vérification du statut. Veuillez réessayer.",
+    "skipPaymentNote": "Vous pouvez ignorer cette étape et configurer les paiements plus tard depuis les paramètres de votre tableau de bord.",
+    "reviewPayment": "Paiement",
+    "connected": "Connecté",
+    "notSetup": "Non configuré",
+    "canSetupLater": "Vous pouvez configurer cela plus tard dans les paramètres de votre tableau de bord.",
+    "step1TitleNew": "Que faites-vous ?",
+    "step1DescNew": "Sélectionnez vos catégories et professions",
+    "step2TitleNew": "Définissez vos tarifs",
+    "step2DescNew": "Combien facturez-vous par heure ?",
+    "step3TitleNew": "Votre emploi du temps",
+    "step3DescNew": "Quand êtes-vous disponible pour travailler ?",
+    "step4TitleNew": "Soyez payé",
+    "step4DescNew": "Comment devons-nous vous envoyer vos revenus ?",
+    "step5TitleNew": "Finalisez",
+    "step5DescNew": "Ajoutez les derniers détails et vérifiez votre profil",
+    "selectProfessions": "Sélectionner les professions",
+    "backToCategories": "Retour aux catégories",
+    "presetWeekdays": "Semaine 9h-17h",
+    "presetFlexible": "Flexible",
+    "presetWeekends": "Week-ends",
+    "paypalDesc": "Paiements rapides et faciles dans le monde entier",
+    "paypalEmailPlaceholder": "votre@email.com",
+    "or": "ou",
+    "bankAccount": "Compte bancaire",
+    "bankDesc": "Transfert direct vers votre banque (SEPA)",
+    "ibanPlaceholder": "FR76 3000 6000 0112 3456 7890 189",
+    "accountHolderPlaceholder": "Nom du titulaire du compte",
+    "paymentSkipNote": "Vous pouvez ignorer ceci et ajouter les détails de paiement plus tard dans les Paramètres",
+    "preview": "Aperçu",
+    "previewDesc": "Comment votre profil apparaîtra"
+  },
+  "days": {
+    "sunday": "Dimanche",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi"
+  },
+  "bookingChanges": {
+    "reschedule": "Reporter",
+    "cancel": "Annuler la réservation",
+    "rescheduleTitle": "Reporter la réservation",
+    "cancelTitle": "Annuler la réservation",
+    "selectNewDate": "Sélectionner une nouvelle date",
+    "selectNewTime": "Sélectionner une nouvelle heure",
+    "noSlotsAvailable": "Aucun créneau disponible à cette date",
+    "rescheduleReason": "Raison du report",
+    "cancelReason": "Raison de l'annulation",
+    "confirmReschedule": "Confirmer le report",
+    "confirmCancel": "Confirmer l'annulation",
+    "refundInfo": "Informations de remboursement",
+    "fullRefund": "Remboursement intégral",
+    "partialRefund": "Remboursement partiel",
+    "noRefund": "Pas de remboursement",
+    "refundAmount": "Montant du remboursement",
+    "refundPolicy": "Politique d'annulation",
+    "policyFree": "Annulation gratuite (plus de 24 heures de préavis)",
+    "policyPartial": "Remboursement partiel (12-24 heures de préavis)",
+    "policyNone": "Pas de remboursement (moins de 12 heures de préavis)",
+    "rescheduleSuccess": "Réservation reportée avec succès",
+    "cancelSuccess": "Réservation annulée avec succès",
+    "pendingApproval": "En attente d'approbation",
+    "awaitingWorkerApproval": "En attente de l'approbation du travailleur"
+  },
+  "guarantee": {
+    "badge": "Garantie de service",
+    "title": "Garantie de service",
+    "shortDescription": "Votre satisfaction est protégée",
+    "back": "Retour",
+    "pageTitle": "Garantie de service",
+    "pageSubtitle": "Réservez en toute confiance. Chaque service sur Servantana est couvert par notre garantie de satisfaction complète.",
+    "promiseTitle": "Notre promesse",
+    "promiseDescription": "Si votre service ne répond pas à vos attentes, nous nous engageons à corriger le problème — que ce soit par un re-service gratuit, un remboursement partiel ou un remboursement complet.",
+    "coverageTitle": "Ce qui est couvert",
+    "coverage": {
+      "noShow": {
+        "title": "Protection contre les absences",
+        "description": "Si votre prestataire de services ne se présente pas, vous recevrez un remboursement complet et une nouvelle réservation prioritaire."
+      },
+      "incompleteWork": {
+        "title": "Travail incomplet",
+        "description": "Si le travail n'est pas terminé comme convenu, nous organiserons son achèvement ou fournirons un remboursement."
+      },
+      "poorQuality": {
+        "title": "Garantie de qualité",
+        "description": "Pas satisfait de la qualité ? Nous enverrons un autre professionnel ou rembourserons votre paiement."
+      },
+      "propertyDamage": {
+        "title": "Protection des biens",
+        "description": "Les dommages causés par le prestataire de services pendant le travail sont couverts jusqu'à 1000$."
+      },
+      "unprofessional": {
+        "title": "Standards professionnels",
+        "description": "Tous les prestataires doivent maintenir un comportement professionnel. Signalez tout problème pour une action immédiate."
+      }
+    },
+    "processTitle": "Comment ça fonctionne",
+    "process": {
+      "fileReport": {
+        "title": "Signaler le problème",
+        "description": "Soumettez une réclamation dans les 7 jours suivant votre service avec les détails de ce qui s'est mal passé."
+      },
+      "review": {
+        "title": "Examen rapide",
+        "description": "Notre équipe examine votre réclamation et contacte le prestataire de services dans les 24 heures."
+      },
+      "resolution": {
+        "title": "Obtenir une résolution",
+        "description": "Recevez un re-service, un crédit ou un remboursement en fonction de votre situation — généralement dans les 48 heures."
+      }
+    },
+    "termsTitle": "Conditions générales",
+    "terms": {
+      "timeLimit": "Les réclamations doivent être soumises dans les 7 jours suivant la date du service",
+      "bookingOnly": "S'applique uniquement aux services réservés et payés via Servantana",
+      "evidence": "Des photos ou vidéos peuvent être demandées pour traiter les réclamations",
+      "onePerBooking": "Une réclamation autorisée par réservation"
+    },
+    "ctaText": "Prêt à réserver en toute confiance ?",
+    "ctaButton": "Trouver des prestataires de services",
+    "claimForm": {
+      "title": "Déposer une réclamation de garantie",
+      "selectReason": "Sélectionner une raison",
+      "reasons": {
+        "NO_SHOW": "Le prestataire ne s'est pas présenté",
+        "INCOMPLETE_SERVICE": "Le service n'a pas été terminé comme convenu",
+        "POOR_QUALITY": "La qualité était en dessous des attentes",
+        "PROPERTY_DAMAGE": "Les biens ont été endommagés pendant le service",
+        "LATE_ARRIVAL": "Le prestataire est arrivé en retard",
+        "UNPROFESSIONAL": "Comportement non professionnel",
+        "OTHER": "Autre problème"
+      },
+      "descriptionLabel": "Décrivez le problème",
+      "descriptionPlaceholder": "Veuillez fournir des détails sur ce qui s'est passé et pourquoi vous déposez cette réclamation...",
+      "evidenceLabel": "Télécharger des preuves (optionnel)",
+      "evidenceHint": "Photos ou vidéos qui soutiennent votre réclamation",
+      "submitClaim": "Soumettre la réclamation",
+      "submitting": "Soumission en cours...",
+      "submitSuccess": "Réclamation soumise avec succès. Nous l'examinerons dans les 24 heures.",
+      "submitError": "Échec de la soumission de la réclamation. Veuillez réessayer."
+    },
+    "claimStatus": {
+      "PENDING": "En attente d'examen",
+      "UNDER_REVIEW": "En cours d'examen",
+      "APPROVED": "Approuvée",
+      "DENIED": "Refusée",
+      "RESOLVED": "Résolue"
+    },
+    "resolution": {
+      "FULL_REFUND": "Remboursement intégral",
+      "PARTIAL_REFUND": "Remboursement partiel",
+      "SERVICE_CREDIT": "Crédit de service",
+      "FREE_REBOOK": "Nouvelle réservation gratuite",
+      "NO_ACTION": "Aucune action requise",
+      "WORKER_WARNING": "Prestataire averti",
+      "WORKER_SUSPENDED": "Prestataire suspendu"
+    }
+  },
+  "aiHub": {
+    "title": "Fonctionnalités propulsées par l'IA",
+    "subtitle": "Découvrez une réservation de services plus intelligente avec notre suite d'outils IA conçus pour vous faire gagner du temps et vous aider à trouver la correspondance parfaite.",
+    "tryNow": "Essayer maintenant",
+    "features": {
+      "chat": {
+        "title": "Assistant IA",
+        "desc": "Obtenez des réponses instantanées sur les services, les réservations et les recommandations"
+      },
+      "smartMatch": {
+        "title": "Correspondance intelligente",
+        "desc": "Trouvez le prestataire de services idéal en fonction de vos besoins et préférences"
+      },
+      "estimate": {
+        "title": "Estimateur de prix",
+        "desc": "Téléchargez des photos et obtenez des estimations de prix instantanées par IA"
+      },
+      "photo": {
+        "title": "Analyse de photos",
+        "desc": "Analysez les photos avant/après pour vérifier la qualité du nettoyage"
+      },
+      "schedule": {
+        "title": "Planification intelligente",
+        "desc": "Trouvez les meilleurs créneaux horaires avec la prévision de la demande par IA"
+      },
+      "reviews": {
+        "title": "Analyse des avis",
+        "desc": "Obtenez une analyse IA des avis des prestataires et des scores de confiance"
+      }
+    },
+    "howItWorks": {
+      "title": "Comment fonctionne notre IA",
+      "step1": {
+        "title": "Partagez vos besoins",
+        "desc": "Dites-nous ce que vous recherchez ou téléchargez des photos de votre espace"
+      },
+      "step2": {
+        "title": "Analyse IA",
+        "desc": "Notre IA analyse votre demande en utilisant l'apprentissage automatique avancé"
+      },
+      "step3": {
+        "title": "Obtenez des résultats",
+        "desc": "Recevez des recommandations personnalisées, des estimations ou des correspondances instantanément"
+      }
+    }
+  }
+}

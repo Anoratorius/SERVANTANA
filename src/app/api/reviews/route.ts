@@ -13,7 +13,7 @@ const createReviewSchema = z.object({
 
 export async function POST(request: NextRequest) {
   // Rate limiting: 5 reviews per hour
-  const rateLimited = applyRateLimit(request, "createReview");
+  const rateLimited = await applyRateLimit(request, "createReview");
   if (rateLimited) return rateLimited;
 
   try {

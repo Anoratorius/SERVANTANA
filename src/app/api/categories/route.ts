@@ -33,7 +33,7 @@ export async function GET() {
 // POST - submit new category suggestion
 export async function POST(request: NextRequest) {
   // Rate limiting: 3 suggestions per hour
-  const rateLimited = applyRateLimit(request, "suggestCategory");
+  const rateLimited = await applyRateLimit(request, "suggestCategory");
   if (rateLimited) return rateLimited;
 
   try {

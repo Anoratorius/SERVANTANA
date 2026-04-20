@@ -28,17 +28,17 @@ export async function POST(request: NextRequest) {
   const clientIP = getClientIP(request);
 
   // Check if IP is blocked
-  const ipBlock = checkIPBlock(clientIP);
+  const ipBlock = await checkIPBlock(clientIP);
   if (ipBlock) return ipBlock;
 
   // Rate limiting: 5 requests per minute per IP (very strict for code verification)
-  const rateLimit = checkRateLimit(`verify-code:${clientIP}`, {
+  const rateLimit = await checkRateLimit(`verify-code:${clientIP}`, {
     maxRequests: 5,
     windowMs: 60 * 1000, // 1 minute
   });
 
   if (!rateLimit.success) {
-    recordIPViolation(clientIP, "Verify code rate limit exceeded");
+    await recordIPViolation(clientIP, "Verify code rate limit exceeded");
     return rateLimitResponse(rateLimit.resetTime);
   }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
           ip: clientIP,
           details: { reason: "Too many failed reset code attempts", attempts: attempts.count },
         });
-        recordIPViolation(clientIP, "Brute force reset code attempt");
+        await recordIPViolation(clientIP, "Brute force reset code attempt");
 
         return NextResponse.json(
           { error: "Too many failed attempts. Please request a new code." },

@@ -125,7 +125,7 @@ export async function GET() {
 // Send a new message
 export async function POST(request: NextRequest) {
   // Rate limiting: 30 messages per minute
-  const rateLimited = applyRateLimit(request, "sendMessage");
+  const rateLimited = await applyRateLimit(request, "sendMessage");
   if (rateLimited) return rateLimited;
 
   try {
@@ -212,8 +212,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Emit real-time event to the receiver
-    emitNewMessage(receiverId, {
+    // Emit real-time event to the receiver (distributed via Redis)
+    await emitNewMessage(receiverId, {
       id: message.id,
       content: message.content,
       createdAt: message.createdAt,
