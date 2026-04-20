@@ -15,7 +15,7 @@ export function getAnthropicClient(): Anthropic {
 }
 
 // Standard model for most tasks
-export const AI_MODEL = "claude-3-sonnet-20240229";
+export const AI_MODEL = "claude-3-haiku-20240307";
 
 // Fast model for simple tasks
 export const AI_MODEL_FAST = "claude-3-5-haiku-20241022";
