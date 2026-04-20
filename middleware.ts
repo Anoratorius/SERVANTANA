@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtDecode } from 'jwt-decode';
+import { routing } from '@/i18n/routing';
 
 export const runtime = 'edge';
 
@@ -45,11 +46,7 @@ function getClientIP(request: NextRequest): string {
   return 'unknown';
 }
 
-const intlMiddleware = createMiddleware({
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
-  localePrefix: 'as-needed',
-});
+const intlMiddleware = createMiddleware(routing);
 
 // Static file extensions that bypass IP check
 const STATIC_EXTENSIONS = /\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf|eot|json|xml|txt|webp|mp4|webm|mp3|wav|pdf)$/i;
@@ -90,7 +87,7 @@ const WORKER_ONBOARDING_BYPASS_PATHS = [
 // Check if path should bypass email verification
 function shouldBypassEmailVerification(pathname: string): boolean {
   // Remove locale prefix if present
-  const pathWithoutLocale = pathname.replace(/^\/(en|de)/, '') || '/';
+  const pathWithoutLocale = pathname.replace(/^\/(en|de|ru|uk|ka)/, '') || '/';
 
   // Check exact matches and prefixes
   for (const bypassPath of EMAIL_VERIFICATION_BYPASS_PATHS) {
@@ -110,7 +107,7 @@ function shouldBypassEmailVerification(pathname: string): boolean {
 // Check if path should bypass worker onboarding check
 function shouldBypassWorkerOnboarding(pathname: string): boolean {
   // Remove locale prefix if present
-  const pathWithoutLocale = pathname.replace(/^\/(en|de)/, '') || '/';
+  const pathWithoutLocale = pathname.replace(/^\/(en|de|ru|uk|ka)/, '') || '/';
 
   // Check exact matches and prefixes
   for (const bypassPath of WORKER_ONBOARDING_BYPASS_PATHS) {
@@ -193,7 +190,7 @@ export default function middleware(request: NextRequest) {
     if (token?.id && token.isEmailVerified === false) {
       const url = request.nextUrl.clone();
       // Preserve locale if present
-      const localeMatch = pathname.match(/^\/(en|de)/);
+      const localeMatch = pathname.match(/^\/(en|de|ru|uk|ka)/);
       const locale = localeMatch ? localeMatch[1] : 'en';
       url.pathname = `/${locale}/email-verification-required`;
       return NextResponse.redirect(url);
@@ -212,7 +209,7 @@ export default function middleware(request: NextRequest) {
       token.onboardingComplete !== true
     ) {
       const url = request.nextUrl.clone();
-      const localeMatch = pathname.match(/^\/(en|de)/);
+      const localeMatch = pathname.match(/^\/(en|de|ru|uk|ka)/);
       const locale = localeMatch ? localeMatch[1] : 'en';
       url.pathname = `/${locale}/worker/onboarding`;
       return NextResponse.redirect(url);
