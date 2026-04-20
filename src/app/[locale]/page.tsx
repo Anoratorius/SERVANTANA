@@ -6,24 +6,19 @@ import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
-import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
   Search,
   UserCheck,
   CalendarCheck,
-  Shield,
   Clock,
   Star,
   Sparkles,
   CheckCircle,
   ArrowRight,
   Users,
-  MapPin,
-  CreditCard,
   Smartphone,
 } from "lucide-react";
 
@@ -93,11 +88,6 @@ function HomeContent() {
             </p>
             <HeroSearch />
 
-            {/* Trust Badge */}
-            <div className="mt-6">
-              <ServiceGuaranteeBadge />
-            </div>
-
             {/* Scroll Indicator */}
             <ScrollIndicator />
           </div>
@@ -132,115 +122,6 @@ function HomeContent() {
                   color="green"
                 />
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="py-16 bg-white w-full">
-          <div className="w-full px-4 max-w-5xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div>
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
-                  50K+
-                </div>
-                <p className="text-muted-foreground">{t("home.stats.happyCustomers")}</p>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
-                  5K+
-                </div>
-                <p className="text-muted-foreground">{t("home.stats.verifiedWorkers")}</p>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
-                  100K+
-                </div>
-                <p className="text-muted-foreground">{t("home.stats.completedJobs")}</p>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
-                  4.9
-                </div>
-                <p className="text-muted-foreground">{t("home.stats.avgRating")}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-16 bg-muted/30 w-full">
-          <div className="w-full px-4 max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <Badge className="mb-4">{t("home.features.badge")}</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
-                {t("home.features.title")}
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                {t("home.features.subtitle")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Shield className="h-7 w-7 text-blue-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{t("home.features.verified.title")}</h3>
-                  <p className="text-muted-foreground text-sm">{t("home.features.verified.desc")}</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CreditCard className="h-7 w-7 text-green-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{t("home.features.payment.title")}</h3>
-                  <p className="text-muted-foreground text-sm">{t("home.features.payment.desc")}</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="h-7 w-7 text-purple-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{t("home.features.ai.title")}</h3>
-                  <p className="text-muted-foreground text-sm">{t("home.features.ai.desc")}</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Clock className="h-7 w-7 text-orange-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{t("home.features.booking.title")}</h3>
-                  <p className="text-muted-foreground text-sm">{t("home.features.booking.desc")}</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="h-7 w-7 text-teal-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{t("home.features.local.title")}</h3>
-                  <p className="text-muted-foreground text-sm">{t("home.features.local.desc")}</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Star className="h-7 w-7 text-yellow-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{t("home.features.reviews.title")}</h3>
-                  <p className="text-muted-foreground text-sm">{t("home.features.reviews.desc")}</p>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </section>
