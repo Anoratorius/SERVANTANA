@@ -80,6 +80,49 @@ npx vercel --prod --force     # Manual (rare)
 
 **URLs:** servantana.com | servantana-five.vercel.app
 
+### Deployment Verification Rule
+
+**NEVER tell the user to "test it" until deployment is verified.**
+
+Before telling the user to test any deployed change:
+
+1. **Check deployment status** - Run `npx vercel ls` and confirm:
+   - Latest deployment shows recent timestamp (not hours old)
+   - Status is `● Ready`
+   - Environment is `Production`
+
+2. **Verify new code is running** - Don't assume deployment happened:
+   - If auto-deploy didn't trigger, run `npx vercel --prod` manually
+   - Wait for build to complete (watch the output)
+   - Confirm the new deployment appears at the top of `npx vercel ls`
+
+3. **Test the actual change** - Make a real request to verify:
+   - If API change: test the endpoint and check response
+   - If UI change: fetch the page and verify content
+   - If the old behavior still shows, deployment isn't complete
+
+4. **No guessing** - Evidence required:
+   - "Should work" is not acceptable
+   - "Wait 30 seconds" is not verification
+   - Only tell user to test after you have PROOF the new code is live
+
+**Example verification flow:**
+```bash
+# 1. Check current deployments
+npx vercel ls | head -5
+
+# 2. If latest is old, trigger manual deploy
+npx vercel --prod
+
+# 3. Verify new deployment is ready
+npx vercel ls | head -5
+# Should show deployment from seconds/minutes ago with "Ready" status
+
+# 4. Test the change works
+curl https://servantana.com/api/endpoint
+# Verify response matches expected new behavior
+```
+
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
