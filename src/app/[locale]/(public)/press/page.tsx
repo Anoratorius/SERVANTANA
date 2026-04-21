@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "@/components/ui/back-button";
 import { Mail } from "lucide-react";
@@ -11,7 +10,7 @@ export default function PressPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1">
         {/* Hero */}
@@ -69,7 +68,7 @@ export default function PressPage() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

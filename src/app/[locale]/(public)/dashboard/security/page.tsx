@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -229,7 +228,7 @@ export default function SecuritySettingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -520,7 +519,7 @@ export default function SecuritySettingsPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -528,7 +527,7 @@ export default function SecuritySettingsPage() {
 function SecuritySkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-3 mb-8">
@@ -543,7 +542,7 @@ function SecuritySkeleton() {
           <Skeleton className="h-80" />
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

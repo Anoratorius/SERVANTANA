@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { BackButton } from "@/components/ui/back-button";
 
 export default function TermsPage() {
@@ -9,7 +8,7 @@ export default function TermsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-white py-12">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -57,7 +56,7 @@ export default function TermsPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

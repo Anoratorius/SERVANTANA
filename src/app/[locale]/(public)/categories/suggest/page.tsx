@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Send, CheckCircle } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
@@ -39,7 +38,7 @@ export default function SuggestCategoryPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-lg">
@@ -109,7 +108,7 @@ export default function SuggestCategoryPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

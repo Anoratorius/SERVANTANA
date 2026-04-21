@@ -1,17 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { BackButton } from "@/components/ui/back-button";
 
 export default function AboutPage() {
   const t = useTranslations();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1">
+    <>
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-16">
           <div className="container mx-auto px-4 max-w-4xl">
@@ -64,9 +60,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-      </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }

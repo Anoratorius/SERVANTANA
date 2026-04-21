@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
-import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 
 const REMEMBERED_EMAIL_KEY = "servantana_remembered_email";
@@ -187,7 +186,7 @@ function LoginFormSkeleton() {
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <div className="flex-1 flex items-center justify-center bg-muted/30 px-4">
         <HeroBackground />
         <Suspense fallback={<LoginFormSkeleton />}>

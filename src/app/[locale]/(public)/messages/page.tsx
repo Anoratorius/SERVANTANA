@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -137,7 +136,7 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -251,7 +250,7 @@ export default function MessagesPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -274,7 +273,7 @@ function formatMessageTime(date: Date): string {
 function MessagesPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-3xl">
           <Skeleton className="h-10 w-48 mb-8" />
@@ -285,7 +284,7 @@ function MessagesPageSkeleton() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

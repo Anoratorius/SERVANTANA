@@ -4,7 +4,6 @@ import { useEffect, useState, useRef, use, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -189,7 +188,7 @@ export default function ConversationPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 flex flex-col bg-gray-50">
         {/* Conversation Header */}
@@ -352,7 +351,7 @@ export default function ConversationPage({
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -382,7 +381,7 @@ function formatMessageTime(date: Date): string {
 function ConversationSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 flex flex-col bg-gray-50">
         <div className="bg-white border-b">
           <div className="container mx-auto px-4 py-3 max-w-3xl">
@@ -410,7 +409,7 @@ function ConversationSkeleton() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -101,7 +100,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-red-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-5xl">
@@ -216,7 +215,7 @@ export default function FavoritesPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -224,7 +223,7 @@ export default function FavoritesPage() {
 function FavoritesPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-red-50 to-white py-8">
         <div className="container mx-auto px-4">
           <Skeleton className="h-10 w-64 mb-8" />
@@ -235,7 +234,7 @@ function FavoritesPageSkeleton() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

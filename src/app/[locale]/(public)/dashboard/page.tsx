@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -98,12 +97,9 @@ export default function DashboardPage() {
     : "U";
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <BackButton />
+    <div className="bg-gradient-to-b from-blue-50 to-white py-8">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <BackButton />
           {/* Welcome Section */}
           <div className="flex flex-col items-center text-center mb-8">
             <Avatar className="h-20 w-20 ring-4 ring-blue-100 mb-4">
@@ -257,10 +253,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
   );
 }
 
@@ -308,26 +301,22 @@ function StatCard({
 
 function DashboardSkeleton() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4 mb-8">
-            <Skeleton className="h-16 w-16 rounded-full" />
-            <div>
-              <Skeleton className="h-8 w-48 mb-2" />
-              <Skeleton className="h-4 w-32" />
-            </div>
+    <div className="bg-gradient-to-b from-blue-50 to-white py-8">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center gap-4 mb-8">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <div>
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-32" />
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-24" />
-            ))}
-          </div>
-          <Skeleton className="h-80" />
         </div>
-      </main>
-      <Footer />
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
+        </div>
+        <Skeleton className="h-80" />
+      </div>
     </div>
   );
 }

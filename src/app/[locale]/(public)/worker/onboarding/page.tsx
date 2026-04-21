@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback, Suspense } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -469,18 +468,18 @@ function WorkerOnboardingContent() {
   if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </main>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 md:py-12">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -1217,7 +1216,7 @@ function WorkerOnboardingContent() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

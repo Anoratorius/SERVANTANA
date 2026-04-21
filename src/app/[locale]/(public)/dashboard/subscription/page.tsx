@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -217,7 +216,7 @@ export default function SubscriptionPage() {
   if (status === "loading" || loading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto max-w-5xl px-4 py-8">
             <Skeleton className="h-8 w-48 mb-8" />
@@ -228,7 +227,7 @@ export default function SubscriptionPage() {
             </div>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -241,7 +240,7 @@ export default function SubscriptionPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto max-w-5xl px-4 py-8">
           <BackButton />
@@ -554,7 +553,7 @@ export default function SubscriptionPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

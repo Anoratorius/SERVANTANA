@@ -3,7 +3,6 @@
 import { useEffect, useState, use } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, Link } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -209,14 +208,14 @@ export default function DisputeDetailPage({
   if (authStatus === "loading" || isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <Skeleton className="h-8 w-48 mb-6" />
             <Skeleton className="h-64" />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -225,7 +224,7 @@ export default function DisputeDetailPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -429,7 +428,7 @@ export default function DisputeDetailPage({
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

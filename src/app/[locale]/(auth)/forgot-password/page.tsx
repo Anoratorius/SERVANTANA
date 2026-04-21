@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -182,7 +182,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-12">
         <div className="container mx-auto px-4 max-w-md">
@@ -460,7 +460,7 @@ export default function ForgotPasswordPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

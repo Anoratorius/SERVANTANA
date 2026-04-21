@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Header, Footer } from "@/components/layout";
 import { Plus, Star, Loader2, MapPin, Users } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
@@ -193,11 +192,11 @@ export default function CategoryDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -206,11 +205,11 @@ export default function CategoryDetailPage() {
   if (!isBuiltIn && !dbCategory) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 flex items-center justify-center">
           <p className="text-gray-500">{t("categories.notFound")}</p>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -219,7 +218,7 @@ export default function CategoryDetailPage() {
   if (dbCategory) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
 
         <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
           <div className="container mx-auto px-4">
@@ -324,7 +323,7 @@ export default function CategoryDetailPage() {
           </div>
         </main>
 
-        <Footer />
+        
       </div>
     );
   }
@@ -332,7 +331,7 @@ export default function CategoryDetailPage() {
   // Built-in category - show job list (existing behavior)
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4">
@@ -389,7 +388,7 @@ export default function CategoryDetailPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

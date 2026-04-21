@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -251,14 +251,14 @@ export default function BookingDetailPage() {
   if (!booking) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("booking.notFound")}</h1>
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -268,7 +268,7 @@ export default function BookingDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -574,7 +574,7 @@ export default function BookingDetailPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -582,7 +582,7 @@ export default function BookingDetailPage() {
 function BookingDetailSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <Skeleton className="h-8 w-32 mb-6" />
@@ -594,7 +594,7 @@ function BookingDetailSkeleton() {
           <Skeleton className="h-48 mt-6" />
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

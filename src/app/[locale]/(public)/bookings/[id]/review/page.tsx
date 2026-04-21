@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -138,7 +138,7 @@ export default function ReviewPage({
   if (error || !booking) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
@@ -146,7 +146,7 @@ export default function ReviewPage({
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function ReviewPage({
   if (booking.worker.id === session?.user?.id) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <AlertCircle className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
@@ -166,7 +166,7 @@ export default function ReviewPage({
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -175,7 +175,7 @@ export default function ReviewPage({
   if (booking.status !== "COMPLETED") {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <AlertCircle className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
@@ -186,7 +186,7 @@ export default function ReviewPage({
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -196,7 +196,7 @@ export default function ReviewPage({
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <div className="mb-8">
@@ -263,14 +263,14 @@ export default function ReviewPage({
             </div>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
@@ -378,7 +378,7 @@ export default function ReviewPage({
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -386,7 +386,7 @@ export default function ReviewPage({
 function ReviewPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
           <Skeleton className="h-6 w-24 mb-6" />
@@ -403,7 +403,7 @@ function ReviewPageSkeleton() {
           </Card>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

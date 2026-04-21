@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -159,14 +158,14 @@ export default function RoutePlannerPage() {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <Route className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h1 className="text-2xl font-bold mb-2">{error}</h1>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -180,7 +179,7 @@ export default function RoutePlannerPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -371,7 +370,7 @@ export default function RoutePlannerPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -379,7 +378,7 @@ export default function RoutePlannerPage() {
 function RoutePlannerSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <Skeleton className="h-10 w-48 mx-auto mb-8" />
@@ -391,7 +390,7 @@ function RoutePlannerSkeleton() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

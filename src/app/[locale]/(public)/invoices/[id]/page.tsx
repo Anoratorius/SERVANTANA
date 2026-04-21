@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -116,21 +115,21 @@ export default function InvoiceDetailPage() {
   if (!invoice) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("notFound")}</h1>
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -295,7 +294,7 @@ export default function InvoiceDetailPage() {
         </div>
       </main>
 
-      <Footer />
+      
 
       {/* Print styles */}
       <style jsx global>{`
@@ -332,14 +331,14 @@ export default function InvoiceDetailPage() {
 function InvoiceDetailSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-3xl">
           <Skeleton className="h-8 w-32 mb-6" />
           <Skeleton className="h-96" />
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -457,7 +456,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-4 sm:py-8">
         <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
@@ -1373,7 +1372,7 @@ export default function SettingsPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -1381,7 +1380,7 @@ export default function SettingsPage() {
 function SettingsPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <Skeleton className="h-10 w-64 mb-8" />
@@ -1393,7 +1392,7 @@ function SettingsPageSkeleton() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

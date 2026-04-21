@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -171,7 +170,7 @@ export default function EarningsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-8">
         <div className="container mx-auto px-4">
@@ -419,7 +418,7 @@ export default function EarningsPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -427,7 +426,7 @@ export default function EarningsPage() {
 function EarningsPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-8">
         <div className="container mx-auto px-4">
           <Skeleton className="h-10 w-64 mb-8" />
@@ -440,7 +439,7 @@ function EarningsPageSkeleton() {
           <Skeleton className="h-64" />
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

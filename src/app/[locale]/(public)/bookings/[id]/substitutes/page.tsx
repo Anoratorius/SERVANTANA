@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -122,7 +122,7 @@ export default function SubstitutesPage() {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-4" />
@@ -130,7 +130,7 @@ export default function SubstitutesPage() {
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -139,7 +139,7 @@ export default function SubstitutesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -295,7 +295,7 @@ export default function SubstitutesPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -303,7 +303,7 @@ export default function SubstitutesPage() {
 function SubstitutesPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <Skeleton className="h-10 w-64 mx-auto mb-8" />
@@ -315,7 +315,7 @@ function SubstitutesPageSkeleton() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

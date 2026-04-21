@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Mail, LogOut, CheckCircle } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
-import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 import { toast } from "sonner";
 
@@ -50,7 +49,7 @@ export default function EmailVerificationRequiredPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <div className="flex-1 flex items-center justify-center bg-muted/30 px-4">
         <HeroBackground />
         <Card className="w-full max-w-md relative z-10">

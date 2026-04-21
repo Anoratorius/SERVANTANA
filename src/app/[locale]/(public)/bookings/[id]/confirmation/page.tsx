@@ -14,7 +14,7 @@ function calculateTotalWithFees(basePrice: number): number {
 import { useEffect, useState, use, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BackButton } from "@/components/ui/back-button";
@@ -277,7 +277,7 @@ export default function BookingConfirmationPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       {/* PayPal Script */}
       {PAYPAL_CLIENT_ID && (
@@ -596,7 +596,7 @@ export default function BookingConfirmationPage({
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

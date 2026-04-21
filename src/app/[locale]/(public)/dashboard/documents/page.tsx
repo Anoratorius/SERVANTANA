@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -199,7 +198,7 @@ export default function DocumentsPage() {
   if (authStatus === "loading" || isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="flex items-center justify-center py-12">
@@ -207,7 +206,7 @@ export default function DocumentsPage() {
             </div>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -217,7 +216,7 @@ export default function DocumentsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -400,7 +399,7 @@ export default function DocumentsPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

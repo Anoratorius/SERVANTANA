@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "@/i18n/navigation";
@@ -36,7 +35,7 @@ export default function GuaranteePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-br from-emerald-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -147,7 +146,7 @@ export default function GuaranteePage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

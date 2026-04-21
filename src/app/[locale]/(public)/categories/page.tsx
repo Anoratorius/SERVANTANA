@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { BackButton } from "@/components/ui/back-button";
 
 const CATEGORIES = [
@@ -64,7 +63,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-5xl">
@@ -138,7 +137,7 @@ export default function CategoriesPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

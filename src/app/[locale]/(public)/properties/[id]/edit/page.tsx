@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -151,21 +150,21 @@ export default function EditPropertyPage() {
   if (authStatus === "loading" || isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
           <div className="container mx-auto px-4 max-w-2xl">
             <Skeleton className="h-8 w-32 mb-6" />
             <Skeleton className="h-96" />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
@@ -357,7 +356,7 @@ export default function EditPropertyPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

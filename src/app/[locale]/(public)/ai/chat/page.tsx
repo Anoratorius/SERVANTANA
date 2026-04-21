@@ -127,8 +127,8 @@ export default function AIChatPage() {
   };
 
   return (
-    <main className="fixed inset-0 flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
+    <div className="flex flex-col h-[calc(100vh-120px)] bg-gray-50 dark:bg-gray-900">
+      {/* Sub-header */}
       <div className="flex-shrink-0 bg-white dark:bg-gray-950 border-b px-4 py-3">
         <div className="container mx-auto max-w-3xl">
           <div className="flex items-center gap-3">
@@ -260,6 +260,6 @@ export default function AIChatPage() {
           </form>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

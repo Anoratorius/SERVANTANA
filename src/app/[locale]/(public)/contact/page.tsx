@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +36,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1">
         {/* Hero */}
@@ -139,7 +138,7 @@ export default function ContactPage() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

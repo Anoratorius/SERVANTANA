@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -169,10 +168,7 @@ export default function BookingsPage() {
   const isCustomer = (booking: Booking) => booking.customer.id === session?.user?.id;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
+    <div className="bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <BackButton />
 
@@ -272,9 +268,6 @@ export default function BookingsPage() {
             </TabsContent>
           </Tabs>
         </div>
-      </main>
-
-      <Footer />
     </div>
   );
 }
@@ -579,20 +572,16 @@ function EmptyState({
 
 function BookingsPageSkeleton() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
-        <div className="container mx-auto px-4">
-          <Skeleton className="h-10 w-48 mb-8" />
-          <Skeleton className="h-10 w-64 mb-6" />
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-40 w-full" />
-            ))}
-          </div>
+    <div className="bg-gradient-to-b from-blue-50 to-white py-8">
+      <div className="container mx-auto px-4">
+        <Skeleton className="h-10 w-48 mb-8" />
+        <Skeleton className="h-10 w-64 mb-6" />
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-40 w-full" />
+          ))}
         </div>
-      </main>
-      <Footer />
+      </div>
     </div>
   );
 }

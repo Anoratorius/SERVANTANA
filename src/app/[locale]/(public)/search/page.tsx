@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -161,7 +160,7 @@ function SearchContent() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
-      <Header />
+      
 
       <main className="flex-1 bg-muted/30 overflow-x-hidden">
         {/* Search Header */}
@@ -231,7 +230,7 @@ function SearchContent() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -346,7 +345,7 @@ export default function SearchPage() {
 function SearchPageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
-      <Header />
+      
       <main className="flex-1 bg-muted/30 overflow-x-hidden">
         <section className="bg-white border-b py-3 md:py-8">
           <div className="container mx-auto px-2 md:px-4">
@@ -370,7 +369,7 @@ function SearchPageSkeleton() {
           </div>
         </section>
       </main>
-      <Footer />
+      
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { BackButton } from "@/components/ui/back-button";
@@ -30,7 +29,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1">
         {/* Hero */}
@@ -93,7 +92,7 @@ export default function FAQPage() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

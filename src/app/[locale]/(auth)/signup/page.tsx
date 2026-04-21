@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
-import { Header } from "@/components/layout";
 import { HeroBackground } from "@/components/home/HeroBackground";
 
 function SignupForm() {
@@ -355,7 +354,7 @@ function SignupFormSkeleton() {
 export default function SignupPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <div className="flex-1 flex items-center justify-center bg-muted/30 px-4 py-8">
         <HeroBackground />
         <Suspense fallback={<SignupFormSkeleton />}>

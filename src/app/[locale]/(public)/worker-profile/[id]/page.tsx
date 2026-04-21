@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -190,14 +189,14 @@ export default function WorkerProfilePage({
   if (error || !worker || !worker.workerProfile) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
             <BackButton />
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -207,7 +206,7 @@ export default function WorkerProfilePage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
 
       <main className="flex-1 bg-muted/30">
         {/* Back button */}
@@ -527,7 +526,7 @@ export default function WorkerProfilePage({
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
@@ -535,7 +534,7 @@ export default function WorkerProfilePage({
 function WorkerProfileSkeleton() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       <main className="flex-1 bg-muted/30">
         <div className="container mx-auto px-4 py-4">
           <Skeleton className="h-6 w-20" />
@@ -568,7 +567,7 @@ function WorkerProfileSkeleton() {
           </div>
         </section>
       </main>
-      <Footer />
+      
     </div>
   );
 }
