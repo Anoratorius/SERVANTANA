@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Check, Loader2, ArrowLeft, ArrowRight, Briefcase, Clock, User, CheckCircle, Plus, X, CreditCard, Camera, Building2, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { IndustryStatsCard } from "@/components/demand/IndustryStatsCard";
 
 // Built-in categories
 const CATEGORIES = [
@@ -831,7 +832,17 @@ function WorkerOnboardingContent() {
                 {t("workerOnboarding.step2DescNew")}
               </p>
 
-              <Card className="max-w-lg mx-auto">
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {/* Industry Stats */}
+              <div className="order-2 md:order-1">
+                <IndustryStatsCard
+                  professionId={primaryProfession || selectedProfessions[0]}
+                  country="DE"
+                  locale={locale}
+                />
+              </div>
+
+              <Card className="order-1 md:order-2">
                 <CardContent className="pt-6 space-y-4">
                   {selectedProfessions.map((profId) => {
                     const profession = professions.find((p) => p.id === profId);
@@ -866,6 +877,7 @@ function WorkerOnboardingContent() {
                   })}
                 </CardContent>
               </Card>
+              </div>
             </div>
           )}
 

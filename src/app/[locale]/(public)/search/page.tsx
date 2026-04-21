@@ -20,6 +20,7 @@ import {
 
 import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
+import { trackSearch } from "@/lib/demand-tracking";
 
 interface Service {
   id: string;
@@ -129,7 +130,16 @@ function SearchContent() {
 
       const response = await fetch(`/api/workers?${params.toString()}`);
       const data = await response.json();
-      setWorkers(data.workers || []);
+      const foundWorkers = data.workers || [];
+      setWorkers(foundWorkers);
+
+      // Track demand signal (fire and forget)
+      trackSearch({
+        searchQuery: serviceFilter !== "all" ? serviceFilter : undefined,
+        city: location || undefined,
+        country: "DE",
+        wasMatched: foundWorkers.length > 0,
+      });
     } catch (error) {
       console.error("Error fetching workers:", error);
     } finally {
