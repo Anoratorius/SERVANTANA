@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -31,6 +31,12 @@ import {
 import { Link } from "@/i18n/navigation";
 
 import { useCurrency } from "@/components/providers/CurrencyProvider";
+import {
+  trackBookingStart,
+  trackBookingStep,
+  trackBookingComplete,
+  trackBookingAbandon,
+} from "@/lib/event-tracking";
 
 interface Service {
   id: string;
@@ -90,6 +96,79 @@ export default function BookingPage({
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [notes, setNotes] = useState("");
+
+  // Track which steps have been tracked to avoid duplicate events
+  const trackedStepsRef = useRef<Set<number>>(new Set());
+  const bookingStartedRef = useRef(false);
+  const bookingCompletedRef = useRef(false);
+
+  // Track booking start when page loads and worker data is available
+  useEffect(() => {
+    if (!isLoading && worker && !bookingStartedRef.current) {
+      bookingStartedRef.current = true;
+      trackBookingStart(id);
+    }
+  }, [isLoading, worker, id]);
+
+  // Track step 1: Date & Time selection
+  const trackDateTimeStep = useCallback(() => {
+    if (selectedDate && selectedTime && !trackedStepsRef.current.has(1)) {
+      trackedStepsRef.current.add(1);
+      trackBookingStep(1, "date_time_selection", id);
+    }
+  }, [selectedDate, selectedTime, id]);
+
+  useEffect(() => {
+    trackDateTimeStep();
+  }, [trackDateTimeStep]);
+
+  // Track step 2: Address entered
+  const trackAddressStep = useCallback(() => {
+    if (address && !trackedStepsRef.current.has(2)) {
+      trackedStepsRef.current.add(2);
+      trackBookingStep(2, "address_entry", id);
+    }
+  }, [address, id]);
+
+  useEffect(() => {
+    trackAddressStep();
+  }, [trackAddressStep]);
+
+  // Track step 3: Notes entered (optional but tracks engagement)
+  const trackNotesStep = useCallback(() => {
+    if (notes && !trackedStepsRef.current.has(3)) {
+      trackedStepsRef.current.add(3);
+      trackBookingStep(3, "notes_entry", id);
+    }
+  }, [notes, id]);
+
+  useEffect(() => {
+    trackNotesStep();
+  }, [trackNotesStep]);
+
+  // Track booking abandonment on page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (bookingStartedRef.current && !bookingCompletedRef.current) {
+        const currentStep = trackedStepsRef.current.size > 0
+          ? Math.max(...Array.from(trackedStepsRef.current))
+          : 0;
+        trackBookingAbandon(currentStep, "page_unload");
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      // Also track abandonment on component unmount (navigation away)
+      if (bookingStartedRef.current && !bookingCompletedRef.current) {
+        const currentStep = trackedStepsRef.current.size > 0
+          ? Math.max(...Array.from(trackedStepsRef.current))
+          : 0;
+        trackBookingAbandon(currentStep, "navigation_away");
+      }
+    };
+  }, []);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -193,6 +272,11 @@ export default function BookingPage({
       }
 
       const data = await response.json();
+
+      // Track booking completion before redirect
+      bookingCompletedRef.current = true;
+      trackBookingComplete(data.booking.id, totalPrice);
+
       router.push(`/bookings/${data.booking.id}/confirmation`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create booking");

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
+import { trackSignup, trackReferral } from "@/lib/event-tracking";
 
 import { HeroBackground } from "@/components/home/HeroBackground";
 
@@ -19,6 +20,9 @@ function SignupForm() {
   const locale = useLocale();
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type");
+
+  // Check for referral code in URL params (ref=XXX or referral=XXX)
+  const referralCode = searchParams.get("ref") || searchParams.get("referral");
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -97,6 +101,14 @@ function SignupForm() {
         setErrorMessage(data.error || "Registration failed");
         setIsLoading(false);
         return;
+      }
+
+      // Track successful signup (map WORKER to CLEANER for analytics)
+      trackSignup("credentials", formData.role === "WORKER" ? "CLEANER" : "CUSTOMER");
+
+      // Track referral if user signed up with a referral code
+      if (referralCode) {
+        trackReferral(referralCode);
       }
 
       const result = await signIn("credentials", {

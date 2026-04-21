@@ -28,6 +28,12 @@ import { Link } from "@/i18n/navigation";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { toast } from "sonner";
+import {
+  trackProfileView,
+  trackEvent,
+  UserEventType,
+  EventCategory,
+} from "@/lib/event-tracking";
 
 interface Service {
   id: string;
@@ -108,6 +114,18 @@ export default function WorkerProfilePage({
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+
+  // Track profile view on mount
+  useEffect(() => {
+    trackProfileView(id);
+    trackEvent({
+      eventType: UserEventType.WORKER_VIEW,
+      eventCategory: EventCategory.ENGAGEMENT,
+      eventAction: "worker_view",
+      targetId: id,
+      targetType: "worker",
+    });
+  }, [id]);
 
   useEffect(() => {
     async function fetchWorker() {

@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Send, MessageCircle, Loader2, Wifi, WifiOff } from "lucide-react";
 import { toast } from "sonner";
 import { useMessageStream, StreamMessage } from "@/hooks/useMessageStream";
+import { trackMessageSend } from "@/lib/event-tracking";
 
 interface Message {
   id: string;

@@ -19,6 +19,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { NotificationBell } from "./NotificationBell";
 import { HeaderLocation } from "./HeaderLocation";
 import { Menu, User, Settings, Calendar, MessageSquare, LogOut, Heart } from "lucide-react";
+import { trackLogout } from "@/lib/event-tracking";
 
 export function Header() {
   const t = useTranslations();
@@ -32,6 +33,7 @@ export function Header() {
 
   const handleSignOut = useCallback(async () => {
     setIsSigningOut(true);
+    trackLogout();
     await signOut({ redirect: false });
     router.push("/");
     router.refresh();

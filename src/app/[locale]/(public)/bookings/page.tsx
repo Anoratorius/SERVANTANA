@@ -29,6 +29,10 @@ import {
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { useOfflineStorage } from "@/hooks/useOfflineStorage";
+import {
+  trackPaymentStart,
+  trackPaymentFailure,
+} from "@/lib/event-tracking";
 
 interface Booking {
   id: string;
@@ -293,6 +297,10 @@ function BookingCard({
 
   const handlePayment = async () => {
     setIsProcessingPayment(true);
+
+    // Track payment start
+    trackPaymentStart(booking.id, booking.totalPrice);
+
     try {
       const response = await fetch("/api/payments/checkout", {
         method: "POST",
@@ -303,7 +311,9 @@ function BookingCard({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create checkout session");
+        const errorMessage = data.error || "Failed to create checkout session";
+        trackPaymentFailure(booking.id, errorMessage);
+        throw new Error(errorMessage);
       }
 
       if (data.url) {
@@ -311,6 +321,8 @@ function BookingCard({
       }
     } catch (error) {
       console.error("Error processing payment:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to process payment";
+      trackPaymentFailure(booking.id, errorMessage);
       toast.error("Failed to process payment. Please try again.");
     } finally {
       setIsProcessingPayment(false);

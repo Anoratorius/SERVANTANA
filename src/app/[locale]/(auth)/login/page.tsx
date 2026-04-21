@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import { trackLogin } from "@/lib/event-tracking";
 
 import { HeroBackground } from "@/components/home/HeroBackground";
 
@@ -59,6 +60,8 @@ function LoginForm() {
       if (result?.error) {
         setErrorMessage("Invalid email or password");
       } else {
+        // Track successful login
+        trackLogin("credentials");
         // Save or clear remembered email based on checkbox
         if (rememberMe) {
           localStorage.setItem(REMEMBERED_EMAIL_KEY, email);

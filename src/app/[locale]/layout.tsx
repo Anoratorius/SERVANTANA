@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
+import { AnalyticsProvider } from "@/components/providers/AnalyticsProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { PermissionsOnboarding } from "@/components/onboarding/PermissionsOnboarding";
 import { SplashController } from "@/components/layout/SplashController";
@@ -34,14 +36,18 @@ export default async function LocaleLayout({ children, params }: Props) {
     <SessionProvider>
       <NextIntlClientProvider messages={messages}>
         <CurrencyProvider>
-          <LocationVerificationProvider>
-            <ProfessionOnboardingProvider>
-              <SplashController />
-              {children}
-              <Toaster />
-              <PermissionsOnboarding locale={locale} />
-            </ProfessionOnboardingProvider>
-          </LocationVerificationProvider>
+          <Suspense fallback={null}>
+            <AnalyticsProvider>
+              <LocationVerificationProvider>
+                <ProfessionOnboardingProvider>
+                  <SplashController />
+                  {children}
+                  <Toaster />
+                  <PermissionsOnboarding locale={locale} />
+                </ProfessionOnboardingProvider>
+              </LocationVerificationProvider>
+            </AnalyticsProvider>
+          </Suspense>
         </CurrencyProvider>
       </NextIntlClientProvider>
     </SessionProvider>

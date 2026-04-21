@@ -161,46 +161,54 @@ async function seedIndustryStats() {
     const supplyScore = 30 + Math.random() * 40; // 30-70
     const opportunityScore = Math.max(0, demandScore - supplyScore + 50);
 
-    await prisma.industryStats.upsert({
+    // Find existing record
+    const existing = await prisma.industryStats.findFirst({
       where: {
-        professionId_city_state_country_periodStart: {
-          professionId: profession.id,
-          city: null,
-          state: null,
-          country: data.country,
-          periodStart,
-        },
-      },
-      update: {
-        avgHourlyRate: data.avgHourlyRate,
-        minHourlyRate: data.minHourlyRate,
-        maxHourlyRate: data.maxHourlyRate,
-        avgMonthlyEarnings: data.avgMonthlyEarnings,
-        avgWeeklyBookings: data.avgWeeklyBookings,
-        avgBookingValue: data.avgBookingValue,
-        demandScore,
-        supplyScore,
-        opportunityScore,
-        source: IndustryStatsSource.ESTIMATED,
-        lastUpdated: now,
-      },
-      create: {
         professionId: profession.id,
+        city: null,
+        state: null,
         country: data.country,
-        avgHourlyRate: data.avgHourlyRate,
-        minHourlyRate: data.minHourlyRate,
-        maxHourlyRate: data.maxHourlyRate,
-        avgMonthlyEarnings: data.avgMonthlyEarnings,
-        avgWeeklyBookings: data.avgWeeklyBookings,
-        avgBookingValue: data.avgBookingValue,
-        demandScore,
-        supplyScore,
-        opportunityScore,
-        source: IndustryStatsSource.ESTIMATED,
         periodStart,
-        periodEnd,
       },
     });
+
+    if (existing) {
+      await prisma.industryStats.update({
+        where: { id: existing.id },
+        data: {
+          avgHourlyRate: data.avgHourlyRate,
+          minHourlyRate: data.minHourlyRate,
+          maxHourlyRate: data.maxHourlyRate,
+          avgMonthlyEarnings: data.avgMonthlyEarnings,
+          avgWeeklyBookings: data.avgWeeklyBookings,
+          avgBookingValue: data.avgBookingValue,
+          demandScore,
+          supplyScore,
+          opportunityScore,
+          source: IndustryStatsSource.ESTIMATED,
+          lastUpdated: now,
+        },
+      });
+    } else {
+      await prisma.industryStats.create({
+        data: {
+          professionId: profession.id,
+          country: data.country,
+          avgHourlyRate: data.avgHourlyRate,
+          minHourlyRate: data.minHourlyRate,
+          maxHourlyRate: data.maxHourlyRate,
+          avgMonthlyEarnings: data.avgMonthlyEarnings,
+          avgWeeklyBookings: data.avgWeeklyBookings,
+          avgBookingValue: data.avgBookingValue,
+          demandScore,
+          supplyScore,
+          opportunityScore,
+          source: IndustryStatsSource.ESTIMATED,
+          periodStart,
+          periodEnd,
+        },
+      });
+    }
 
     console.log(`  Added stats for ${data.professionName} in ${data.country}`);
   }

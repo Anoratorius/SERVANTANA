@@ -19,6 +19,7 @@ import {
 import { Link } from "@/i18n/navigation";
 
 import { toast } from "sonner";
+import { trackReviewSubmit } from "@/lib/event-tracking";
 
 interface Booking {
   id: string;

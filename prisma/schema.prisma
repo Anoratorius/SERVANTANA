@@ -302,6 +302,12 @@ model User {
 
   // Demand tracking relations
   demandSignals DemandSignal[] @relation("CustomerDemandSignals")
+
+  // Analytics relations
+  userEvents          UserEvent[]       @relation("UserEvents")
+  userAnalytics       UserAnalytics[]   @relation("UserAnalyticsRecords")
+  fraudSignals        FraudSignal[]     @relation("FraudSignals")
+  acquisitionRecord   UserAcquisition?  @relation("UserAcquisitionRecord")
 }
 
 // NextAuth.js Account model
@@ -1640,4 +1646,560 @@ model SubscriptionInvoice {
   @@index([subscriptionId])
   @@index([userId])
   @@index([stripeInvoiceId])
+}
+
+// ============================================
+// COMPREHENSIVE ANALYTICS SYSTEM
+// ============================================
+
+// Track every user event/action for analytics
+model UserEvent {
+  id String @id @default(cuid())
+
+  // Who
+  userId    String?
+  sessionId String? // For anonymous users
+
+  // What happened
+  eventType     UserEventType
+  eventCategory EventCategory
+  eventAction   String // Specific action: "click", "view", "submit", etc.
+  eventLabel    String? // Additional context: button name, page section, etc.
+  eventValue    Float? // Numeric value if applicable
+
+  // Where it happened
+  pageUrl      String?
+  pageTitle    String?
+  pagePath     String?
+  referrerUrl  String?
+  componentId  String? // Specific UI component
+
+  // Context
+  targetId     String? // ID of target entity (worker, booking, etc.)
+  targetType   String? // Type: "worker", "booking", "service", etc.
+  searchQuery  String? // If search-related
+  searchFilters Json? // Filters applied
+
+  // Device & Technical
+  ipAddress    String?
+  ipCity       String?
+  ipRegion     String?
+  ipCountry    String?
+  ipIsp        String?
+  ipType       String? // residential, vpn, datacenter
+  userAgent    String?
+  deviceType   String? // mobile, desktop, tablet
+  deviceModel  String?
+  browser      String?
+  browserVersion String?
+  os           String?
+  osVersion    String?
+  screenWidth  Int?
+  screenHeight Int?
+  timezone     String?
+  language     String?
+
+  // Session context
+  sessionStartedAt DateTime?
+  pageLoadTime     Int? // milliseconds
+  timeOnPage       Int? // seconds
+  scrollDepth      Int? // percentage 0-100
+
+  // Funnel tracking
+  funnelId   String? // Which funnel this event belongs to
+  funnelStep Int? // Step number in funnel
+
+  // UTM / Attribution
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User? @relation("UserEvents", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([eventCategory])
+  @@index([createdAt])
+  @@index([pageUrl])
+  @@index([ipCountry])
+}
+
+enum UserEventType {
+  PAGE_VIEW
+  CLICK
+  SEARCH
+  FILTER
+  SCROLL
+  FORM_START
+  FORM_FIELD
+  FORM_SUBMIT
+  FORM_ERROR
+  FORM_ABANDON
+  BOOKING_START
+  BOOKING_STEP
+  BOOKING_COMPLETE
+  BOOKING_ABANDON
+  BOOKING_CANCEL
+  PAYMENT_START
+  PAYMENT_SUCCESS
+  PAYMENT_FAILURE
+  LOGIN
+  LOGOUT
+  SIGNUP
+  PROFILE_VIEW
+  PROFILE_EDIT
+  WORKER_VIEW
+  MESSAGE_SEND
+  MESSAGE_READ
+  REVIEW_SUBMIT
+  NOTIFICATION_VIEW
+  NOTIFICATION_CLICK
+  FEATURE_USE
+  ERROR
+  CUSTOM
+}
+
+enum EventCategory {
+  NAVIGATION
+  ENGAGEMENT
+  CONVERSION
+  ACQUISITION
+  RETENTION
+  REVENUE
+  ERROR
+  SYSTEM
+}
+
+// Aggregated user analytics (computed daily)
+model UserAnalytics {
+  id String @id @default(cuid())
+
+  userId String
+  date   DateTime // Date this snapshot represents
+
+  // Engagement metrics
+  sessionsCount      Int @default(0)
+  totalSessionTime   Int @default(0) // seconds
+  avgSessionDuration Int @default(0) // seconds
+  pagesViewed        Int @default(0)
+  eventsTriggered    Int @default(0)
+
+  // Search behavior (customers)
+  searchesCount        Int @default(0)
+  searchesToBooking    Int @default(0) // searches that led to booking
+  profilesViewed       Int @default(0)
+  avgTimeOnProfile     Int @default(0) // seconds
+  filtersUsed          Json? // Which filters used most
+
+  // Booking behavior
+  bookingsCreated    Int   @default(0)
+  bookingsCompleted  Int   @default(0)
+  bookingsCancelled  Int   @default(0)
+  totalBookingValue  Float @default(0)
+  avgBookingValue    Float @default(0)
+  repeatBookings     Int   @default(0) // Same worker
+  tipsGiven          Float @default(0)
+
+  // Worker-specific
+  bookingsReceived     Int   @default(0)
+  bookingsAccepted     Int   @default(0)
+  bookingsRejected     Int   @default(0)
+  avgResponseTime      Int   @default(0) // minutes
+  earningsTotal        Float @default(0)
+  ratingsReceived      Int   @default(0)
+  avgRatingReceived    Float @default(0)
+
+  // Communication
+  messagesSent     Int @default(0)
+  messagesReceived Int @default(0)
+  avgReplyTime     Int @default(0) // minutes
+
+  // Reviews
+  reviewsGiven       Int   @default(0)
+  avgRatingGiven     Float @default(0)
+  reviewsReceived    Int   @default(0)
+
+  // Retention signals
+  daysSinceLastVisit  Int @default(0)
+  daysSinceLastBooking Int @default(0)
+  isChurnRisk         Boolean @default(false)
+  churnRiskScore      Float   @default(0) // 0-1
+
+  // Lifetime metrics (cumulative)
+  lifetimeBookings     Int   @default(0)
+  lifetimeSpent        Float @default(0) // Customers
+  lifetimeEarned       Float @default(0) // Workers
+  lifetimeValue        Float @default(0) // LTV calculation
+  accountAgeDays       Int   @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation("UserAnalyticsRecords", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@index([isChurnRisk])
+}
+
+// Platform-wide metrics (computed daily)
+model PlatformMetrics {
+  id String @id @default(cuid())
+
+  date        DateTime @unique // Date this snapshot represents
+  periodType  MetricPeriod @default(DAILY)
+
+  // User metrics
+  totalUsers          Int @default(0)
+  totalCustomers      Int @default(0)
+  totalWorkers        Int @default(0)
+  newUsersToday       Int @default(0)
+  newCustomersToday   Int @default(0)
+  newWorkersToday     Int @default(0)
+  activeUsersToday    Int @default(0) // DAU
+  activeUsersWeek     Int @default(0) // WAU
+  activeUsersMonth    Int @default(0) // MAU
+
+  // Engagement metrics
+  totalSessions       Int @default(0)
+  avgSessionDuration  Int @default(0) // seconds
+  totalPageViews      Int @default(0)
+  bounceRate          Float @default(0) // percentage
+
+  // Search & Discovery
+  totalSearches           Int @default(0)
+  searchesWithResults     Int @default(0)
+  searchesWithoutResults  Int @default(0)
+  avgSearchResultsCount   Float @default(0)
+  searchToBookingRate     Float @default(0)
+  profileViewsTotal       Int @default(0)
+  profileToBookingRate    Float @default(0)
+
+  // Booking metrics
+  bookingsCreated     Int   @default(0)
+  bookingsConfirmed   Int   @default(0)
+  bookingsCompleted   Int   @default(0)
+  bookingsCancelled   Int   @default(0)
+  bookingsCancelledByCustomer Int @default(0)
+  bookingsCancelledByWorker   Int @default(0)
+  avgBookingValue     Float @default(0)
+  totalBookingValue   Float @default(0)
+
+  // Revenue metrics
+  totalRevenue        Float @default(0) // Platform fees
+  customerFees        Float @default(0)
+  workerFees          Float @default(0)
+  tipsTotal           Float @default(0)
+  refundsTotal        Float @default(0)
+  chargebacksTotal    Float @default(0)
+  avgRevenuePerUser   Float @default(0) // ARPU
+
+  // Conversion funnels
+  signupStarted       Int   @default(0)
+  signupCompleted     Int   @default(0)
+  signupConversionRate Float @default(0)
+  firstBookingRate    Float @default(0) // % of new users who book
+  repeatBookingRate   Float @default(0) // % of users who book again
+
+  // Quality metrics
+  avgWorkerRating     Float @default(0)
+  avgCustomerRating   Float @default(0)
+  disputesOpened      Int   @default(0)
+  disputesResolved    Int   @default(0)
+  avgDisputeResolutionTime Int @default(0) // hours
+  guaranteeClaimsOpened    Int @default(0)
+  guaranteeClaimsPaid      Float @default(0)
+
+  // Supply/Demand
+  totalDemandSignals      Int   @default(0)
+  unmatchedDemand         Int   @default(0)
+  waitlistCount           Int   @default(0)
+  supplyDemandRatio       Float @default(0)
+  avgWorkerUtilization    Float @default(0) // % of available slots booked
+
+  // Retention
+  day1Retention       Float @default(0) // % returning next day
+  day7Retention       Float @default(0)
+  day30Retention      Float @default(0)
+  churnRate           Float @default(0)
+  reactivationRate    Float @default(0)
+
+  // Geographic
+  topCitiesByBookings   Json? // [{city, count}]
+  topCitiesByRevenue    Json?
+  topCitiesByDemand     Json?
+  supplyGapsByCity      Json? // [{city, demandCount, workerCount, gap}]
+
+  // Service breakdown
+  bookingsByService     Json? // [{service, count, revenue}]
+  topProfessions        Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([date])
+  @@index([periodType])
+}
+
+enum MetricPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+// Fraud detection signals
+model FraudSignal {
+  id String @id @default(cuid())
+
+  // Who/What
+  userId      String?
+  ipAddress   String?
+  deviceId    String?
+  bookingId   String?
+  paymentId   String?
+  reviewId    String?
+
+  // Signal details
+  signalType    FraudSignalType
+  severity      FraudSeverity
+  riskScore     Float // 0-100
+  description   String
+  details       Json? // Additional context
+
+  // Detection context
+  detectedBy    String // "system", "ai", "manual", "rule:xyz"
+  ruleTriggered String? // Which rule was triggered
+
+  // Status
+  status        FraudSignalStatus @default(OPEN)
+  reviewedById  String?
+  reviewedAt    DateTime?
+  resolution    String? // What action was taken
+  falsePositive Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation("FraudSignals", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([signalType])
+  @@index([severity])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum FraudSignalType {
+  MULTIPLE_ACCOUNTS
+  SUSPICIOUS_IP
+  VPN_DETECTED
+  VELOCITY_ABUSE // Too many actions too fast
+  FAKE_REVIEW
+  REVIEW_MANIPULATION
+  PAYMENT_FRAUD
+  CHARGEBACK
+  IDENTITY_MISMATCH
+  LOCATION_SPOOFING
+  BOT_BEHAVIOR
+  ACCOUNT_TAKEOVER
+  FAKE_PROFILE
+  SPAM_MESSAGES
+  POLICY_VIOLATION
+  CUSTOM
+}
+
+enum FraudSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FraudSignalStatus {
+  OPEN
+  INVESTIGATING
+  CONFIRMED
+  DISMISSED
+  RESOLVED
+}
+
+// User acquisition tracking
+model UserAcquisition {
+  id String @id @default(cuid())
+
+  userId String @unique
+
+  // First touch attribution
+  firstReferrer     String?
+  firstLandingPage  String?
+  firstUtmSource    String?
+  firstUtmMedium    String?
+  firstUtmCampaign  String?
+  firstUtmTerm      String?
+  firstUtmContent   String?
+
+  // Referral
+  referralCode      String?
+  referredByUserId  String?
+
+  // Device/location at signup
+  signupIp          String?
+  signupCountry     String?
+  signupCity        String?
+  signupDevice      String?
+  signupBrowser     String?
+  signupOs          String?
+
+  // Conversion tracking
+  signupStartedAt   DateTime?
+  signupCompletedAt DateTime?
+  firstBookingAt    DateTime?
+  firstPaymentAt    DateTime?
+
+  // Campaign tracking
+  campaignId        String?
+  adId              String?
+  affiliateId       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation("UserAcquisitionRecord", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([firstUtmSource])
+  @@index([firstUtmCampaign])
+  @@index([referredByUserId])
+  @@index([signupCountry])
+}
+
+// Worker performance metrics (daily snapshot)
+model WorkerPerformanceMetrics {
+  id String @id @default(cuid())
+
+  workerId String @map("cleanerId")
+  date     DateTime
+
+  // Booking metrics
+  bookingsReceived    Int @default(0)
+  bookingsAccepted    Int @default(0)
+  bookingsRejected    Int @default(0)
+  bookingsCompleted   Int @default(0)
+  bookingsCancelled   Int @default(0)
+  acceptanceRate      Float @default(0)
+  completionRate      Float @default(0)
+  cancellationRate    Float @default(0)
+
+  // Response metrics
+  inquiriesReceived   Int @default(0)
+  avgResponseTime     Int @default(0) // minutes
+  responseRate        Float @default(0) // % responded within 24h
+
+  // Punctuality
+  onTimeArrivals      Int @default(0)
+  lateArrivals        Int @default(0)
+  onTimeRate          Float @default(0)
+  avgLateMinutes      Int @default(0)
+
+  // Quality
+  ratingsReceived     Int @default(0)
+  avgRating           Float @default(0)
+  fiveStarRatings     Int @default(0)
+  oneStarRatings      Int @default(0)
+  complaintsReceived  Int @default(0)
+
+  // Earnings
+  grossEarnings       Float @default(0)
+  netEarnings         Float @default(0)
+  tipsReceived        Float @default(0)
+  avgEarningPerJob    Float @default(0)
+
+  // Customer satisfaction
+  repeatCustomers     Int @default(0)
+  repeatBookingRate   Float @default(0)
+  customerRetention   Float @default(0)
+
+  // Activity
+  hoursAvailable      Float @default(0)
+  hoursBooked         Float @default(0)
+  utilizationRate     Float @default(0)
+  profileViews        Int @default(0)
+  profileToBookingRate Float @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([workerId, date])
+  @@index([workerId])
+  @@index([date])
+  @@index([avgRating])
+  @@index([completionRate])
+}
+
+// Customer behavior metrics (daily snapshot)
+model CustomerBehaviorMetrics {
+  id String @id @default(cuid())
+
+  customerId String
+  date       DateTime
+
+  // Search behavior
+  searches            Int @default(0)
+  searchFiltersUsed   Json? // Which filters
+  profilesViewed      Int @default(0)
+  avgTimeOnProfile    Int @default(0) // seconds
+  favoritesAdded      Int @default(0)
+
+  // Booking behavior
+  bookingsCreated     Int @default(0)
+  bookingsCompleted   Int @default(0)
+  bookingsCancelled   Int @default(0)
+  avgBookingValue     Float @default(0)
+  totalSpent          Float @default(0)
+  tipsGiven           Float @default(0)
+  avgTipPercent       Float @default(0)
+
+  // Price sensitivity
+  maxPriceFilterUsed  Float?
+  avgBookedPrice      Float @default(0)
+  priceToMarketRatio  Float @default(0) // Their spend vs market avg
+
+  // Timing
+  avgBookingLeadTime  Int @default(0) // days in advance
+  preferredDays       Json? // [{day, count}]
+  preferredTimes      Json? // [{hour, count}]
+
+  // Loyalty
+  uniqueWorkersBooked Int @default(0)
+  repeatWorkerBookings Int @default(0)
+  favoriteWorkerCount Int @default(0)
+
+  // Reviews
+  reviewsGiven        Int @default(0)
+  avgRatingGiven      Float @default(0)
+  reviewsWithPhotos   Int @default(0)
+
+  // Communication
+  messagesSent        Int @default(0)
+  avgMessageLength    Int @default(0)
+  inquiriesStarted    Int @default(0)
+
+  // Lifetime
+  lifetimeBookings    Int @default(0)
+  lifetimeSpent       Float @default(0)
+  accountAgeDays      Int @default(0)
+  ltv                 Float @default(0) // Lifetime value
+
+  createdAt DateTime @default(now())
+
+  @@unique([customerId, date])
+  @@index([customerId])
+  @@index([date])
+  @@index([ltv])
 }

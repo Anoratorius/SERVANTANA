@@ -21,6 +21,7 @@ import {
 import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 import { trackSearch } from "@/lib/demand-tracking";
+import { trackSearchEvent } from "@/lib/event-tracking";
 
 interface Service {
   id: string;
@@ -140,6 +141,18 @@ function SearchContent() {
         country: "DE",
         wasMatched: foundWorkers.length > 0,
       });
+
+      // Track search event for analytics
+      const filters: Record<string, unknown> = {};
+      if (serviceFilter && serviceFilter !== "all") filters.service = serviceFilter;
+      if (minRating && minRating !== "0") filters.minRating = minRating;
+      if (maxPrice && maxPrice !== "any") filters.maxPrice = maxPrice;
+      if (location) filters.location = location;
+      if (ecoFriendly) filters.ecoFriendly = true;
+      if (petFriendly) filters.petFriendly = true;
+
+      const query = serviceFilter !== "all" ? serviceFilter : (location || "all");
+      trackSearchEvent(query, filters, foundWorkers.length);
     } catch (error) {
       console.error("Error fetching workers:", error);
     } finally {

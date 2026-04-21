@@ -33,6 +33,11 @@ import { Link } from "@/i18n/navigation";
 import { ServiceGuaranteeBadge } from "@/components/guarantee";
 import { toast } from "sonner";
 import Script from "next/script";
+import {
+  trackPaymentStart,
+  trackPaymentSuccess,
+  trackPaymentFailure,
+} from "@/lib/event-tracking";
 
 interface Payment {
   id: string;
@@ -221,6 +226,10 @@ export default function BookingConfirmationPage({
     if (!booking) return;
 
     setIsProcessingPayment(true);
+
+    // Track payment start
+    trackPaymentStart(booking.id, booking.totalPrice);
+
     try {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -231,7 +240,9 @@ export default function BookingConfirmationPage({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create checkout session");
+        const errorMessage = data.error || "Failed to create checkout session";
+        trackPaymentFailure(booking.id, errorMessage);
+        throw new Error(errorMessage);
       }
 
       if (data.checkoutUrl) {
@@ -240,6 +251,7 @@ export default function BookingConfirmationPage({
     } catch (error) {
       console.error("Error processing payment:", error);
       const message = error instanceof Error ? error.message : "Failed to process payment";
+      trackPaymentFailure(booking.id, message);
       toast.error(message);
     } finally {
       setIsProcessingPayment(false);
