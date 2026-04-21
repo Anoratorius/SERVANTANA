@@ -192,12 +192,13 @@ enum CategoryStatus {
   REJECTED
 }
 
-// User model - base for both customers and cleaners
+// User model - base for both customers and workers
 model User {
-  id                String    @id @default(cuid())
-  email             String    @unique
+  id                String     @id @default(cuid())
+  internalId        String?    @unique // 9-digit internal ID (admin-only visible)
+  email             String     @unique
   emailVerified     DateTime?
-  phone             String?   @unique
+  phone             String?    @unique
   phoneVerified     DateTime?
   password          String?
   firstName         String
@@ -205,69 +206,69 @@ model User {
   avatar            String?
   role              Role       @default(CUSTOMER)
   status            UserStatus @default(ACTIVE)
-  suspendedUntil    DateTime?  // For temporary suspensions
-  suspendedReason   String?    // Reason for suspension/ban
+  suspendedUntil    DateTime? // For temporary suspensions
+  suspendedReason   String? // Reason for suspension/ban
   preferredLanguage String     @default("en")
   tokenVersion      Int        @default(0) // Incremented on password change to invalidate sessions
 
   // Location verification (required for all users)
-  latitude          Float?     // Verified location
-  longitude         Float?
-  locationCity      String?    // Reverse geocoded city
-  locationCountry   String?    // Reverse geocoded country
+  latitude           Float? // Verified location
+  longitude          Float?
+  locationCity       String? // Reverse geocoded city
+  locationCountry    String? // Reverse geocoded country
   locationVerifiedAt DateTime? // When location was verified
-  lastKnownIp       String?    // Last known IP for fraud detection
+  lastKnownIp        String? // Last known IP for fraud detection
 
   // Stripe Customer ID (for customers to save payment methods)
-  stripeCustomerId  String?    @unique
+  stripeCustomerId String? @unique
 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  workerProfile    WorkerProfile?
-  accounts         Account[]
-  sessions         Session[]
-  bookingsAsCustomer Booking[] @relation("CustomerBookings")
-  bookingsAsCleaner  Booking[] @relation("CleanerBookings")
-  reviewsGiven     Review[]  @relation("ReviewsGiven")
-  reviewsReceived  Review[]  @relation("ReviewsReceived")
-  messagesSent     Message[] @relation("MessagesSent")
-  messagesReceived Message[] @relation("MessagesReceived")
-  favoriteCleaners Favorite[] @relation("CustomerFavorites")
-  favoritedBy      Favorite[] @relation("CleanerFavorites")
-  earnings         Earning[]  @relation("CleanerEarnings")
-  payouts          Payout[]   @relation("CleanerPayouts")
+  workerProfile      WorkerProfile?
+  accounts           Account[]
+  sessions           Session[]
+  bookingsAsCustomer Booking[]      @relation("CustomerBookings")
+  bookingsAsWorker   Booking[]      @relation("WorkerBookings")
+  reviewsGiven       Review[]       @relation("ReviewsGiven")
+  reviewsReceived    Review[]       @relation("ReviewsReceived")
+  messagesSent       Message[]      @relation("MessagesSent")
+  messagesReceived   Message[]      @relation("MessagesReceived")
+  favoriteWorkers    Favorite[]     @relation("CustomerFavorites")
+  favoritedBy        Favorite[]     @relation("WorkerFavorites")
+  earnings           Earning[]      @relation("WorkerEarnings")
+  payouts            Payout[]       @relation("WorkerPayouts")
 
   // Security relations
-  userSessions     UserSession[] @relation("UserSessions")
-  userDevices      UserDevice[]  @relation("UserDevices")
+  userSessions       UserSession[]            @relation("UserSessions")
+  userDevices        UserDevice[]             @relation("UserDevices")
   emailVerifications EmailVerificationToken[] @relation("EmailVerifications")
 
   // Dispute relations
-  disputesAsCustomer Dispute[] @relation("CustomerDisputes")
-  disputesAsCleaner  Dispute[] @relation("CleanerDisputes")
-  disputesResolved   Dispute[] @relation("ResolvedDisputes")
-  disputeMessages    DisputeMessage[] @relation("DisputeMessagesSent")
+  disputesAsCustomer Dispute[]         @relation("CustomerDisputes")
+  disputesAsWorker   Dispute[]         @relation("WorkerDisputes")
+  disputesResolved   Dispute[]         @relation("ResolvedDisputes")
+  disputeMessages    DisputeMessage[]  @relation("DisputeMessagesSent")
   disputeEvidence    DisputeEvidence[] @relation("DisputeEvidenceUploaded")
 
   // Notification relations
   notificationPreferences NotificationPreference[] @relation("NotificationPreferences")
-  pushSubscriptions       PushSubscription[] @relation("PushSubscriptions")
-  mobileDeviceTokens      MobileDeviceToken[] @relation("MobileDeviceTokens")
-  notificationLogs        NotificationLog[] @relation("NotificationLogs")
-  reminderPreference      ReminderPreference? @relation("ReminderPreferences")
-  bookingReminders        BookingReminder[] @relation("BookingReminders")
+  pushSubscriptions       PushSubscription[]       @relation("PushSubscriptions")
+  mobileDeviceTokens      MobileDeviceToken[]      @relation("MobileDeviceTokens")
+  notificationLogs        NotificationLog[]        @relation("NotificationLogs")
+  reminderPreference      ReminderPreference?      @relation("ReminderPreferences")
+  bookingReminders        BookingReminder[]        @relation("BookingReminders")
 
   // Booking change relations
   bookingChangeRequests  BookingChange[] @relation("BookingChangeRequester")
   bookingChangeResponses BookingChange[] @relation("BookingChangeResponder")
 
   // Photo relations
-  bookingPhotos  BookingPhoto[] @relation("BookingPhotosUploaded")
+  bookingPhotos BookingPhoto[] @relation("BookingPhotosUploaded")
 
   // Document relations
-  cleanerDocuments  WorkerDocument[] @relation("CleanerDocuments")
+  workerDocuments   WorkerDocument[] @relation("WorkerDocuments")
   documentsVerified WorkerDocument[] @relation("DocumentsVerified")
 
   // Calendar relations
@@ -284,20 +285,20 @@ model User {
 
   // Invoice relations
   invoicesAsCustomer Invoice[] @relation("CustomerInvoices")
-  invoicesAsCleaner  Invoice[] @relation("CleanerInvoices")
+  invoicesAsWorker   Invoice[] @relation("WorkerInvoices")
 
-  // Customer review relations (cleaners rating customers)
+  // Customer review relations (workers rating customers)
   customerReviewsGiven    CustomerReview[] @relation("CustomerReviewsGiven")
   customerReviewsReceived CustomerReview[] @relation("CustomerReviewsReceived")
 
   // Guarantee claim relations
   guaranteeClaimsAsCustomer GuaranteeClaim[] @relation("CustomerClaims")
-  guaranteeClaimsAsCleaner  GuaranteeClaim[] @relation("CleanerClaims")
+  guaranteeClaimsAsWorker   GuaranteeClaim[] @relation("WorkerClaims")
   guaranteeClaimsResolved   GuaranteeClaim[] @relation("ResolvedClaims")
 
   // Subscription relations
-  subscription              Subscription?
-  subscriptionInvoices      SubscriptionInvoice[]
+  subscription         Subscription?
+  subscriptionInvoices SubscriptionInvoice[]
 }
 
 // NextAuth.js Account model
@@ -341,9 +342,9 @@ model VerificationToken {
 // Password reset token for email/phone verification
 model PasswordResetToken {
   id         String   @id @default(cuid())
-  identifier String   // email or phone number
-  token      String   // 6-digit code
-  type       String   // "email" or "phone"
+  identifier String // email or phone number
+  token      String // 6-digit code
+  type       String // "email" or "phone"
   expires    DateTime
   used       Boolean  @default(false)
   createdAt  DateTime @default(now())
@@ -354,71 +355,78 @@ model PasswordResetToken {
 
 // Worker profile - additional info for workers
 model WorkerProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  bio             String?
-  introVideoUrl   String?  // Short intro video URL
-  introVideoId    String?  // Cloudinary public ID for deletion
-  hourlyRate      Float
-  currency        String   @default("USD")
-  experienceYears Int      @default(0)
-  verified        Boolean  @default(false)
-  isActive        Boolean  @default(true)  // Admin can deactivate without deleting
+  id                 String  @id @default(cuid())
+  userId             String  @unique
+  bio                String?
+  introVideoUrl      String? // Short intro video URL
+  introVideoId       String? // Cloudinary public ID for deletion
+  hourlyRate         Float
+  currency           String  @default("USD")
+  experienceYears    Int     @default(0)
+  verified           Boolean @default(false)
+  isActive           Boolean @default(true) // Admin can deactivate without deleting
   onboardingComplete Boolean @default(false) // Profile only visible after onboarding
-  availableNow    Boolean  @default(false)
-  ecoFriendly     Boolean  @default(false)
-  petFriendly     Boolean  @default(false)
+  availableNow       Boolean @default(false)
+  ecoFriendly        Boolean @default(false)
+  petFriendly        Boolean @default(false)
+
+  // Worker subscription (12 units/year after first job)
+  workerSubscriptionStatus WorkerSubscriptionStatus @default(NONE)
+  subscriptionExpiresAt    DateTime? // When current subscription expires
+  firstJobCompletedAt      DateTime? // When worker completed their first job
+  paymentDueAt             DateTime? // 24h deadline to pay after first job
+  isVisible                Boolean                  @default(true) // False if suspended for non-payment
 
   // Service area
-  address         String?
-  city            String?
-  state           String?
-  country         String?
-  postalCode      String?
-  latitude        Float?
-  longitude       Float?
-  serviceRadius   Int      @default(10) // in km
-  timezone        String   @default("Europe/Berlin") // IANA timezone for payout timing
+  address       String?
+  city          String?
+  state         String?
+  country       String?
+  postalCode    String?
+  latitude      Float?
+  longitude     Float?
+  serviceRadius Int     @default(10) // in km
+  timezone      String  @default("Europe/Berlin") // IANA timezone for payout timing
 
   // Payment
-  paypalEmail     String?  // PayPal email for receiving payouts
-  iban            String?  // IBAN for bank transfers
-  accountHolder   String?  // Bank account holder name
-  cryptoWallets   CryptoWallet[]
+  paypalEmail   String? // PayPal email for receiving payouts
+  iban          String? // IBAN for bank transfers
+  accountHolder String? // Bank account holder name
+  cryptoWallets CryptoWallet[]
 
   // Stripe Connect
-  stripeAccountId         String?  @unique // Stripe Connect Express account ID
+  stripeAccountId          String? @unique // Stripe Connect Express account ID
   stripeOnboardingComplete Boolean @default(false)
 
   // Stats
-  totalBookings   Int      @default(0)
-  averageRating   Float    @default(0)
-  responseTime    Int?     // in minutes
+  totalBookings Int   @default(0)
+  averageRating Float @default(0)
+  responseTime  Int? // in minutes
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  services        WorkerService[]
-  availability    Availability[]
-  professions     WorkerProfession[]
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services     WorkerService[]
+  availability Availability[]
+  professions  WorkerProfession[]
 
   @@map("CleanerProfile")
 }
 
 // Crypto wallet for workers
 model CryptoWallet {
-  id               String   @id @default(cuid())
-  workerProfileId  String   @map("cleanerProfileId")
-  currency         String   // BTC, ETH, LTC
-  address          String   // Public wallet address
-  derivationIndex  Int      // HD wallet derivation index
-  balance          Float    @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(cuid())
+  workerProfileId String   @map("cleanerProfileId")
+  currency        String // BTC, ETH, LTC
+  address         String // Public wallet address
+  derivationIndex Int // HD wallet derivation index
+  balance         Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  workerProfile    WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+  workerProfile WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
 
   @@unique([workerProfileId, currency])
   @@index([workerProfileId])
@@ -430,7 +438,7 @@ model Service {
   name        String   @unique // e.g., "regular", "deep", "moveInOut"
   description String?
   basePrice   Float
-  duration    Int      // estimated duration in minutes
+  duration    Int // estimated duration in minutes
   category    String   @default("cleaning")
   icon        String?
   isActive    Boolean  @default(true)
@@ -439,8 +447,8 @@ model Service {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  workerServices  WorkerService[]
-  bookings        Booking[]
+  workerServices WorkerService[]
+  bookings       Booking[]
 }
 
 // Junction table: which services a worker offers with their custom prices
@@ -448,14 +456,14 @@ model WorkerService {
   id          String   @id @default(cuid())
   workerId    String   @map("cleanerId")
   serviceId   String
-  customPrice Float?   // null means use base price
+  customPrice Float? // null means use base price
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relations
-  worker      WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
-  service     Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  worker  WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  service Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@unique([workerId, serviceId])
   @@map("CleanerService")
@@ -463,251 +471,251 @@ model WorkerService {
 
 // Worker availability schedule
 model Availability {
-  id        String   @id @default(cuid())
-  workerId  String   @map("cleanerId")
-  dayOfWeek Int      // 0 = Sunday, 6 = Saturday
-  startTime String   // "09:00"
-  endTime   String   // "17:00"
-  isActive  Boolean  @default(true)
+  id        String  @id @default(cuid())
+  workerId  String  @map("cleanerId")
+  dayOfWeek Int // 0 = Sunday, 6 = Saturday
+  startTime String // "09:00"
+  endTime   String // "17:00"
+  isActive  Boolean @default(true)
 
-  worker    WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  worker WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
 
   @@unique([workerId, dayOfWeek])
 }
 
 // Booking model
 model Booking {
-  id            String   @id @default(cuid())
-  customerId    String
-  cleanerId     String
-  serviceId     String?
-  propertyId    String?  // Optional link to saved property
+  id         String  @id @default(cuid())
+  customerId String
+  workerId   String  @map("cleanerId")
+  serviceId  String?
+  propertyId String? // Optional link to saved property
 
   // Scheduling
   scheduledDate DateTime
-  scheduledTime String   // "14:00"
-  duration      Int      // in minutes
+  scheduledTime String // "14:00"
+  duration      Int // in minutes
 
   // Location
-  address       String?
-  city          String?
-  state         String?
-  postalCode    String?
-  latitude      Float?
-  longitude     Float?
+  address    String?
+  city       String?
+  state      String?
+  postalCode String?
+  latitude   Float?
+  longitude  Float?
 
   // Details
-  notes         String?
-  status        BookingStatus @default(PENDING)
-  totalPrice    Float
-  currency      String   @default("USD")
-  teamSize      Int      @default(1)  // Number of cleaners for this job
+  notes      String?
+  status     BookingStatus @default(PENDING)
+  totalPrice Float
+  currency   String        @default("USD")
+  teamSize   Int           @default(1) // Number of workers for this job
 
   // Tipping
-  tipAmount     Float?   // Tip amount (100% goes to cleaner)
-  tipPaidAt     DateTime?
+  tipAmount Float? // Tip amount (100% goes to worker)
+  tipPaidAt DateTime?
 
   // Timestamps
-  confirmedAt   DateTime?
-  startedAt     DateTime?
-  completedAt   DateTime?
-  cancelledAt   DateTime?
+  confirmedAt        DateTime?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  cancelledAt        DateTime?
   cancellationReason String?
-  cancelledByCleaner Boolean @default(false)
+  cancelledByWorker  Boolean   @default(false) @map("cancelledByCleaner")
 
   // Substitution tracking
-  substitutedFromId String?  // Original booking this was created from
-  substitutedToId   String?  // New booking created as substitute
+  substitutedFromId String? // Original booking this was created from
+  substitutedToId   String? // New booking created as substitute
 
-  // GPS tracking (cleaner en route)
-  trackingActive      Boolean   @default(false)
-  cleanerLatitude     Float?
-  cleanerLongitude    Float?
-  lastLocationUpdate  DateTime?
-  estimatedArrival    DateTime?
-  etaStatus           EtaStatus?
+  // GPS tracking (worker en route)
+  trackingActive     Boolean    @default(false)
+  workerLatitude     Float?     @map("cleanerLatitude")
+  workerLongitude    Float?     @map("cleanerLongitude")
+  lastLocationUpdate DateTime?
+  estimatedArrival   DateTime?
+  etaStatus          EtaStatus?
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  customer      User     @relation("CustomerBookings", fields: [customerId], references: [id])
-  cleaner       User     @relation("CleanerBookings", fields: [cleanerId], references: [id])
-  service       Service?  @relation(fields: [serviceId], references: [id])
-  property      Property? @relation(fields: [propertyId], references: [id])
-  review        Review?
-  messages      Message[]
-  payment       Payment?
-  earning       Earning?
-  disputes      Dispute[]
-  changes       BookingChange[]
-  photos        BookingPhoto[]
-  calendarEvents CalendarEvent[]
-  reminders     BookingReminder[] @relation("BookingReminders")
-  teamMembers   BookingTeamMember[]
-  invoice       Invoice?
-  customerReview CustomerReview?
+  customer        User                @relation("CustomerBookings", fields: [customerId], references: [id])
+  worker          User                @relation("WorkerBookings", fields: [workerId], references: [id])
+  service         Service?            @relation(fields: [serviceId], references: [id])
+  property        Property?           @relation(fields: [propertyId], references: [id])
+  review          Review?
+  messages        Message[]
+  payment         Payment?
+  earning         Earning?
+  disputes        Dispute[]
+  changes         BookingChange[]
+  photos          BookingPhoto[]
+  calendarEvents  CalendarEvent[]
+  reminders       BookingReminder[]   @relation("BookingReminders")
+  teamMembers     BookingTeamMember[]
+  invoice         Invoice?
+  customerReview  CustomerReview?
   guaranteeClaims GuaranteeClaim[]
 
   @@index([customerId])
   @@index([propertyId])
-  @@index([cleanerId])
+  @@index([workerId], map: "Booking_cleanerId_idx")
   @@index([status])
   @@index([scheduledDate])
 }
 
 // Review model
 model Review {
-  id        String   @id @default(cuid())
-  bookingId String   @unique
-  reviewerId String  // customer who left the review
-  revieweeId String  // cleaner who received the review
-  rating    Int      // 1-5
-  comment   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  bookingId  String   @unique
+  reviewerId String // customer who left the review
+  revieweeId String // worker who received the review
+  rating     Int // 1-5
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Relations
-  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  reviewer  User     @relation("ReviewsGiven", fields: [reviewerId], references: [id])
-  reviewee  User     @relation("ReviewsReceived", fields: [revieweeId], references: [id])
+  booking  Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  reviewer User    @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  reviewee User    @relation("ReviewsReceived", fields: [revieweeId], references: [id])
 
   @@index([revieweeId])
   @@index([reviewerId])
 }
 
-// Customer Review model (cleaner rates customer)
+// Customer Review model (worker rates customer)
 model CustomerReview {
-  id              String   @id @default(cuid())
-  bookingId       String   @unique
-  cleanerId       String   // Cleaner who left the review
-  customerId      String   // Customer being reviewed
+  id         String @id @default(cuid())
+  bookingId  String @unique
+  workerId   String @map("cleanerId") // Worker who left the review
+  customerId String // Customer being reviewed
 
   // Ratings (1-5 scale)
-  punctuality     Int      // Was customer on time / property accessible
-  cleanliness     Int      // Initial state of property
-  communication   Int      // How well did customer communicate
-  overall         Int      // Overall experience
+  punctuality   Int // Was customer on time / property accessible
+  cleanliness   Int // Initial state of property
+  communication Int // How well did customer communicate
+  overall       Int // Overall experience
 
-  comment         String?
+  comment String?
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  booking         Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  cleaner         User     @relation("CustomerReviewsGiven", fields: [cleanerId], references: [id])
-  customer        User     @relation("CustomerReviewsReceived", fields: [customerId], references: [id])
+  booking  Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  worker   User    @relation("CustomerReviewsGiven", fields: [workerId], references: [id])
+  customer User    @relation("CustomerReviewsReceived", fields: [customerId], references: [id])
 
   @@index([customerId])
-  @@index([cleanerId])
+  @@index([workerId], map: "CustomerReview_cleanerId_idx")
 }
 
-// Message model for customer-cleaner communication
+// Message model for customer-worker communication
 model Message {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   senderId   String
   receiverId String
   bookingId  String?
   content    String
-  read       Boolean  @default(false)
+  read       Boolean   @default(false)
   readAt     DateTime?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
 
   // Relations
-  sender     User     @relation("MessagesSent", fields: [senderId], references: [id])
-  receiver   User     @relation("MessagesReceived", fields: [receiverId], references: [id])
-  booking    Booking? @relation(fields: [bookingId], references: [id])
+  sender   User     @relation("MessagesSent", fields: [senderId], references: [id])
+  receiver User     @relation("MessagesReceived", fields: [receiverId], references: [id])
+  booking  Booking? @relation(fields: [bookingId], references: [id])
 
   @@index([senderId])
   @@index([receiverId])
   @@index([createdAt])
 }
 
-// Favorite cleaners
+// Favorite workers
 model Favorite {
   id         String   @id @default(cuid())
   customerId String
-  cleanerId  String
+  workerId   String   @map("cleanerId")
   createdAt  DateTime @default(now())
 
-  customer   User     @relation("CustomerFavorites", fields: [customerId], references: [id], onDelete: Cascade)
-  cleaner    User     @relation("CleanerFavorites", fields: [cleanerId], references: [id], onDelete: Cascade)
+  customer User @relation("CustomerFavorites", fields: [customerId], references: [id], onDelete: Cascade)
+  worker   User @relation("WorkerFavorites", fields: [workerId], references: [id], onDelete: Cascade)
 
-  @@unique([customerId, cleanerId])
+  @@unique([customerId, workerId], map: "Favorite_customerId_cleanerId_key")
 }
 
 // Payment model for tracking payments (Stripe, PayPal, and Crypto)
 model Payment {
-  id                String   @id @default(cuid())
-  bookingId         String   @unique
-  provider          String   @default("stripe") // stripe, paypal, crypto
-  stripePaymentId   String?  @unique // Stripe PaymentIntent ID
-  stripeSessionId   String?  @unique // Stripe Checkout Session ID
-  paypalOrderId     String?  @unique // PayPal Order ID
-  paypalCaptureId   String?  // PayPal Capture ID
-  cryptoChargeId    String?  @unique // Coinbase Commerce Charge ID
-  cryptoChargeCode  String?  // Coinbase Commerce Charge Code
-  cryptoNetwork     String?  // bitcoin, ethereum, litecoin
-  cryptoTxId        String?  // Blockchain transaction ID
-  amount            Float    // Total amount charged to customer
-  currency          String   @default("EUR")
-  status            PaymentStatus @default(PENDING)
-  paymentMethod     String?  // card, bank_transfer, paypal, crypto, etc.
+  id               String        @id @default(cuid())
+  bookingId        String        @unique
+  provider         String        @default("stripe") // stripe, paypal, crypto
+  stripePaymentId  String?       @unique // Stripe PaymentIntent ID
+  stripeSessionId  String?       @unique // Stripe Checkout Session ID
+  paypalOrderId    String?       @unique // PayPal Order ID
+  paypalCaptureId  String? // PayPal Capture ID
+  cryptoChargeId   String?       @unique // Coinbase Commerce Charge ID
+  cryptoChargeCode String? // Coinbase Commerce Charge Code
+  cryptoNetwork    String? // bitcoin, ethereum, litecoin
+  cryptoTxId       String? // Blockchain transaction ID
+  amount           Float // Total amount charged to customer
+  currency         String        @default("EUR")
+  status           PaymentStatus @default(PENDING)
+  paymentMethod    String? // card, bank_transfer, paypal, crypto, etc.
 
   // Fee breakdown
-  bookingAmount     Float?   // Original booking price (cleaner's rate)
-  customerFee       Float?   // Fixed + percentage fee from customer
-  cleanerFee        Float?   // Fixed + percentage fee from cleaner
-  platformFee       Float?   // Total platform fee (customerFee + cleanerFee)
-  cleanerPayout     Float?   // Amount transferred to cleaner
-  receiptUrl        String?
-  failureReason     String?
-  refundedAmount    Float?
-  refundedAt        DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  bookingAmount  Float? // Original booking price (worker's rate)
+  customerFee    Float? // Fixed + percentage fee from customer
+  workerFee      Float?    @map("cleanerFee") // Fixed + percentage fee from worker
+  platformFee    Float? // Total platform fee (customerFee + workerFee)
+  workerPayout   Float?    @map("cleanerPayout") // Amount transferred to worker
+  receiptUrl     String?
+  failureReason  String?
+  refundedAmount Float?
+  refundedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  booking           Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
-// Earnings model for tracking cleaner earnings
+// Earnings model for tracking worker earnings
 model Earning {
-  id            String   @id @default(cuid())
-  cleanerId     String
-  bookingId     String   @unique
-  amount        Float    // Amount earned (after platform fee)
-  platformFee   Float    // Platform's cut
-  grossAmount   Float    // Total payment received
-  currency      String   @default("USD")
-  status        EarningStatus @default(PENDING)
-  availableAt   DateTime // When funds become available for payout
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String        @id @default(cuid())
+  workerId    String        @map("cleanerId")
+  bookingId   String        @unique
+  amount      Float // Amount earned (after platform fee)
+  platformFee Float // Platform's cut
+  grossAmount Float // Total payment received
+  currency    String        @default("USD")
+  status      EarningStatus @default(PENDING)
+  availableAt DateTime // When funds become available for payout
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
-  cleaner       User     @relation("CleanerEarnings", fields: [cleanerId], references: [id])
-  booking       Booking  @relation(fields: [bookingId], references: [id])
-  payout        Payout?  @relation(fields: [payoutId], references: [id])
-  payoutId      String?
+  worker   User    @relation("WorkerEarnings", fields: [workerId], references: [id])
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  payout   Payout? @relation(fields: [payoutId], references: [id])
+  payoutId String?
 
-  @@index([cleanerId])
+  @@index([workerId], map: "Earning_cleanerId_idx")
   @@index([status])
 }
 
 // Custom category submitted by users
 model Category {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
-  nameDE      String?  // German translation
+  nameDE      String? // German translation
   description String?
-  emoji       String   @default("📁")
-  gradient    String   @default("from-gray-400 to-gray-600")
+  emoji       String         @default("📁")
+  gradient    String         @default("from-gray-400 to-gray-600")
   status      CategoryStatus @default(PENDING)
-  submittedBy String?  // userId of submitter
-  reviewedBy  String?  // admin userId who reviewed
+  submittedBy String? // userId of submitter
+  reviewedBy  String? // admin userId who reviewed
   reviewedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
   professions Profession[]
 
@@ -716,21 +724,21 @@ model Category {
 
 // Professions within a category (what workers do)
 model Profession {
-  id          String   @id @default(cuid())
-  categoryId  String?  // Optional - can be assigned later by admin
-  name        String   @unique
-  nameDE      String?  // German translation
-  emoji       String   @default("👤")
-  status      CategoryStatus @default(PENDING)  // PENDING until admin approves
-  submittedBy String?  // userId of worker who suggested it
-  reviewedBy  String?  // admin who approved/rejected
+  id          String         @id @default(cuid())
+  categoryId  String? // Optional - can be assigned later by admin
+  name        String         @unique
+  nameDE      String? // German translation
+  emoji       String         @default("👤")
+  status      CategoryStatus @default(PENDING) // PENDING until admin approves
+  submittedBy String? // userId of worker who suggested it
+  reviewedBy  String? // admin who approved/rejected
   reviewedAt  DateTime?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
-  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  workers     WorkerProfession[]
+  category Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  workers  WorkerProfession[]
 
   @@index([categoryId])
   @@index([status])
@@ -741,12 +749,12 @@ model WorkerProfession {
   id           String   @id @default(cuid())
   workerId     String   @map("cleanerId")
   professionId String
-  isPrimary    Boolean  @default(false)  // Main profession shown first
-  hourlyRate   Float?   // Rate for this specific profession (nullable for backwards compatibility)
+  isPrimary    Boolean  @default(false) // Main profession shown first
+  hourlyRate   Float? // Rate for this specific profession (nullable for backwards compatibility)
   createdAt    DateTime @default(now())
 
-  worker       WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
-  profession   Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+  worker     WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  profession Profession    @relation(fields: [professionId], references: [id], onDelete: Cascade)
 
   @@unique([workerId, professionId])
   @@index([workerId])
@@ -754,24 +762,24 @@ model WorkerProfession {
   @@map("CleanerProfession")
 }
 
-// Payout model for tracking cleaner payouts
+// Payout model for tracking worker payouts
 model Payout {
-  id              String    @id @default(cuid())
-  cleanerId       String
-  amount          Float
-  currency        String    @default("USD")
-  status          PayoutStatus @default(PENDING)
-  payoutMethod    String?   // bank_transfer, paypal, etc.
-  stripePayoutId  String?   @unique
-  failureReason   String?
-  processedAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id             String       @id @default(cuid())
+  workerId       String       @map("cleanerId")
+  amount         Float
+  currency       String       @default("USD")
+  status         PayoutStatus @default(PENDING)
+  payoutMethod   String? // bank_transfer, paypal, etc.
+  stripePayoutId String?      @unique
+  failureReason  String?
+  processedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  cleaner         User      @relation("CleanerPayouts", fields: [cleanerId], references: [id])
-  earnings        Earning[]
+  worker   User      @relation("WorkerPayouts", fields: [workerId], references: [id])
+  earnings Earning[]
 
-  @@index([cleanerId])
+  @@index([workerId], map: "Payout_cleanerId_idx")
   @@index([status])
 }
 
@@ -780,45 +788,45 @@ model Payout {
 // ============================================
 
 model Dispute {
-  id            String           @id @default(cuid())
-  bookingId     String
-  customerId    String
-  cleanerId     String
-  type          DisputeType
-  status        DisputeStatus    @default(OPEN)
-  subject       String
-  description   String
-  resolution    DisputeResolution?
+  id             String             @id @default(cuid())
+  bookingId      String
+  customerId     String
+  workerId       String             @map("cleanerId")
+  type           DisputeType
+  status         DisputeStatus      @default(OPEN)
+  subject        String
+  description    String
+  resolution     DisputeResolution?
   resolutionNote String?
-  refundAmount  Float?
-  resolvedById  String?
-  resolvedAt    DateTime?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  refundAmount   Float?
+  resolvedById   String?
+  resolvedAt     DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 
-  booking       Booking          @relation(fields: [bookingId], references: [id])
-  customer      User             @relation("CustomerDisputes", fields: [customerId], references: [id])
-  cleaner       User             @relation("CleanerDisputes", fields: [cleanerId], references: [id])
-  resolvedBy    User?            @relation("ResolvedDisputes", fields: [resolvedById], references: [id])
-  messages      DisputeMessage[]
-  evidence      DisputeEvidence[]
+  booking    Booking           @relation(fields: [bookingId], references: [id])
+  customer   User              @relation("CustomerDisputes", fields: [customerId], references: [id])
+  worker     User              @relation("WorkerDisputes", fields: [workerId], references: [id])
+  resolvedBy User?             @relation("ResolvedDisputes", fields: [resolvedById], references: [id])
+  messages   DisputeMessage[]
+  evidence   DisputeEvidence[]
 
   @@index([customerId])
-  @@index([cleanerId])
+  @@index([workerId], map: "Dispute_cleanerId_idx")
   @@index([status])
   @@index([bookingId])
 }
 
 model DisputeMessage {
-  id          String   @id @default(cuid())
-  disputeId   String
-  senderId    String
-  content     String
-  isAdmin     Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  disputeId String
+  senderId  String
+  content   String
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  dispute     Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
-  sender      User     @relation("DisputeMessagesSent", fields: [senderId], references: [id])
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  sender  User    @relation("DisputeMessagesSent", fields: [senderId], references: [id])
 
   @@index([disputeId])
 }
@@ -834,8 +842,8 @@ model DisputeEvidence {
   description String?
   createdAt   DateTime @default(now())
 
-  dispute     Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
-  uploader    User     @relation("DisputeEvidenceUploaded", fields: [uploaderId], references: [id])
+  dispute  Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  uploader User    @relation("DisputeEvidenceUploaded", fields: [uploaderId], references: [id])
 
   @@index([disputeId])
 }
@@ -845,93 +853,93 @@ model DisputeEvidence {
 // ============================================
 
 model NotificationPreference {
-  id          String              @id @default(cuid())
-  userId      String
-  type        NotificationType
-  channel     NotificationChannel
-  enabled     Boolean             @default(true)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  id        String              @id @default(cuid())
+  userId    String
+  type      NotificationType
+  channel   NotificationChannel
+  enabled   Boolean             @default(true)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 
-  user        User                @relation("NotificationPreferences", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("NotificationPreferences", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, type, channel])
   @@index([userId])
 }
 
 model PushSubscription {
-  id          String   @id @default(cuid())
-  userId      String
-  endpoint    String   @unique
-  p256dh      String
-  auth        String
-  userAgent   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user        User     @relation("PushSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("PushSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model MobileDeviceToken {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
-  token       String    @unique
-  platform    String    // "ios" or "android"
+  token       String   @unique
+  platform    String // "ios" or "android"
   deviceName  String?
   deviceModel String?
   appVersion  String?
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user        User      @relation("MobileDeviceTokens", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("MobileDeviceTokens", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([token])
 }
 
 model NotificationLog {
-  id          String              @id @default(cuid())
-  userId      String
-  type        NotificationType
-  channel     NotificationChannel
-  title       String
-  body        String
-  data        Json?
-  sent        Boolean             @default(false)
-  sentAt      DateTime?
-  error       String?
-  createdAt   DateTime            @default(now())
+  id        String              @id @default(cuid())
+  userId    String
+  type      NotificationType
+  channel   NotificationChannel
+  title     String
+  body      String
+  data      Json?
+  sent      Boolean             @default(false)
+  sentAt    DateTime?
+  error     String?
+  createdAt DateTime            @default(now())
 
-  user        User                @relation("NotificationLogs", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("NotificationLogs", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([createdAt])
 }
 
 model ReminderPreference {
-  id                  String   @id @default(cuid())
-  userId              String   @unique
-  enabled             Boolean  @default(true)
-  reminderTimes       Int[]    @default([1440, 60]) // Minutes before booking (1440=24hr, 60=1hr)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  enabled       Boolean  @default(true)
+  reminderTimes Int[]    @default([1440, 60]) // Minutes before booking (1440=24hr, 60=1hr)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  user                User     @relation("ReminderPreferences", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("ReminderPreferences", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model BookingReminder {
-  id                  String   @id @default(cuid())
-  bookingId           String
-  userId              String
-  reminderMinutes     Int      // Minutes before booking this reminder was for
-  sentAt              DateTime @default(now())
-  channel             NotificationChannel
+  id              String              @id @default(cuid())
+  bookingId       String
+  userId          String
+  reminderMinutes Int // Minutes before booking this reminder was for
+  sentAt          DateTime            @default(now())
+  channel         NotificationChannel
 
-  booking             Booking  @relation("BookingReminders", fields: [bookingId], references: [id], onDelete: Cascade)
-  user                User     @relation("BookingReminders", fields: [userId], references: [id], onDelete: Cascade)
+  booking Booking @relation("BookingReminders", fields: [bookingId], references: [id], onDelete: Cascade)
+  user    User    @relation("BookingReminders", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([bookingId, userId, reminderMinutes, channel])
   @@index([bookingId])
@@ -943,32 +951,32 @@ model BookingReminder {
 // ============================================
 
 model BookingChange {
-  id                String              @id @default(cuid())
-  bookingId         String
-  requesterId       String
-  type              BookingChangeType
-  status            BookingChangeStatus @default(PENDING)
-  reason            String?
+  id          String              @id @default(cuid())
+  bookingId   String
+  requesterId String
+  type        BookingChangeType
+  status      BookingChangeStatus @default(PENDING)
+  reason      String?
 
   // For reschedule
-  originalDate      DateTime?
-  originalTime      String?
-  newDate           DateTime?
-  newTime           String?
+  originalDate DateTime?
+  originalTime String?
+  newDate      DateTime?
+  newTime      String?
 
   // For cancellation
-  refundAmount      Float?
-  refundPercent     Float?
+  refundAmount  Float?
+  refundPercent Float?
 
-  responderId       String?
-  responseNote      String?
-  respondedAt       DateTime?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  responderId  String?
+  responseNote String?
+  respondedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  booking           Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  requester         User                @relation("BookingChangeRequester", fields: [requesterId], references: [id])
-  responder         User?               @relation("BookingChangeResponder", fields: [responderId], references: [id])
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  requester User    @relation("BookingChangeRequester", fields: [requesterId], references: [id])
+  responder User?   @relation("BookingChangeResponder", fields: [responderId], references: [id])
 
   @@index([bookingId])
   @@index([requesterId])
@@ -980,31 +988,31 @@ model BookingChange {
 // ============================================
 
 model BookingPhoto {
-  id          String   @id @default(cuid())
-  bookingId   String
-  uploaderId  String
-  type        String   // "before" or "after"
-  fileUrl     String
+  id           String   @id @default(cuid())
+  bookingId    String
+  uploaderId   String
+  type         String // "before" or "after"
+  fileUrl      String
   thumbnailUrl String?
-  fileName    String
-  fileSize    Int
-  caption     String?
-  createdAt   DateTime @default(now())
+  fileName     String
+  fileSize     Int
+  caption      String?
+  createdAt    DateTime @default(now())
 
-  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  uploader    User     @relation("BookingPhotosUploaded", fields: [uploaderId], references: [id])
+  booking  Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  uploader User    @relation("BookingPhotosUploaded", fields: [uploaderId], references: [id])
 
   @@index([bookingId])
   @@index([type])
 }
 
 // ============================================
-// CLEANER DOCUMENT VERIFICATION MODEL
+// WORKER DOCUMENT VERIFICATION MODEL
 // ============================================
 
 model WorkerDocument {
   id            String         @id @default(cuid())
-  cleanerId     String
+  workerId      String         @map("cleanerId")
   type          DocumentType
   status        DocumentStatus @default(PENDING)
   fileUrl       String
@@ -1017,10 +1025,10 @@ model WorkerDocument {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
-  cleaner       User           @relation("CleanerDocuments", fields: [cleanerId], references: [id], onDelete: Cascade)
-  verifiedBy    User?          @relation("DocumentsVerified", fields: [verifiedById], references: [id])
+  worker     User  @relation("WorkerDocuments", fields: [workerId], references: [id], onDelete: Cascade)
+  verifiedBy User? @relation("DocumentsVerified", fields: [verifiedById], references: [id])
 
-  @@index([cleanerId])
+  @@index([workerId], map: "CleanerDocument_cleanerId_idx")
   @@index([status])
   @@index([type])
   @@map("CleanerDocument")
@@ -1031,21 +1039,21 @@ model WorkerDocument {
 // ============================================
 
 model CalendarConnection {
-  id              String   @id @default(cuid())
-  userId          String
-  provider        String   // "google" or "outlook"
-  email           String
-  accessToken     String   // Encrypted
-  refreshToken    String?  // Encrypted
-  tokenExpiresAt  DateTime?
-  calendarId      String?
-  lastSyncAt      DateTime?
-  syncEnabled     Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String    @id @default(cuid())
+  userId         String
+  provider       String // "google" or "outlook"
+  email          String
+  accessToken    String // Encrypted
+  refreshToken   String? // Encrypted
+  tokenExpiresAt DateTime?
+  calendarId     String?
+  lastSyncAt     DateTime?
+  syncEnabled    Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  user            User     @relation("CalendarConnections", fields: [userId], references: [id], onDelete: Cascade)
-  events          CalendarEvent[]
+  user   User            @relation("CalendarConnections", fields: [userId], references: [id], onDelete: Cascade)
+  events CalendarEvent[]
 
   @@unique([userId, provider])
   @@index([userId])
@@ -1055,7 +1063,7 @@ model CalendarEvent {
   id              String   @id @default(cuid())
   connectionId    String
   bookingId       String?
-  externalEventId String   // Google/Outlook event ID
+  externalEventId String // Google/Outlook event ID
   title           String
   description     String?
   startTime       DateTime
@@ -1065,8 +1073,8 @@ model CalendarEvent {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  connection      CalendarConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
-  booking         Booking?           @relation(fields: [bookingId], references: [id])
+  connection CalendarConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  booking    Booking?           @relation(fields: [bookingId], references: [id])
 
   @@unique([connectionId, externalEventId])
   @@index([bookingId])
@@ -1077,15 +1085,15 @@ model CalendarEvent {
 // ============================================
 
 model AnalyticsSnapshot {
-  id          String   @id @default(cuid())
-  userId      String
-  type        String   // "cleaner" or "admin"
-  period      String   // "daily", "weekly", "monthly"
-  date        DateTime // Start of period
-  data        Json
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // "worker" or "admin"
+  period    String // "daily", "weekly", "monthly"
+  date      DateTime // Start of period
+  data      Json
+  createdAt DateTime @default(now())
 
-  user        User     @relation("AnalyticsSnapshots", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("AnalyticsSnapshots", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, type, period, date])
   @@index([userId])
@@ -1098,18 +1106,18 @@ model AnalyticsSnapshot {
 
 // Persistent audit log for security events
 model AuditLog {
-  id          String   @id @default(cuid())
-  action      String   // e.g., "LOGIN_SUCCESS", "USER_DELETED", "PASSWORD_RESET"
-  actorId     String?  // User who performed the action
-  actorEmail  String?  // Email of actor (for when user is deleted)
-  targetId    String?  // Resource affected
-  targetType  String?  // e.g., "User", "Booking", "Payment"
-  details     Json?    // Additional context (sanitized)
-  ip          String?  // IP address
-  userAgent   String?  // Browser/device info
-  country     String?  // Geo-location country
-  severity    String   @default("INFO") // INFO, WARNING, CRITICAL
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  action     String // e.g., "LOGIN_SUCCESS", "USER_DELETED", "PASSWORD_RESET"
+  actorId    String? // User who performed the action
+  actorEmail String? // Email of actor (for when user is deleted)
+  targetId   String? // Resource affected
+  targetType String? // e.g., "User", "Booking", "Payment"
+  details    Json? // Additional context (sanitized)
+  ip         String? // IP address
+  userAgent  String? // Browser/device info
+  country    String? // Geo-location country
+  severity   String   @default("INFO") // INFO, WARNING, CRITICAL
+  createdAt  DateTime @default(now())
 
   @@index([actorId])
   @@index([action])
@@ -1119,21 +1127,21 @@ model AuditLog {
 
 // Active user sessions for session management
 model UserSession {
-  id            String    @id @default(cuid())
-  userId        String
-  sessionToken  String    @unique // JWT token hash or session ID
-  deviceId      String?   // Link to known device
-  ip            String?
-  userAgent     String?
-  country       String?
-  city          String?
-  lastActiveAt  DateTime  @default(now())
-  expiresAt     DateTime
-  isValid       Boolean   @default(true) // Can be revoked
-  createdAt     DateTime  @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique // JWT token hash or session ID
+  deviceId     String? // Link to known device
+  ip           String?
+  userAgent    String?
+  country      String?
+  city         String?
+  lastActiveAt DateTime @default(now())
+  expiresAt    DateTime
+  isValid      Boolean  @default(true) // Can be revoked
+  createdAt    DateTime @default(now())
 
-  user          User      @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
-  device        UserDevice? @relation(fields: [deviceId], references: [id])
+  user   User        @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
+  device UserDevice? @relation(fields: [deviceId], references: [id])
 
   @@index([userId])
   @@index([sessionToken])
@@ -1142,21 +1150,21 @@ model UserSession {
 
 // Known user devices for fingerprinting
 model UserDevice {
-  id              String    @id @default(cuid())
-  userId          String
-  fingerprint     String    // Hash of device characteristics
-  name            String?   // User-friendly name (e.g., "Chrome on Windows")
-  browser         String?
-  os              String?
-  deviceType      String?   // desktop, mobile, tablet
-  isTrusted       Boolean   @default(false) // User has verified this device
-  lastSeenAt      DateTime  @default(now())
-  lastIp          String?
-  lastCountry     String?
-  createdAt       DateTime  @default(now())
+  id          String   @id @default(cuid())
+  userId      String
+  fingerprint String // Hash of device characteristics
+  name        String? // User-friendly name (e.g., "Chrome on Windows")
+  browser     String?
+  os          String?
+  deviceType  String? // desktop, mobile, tablet
+  isTrusted   Boolean  @default(false) // User has verified this device
+  lastSeenAt  DateTime @default(now())
+  lastIp      String?
+  lastCountry String?
+  createdAt   DateTime @default(now())
 
-  user            User      @relation("UserDevices", fields: [userId], references: [id], onDelete: Cascade)
-  sessions        UserSession[]
+  user     User          @relation("UserDevices", fields: [userId], references: [id], onDelete: Cascade)
+  sessions UserSession[]
 
   @@unique([userId, fingerprint])
   @@index([userId])
@@ -1164,14 +1172,14 @@ model UserDevice {
 
 // Email verification tokens
 model EmailVerificationToken {
-  id          String   @id @default(cuid())
-  userId      String
-  token       String   @unique
-  expires     DateTime
-  used        Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expires   DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  user        User     @relation("EmailVerifications", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("EmailVerifications", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([token])
@@ -1208,18 +1216,18 @@ enum SmartLockAccessStatus {
 // ============================================
 
 enum SubscriptionTier {
-  FREE           // Default tier - standard fees
-  WORKER_PRO     // Lower fees, priority search, badge
-  BUSINESS       // Bulk discounts, multiple employees
-  ENTERPRISE     // Custom pricing, dedicated support
+  FREE // Default tier - standard fees
+  WORKER_PRO // Lower fees, priority search, badge
+  BUSINESS // Bulk discounts, multiple employees
+  ENTERPRISE // Custom pricing, dedicated support
 }
 
 enum SubscriptionStatus {
   ACTIVE
-  PAST_DUE       // Payment failed, grace period
-  CANCELED       // User canceled, still active until period end
-  EXPIRED        // Subscription ended
-  TRIALING       // Free trial period
+  PAST_DUE // Payment failed, grace period
+  CANCELED // User canceled, still active until period end
+  EXPIRED // Subscription ended
+  TRIALING // Free trial period
 }
 
 enum BillingInterval {
@@ -1227,32 +1235,41 @@ enum BillingInterval {
   YEARLY
 }
 
+// Worker subscription status (for yearly fee after first job)
+enum WorkerSubscriptionStatus {
+  NONE // No subscription yet (hasn't completed first job)
+  PENDING_PAYMENT // First job completed, waiting for payment (24h window)
+  ACTIVE // Paid and active
+  EXPIRED // Subscription expired, needs renewal
+  SUSPENDED // Didn't pay within 24h, worker is invisible
+}
+
 // ============================================
 // PROPERTY MANAGEMENT MODEL
 // ============================================
 
 model Property {
-  id          String   @id @default(cuid())
-  ownerId     String
-  name        String   // e.g., "Beach House", "Main Apartment"
-  address     String
-  city        String?
-  state       String?
-  postalCode  String?
-  country     String?
-  latitude    Float?
-  longitude   Float?
-  size        Int?     // Square meters
-  rooms       Int?     // Number of rooms
-  bathrooms   Int?     // Number of bathrooms
-  notes       String?  // Special instructions
-  isDefault   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  ownerId    String
+  name       String // e.g., "Beach House", "Main Apartment"
+  address    String
+  city       String?
+  state      String?
+  postalCode String?
+  country    String?
+  latitude   Float?
+  longitude  Float?
+  size       Int? // Square meters
+  rooms      Int? // Number of rooms
+  bathrooms  Int? // Number of bathrooms
+  notes      String? // Special instructions
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  owner       User     @relation("UserProperties", fields: [ownerId], references: [id], onDelete: Cascade)
-  bookings    Booking[]
-  smartLocks  SmartLock[]
+  owner      User        @relation("UserProperties", fields: [ownerId], references: [id], onDelete: Cascade)
+  bookings   Booking[]
+  smartLocks SmartLock[]
 
   @@index([ownerId])
 }
@@ -1262,20 +1279,20 @@ model Property {
 // ============================================
 
 model SmartLock {
-  id            String            @id @default(cuid())
-  propertyId    String
-  name          String            // e.g., "Front Door", "Back Door"
-  provider      SmartLockProvider
-  deviceId      String?           // External device ID from provider
-  serialNumber  String?
-  isActive      Boolean           @default(true)
-  batteryLevel  Int?              // 0-100 percentage
-  lastSyncAt    DateTime?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id           String            @id @default(cuid())
+  propertyId   String
+  name         String // e.g., "Front Door", "Back Door"
+  provider     SmartLockProvider
+  deviceId     String? // External device ID from provider
+  serialNumber String?
+  isActive     Boolean           @default(true)
+  batteryLevel Int? // 0-100 percentage
+  lastSyncAt   DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 
-  property      Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  accessCodes   SmartLockAccess[]
+  property    Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  accessCodes SmartLockAccess[]
 
   @@index([propertyId])
 }
@@ -1283,26 +1300,26 @@ model SmartLock {
 model SmartLockAccess {
   id            String                @id @default(cuid())
   lockId        String
-  bookingId     String?               // Optional link to booking
-  cleanerId     String?               // Cleaner who has access
+  bookingId     String? // Optional link to booking
+  workerId      String?               @map("cleanerId") // Worker who has access
   accessType    SmartLockAccessType   @default(TEMPORARY)
-  accessCode    String                // The PIN code or access token
+  accessCode    String // The PIN code or access token
   validFrom     DateTime
-  validUntil    DateTime?             // Null for permanent access
+  validUntil    DateTime? // Null for permanent access
   status        SmartLockAccessStatus @default(ACTIVE)
-  usedAt        DateTime?             // When the code was first used
+  usedAt        DateTime? // When the code was first used
   usageCount    Int                   @default(0)
-  maxUsage      Int?                  // Max times code can be used (null = unlimited)
+  maxUsage      Int? // Max times code can be used (null = unlimited)
   revokedAt     DateTime?
   revokedReason String?
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 
-  lock          SmartLock             @relation(fields: [lockId], references: [id], onDelete: Cascade)
+  lock SmartLock @relation(fields: [lockId], references: [id], onDelete: Cascade)
 
   @@index([lockId])
   @@index([bookingId])
-  @@index([cleanerId])
+  @@index([workerId], map: "SmartLockAccess_cleanerId_idx")
   @@index([status])
 }
 
@@ -1311,21 +1328,21 @@ model SmartLockAccess {
 // ============================================
 
 model BookingTeamMember {
-  id          String   @id @default(cuid())
-  bookingId   String
-  cleanerId   String
-  isLead      Boolean  @default(false)  // Primary cleaner is the lead
-  confirmed   Boolean  @default(false)  // Team member has accepted
-  earnings    Float?   // Individual earnings for this team member
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  bookingId String
+  workerId  String   @map("cleanerId")
+  isLead    Boolean  @default(false) // Primary worker is the lead
+  confirmed Boolean  @default(false) // Team member has accepted
+  earnings  Float? // Individual earnings for this team member
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  cleaner     User     @relation("TeamMemberBookings", fields: [cleanerId], references: [id])
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  worker  User    @relation("TeamMemberBookings", fields: [workerId], references: [id])
 
-  @@unique([bookingId, cleanerId])
+  @@unique([bookingId, workerId], map: "BookingTeamMember_bookingId_cleanerId_key")
   @@index([bookingId])
-  @@index([cleanerId])
+  @@index([workerId], map: "BookingTeamMember_cleanerId_idx")
 }
 
 // ============================================
@@ -1333,42 +1350,42 @@ model BookingTeamMember {
 // ============================================
 
 model Invoice {
-  id            String   @id @default(cuid())
-  invoiceNumber String   @unique  // INV-2024-0001 format
-  bookingId     String   @unique
+  id            String @id @default(cuid())
+  invoiceNumber String @unique // INV-2024-0001 format
+  bookingId     String @unique
   customerId    String
-  cleanerId     String
+  workerId      String @map("cleanerId")
 
   // Invoice details
-  subtotal      Float
-  tipAmount     Float    @default(0)
-  taxRate       Float    @default(0)
-  taxAmount     Float    @default(0)
-  totalAmount   Float
-  currency      String   @default("USD")
+  subtotal    Float
+  tipAmount   Float  @default(0)
+  taxRate     Float  @default(0)
+  taxAmount   Float  @default(0)
+  totalAmount Float
+  currency    String @default("USD")
 
   // Service details (snapshot at invoice time)
-  serviceName   String
-  serviceDate   DateTime
-  serviceTime   String
-  duration      Int
-  address       String
+  serviceName String
+  serviceDate DateTime
+  serviceTime String
+  duration    Int
+  address     String
 
   // Status
-  status        String   @default("ISSUED")  // ISSUED, PAID, CANCELLED
-  paidAt        DateTime?
-  sentAt        DateTime?
-  sentTo        String?  // Email address
+  status String    @default("ISSUED") // ISSUED, PAID, CANCELLED
+  paidAt DateTime?
+  sentAt DateTime?
+  sentTo String? // Email address
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  booking       Booking  @relation(fields: [bookingId], references: [id])
-  customer      User     @relation("CustomerInvoices", fields: [customerId], references: [id])
-  cleaner       User     @relation("CleanerInvoices", fields: [cleanerId], references: [id])
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  customer User    @relation("CustomerInvoices", fields: [customerId], references: [id])
+  worker   User    @relation("WorkerInvoices", fields: [workerId], references: [id])
 
   @@index([customerId])
-  @@index([cleanerId])
+  @@index([workerId], map: "Invoice_cleanerId_idx")
   @@index([invoiceNumber])
 }
 
@@ -1377,41 +1394,41 @@ model Invoice {
 // ============================================
 
 model GuaranteeClaim {
-  id            String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Relations
-  bookingId     String
-  customerId    String
-  cleanerId     String
+  bookingId  String
+  customerId String
+  workerId   String @map("cleanerId")
 
   // Claim details
-  reason        GuaranteeClaimReason
-  description   String   @db.Text
-  evidence      String[] // Array of file URLs (photos, etc.)
+  reason      GuaranteeClaimReason
+  description String               @db.Text
+  evidence    String[] // Array of file URLs (photos, etc.)
 
   // Status tracking
-  status        GuaranteeClaimStatus @default(PENDING)
+  status GuaranteeClaimStatus @default(PENDING)
 
   // Resolution
-  resolution       GuaranteeResolution?
-  resolutionNote   String?  @db.Text
-  refundAmount     Float?
-  resolvedAt       DateTime?
-  resolvedById     String?
+  resolution     GuaranteeResolution?
+  resolutionNote String?              @db.Text
+  refundAmount   Float?
+  resolvedAt     DateTime?
+  resolvedById   String?
 
   // Timestamps
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  booking       Booking  @relation(fields: [bookingId], references: [id])
-  customer      User     @relation("CustomerClaims", fields: [customerId], references: [id])
-  cleaner       User     @relation("CleanerClaims", fields: [cleanerId], references: [id])
-  resolvedBy    User?    @relation("ResolvedClaims", fields: [resolvedById], references: [id])
+  booking    Booking @relation(fields: [bookingId], references: [id])
+  customer   User    @relation("CustomerClaims", fields: [customerId], references: [id])
+  worker     User    @relation("WorkerClaims", fields: [workerId], references: [id])
+  resolvedBy User?   @relation("ResolvedClaims", fields: [resolvedById], references: [id])
 
   @@index([bookingId])
   @@index([customerId])
-  @@index([cleanerId])
+  @@index([workerId], map: "GuaranteeClaim_cleanerId_idx")
   @@index([status])
 }
 
@@ -1420,40 +1437,40 @@ model GuaranteeClaim {
 // ============================================
 
 model Subscription {
-  id                    String             @id @default(cuid())
-  userId                String             @unique
+  id     String @id @default(cuid())
+  userId String @unique
 
   // Subscription details
-  tier                  SubscriptionTier   @default(FREE)
-  status                SubscriptionStatus @default(ACTIVE)
-  billingInterval       BillingInterval?   // null for FREE tier
+  tier            SubscriptionTier   @default(FREE)
+  status          SubscriptionStatus @default(ACTIVE)
+  billingInterval BillingInterval? // null for FREE tier
 
   // Stripe subscription data
-  stripeSubscriptionId  String?            @unique
-  stripePriceId         String?
+  stripeSubscriptionId     String?   @unique
+  stripePriceId            String?
   stripeCurrentPeriodStart DateTime?
   stripeCurrentPeriodEnd   DateTime?
 
   // Trial info
-  trialEndsAt           DateTime?
+  trialEndsAt DateTime?
 
   // Cancellation
-  cancelAtPeriodEnd     Boolean            @default(false)
-  canceledAt            DateTime?
-  cancellationReason    String?
+  cancelAtPeriodEnd  Boolean   @default(false)
+  canceledAt         DateTime?
+  cancellationReason String?
 
   // Tier-specific benefits (cached for quick access)
-  platformFeePercent    Float              @default(15)  // Standard is 15%, Pro is 10%
-  prioritySearchBoost   Int                @default(0)   // 0-100 boost in search ranking
-  maxEmployees          Int                @default(1)   // For business accounts
+  platformFeePercent  Float @default(15) // Standard is 15%, Pro is 10%
+  prioritySearchBoost Int   @default(0) // 0-100 boost in search ranking
+  maxEmployees        Int   @default(1) // For business accounts
 
   // Timestamps
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  invoices              SubscriptionInvoice[]
+  user     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices SubscriptionInvoice[]
 
   @@index([tier])
   @@index([status])
@@ -1465,38 +1482,38 @@ model Subscription {
 // ============================================
 
 model SubscriptionInvoice {
-  id                    String   @id @default(cuid())
-  subscriptionId        String
-  userId                String
+  id             String @id @default(cuid())
+  subscriptionId String
+  userId         String
 
   // Stripe invoice data
-  stripeInvoiceId       String   @unique
+  stripeInvoiceId       String  @unique
   stripePaymentIntentId String?
 
   // Amount
-  amountDue             Float
-  amountPaid            Float
-  currency              String   @default("EUR")
+  amountDue  Float
+  amountPaid Float
+  currency   String @default("EUR")
 
   // Status
-  status                String   // draft, open, paid, void, uncollectible
-  paid                  Boolean  @default(false)
+  status String // draft, open, paid, void, uncollectible
+  paid   Boolean @default(false)
 
   // Period
-  periodStart           DateTime
-  periodEnd             DateTime
+  periodStart DateTime
+  periodEnd   DateTime
 
   // URLs
-  hostedInvoiceUrl      String?  // Stripe hosted invoice page
-  invoicePdf            String?  // PDF download URL
+  hostedInvoiceUrl String? // Stripe hosted invoice page
+  invoicePdf       String? // PDF download URL
 
   // Timestamps
-  createdAt             DateTime @default(now())
-  paidAt                DateTime?
+  createdAt DateTime  @default(now())
+  paidAt    DateTime?
 
   // Relations
-  subscription          Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([subscriptionId])
   @@index([userId])

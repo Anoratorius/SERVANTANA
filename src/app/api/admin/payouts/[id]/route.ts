@@ -83,7 +83,7 @@ export async function PATCH(
         where: { id },
         data: updateData,
         include: {
-          cleaner: {
+          worker: {
             select: {
               firstName: true,
               lastName: true,

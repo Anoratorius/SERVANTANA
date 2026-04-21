@@ -80,7 +80,7 @@ export async function GET(
         booking: {
           select: {
             customerId: true,
-            cleanerId: true,
+            workerId: true,
           },
         },
         uploader: {
@@ -106,7 +106,7 @@ export async function GET(
     // Only customer or worker can view
     if (
       photo.booking.customerId !== session.user.id &&
-      photo.booking.cleanerId !== session.user.id
+      photo.booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

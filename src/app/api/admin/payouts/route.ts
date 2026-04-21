@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       prisma.payout.findMany({
         where,
         include: {
-          cleaner: {
+          worker: {
             select: {
               id: true,
               firstName: true,
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
         availableAt: { lte: new Date() },
       },
       include: {
-        cleaner: {
+        worker: {
           include: {
             workerProfile: {
               select: {
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     const workerEarnings = new Map<
       string,
       {
-        cleaner: typeof pendingEarnings[0]["cleaner"];
+        worker: typeof pendingEarnings[0]["worker"];
         earnings: typeof pendingEarnings;
         totalAmount: number;
         currency: string;
@@ -169,15 +169,15 @@ export async function POST(request: NextRequest) {
     >();
 
     for (const earning of pendingEarnings) {
-      const cleanerId = earning.cleanerId;
-      const existing = workerEarnings.get(cleanerId);
+      const workerId = earning.workerId;
+      const existing = workerEarnings.get(workerId);
 
       if (existing) {
         existing.earnings.push(earning);
         existing.totalAmount += earning.amount;
       } else {
-        workerEarnings.set(cleanerId, {
-          cleaner: earning.cleaner,
+        workerEarnings.set(workerId, {
+          worker: earning.worker,
           earnings: [earning],
           totalAmount: earning.amount,
           currency: earning.currency,
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
     }
 
     const results: Array<{
-      cleanerId: string;
+      workerId: string;
       workerName: string;
       amount: number;
       currency: string;
@@ -197,8 +197,8 @@ export async function POST(request: NextRequest) {
     }> = [];
 
     // Process each worker's payout
-    for (const [cleanerId, data] of workerEarnings) {
-      const { cleaner: worker, earnings, totalAmount, currency } = data;
+    for (const [workerId, data] of workerEarnings) {
+      const { worker, earnings, totalAmount, currency } = data;
       const workerName = `${worker.firstName} ${worker.lastName}`;
 
       try {
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
             destinationAccountId: worker.workerProfile.stripeAccountId,
             description: `Servantana earnings payout - ${new Date().toISOString().split("T")[0]}`,
             metadata: {
-              cleanerId,
+              workerId,
               earningIds: earnings.map((e) => e.id).join(","),
             },
           });
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
             worker.workerProfile.paypalEmail,
             totalAmount,
             currency,
-            `payout_${cleanerId}_${Date.now()}`,
+            `payout_${workerId}_${Date.now()}`,
             `Servantana earnings for ${earnings.length} booking(s)`
           );
 
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
         } else {
           // No payment method configured
           results.push({
-            cleanerId,
+            workerId,
             workerName,
             amount: totalAmount,
             currency,
@@ -253,7 +253,7 @@ export async function POST(request: NextRequest) {
         // Create payout record
         const payout = await prisma.payout.create({
           data: {
-            cleanerId,
+            workerId,
             amount: totalAmount,
             currency,
             status: "PROCESSING",
@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
         });
 
         results.push({
-          cleanerId,
+          workerId,
           workerName,
           amount: totalAmount,
           currency,
@@ -288,9 +288,9 @@ export async function POST(request: NextRequest) {
           payoutId: payout.id,
         });
       } catch (error) {
-        console.error(`Payout failed for cleaner ${cleanerId}:`, error);
+        console.error(`Payout failed for worker ${workerId}:`, error);
         results.push({
-          cleanerId,
+          workerId,
           workerName,
           amount: totalAmount,
           currency,

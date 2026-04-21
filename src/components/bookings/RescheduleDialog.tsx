@@ -20,7 +20,7 @@ interface RescheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   bookingId: string;
-  cleanerId: string;
+  workerId: string;
   currentDate: string;
   currentTime: string;
   onRescheduled?: () => void;
@@ -36,7 +36,7 @@ export function RescheduleDialog({
   open,
   onOpenChange,
   bookingId,
-  cleanerId,
+  workerId,
   currentDate,
   currentTime,
   onRescheduled,
@@ -57,10 +57,10 @@ export function RescheduleDialog({
   );
 
   useEffect(() => {
-    if (open && cleanerId) {
+    if (open && workerId) {
       fetchAvailableSlots();
     }
-  }, [open, cleanerId]);
+  }, [open, workerId]);
 
   useEffect(() => {
     // Reset time selection when date changes
@@ -76,7 +76,7 @@ export function RescheduleDialog({
         .split("T")[0];
 
       const res = await fetch(
-        `/api/worker/availability-slots?cleanerId=${cleanerId}&startDate=${startDate}&endDate=${endDate}`
+        `/api/worker/availability-slots?workerId=${workerId}&startDate=${startDate}&endDate=${endDate}`
       );
 
       if (res.ok) {

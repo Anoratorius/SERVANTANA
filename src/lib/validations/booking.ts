@@ -9,7 +9,7 @@ import { z } from "zod";
  * Create booking request validation
  */
 export const createBookingSchema = z.object({
-  cleanerId: z.string().min(1, "Worker ID is required"),
+  workerId: z.string().min(1, "Worker ID is required"),
   serviceId: z.string().optional(),
   scheduledDate: z.string().refine(
     (val) => !isNaN(Date.parse(val)),

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     const where: Record<string, unknown> = {
       OR: [
         { customerId: session.user.id },
-        { cleanerId: session.user.id },
+        { workerId: session.user.id },
       ],
     };
 
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
       data: {
         bookingId,
         customerId: session.user.id,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
         reason: reason as GuaranteeClaimReason,
         description,
         evidence: evidence || [],

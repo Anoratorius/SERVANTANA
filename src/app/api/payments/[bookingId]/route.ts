@@ -30,8 +30,8 @@ export async function GET(
       );
     }
 
-    // Verify the user is the customer or cleaner
-    if (booking.customerId !== session.user.id && booking.cleanerId !== session.user.id) {
+    // Verify the user is the customer or worker
+    if (booking.customerId !== session.user.id && booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "You don't have access to this payment" },
         { status: 403 }

@@ -174,8 +174,8 @@ export async function POST(request: NextRequest) {
       }
 
       const isParticipant =
-        (booking.customerId === session.user.id && booking.cleanerId === receiverId) ||
-        (booking.cleanerId === session.user.id && booking.customerId === receiverId);
+        (booking.customerId === session.user.id && booking.workerId === receiverId) ||
+        (booking.workerId === session.user.id && booking.customerId === receiverId);
 
       if (!isParticipant) {
         return NextResponse.json(

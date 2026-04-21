@@ -84,7 +84,7 @@ interface DbCategory {
     name: string;
     nameDE?: string;
     emoji: string;
-    _count: { cleaners: number };
+    _count: { workers: number };
   }>;
 }
 
@@ -168,7 +168,7 @@ export default function CategoryDetailPage() {
       const response = await fetch(`/api/workers?categoryId=${categoryId}`);
       if (response.ok) {
         const data = await response.json();
-        setWorkers(data.cleaners || []);
+        setWorkers(data.workers || []);
       }
     } catch (error) {
       console.error("Failed to fetch workers:", error);

@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
           select: {
             status: true,
             scheduledDate: true,
-            cleaner: { select: { firstName: true } },
+            worker: { select: { firstName: true } },
           },
         },
       },

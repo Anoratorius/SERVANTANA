@@ -43,7 +43,7 @@ export async function GET(
       where: { id },
       include: {
         service: true,
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -74,7 +74,7 @@ export async function GET(
 
     const availableWorkers = await prisma.workerProfile.findMany({
       where: {
-        userId: { not: booking.cleanerId },
+        userId: { not: booking.workerId },
         verified: true,
         services: {
           some: {
@@ -154,7 +154,7 @@ export async function GET(
       // Check for conflicting bookings
       const conflictingBooking = await prisma.booking.findFirst({
         where: {
-          cleanerId: worker.userId,
+          workerId: worker.userId,
           scheduledDate: booking.scheduledDate,
           status: { in: ["PENDING", "CONFIRMED", "IN_PROGRESS"] },
           id: { not: booking.id },
@@ -203,9 +203,9 @@ export async function GET(
         scheduledDate: booking.scheduledDate,
         scheduledTime: booking.scheduledTime,
         service: booking.service?.name || "Cleaning Service",
-        originalWorker: booking.cleaner ? {
-          firstName: booking.cleaner.firstName,
-          lastName: booking.cleaner.lastName,
+        originalWorker: booking.worker ? {
+          firstName: booking.worker.firstName,
+          lastName: booking.worker.lastName,
         } : null,
       },
       substitutes: substitutes.slice(0, 10), // Return top 10
@@ -300,7 +300,7 @@ export async function POST(
     const newBooking = await prisma.booking.create({
       data: {
         customerId: booking.customerId,
-        cleanerId: substituteWorkerId,
+        workerId: substituteWorkerId,
         serviceId: booking.serviceId,
         scheduledDate: booking.scheduledDate,
         scheduledTime: booking.scheduledTime,

@@ -50,11 +50,11 @@ export async function GET(
           take: 10,
           orderBy: { createdAt: "desc" },
           include: {
-            cleaner: { select: { firstName: true, lastName: true } },
+            worker: { select: { firstName: true, lastName: true } },
             service: { select: { name: true } },
           },
         },
-        bookingsAsCleaner: {
+        bookingsAsWorker: {
           take: 10,
           orderBy: { createdAt: "desc" },
           include: {
@@ -127,7 +127,7 @@ export async function GET(
             createdAt: true,
           },
         },
-        disputesAsCleaner: {
+        disputesAsWorker: {
           take: 5,
           orderBy: { createdAt: "desc" },
           select: {
@@ -137,7 +137,7 @@ export async function GET(
             createdAt: true,
           },
         },
-        cleanerDocuments: {
+        workerDocuments: {
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
@@ -150,13 +150,13 @@ export async function GET(
         _count: {
           select: {
             bookingsAsCustomer: true,
-            bookingsAsCleaner: true,
+            bookingsAsWorker: true,
             reviewsReceived: true,
             reviewsGiven: true,
             messagesSent: true,
             messagesReceived: true,
             properties: true,
-            favoriteCleaners: true,
+            favoriteWorkers: true,
             favoritedBy: true,
           },
         },
@@ -372,14 +372,14 @@ export async function DELETE(
     await prisma.$transaction(async (tx) => {
       // Get all bookings where user is customer or worker
       const userBookings = await tx.booking.findMany({
-        where: { OR: [{ customerId: id }, { cleanerId: id }] },
+        where: { OR: [{ customerId: id }, { workerId: id }] },
         select: { id: true },
       });
       const bookingIds = userBookings.map((b) => b.id);
 
       // Get all disputes where user is involved
       const userDisputes = await tx.dispute.findMany({
-        where: { OR: [{ customerId: id }, { cleanerId: id }] },
+        where: { OR: [{ customerId: id }, { workerId: id }] },
         select: { id: true },
       });
       const disputeIds = userDisputes.map((d) => d.id);
@@ -414,9 +414,9 @@ export async function DELETE(
       }
 
       // Delete user-specific records
-      await tx.payout.deleteMany({ where: { cleanerId: id } });
-      await tx.earning.deleteMany({ where: { cleanerId: id } });
-      await tx.workerDocument.deleteMany({ where: { cleanerId: id } });
+      await tx.payout.deleteMany({ where: { workerId: id } });
+      await tx.earning.deleteMany({ where: { workerId: id } });
+      await tx.workerDocument.deleteMany({ where: { workerId: id } });
 
       // Clear verified documents where this user was the verifier
       await tx.workerDocument.updateMany({

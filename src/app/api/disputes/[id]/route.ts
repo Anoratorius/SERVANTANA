@@ -36,7 +36,7 @@ export async function GET(
             avatar: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -87,10 +87,10 @@ export async function GET(
 
     // Only customer, worker, or admin can view
     const isCustomer = dispute.customerId === session.user.id;
-    const isCleaner = dispute.cleanerId === session.user.id;
+    const isWorker = dispute.workerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";
 
-    if (!isCustomer && !isCleaner && !isAdmin) {
+    if (!isCustomer && !isWorker && !isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

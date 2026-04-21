@@ -27,7 +27,7 @@ export async function DELETE(
     }
 
     // Only owner can delete
-    if (document.cleanerId !== session.user.id) {
+    if (document.workerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -92,7 +92,7 @@ export async function GET(
     }
 
     // Only owner or admin can view
-    if (document.cleanerId !== session.user.id && session.user.role !== "ADMIN") {
+    if (document.workerId !== session.user.id && session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

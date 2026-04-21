@@ -62,7 +62,7 @@ export async function getWorkerAnalytics(
   // Current period bookings
   const bookings = await prisma.booking.findMany({
     where: {
-      cleanerId: workerId,
+      workerId: workerId,
       createdAt: { gte: start, lte: end },
     },
     include: {
@@ -74,7 +74,7 @@ export async function getWorkerAnalytics(
   // Previous period bookings for comparison
   const previousBookings = await prisma.booking.findMany({
     where: {
-      cleanerId: workerId,
+      workerId: workerId,
       createdAt: { gte: previousStart, lte: previousEnd },
     },
     select: { id: true, totalPrice: true },
@@ -83,14 +83,14 @@ export async function getWorkerAnalytics(
   // Earnings data
   const earnings = await prisma.earning.findMany({
     where: {
-      cleanerId: workerId,
+      workerId: workerId,
       createdAt: { gte: start, lte: end },
     },
   });
 
   const previousEarnings = await prisma.earning.findMany({
     where: {
-      cleanerId: workerId,
+      workerId: workerId,
       createdAt: { gte: previousStart, lte: previousEnd },
     },
     select: { amount: true },
@@ -225,7 +225,7 @@ async function getRepeatCustomerCount(
   const result = await prisma.booking.groupBy({
     by: ["customerId"],
     where: {
-      cleanerId: workerId,
+      workerId: workerId,
       createdAt: { gte: start, lte: end },
       status: "COMPLETED",
     },
@@ -244,7 +244,7 @@ export async function getAdminAnalytics(period: string) {
   // Platform-wide stats
   const [
     totalUsers,
-    totalCleaners,
+    totalWorkers,
     totalBookings,
     totalRevenue,
     activeBookings,
@@ -304,7 +304,7 @@ export async function getAdminAnalytics(period: string) {
   return {
     stats: {
       totalUsers,
-      totalCleaners,
+      totalWorkers,
       totalBookings,
       totalRevenue: totalRevenue._sum.amount || 0,
       activeBookings,

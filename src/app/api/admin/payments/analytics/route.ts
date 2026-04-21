@@ -159,9 +159,9 @@ export async function GET(request: NextRequest) {
             },
           },
           select: {
-            cleanerId: true,
+            workerId: true,
             payment: {
-              select: { cleanerPayout: true },
+              select: { workerPayout: true },
             },
           },
         });
@@ -169,8 +169,8 @@ export async function GET(request: NextRequest) {
         // Aggregate by worker
         const workerPayouts = new Map<string, number>();
         bookingsWithPayments.forEach((b) => {
-          const current = workerPayouts.get(b.cleanerId) || 0;
-          workerPayouts.set(b.cleanerId, current + (b.payment?.cleanerPayout || 0));
+          const current = workerPayouts.get(b.workerId) || 0;
+          workerPayouts.set(b.workerId, current + (b.payment?.workerPayout || 0));
         });
 
         // Get top 10 workers

@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
           // Create payout record
           const payout = await prisma.payout.create({
             data: {
-              cleanerId: worker.id,
+              workerId: worker.id,
               amount: totalAmount,
               currency,
               status: "COMPLETED",

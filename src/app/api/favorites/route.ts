@@ -12,7 +12,7 @@ export async function GET() {
     const favorites = await prisma.favorite.findMany({
       where: { customerId: session.user.id },
       include: {
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -50,18 +50,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { cleanerId } = body;
+    const { workerId } = body;
 
-    if (!cleanerId) {
+    if (!workerId) {
       return NextResponse.json(
-        { error: "cleanerId is required" },
+        { error: "workerId is required" },
         { status: 400 }
       );
     }
 
     // Verify worker exists
     const targetWorker = await prisma.user.findUnique({
-      where: { id: cleanerId, role: "WORKER" },
+      where: { id: workerId, role: "WORKER" },
     });
 
     if (!targetWorker) {
@@ -71,9 +71,9 @@ export async function POST(request: NextRequest) {
     // Check if already favorited
     const existing = await prisma.favorite.findUnique({
       where: {
-        customerId_cleanerId: {
+        customerId_workerId: {
           customerId: session.user.id,
-          cleanerId,
+          workerId,
         },
       },
     });
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     const favorite = await prisma.favorite.create({
       data: {
         customerId: session.user.id,
-        cleanerId,
+        workerId,
       },
     });
 
@@ -110,11 +110,11 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const cleanerId = searchParams.get("cleanerId");
+    const workerId = searchParams.get("workerId");
 
-    if (!cleanerId) {
+    if (!workerId) {
       return NextResponse.json(
-        { error: "cleanerId is required" },
+        { error: "workerId is required" },
         { status: 400 }
       );
     }
@@ -122,7 +122,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.favorite.deleteMany({
       where: {
         customerId: session.user.id,
-        cleanerId,
+        workerId,
       },
     });
 

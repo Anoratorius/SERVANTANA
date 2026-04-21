@@ -27,7 +27,7 @@ export async function GET(
             email: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -68,14 +68,14 @@ export async function GET(
     }
 
     // Only allow customer or worker to view the booking
-    if (booking.customerId !== session.user.id && booking.cleanerId !== session.user.id) {
+    if (booking.customerId !== session.user.id && booking.workerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check if worker has Stripe Connect set up
     const workerHasStripe = Boolean(
-      booking.cleaner.workerProfile?.stripeAccountId &&
-      booking.cleaner.workerProfile?.stripeOnboardingComplete
+      booking.worker.workerProfile?.stripeAccountId &&
+      booking.worker.workerProfile?.stripeOnboardingComplete
     );
 
     return NextResponse.json({ booking, workerHasStripe });
@@ -112,7 +112,7 @@ export async function PATCH(
 
     // Only customer or worker can modify booking
     const isCustomer = booking.customerId === session.user.id;
-    const isWorker = booking.cleanerId === session.user.id;
+    const isWorker = booking.workerId === session.user.id;
 
     if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -179,7 +179,7 @@ export async function PATCH(
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,
@@ -196,7 +196,7 @@ export async function PATCH(
     // Send notifications based on status change
     const notificationData = {
       bookingId: id,
-      workerName: `${updatedBooking.cleaner.firstName} ${updatedBooking.cleaner.lastName}`,
+      workerName: `${updatedBooking.worker.firstName} ${updatedBooking.worker.lastName}`,
       customerName: `${updatedBooking.customer.firstName} ${updatedBooking.customer.lastName}`,
       serviceName: updatedBooking.service?.name || "Service",
       scheduledDate: updatedBooking.scheduledDate.toLocaleDateString("en-US", {

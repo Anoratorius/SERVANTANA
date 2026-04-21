@@ -10,20 +10,20 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const cleanerId = searchParams.get("cleanerId");
+    const workerId = searchParams.get("workerId");
 
-    if (!cleanerId) {
+    if (!workerId) {
       return NextResponse.json(
-        { error: "cleanerId is required" },
+        { error: "workerId is required" },
         { status: 400 }
       );
     }
 
     const favorite = await prisma.favorite.findUnique({
       where: {
-        customerId_cleanerId: {
+        customerId_workerId: {
           customerId: session.user.id,
-          cleanerId,
+          workerId,
         },
       },
     });

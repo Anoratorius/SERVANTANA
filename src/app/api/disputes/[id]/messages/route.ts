@@ -44,10 +44,10 @@ export async function POST(
 
     // Only customer, worker, or admin can send messages
     const isCustomer = dispute.customerId === session.user.id;
-    const isCleaner = dispute.cleanerId === session.user.id;
+    const isWorker = dispute.workerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";
 
-    if (!isCustomer && !isCleaner && !isAdmin) {
+    if (!isCustomer && !isWorker && !isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -114,10 +114,10 @@ export async function GET(
 
     // Only customer, worker, or admin can view messages
     const isCustomer = dispute.customerId === session.user.id;
-    const isCleaner = dispute.cleanerId === session.user.id;
+    const isWorker = dispute.workerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";
 
-    if (!isCustomer && !isCleaner && !isAdmin) {
+    if (!isCustomer && !isWorker && !isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

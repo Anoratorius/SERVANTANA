@@ -10,22 +10,22 @@ export async function GET() {
     }
 
     const userId = session.user.id;
-    const isCleaner = session.user.role === "WORKER";
+    const isWorker = session.user.role === "WORKER";
 
     // Get booking counts
     const [totalBookings, upcomingBookings, completedBookings] = await Promise.all([
       prisma.booking.count({
-        where: isCleaner ? { cleanerId: userId } : { customerId: userId },
+        where: isWorker ? { workerId: userId } : { customerId: userId },
       }),
       prisma.booking.count({
         where: {
-          ...(isCleaner ? { cleanerId: userId } : { customerId: userId }),
+          ...(isWorker ? { workerId: userId } : { customerId: userId }),
           status: { in: ["PENDING", "CONFIRMED", "IN_PROGRESS"] },
         },
       }),
       prisma.booking.count({
         where: {
-          ...(isCleaner ? { cleanerId: userId } : { customerId: userId }),
+          ...(isWorker ? { workerId: userId } : { customerId: userId }),
           status: "COMPLETED",
         },
       }),
@@ -34,11 +34,11 @@ export async function GET() {
     let totalEarnings = 0;
     let averageRating = 0;
 
-    if (isCleaner) {
+    if (isWorker) {
       // Calculate total earnings for worker
       const earnings = await prisma.booking.aggregate({
         where: {
-          cleanerId: userId,
+          workerId: userId,
           status: "COMPLETED",
         },
         _sum: {
@@ -63,7 +63,7 @@ export async function GET() {
       totalBookings,
       upcomingBookings,
       completedBookings,
-      ...(isCleaner ? { totalEarnings, averageRating } : {}),
+      ...(isWorker ? { totalEarnings, averageRating } : {}),
     });
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);

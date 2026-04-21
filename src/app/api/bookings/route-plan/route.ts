@@ -129,7 +129,7 @@ export async function GET() {
     // Fetch today's confirmed/pending bookings for this worker
     const bookings = await prisma.booking.findMany({
       where: {
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         scheduledDate: {
           gte: today,
           lt: tomorrow,

@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const bookingId = session.metadata?.bookingId;
-  const cleanerId = session.metadata?.cleanerId;
+  const workerId = session.metadata?.workerId;
 
   if (!bookingId) {
     console.error("No booking ID in session metadata");
@@ -91,7 +91,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     select: {
       totalPrice: true,
       currency: true,
-      cleanerId: true,
+      workerId: true,
     },
   });
 
@@ -140,7 +140,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     }),
     prisma.earning.create({
       data: {
-        cleanerId: cleanerId || booking.cleanerId,
+        workerId: workerId || booking.workerId,
         bookingId: bookingId,
         amount: netAmount,
         platformFee: platformFee,
@@ -152,7 +152,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     }),
   ]);
 
-  console.log(`Payment completed for booking ${bookingId}, earning created for cleaner`);
+  console.log(`Payment completed for booking ${bookingId}, earning created for worker`);
 }
 
 async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {

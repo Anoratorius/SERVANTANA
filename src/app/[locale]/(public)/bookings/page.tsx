@@ -46,7 +46,7 @@ interface Booking {
     lastName: string;
     avatar: string | null;
   };
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -294,7 +294,7 @@ function BookingCard({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  const otherUser = isCustomer ? booking.cleaner : booking.customer;
+  const otherUser = isCustomer ? booking.worker : booking.customer;
   const isPaid = booking.payment?.status === "SUCCEEDED";
   const needsPayment = isCustomer && !isPaid && ["PENDING", "CONFIRMED"].includes(booking.status);
 
@@ -518,7 +518,7 @@ function BookingCard({
                 )}
                 {isPast && booking.status === "COMPLETED" && isCustomer && (
                   <>
-                    <Link href={`/worker-profile/${booking.cleaner.id}?rebook=${booking.id}`}>
+                    <Link href={`/worker-profile/${booking.worker.id}?rebook=${booking.id}`}>
                       <Button size="sm" className="bg-gradient-to-r from-green-500 to-green-600">
                         <RotateCcw className="h-4 w-4 mr-1" />
                         {t("booking.bookAgain")}

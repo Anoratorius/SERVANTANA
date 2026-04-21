@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       where: {
         OR: [
           { customerId: session.user.id },
-          { cleanerId: session.user.id },
+          { workerId: session.user.id },
         ],
         ...(status ? { status } : {}),
       },
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
             avatar: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const {
-      cleanerId,
+      workerId,
       serviceId,
       scheduledDate,
       scheduledTime,
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!cleanerId || !scheduledDate || !scheduledTime) {
+    if (!workerId || !scheduledDate || !scheduledTime) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 
     // Verify worker exists
     const worker = await prisma.user.findUnique({
-      where: { id: cleanerId, role: Role.WORKER },
+      where: { id: workerId, role: Role.WORKER },
     });
 
     if (!worker) {
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     const booking = await prisma.booking.create({
       data: {
         customerId: session.user.id,
-        cleanerId,
+        workerId,
         serviceId: serviceId || null,
         scheduledDate: new Date(scheduledDate),
         scheduledTime,
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
             email: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
 
     // Send notification to worker about new booking request
     const bookingDate = new Date(scheduledDate);
-    sendNotification(cleanerId, "BOOKING_CREATED", {
+    sendNotification(workerId, "BOOKING_CREATED", {
       bookingId: booking.id,
       customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
       serviceName: booking.service?.name || "Service",

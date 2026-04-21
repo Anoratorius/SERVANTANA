@@ -20,7 +20,7 @@ export async function GET(
         id,
         OR: [
           { customerId: session.user.id },
-          { cleanerId: session.user.id },
+          { workerId: session.user.id },
         ],
       },
       include: {
@@ -45,7 +45,7 @@ export async function GET(
             email: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,

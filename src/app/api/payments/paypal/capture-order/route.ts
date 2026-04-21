@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
         if (!existingEarning) {
           await tx.earning.create({
             data: {
-              cleanerId: booking.cleanerId,
+              workerId: booking.workerId,
               bookingId: bookingId,
               amount: netAmount,
               platformFee: platformFee,

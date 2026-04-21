@@ -28,7 +28,7 @@ interface Booking {
   status: string;
   service: { name: string };
   customer: { firstName: string; lastName: string };
-  cleaner: { firstName: string; lastName: string };
+  worker: { firstName: string; lastName: string };
 }
 
 const DISPUTE_TYPES = [

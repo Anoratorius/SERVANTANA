@@ -68,7 +68,7 @@ interface Booking {
   totalPrice: number;
   currency: string;
   status: string;
-  cleaner: {
+  worker: {
     firstName: string;
     lastName: string;
   };
@@ -398,7 +398,7 @@ export default function BookingConfirmationPage({
                     <div>
                       <p className="text-sm text-muted-foreground">Worker</p>
                       <p className="font-medium">
-                        {booking.cleaner.firstName} {booking.cleaner.lastName}
+                        {booking.worker.firstName} {booking.worker.lastName}
                         {booking.service && (
                           <> - {t(`cleaner.services.${booking.service.name}` as Parameters<typeof t>[0])}</>
                         )}

@@ -26,7 +26,7 @@ interface Invoice {
     firstName: string;
     lastName: string;
   };
-  cleaner: {
+  worker: {
     firstName: string;
     lastName: string;
   };
@@ -118,7 +118,7 @@ export default function InvoicesPage() {
                           </span>
                           <span>
                             {isCustomer
-                              ? `${invoice.cleaner.firstName} ${invoice.cleaner.lastName}`
+                              ? `${invoice.worker.firstName} ${invoice.worker.lastName}`
                               : `${invoice.customer.firstName} ${invoice.customer.lastName}`}
                           </span>
                         </div>

@@ -27,7 +27,7 @@ interface Booking {
   address: string;
   totalPrice: number;
   status: string;
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -152,7 +152,7 @@ export default function ReviewPage({
   }
 
   // Check if user is the customer
-  if (booking.cleaner.id === session?.user?.id) {
+  if (booking.worker.id === session?.user?.id) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -191,7 +191,7 @@ export default function ReviewPage({
     );
   }
 
-  const cleanerInitials = `${booking.cleaner.firstName[0]}${booking.cleaner.lastName[0]}`;
+  const workerInitials = `${booking.worker.firstName[0]}${booking.worker.lastName[0]}`;
 
   if (isSubmitted) {
     return (
@@ -215,14 +215,14 @@ export default function ReviewPage({
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="h-14 w-14">
-                    <AvatarImage src={booking.cleaner.avatar || undefined} />
+                    <AvatarImage src={booking.worker.avatar || undefined} />
                     <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white text-lg">
-                      {cleanerInitials}
+                      {workerInitials}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <h3 className="font-semibold text-lg">
-                      {booking.cleaner.firstName} {booking.cleaner.lastName}
+                      {booking.worker.firstName} {booking.worker.lastName}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {t(`cleaner.services.${booking.service.name}` as Parameters<typeof t>[0])}
@@ -255,7 +255,7 @@ export default function ReviewPage({
                   View My Bookings
                 </Button>
               </Link>
-              <Link href={`/worker-profile/${booking.cleaner.id}`}>
+              <Link href={`/worker-profile/${booking.worker.id}`}>
                 <Button size="lg" variant="outline">
                   View Worker Profile
                 </Button>
@@ -284,14 +284,14 @@ export default function ReviewPage({
               {/* Worker Info */}
               <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={booking.cleaner.avatar || undefined} />
+                  <AvatarImage src={booking.worker.avatar || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white text-xl">
-                    {cleanerInitials}
+                    {workerInitials}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-semibold text-lg">
-                    {booking.cleaner.firstName} {booking.cleaner.lastName}
+                    {booking.worker.firstName} {booking.worker.lastName}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {t(`cleaner.services.${booking.service.name}` as Parameters<typeof t>[0])} •{" "}

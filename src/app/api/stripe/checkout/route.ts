@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       where: { id: bookingId },
       include: {
         customer: true,
-        cleaner: true,
+        worker: true,
         payment: true,
       },
     });
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       cancelUrl,
       metadata: {
         customerId: booking.customerId,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
       },
     });
 
@@ -95,9 +95,9 @@ export async function POST(request: NextRequest) {
           amount: fees.customerTotal,
           bookingAmount: booking.totalPrice,
           customerFee: fees.customerFixedFee + fees.customerPercentageFee,
-          cleanerFee: fees.workerFixedFee + fees.workerPercentageFee,
+          workerFee: fees.workerFixedFee + fees.workerPercentageFee,
           platformFee: fees.platformTotal,
-          cleanerPayout: fees.workerReceives,
+          workerPayout: fees.workerReceives,
           currency,
           status: "PROCESSING",
         },
@@ -111,9 +111,9 @@ export async function POST(request: NextRequest) {
           amount: fees.customerTotal,
           bookingAmount: booking.totalPrice,
           customerFee: fees.customerFixedFee + fees.customerPercentageFee,
-          cleanerFee: fees.workerFixedFee + fees.workerPercentageFee,
+          workerFee: fees.workerFixedFee + fees.workerPercentageFee,
           platformFee: fees.platformTotal,
-          cleanerPayout: fees.workerReceives,
+          workerPayout: fees.workerReceives,
           currency,
           status: "PROCESSING",
         },

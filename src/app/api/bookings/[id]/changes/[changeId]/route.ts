@@ -53,7 +53,7 @@ export async function PATCH(
 
     // Only the other party can approve/reject (not the requester)
     const isCustomer = change.booking.customerId === session.user.id;
-    const isWorker = change.booking.cleanerId === session.user.id;
+    const isWorker = change.booking.workerId === session.user.id;
     const isRequester = change.requesterId === session.user.id;
 
     if (!isCustomer && !isWorker) {
@@ -125,7 +125,7 @@ export async function GET(
           select: {
             id: true,
             customerId: true,
-            cleanerId: true,
+            workerId: true,
             scheduledDate: true,
             scheduledTime: true,
           },
@@ -164,7 +164,7 @@ export async function GET(
     // Only customer or worker can view
     if (
       change.booking.customerId !== session.user.id &&
-      change.booking.cleanerId !== session.user.id
+      change.booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

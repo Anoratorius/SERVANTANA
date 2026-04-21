@@ -196,7 +196,7 @@ export async function GET(
             avatar: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,

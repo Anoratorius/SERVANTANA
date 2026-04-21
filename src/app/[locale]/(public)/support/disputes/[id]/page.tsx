@@ -70,7 +70,7 @@ interface Dispute {
     service: { name: string };
   };
   customer: { id: string; firstName: string; lastName: string; avatar: string | null };
-  cleaner: { id: string; firstName: string; lastName: string; avatar: string | null };
+  worker: { id: string; firstName: string; lastName: string; avatar: string | null };
   resolvedBy: { firstName: string; lastName: string } | null;
   messages: Message[];
   evidence: Evidence[];

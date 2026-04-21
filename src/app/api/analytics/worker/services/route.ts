@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     // Get bookings by service
     const bookings = await prisma.booking.findMany({
       where: {
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         createdAt: { gte: start, lte: end },
       },
       include: {

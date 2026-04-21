@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             reminderPreference: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       // Process reminders for both customer and worker
       const users = [
         { user: booking.customer, role: "customer" as const },
-        { user: booking.cleaner, role: "cleaner" as const },
+        { user: booking.worker, role: "worker" as const },
       ];
 
       for (const { user, role } of users) {
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
           if (alreadySent) continue;
 
           // Send the reminder
-          const otherUser = role === "customer" ? booking.cleaner : booking.customer;
+          const otherUser = role === "customer" ? booking.worker : booking.customer;
           const formattedDate = bookingDateTime.toLocaleDateString();
           const formattedTime = booking.scheduledTime;
 

@@ -108,7 +108,7 @@ export default function BookingPage({
           return;
         }
         const data = await response.json();
-        setWorker(data.cleaner);
+        setWorker(data.worker);
       } catch {
         setError("Failed to load worker");
       } finally {
@@ -176,7 +176,7 @@ export default function BookingPage({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          cleanerId: id,
+          workerId: id,
           scheduledDate: selectedDate,
           scheduledTime: selectedTime,
           duration: selectedDuration * 60,

@@ -49,7 +49,7 @@ interface Booking {
     lastName: string;
     phone: string | null;
   };
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -62,7 +62,7 @@ interface Booking {
 
 interface TrackingData {
   trackingActive: boolean;
-  cleanerLocation: {
+  workerLocation: {
     latitude: number;
     longitude: number;
     lastUpdate: string;
@@ -74,7 +74,7 @@ interface TrackingData {
   };
   estimatedArrival: string | null;
   distanceKm: number | null;
-  cleanerName: string;
+  workerName: string;
   status: string;
 }
 
@@ -98,7 +98,7 @@ export default function BookingDetailPage() {
   const [watchId, setWatchId] = useState<number | null>(null);
 
   const bookingId = params.id as string;
-  const isCleaner = session?.user?.id === booking?.cleaner.id;
+  const isWorker = session?.user?.id === booking?.worker.id;
   const isCustomer = session?.user?.id === booking?.customer.id;
 
   // Fetch booking details
@@ -263,7 +263,7 @@ export default function BookingDetailPage() {
     );
   }
 
-  const otherUser = isCleaner ? booking.customer : booking.cleaner;
+  const otherUser = isWorker ? booking.customer : booking.worker;
   const dateObj = new Date(booking.scheduledDate);
 
   return (
@@ -344,7 +344,7 @@ export default function BookingDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {isCleaner ? t("booking.customer") : t("booking.worker")}
+                  {isWorker ? t("booking.customer") : t("booking.worker")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -384,7 +384,7 @@ export default function BookingDetailPage() {
               </CardHeader>
               <CardContent>
                 {/* Cleaner controls */}
-                {isCleaner && (
+                {isWorker && (
                   <div className="space-y-4">
                     <p className="text-muted-foreground">
                       {t("tracking.workerDescription")}
@@ -439,7 +439,7 @@ export default function BookingDetailPage() {
                         <div className="flex items-center gap-2 text-green-600">
                           <Car className="h-5 w-5" />
                           <span className="font-medium">
-                            {t("tracking.workerEnRoute", { name: tracking.cleanerName })}
+                            {t("tracking.workerEnRoute", { name: tracking.workerName })}
                           </span>
                         </div>
 
@@ -476,10 +476,10 @@ export default function BookingDetailPage() {
                           )}
                         </div>
 
-                        {tracking.cleanerLocation?.lastUpdate && (
+                        {tracking.workerLocation?.lastUpdate && (
                           <p className="text-sm text-muted-foreground">
                             {t("tracking.lastUpdate")}:{" "}
-                            {new Date(tracking.cleanerLocation.lastUpdate).toLocaleTimeString()}
+                            {new Date(tracking.workerLocation.lastUpdate).toLocaleTimeString()}
                           </p>
                         )}
                       </>
@@ -497,7 +497,7 @@ export default function BookingDetailPage() {
           )}
 
           {/* Smart Lock Access - For cleaners on confirmed/in-progress bookings */}
-          {isCleaner && ["CONFIRMED", "IN_PROGRESS"].includes(booking.status) && (
+          {isWorker && ["CONFIRMED", "IN_PROGRESS"].includes(booking.status) && (
             <div className="mt-6">
               <SmartLockAccess bookingId={bookingId} />
             </div>
@@ -508,7 +508,7 @@ export default function BookingDetailPage() {
             <div className="mt-6">
               <BookingTeam
                 bookingId={bookingId}
-                isLeadCleaner={isCleaner}
+                isLeadWorker={isWorker}
                 teamSize={booking.teamSize}
               />
             </div>
@@ -530,7 +530,7 @@ export default function BookingDetailPage() {
                   {!booking.tipAmount && (
                     <TipDialog
                       bookingId={bookingId}
-                      cleanerName={`${booking.cleaner.firstName} ${booking.cleaner.lastName}`}
+                      workerName={`${booking.worker.firstName} ${booking.worker.lastName}`}
                       totalPrice={booking.totalPrice}
                       onTipComplete={() => {
                         // Refresh booking data
@@ -544,7 +544,7 @@ export default function BookingDetailPage() {
           )}
 
           {/* Customer Review Section - For cleaners on completed bookings */}
-          {booking.status === "COMPLETED" && isCleaner && (
+          {booking.status === "COMPLETED" && isWorker && (
             <Card className="mt-6">
               <CardContent className="p-6">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">

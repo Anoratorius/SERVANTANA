@@ -30,12 +30,12 @@ interface Service {
   isSpecialty?: boolean;
 }
 
-interface CleanerService {
+interface WorkerService {
   customPrice: number | null;
   service: Service;
 }
 
-interface CleanerProfile {
+interface WorkerProfileData {
   id: string;
   bio: string | null;
   hourlyRate: number;
@@ -49,15 +49,15 @@ interface CleanerProfile {
   state: string | null;
   averageRating: number;
   totalBookings: number;
-  services: CleanerService[];
+  services: WorkerService[];
 }
 
-interface Cleaner {
+interface Worker {
   id: string;
   firstName: string;
   lastName: string;
   avatar: string | null;
-  workerProfile: CleanerProfile | null;
+  workerProfile: WorkerProfileData | null;
 }
 
 function SearchContent() {
@@ -65,7 +65,7 @@ function SearchContent() {
   const locale = useLocale();
   const searchParams = useSearchParams();
 
-  const [cleaners, setCleaners] = useState<Cleaner[]>([]);
+  const [workers, setWorkers] = useState<Worker[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -130,9 +130,9 @@ function SearchContent() {
 
       const response = await fetch(`/api/workers?${params.toString()}`);
       const data = await response.json();
-      setCleaners(data.cleaners || []);
+      setWorkers(data.workers || []);
     } catch (error) {
-      console.error("Error fetching cleaners:", error);
+      console.error("Error fetching workers:", error);
     } finally {
       setIsLoading(false);
     }
@@ -206,10 +206,10 @@ function SearchContent() {
             {isLoading ? (
               <div className="flex flex-col items-center gap-2.5 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <CleanerCardSkeleton key={i} />
+                  <WorkerCardSkeleton key={i} />
                 ))}
               </div>
-            ) : cleaners.length === 0 ? (
+            ) : workers.length === 0 ? (
               <div className="text-center py-6 md:py-16">
                 <Search className="h-8 w-8 md:h-14 md:w-14 mx-auto text-muted-foreground mb-2 md:mb-5" />
                 <h2 className="text-base md:text-2xl font-semibold mb-1 md:mb-2">{t("customer.search.noResults")}</h2>
@@ -218,11 +218,11 @@ function SearchContent() {
             ) : (
               <>
                 <p className="text-xs md:text-base text-muted-foreground mb-2 md:mb-6 text-center">
-                  {cleaners.length} {t("customer.search.results")}
+                  {workers.length} {t("customer.search.results")}
                 </p>
                 <div className="flex flex-col items-center gap-2.5 w-full md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
-                  {cleaners.map((cleaner) => (
-                    <CleanerCard key={cleaner.id} cleaner={cleaner} t={t} locale={locale} />
+                  {workers.map((worker) => (
+                    <WorkerCard key={worker.id} worker={worker} t={t} locale={locale} />
                   ))}
                 </div>
               </>
@@ -236,12 +236,12 @@ function SearchContent() {
   );
 }
 
-function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<typeof useTranslations>; locale: string }) {
-  const profile = cleaner.workerProfile;
+function WorkerCard({ worker, t, locale }: { worker: Worker; t: ReturnType<typeof useTranslations>; locale: string }) {
+  const profile = worker.workerProfile;
   const { formatPricePerHour } = useCurrency();
   if (!profile) return null;
 
-  const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
+  const initials = `${worker.firstName[0]}${worker.lastName[0]}`;
 
   return (
     <Card className="hover:shadow-lg transition-shadow overflow-hidden border-t-[3px] md:border-t-4 border-t-blue-500 w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[220px] md:h-[340px]">
@@ -249,13 +249,13 @@ function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<t
         {/* Top: Avatar and info */}
         <div className="flex flex-col items-center text-center">
           <Avatar className="h-8 w-8 md:h-12 md:w-12 ring-2 ring-blue-100">
-            <AvatarImage src={cleaner.avatar || undefined} />
+            <AvatarImage src={worker.avatar || undefined} />
             <AvatarFallback className="text-xs md:text-base bg-gradient-to-br from-blue-500 to-green-500 text-white">{initials}</AvatarFallback>
           </Avatar>
           <div className="mt-1 md:mt-2 w-full">
             <div className="flex items-center justify-center gap-0.5 md:gap-1">
               <h3 className="font-semibold text-[10px] md:text-sm">
-                {cleaner.firstName} {cleaner.lastName}
+                {worker.firstName} {worker.lastName}
               </h3>
               {profile.verified && (
                 <CheckCircle className="h-2 w-2 md:h-3.5 md:w-3.5 text-blue-500 flex-shrink-0" />
@@ -299,7 +299,7 @@ function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<t
           <div className="pt-1 md:pt-2 border-t text-center">
             <span className="text-sm md:text-xl font-bold text-blue-600">{formatPricePerHour(profile.hourlyRate, locale)}</span>
           </div>
-          <Link href={`/worker-profile/${cleaner.id}`} className="block mt-1 md:mt-2">
+          <Link href={`/worker-profile/${worker.id}`} className="block mt-1 md:mt-2">
             <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[9px] md:text-sm h-6 md:h-9">{t("worker.profile.bookNow")}</Button>
           </Link>
         </div>
@@ -308,7 +308,7 @@ function CleanerCard({ cleaner, t, locale }: { cleaner: Cleaner; t: ReturnType<t
   );
 }
 
-function CleanerCardSkeleton() {
+function WorkerCardSkeleton() {
   return (
     <Card className="w-[76vw] max-w-[260px] md:w-full md:max-w-none h-[220px] md:h-[340px]">
       <CardContent className="p-2 md:p-5 h-full flex flex-col justify-between">
@@ -364,7 +364,7 @@ function SearchPageSkeleton() {
           <div className="container mx-auto px-2 md:px-4">
             <div className="flex flex-col items-center gap-2.5 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <CleanerCardSkeleton key={i} />
+                <WorkerCardSkeleton key={i} />
               ))}
             </div>
           </div>

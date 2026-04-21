@@ -123,7 +123,7 @@ export default function WorkerProfilePage({
           return;
         }
         const data = await response.json();
-        setWorker(data.cleaner);
+        setWorker(data.worker);
       } catch {
         setError("Failed to load worker profile");
       } finally {
@@ -137,7 +137,7 @@ export default function WorkerProfilePage({
     async function checkFavorite() {
       if (!session?.user?.id) return;
       try {
-        const response = await fetch(`/api/favorites/check?cleanerId=${id}`);
+        const response = await fetch(`/api/favorites/check?workerId=${id}`);
         if (response.ok) {
           const data = await response.json();
           setIsFavorite(data.isFavorite);
@@ -158,7 +158,7 @@ export default function WorkerProfilePage({
     setIsFavoriteLoading(true);
     try {
       if (isFavorite) {
-        const response = await fetch(`/api/favorites?cleanerId=${id}`, {
+        const response = await fetch(`/api/favorites?workerId=${id}`, {
           method: "DELETE",
         });
         if (response.ok) {
@@ -169,7 +169,7 @@ export default function WorkerProfilePage({
         const response = await fetch("/api/favorites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cleanerId: id }),
+          body: JSON.stringify({ workerId: id }),
         });
         if (response.ok) {
           setIsFavorite(true);

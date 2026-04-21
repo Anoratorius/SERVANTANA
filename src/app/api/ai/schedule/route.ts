@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-        bookingsAsCleaner: {
+        bookingsAsWorker: {
           where: {
             scheduledDate: { gte: start },
             status: { in: ["PENDING", "CONFIRMED", "IN_PROGRESS"] },
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
           if (hour < startHour || hour + (duration / 60) > endHour) return false;
 
           // Check for conflicting bookings
-          const hasConflict = worker.bookingsAsCleaner.some(booking => {
+          const hasConflict = worker.bookingsAsWorker.some(booking => {
             const bookingDate = new Date(booking.scheduledDate).toISOString().split("T")[0];
             if (bookingDate !== dateStr) return false;
 

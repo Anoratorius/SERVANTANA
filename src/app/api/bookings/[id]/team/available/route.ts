@@ -18,7 +18,7 @@ export async function GET(
     const booking = await prisma.booking.findUnique({
       where: { id },
       select: {
-        cleanerId: true,
+        workerId: true,
         serviceId: true,
         scheduledDate: true,
         scheduledTime: true,
@@ -26,7 +26,7 @@ export async function GET(
         latitude: true,
         longitude: true,
         teamMembers: {
-          select: { cleanerId: true },
+          select: { workerId: true },
         },
       },
     });
@@ -36,7 +36,7 @@ export async function GET(
     }
 
     // Only lead worker can search for team members
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only lead worker can search for team members" },
         { status: 403 }
@@ -49,8 +49,8 @@ export async function GET(
 
     // Get existing team member IDs
     const existingMemberIds = [
-      booking.cleanerId,
-      ...booking.teamMembers.map((m) => m.cleanerId),
+      booking.workerId,
+      ...booking.teamMembers.map((m) => m.workerId),
     ];
 
     // Find workers who:
@@ -79,7 +79,7 @@ export async function GET(
           },
         },
         // Exclude workers with conflicting bookings
-        bookingsAsCleaner: {
+        bookingsAsWorker: {
           none: {
             scheduledDate: booking.scheduledDate,
             scheduledTime: booking.scheduledTime,

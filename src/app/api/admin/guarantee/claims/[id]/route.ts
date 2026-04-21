@@ -50,7 +50,7 @@ export async function GET(
             createdAt: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -160,7 +160,7 @@ export async function PATCH(
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,

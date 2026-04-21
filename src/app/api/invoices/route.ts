@@ -14,7 +14,7 @@ export async function GET() {
       where: {
         OR: [
           { customerId: session.user.id },
-          { cleanerId: session.user.id },
+          { workerId: session.user.id },
         ],
       },
       orderBy: { createdAt: "desc" },
@@ -25,7 +25,7 @@ export async function GET() {
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,

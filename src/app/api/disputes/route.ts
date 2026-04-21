@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
 
     // Only customer or worker can create dispute
     const isCustomer = booking.customerId === session.user.id;
-    const isCleaner = booking.cleanerId === session.user.id;
+    const isWorker = booking.workerId === session.user.id;
 
-    if (!isCustomer && !isCleaner) {
+    if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       data: {
         bookingId,
         customerId: booking.customerId,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
         type,
         subject,
         description,
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = {
       OR: [
         { customerId: session.user.id },
-        { cleanerId: session.user.id },
+        { workerId: session.user.id },
       ],
     };
 
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,

@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     // Check if document of this type already exists (pending or verified)
     const existingDoc = await prisma.workerDocument.findFirst({
       where: {
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         type: type as "GOVERNMENT_ID" | "DRIVERS_LICENSE" | "PASSPORT" | "BUSINESS_LICENSE" | "INSURANCE_CERTIFICATE" | "BACKGROUND_CHECK" | "OTHER",
         status: { in: ["PENDING", "VERIFIED"] },
       },
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     // Save to database
     const document = await prisma.workerDocument.create({
       data: {
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         type: type as "GOVERNMENT_ID" | "DRIVERS_LICENSE" | "PASSPORT" | "BUSINESS_LICENSE" | "INSURANCE_CERTIFICATE" | "BACKGROUND_CHECK" | "OTHER",
         fileUrl: uploadResult.url,
         fileName: file.name,
@@ -144,7 +144,7 @@ export async function GET() {
     }
 
     const documents = await prisma.workerDocument.findMany({
-      where: { cleanerId: session.user.id },
+      where: { workerId: session.user.id },
       orderBy: { createdAt: "desc" },
       include: {
         verifiedBy: {

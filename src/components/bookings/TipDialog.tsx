@@ -15,9 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Heart, Loader2, DollarSign, Check } from "lucide-react";
 import { toast } from "sonner";
 
-interface TipDialogProps {
+export interface TipDialogProps {
   bookingId: string;
-  cleanerName: string;
+  workerName: string;
   totalPrice: number;
   onTipComplete?: (amount: number) => void;
 }
@@ -26,7 +26,7 @@ const TIP_PRESETS = [5, 10, 15, 20];
 
 export function TipDialog({
   bookingId,
-  cleanerName,
+  workerName,
   totalPrice,
   onTipComplete,
 }: TipDialogProps) {
@@ -104,7 +104,7 @@ export function TipDialog({
             {t("title")}
           </DialogTitle>
           <DialogDescription>
-            {t("description", { name: cleanerName })}
+            {t("description", { name: workerName })}
           </DialogDescription>
         </DialogHeader>
 

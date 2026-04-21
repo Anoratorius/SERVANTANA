@@ -98,7 +98,7 @@ export async function syncBookingToCalendar(
     include: {
       service: true,
       customer: { select: { firstName: true, lastName: true } },
-      cleaner: { select: { firstName: true, lastName: true } },
+      worker: { select: { firstName: true, lastName: true } },
     },
   });
 

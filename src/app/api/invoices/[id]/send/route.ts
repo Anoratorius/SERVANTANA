@@ -49,7 +49,7 @@ export async function POST(
             phone: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,
@@ -78,7 +78,7 @@ export async function POST(
     }
 
     // Only worker or admin can send invoices
-    const isWorker = invoice.cleanerId === session.user.id;
+    const isWorker = invoice.workerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";
 
     if (!isWorker && !isAdmin) {
@@ -89,7 +89,7 @@ export async function POST(
     }
 
     // Build invoice data for PDF
-    const workerProfile = invoice.cleaner.workerProfile;
+    const workerProfile = invoice.worker.workerProfile;
     const workerAddress = workerProfile
       ? [workerProfile.address, workerProfile.city, workerProfile.state]
           .filter(Boolean)
@@ -105,9 +105,9 @@ export async function POST(
         phone: invoice.customer.phone || undefined,
       },
       worker: {
-        name: `${invoice.cleaner.firstName} ${invoice.cleaner.lastName}`,
-        email: invoice.cleaner.email,
-        phone: invoice.cleaner.phone || undefined,
+        name: `${invoice.worker.firstName} ${invoice.worker.lastName}`,
+        email: invoice.worker.email,
+        phone: invoice.worker.phone || undefined,
         address: workerAddress,
       },
       service: {
@@ -178,7 +178,7 @@ export async function POST(
 
             <p style="margin-bottom: 20px;">
               Please find attached your invoice for the service provided by
-              <strong>${invoice.cleaner.firstName} ${invoice.cleaner.lastName}</strong>.
+              <strong>${invoice.worker.firstName} ${invoice.worker.lastName}</strong>.
             </p>
 
             <p style="margin-bottom: 20px;">

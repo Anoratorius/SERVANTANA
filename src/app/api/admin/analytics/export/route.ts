@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
           include: {
             service: { select: { name: true } },
             customer: { select: { firstName: true, lastName: true } },
-            cleaner: { select: { firstName: true, lastName: true } },
+            worker: { select: { firstName: true, lastName: true } },
           },
           orderBy: { scheduledDate: "desc" },
         });
@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
           totalPrice: b.totalPrice,
           serviceName: b.service?.name || "N/A",
           customerName: `${b.customer.firstName || ""} ${b.customer.lastName || ""}`.trim() || "N/A",
-          workerName: b.cleaner
-            ? `${b.cleaner.firstName || ""} ${b.cleaner.lastName || ""}`.trim() || "N/A"
+          workerName: b.worker
+            ? `${b.worker.firstName || ""} ${b.worker.lastName || ""}`.trim() || "N/A"
             : "Unassigned",
         }));
 

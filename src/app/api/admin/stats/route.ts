@@ -78,7 +78,7 @@ export async function GET() {
           status: true,
           totalPrice: true,
           customer: { select: { firstName: true, lastName: true } },
-          cleaner: { select: { firstName: true, lastName: true } },
+          worker: { select: { firstName: true, lastName: true } },
           service: { select: { name: true } },
         },
       }),

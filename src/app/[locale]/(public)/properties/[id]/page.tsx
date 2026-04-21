@@ -44,7 +44,7 @@ interface Property {
     status: string;
     totalPrice: number;
     service: { name: string };
-    cleaner: { firstName: string; lastName: string };
+    worker: { firstName: string; lastName: string };
   }[];
   _count: { bookings: number };
 }
@@ -248,7 +248,7 @@ export default function PropertyDetailPage() {
                             at {booking.scheduledTime}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {booking.cleaner.firstName} {booking.cleaner.lastName}
+                            {booking.worker.firstName} {booking.worker.lastName}
                           </p>
                         </div>
                         <div className="text-right">

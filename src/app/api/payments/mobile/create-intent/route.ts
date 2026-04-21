@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
             stripeCustomerId: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -112,9 +112,9 @@ export async function POST(request: NextRequest) {
       metadata: {
         bookingId: booking.id,
         customerId: booking.customerId,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
       },
-      description: `${booking.service?.name || "Service"} - Booking with ${booking.cleaner?.firstName} ${booking.cleaner?.lastName}`,
+      description: `${booking.service?.name || "Service"} - Booking with ${booking.worker?.firstName} ${booking.worker?.lastName}`,
     });
 
     // Create or update payment record

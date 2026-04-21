@@ -34,7 +34,7 @@ export async function GET(
     where: { id: bookingId },
     select: {
       customerId: true,
-      cleanerId: true,
+      workerId: true,
       status: true,
     },
   });
@@ -46,7 +46,7 @@ export async function GET(
   // Only customer or worker can track
   if (
     booking.customerId !== session.user.id &&
-    booking.cleanerId !== session.user.id
+    booking.workerId !== session.user.id
   ) {
     return new Response("Unauthorized", { status: 401 });
   }

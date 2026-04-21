@@ -39,7 +39,7 @@ interface Booking {
     email: string;
     phone: string | null;
   };
-  cleaner: {
+  worker: {
     firstName: string;
     lastName: string;
     email: string;
@@ -178,21 +178,21 @@ export default function InvoiceDetailPage() {
                 {booking && (
                   <div>
                     <p className="font-medium">
-                      {booking.cleaner.firstName} {booking.cleaner.lastName}
+                      {booking.worker.firstName} {booking.worker.lastName}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {booking.cleaner.email}
+                      {booking.worker.email}
                     </p>
-                    {booking.cleaner.phone && (
+                    {booking.worker.phone && (
                       <p className="text-sm text-muted-foreground">
-                        {booking.cleaner.phone}
+                        {booking.worker.phone}
                       </p>
                     )}
-                    {booking.cleaner.workerProfile?.address && (
+                    {booking.worker.workerProfile?.address && (
                       <p className="text-sm text-muted-foreground">
-                        {booking.cleaner.workerProfile.address}
-                        {booking.cleaner.workerProfile.city &&
-                          `, ${booking.cleaner.workerProfile.city}`}
+                        {booking.worker.workerProfile.address}
+                        {booking.worker.workerProfile.city &&
+                          `, ${booking.worker.workerProfile.city}`}
                       </p>
                     )}
                   </div>

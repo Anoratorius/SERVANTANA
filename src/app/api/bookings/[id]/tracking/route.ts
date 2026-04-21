@@ -55,17 +55,17 @@ export async function GET(
       where: { id },
       select: {
         customerId: true,
-        cleanerId: true,
+        workerId: true,
         trackingActive: true,
-        cleanerLatitude: true,
-        cleanerLongitude: true,
+        workerLatitude: true,
+        workerLongitude: true,
         lastLocationUpdate: true,
         estimatedArrival: true,
         latitude: true,
         longitude: true,
         address: true,
         status: true,
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,
@@ -81,7 +81,7 @@ export async function GET(
     // Only customer or worker can view tracking
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -90,15 +90,15 @@ export async function GET(
     let distanceKm: number | null = null;
     if (
       booking.trackingActive &&
-      booking.cleanerLatitude &&
-      booking.cleanerLongitude &&
+      booking.workerLatitude &&
+      booking.workerLongitude &&
       booking.latitude &&
       booking.longitude
     ) {
       distanceKm = Math.round(
         calculateDistance(
-          booking.cleanerLatitude,
-          booking.cleanerLongitude,
+          booking.workerLatitude,
+          booking.workerLongitude,
           booking.latitude,
           booking.longitude
         ) * 10
@@ -109,8 +109,8 @@ export async function GET(
       trackingActive: booking.trackingActive,
       workerLocation: booking.trackingActive
         ? {
-            latitude: booking.cleanerLatitude,
-            longitude: booking.cleanerLongitude,
+            latitude: booking.workerLatitude,
+            longitude: booking.workerLongitude,
             lastUpdate: booking.lastLocationUpdate,
           }
         : null,
@@ -121,7 +121,7 @@ export async function GET(
       },
       estimatedArrival: booking.estimatedArrival,
       distanceKm,
-      cleanerName: `${booking.cleaner.firstName} ${booking.cleaner.lastName}`,
+      workerName: `${booking.worker.firstName} ${booking.worker.lastName}`,
       status: booking.status,
     });
   } catch (error) {
@@ -151,7 +151,7 @@ export async function POST(
     const booking = await prisma.booking.findUnique({
       where: { id },
       select: {
-        cleanerId: true,
+        workerId: true,
         latitude: true,
         longitude: true,
         status: true,
@@ -163,7 +163,7 @@ export async function POST(
     }
 
     // Only worker can update tracking
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only worker can update tracking" },
         { status: 403 }
@@ -191,8 +191,8 @@ export async function POST(
         where: { id },
         data: {
           trackingActive: true,
-          cleanerLatitude: latitude,
-          cleanerLongitude: longitude,
+          workerLatitude: latitude,
+          workerLongitude: longitude,
           lastLocationUpdate: new Date(),
           estimatedArrival,
         },
@@ -224,8 +224,8 @@ export async function POST(
         where: { id },
         data: {
           trackingActive: false,
-          cleanerLatitude: null,
-          cleanerLongitude: null,
+          workerLatitude: null,
+          workerLongitude: null,
           lastLocationUpdate: null,
           estimatedArrival: null,
         },
@@ -257,8 +257,8 @@ export async function POST(
       await prisma.booking.update({
         where: { id },
         data: {
-          cleanerLatitude: latitude,
-          cleanerLongitude: longitude,
+          workerLatitude: latitude,
+          workerLongitude: longitude,
           lastLocationUpdate: new Date(),
           estimatedArrival,
         },

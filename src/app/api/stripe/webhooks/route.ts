@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { handleSubscriptionPayment } from "@/lib/worker-subscription";
 
 export const runtime = "nodejs";
 
@@ -93,6 +94,12 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
+  // Check if this is a worker subscription payment
+  if (session.metadata?.type === "worker_subscription") {
+    await handleWorkerSubscriptionPayment(session);
+    return;
+  }
+
   const bookingId = session.metadata?.bookingId;
   if (!bookingId) {
     console.error("No bookingId in checkout session metadata");
@@ -124,7 +131,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   });
 
   // Create earning record for worker (status PENDING until payout day)
-  if (payment.cleanerPayout) {
+  if (payment.workerPayout) {
     // Calculate next payout date (1st or 15th of month)
     const now = new Date();
     let payoutDate: Date;
@@ -140,9 +147,9 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     await prisma.earning.upsert({
       where: { bookingId },
       create: {
-        cleanerId: payment.booking.cleanerId,
+        workerId: payment.booking.workerId,
         bookingId,
-        amount: payment.cleanerPayout,
+        amount: payment.workerPayout,
         platformFee: payment.platformFee || 0,
         grossAmount: payment.bookingAmount || payment.amount,
         currency: payment.currency,
@@ -150,7 +157,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
         availableAt: payoutDate,
       },
       update: {
-        amount: payment.cleanerPayout,
+        amount: payment.workerPayout,
         platformFee: payment.platformFee || 0,
         status: "PENDING",
         availableAt: payoutDate,
@@ -260,4 +267,20 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
   }
 
   console.log(`Charge refunded: ${charge.id}`);
+}
+
+async function handleWorkerSubscriptionPayment(session: Stripe.Checkout.Session) {
+  const workerId = session.metadata?.workerId;
+  if (!workerId) {
+    console.error("No workerId in worker subscription session metadata");
+    return;
+  }
+
+  const amount = (session.amount_total || 0) / 100;
+  const currency = session.currency?.toUpperCase() || "EUR";
+  const transactionId = session.payment_intent as string || session.id;
+
+  await handleSubscriptionPayment(workerId, transactionId, amount, currency);
+
+  console.log(`Worker subscription payment completed for worker ${workerId}`);
 }

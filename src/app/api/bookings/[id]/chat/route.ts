@@ -20,7 +20,7 @@ export async function GET(
       where: { id },
       select: {
         customerId: true,
-        cleanerId: true,
+        workerId: true,
         status: true,
       },
     });
@@ -32,7 +32,7 @@ export async function GET(
     // Only customer or worker can view chat
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -122,7 +122,7 @@ export async function POST(
       select: {
         id: true,
         customerId: true,
-        cleanerId: true,
+        workerId: true,
         status: true,
         service: {
           select: { name: true },
@@ -137,7 +137,7 @@ export async function POST(
     // Only customer or worker can send messages
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -153,7 +153,7 @@ export async function POST(
     // Determine receiver (the other party)
     const receiverId =
       session.user.id === booking.customerId
-        ? booking.cleanerId
+        ? booking.workerId
         : booking.customerId;
 
     // Create message with full details for SSE event

@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Only worker can sync their bookings
-      if (booking.cleanerId !== session.user.id) {
+      if (booking.workerId !== session.user.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       // Sync all upcoming bookings
       const bookings = await prisma.booking.findMany({
         where: {
-          cleanerId: session.user.id,
+          workerId: session.user.id,
           status: { in: ["PENDING", "CONFIRMED"] },
           scheduledDate: { gte: new Date() },
         },

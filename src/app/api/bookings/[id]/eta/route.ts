@@ -45,7 +45,7 @@ export async function POST(
         customer: {
           select: { id: true, firstName: true, email: true },
         },
-        cleaner: {
+        worker: {
           select: { id: true, firstName: true },
         },
       },
@@ -56,7 +56,7 @@ export async function POST(
     }
 
     // Verify the user is the worker for this booking
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only the assigned worker can update ETA" },
         { status: 403 }
@@ -108,8 +108,8 @@ export async function POST(
         status: newBookingStatus,
         etaStatus: status as EtaStatus,
         estimatedArrival: eta ? new Date(eta) : undefined,
-        cleanerLatitude: latitude,
-        cleanerLongitude: longitude,
+        workerLatitude: latitude,
+        workerLongitude: longitude,
         lastLocationUpdate: latitude && longitude ? new Date() : undefined,
         trackingActive: status === "ON_THE_WAY" || status === "ARRIVED",
       },
@@ -123,7 +123,7 @@ export async function POST(
     }
 
     // Send push notification to customer about ETA update
-    const workerName = `${booking.cleaner?.firstName || "Your worker"}`;
+    const workerName = `${booking.worker?.firstName || "Your worker"}`;
     sendNotification(booking.customerId, "BOOKING_ETA_UPDATE", {
       bookingId,
       workerName,
@@ -170,7 +170,7 @@ export async function GET(
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -197,7 +197,7 @@ export async function GET(
     // Verify the user is the customer or worker for this booking
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json(
         { error: "Not authorized to view this booking" },
@@ -207,15 +207,15 @@ export async function GET(
 
     // Use real-time cleaner location from booking if available, otherwise fall back to profile
     const workerLat =
-      booking.cleanerLatitude ||
-      booking.cleaner?.workerProfile?.latitude ||
-      booking.cleaner?.latitude;
+      booking.workerLatitude ||
+      booking.worker?.workerProfile?.latitude ||
+      booking.worker?.latitude;
     const workerLng =
-      booking.cleanerLongitude ||
-      booking.cleaner?.workerProfile?.longitude ||
-      booking.cleaner?.longitude;
+      booking.workerLongitude ||
+      booking.worker?.workerProfile?.longitude ||
+      booking.worker?.longitude;
     const locationLastUpdated =
-      booking.lastLocationUpdate || booking.cleaner?.locationVerifiedAt;
+      booking.lastLocationUpdate || booking.worker?.locationVerifiedAt;
 
     // Calculate distance if both locations available
     let distance = null;
@@ -250,12 +250,12 @@ export async function GET(
         scheduledTime: booking.scheduledTime,
         trackingActive: booking.trackingActive,
       },
-      worker: booking.cleaner
+      worker: booking.worker
         ? {
-            id: booking.cleaner.id,
-            firstName: booking.cleaner.firstName,
-            lastName: booking.cleaner.lastName,
-            avatar: booking.cleaner.avatar,
+            id: booking.worker.id,
+            firstName: booking.worker.firstName,
+            lastName: booking.worker.lastName,
+            avatar: booking.worker.avatar,
             location:
               workerLat && workerLng
                 ? {

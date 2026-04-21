@@ -28,7 +28,7 @@ export async function GET(
             status: true,
             totalPrice: true,
             service: { select: { name: true } },
-            cleaner: { select: { firstName: true, lastName: true } },
+            worker: { select: { firstName: true, lastName: true } },
           },
         },
         _count: { select: { bookings: true } },

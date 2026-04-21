@@ -19,11 +19,11 @@ export async function GET(
       where: { id },
       select: {
         customerId: true,
-        cleanerId: true,
+        workerId: true,
         status: true,
         tipAmount: true,
         tipPaidAt: true,
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,
@@ -39,7 +39,7 @@ export async function GET(
     // Only customer or worker can view tip
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -48,7 +48,7 @@ export async function GET(
       tipAmount: booking.tipAmount,
       tipPaidAt: booking.tipPaidAt,
       hasTipped: !!booking.tipAmount,
-      cleanerName: `${booking.cleaner.firstName} ${booking.cleaner.lastName}`,
+      workerName: `${booking.worker.firstName} ${booking.worker.lastName}`,
       canTip: booking.status === "COMPLETED" && !booking.tipAmount,
     });
   } catch (error) {
@@ -94,15 +94,15 @@ export async function POST(
       where: { id },
       select: {
         customerId: true,
-        cleanerId: true,
+        workerId: true,
         status: true,
         tipAmount: true,
         totalPrice: true,
         teamSize: true,
         teamMembers: {
-          select: { id: true, cleanerId: true },
+          select: { id: true, workerId: true },
         },
-        cleaner: {
+        worker: {
           select: { firstName: true, lastName: true },
         },
       },
@@ -164,7 +164,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: `Thank you for tipping $${amount.toFixed(2)} to ${booking.cleaner.firstName}!`,
+      message: `Thank you for tipping $${amount.toFixed(2)} to ${booking.worker.firstName}!`,
       tipAmount: amount,
     });
   } catch (error) {

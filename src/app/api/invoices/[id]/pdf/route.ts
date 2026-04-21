@@ -36,7 +36,7 @@ export async function GET(
             phone: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             firstName: true,
             lastName: true,
@@ -66,7 +66,7 @@ export async function GET(
 
     // Only customer, worker, or admin can download
     const isCustomer = invoice.customerId === session.user.id;
-    const isWorker = invoice.cleanerId === session.user.id;
+    const isWorker = invoice.workerId === session.user.id;
     const isAdmin = session.user.role === "ADMIN";
 
     if (!isCustomer && !isWorker && !isAdmin) {
@@ -74,7 +74,7 @@ export async function GET(
     }
 
     // Build invoice data for PDF
-    const workerProfile = invoice.cleaner.workerProfile;
+    const workerProfile = invoice.worker.workerProfile;
     const workerAddress = workerProfile
       ? [workerProfile.address, workerProfile.city, workerProfile.state]
           .filter(Boolean)
@@ -90,9 +90,9 @@ export async function GET(
         phone: invoice.customer.phone || undefined,
       },
       worker: {
-        name: `${invoice.cleaner.firstName} ${invoice.cleaner.lastName}`,
-        email: invoice.cleaner.email,
-        phone: invoice.cleaner.phone || undefined,
+        name: `${invoice.worker.firstName} ${invoice.worker.lastName}`,
+        email: invoice.worker.email,
+        phone: invoice.worker.phone || undefined,
         address: workerAddress,
       },
       service: {

@@ -78,16 +78,16 @@ export async function POST(request: NextRequest) {
         status: "COMPLETED",
       },
       select: {
-        cleanerId: true,
+        workerId: true,
         review: { select: { rating: true } },
       },
     });
 
     const previousWorkers = new Map<string, { count: number; avgRating: number }>();
     customerHistory.forEach(booking => {
-      const existing = previousWorkers.get(booking.cleanerId) || { count: 0, avgRating: 0 };
+      const existing = previousWorkers.get(booking.workerId) || { count: 0, avgRating: 0 };
       const rating = booking.review?.rating || 0;
-      previousWorkers.set(booking.cleanerId, {
+      previousWorkers.set(booking.workerId, {
         count: existing.count + 1,
         avgRating: rating > 0 ? (existing.avgRating * existing.count + rating) / (existing.count + 1) : existing.avgRating,
       });
@@ -158,10 +158,10 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-        bookingsAsCleaner: {
+        bookingsAsWorker: {
           select: { status: true },
         },
-        cleanerDocuments: {
+        workerDocuments: {
           where: { status: "VERIFIED" },
           select: { type: true },
         },
@@ -273,9 +273,9 @@ export async function POST(request: NextRequest) {
       factors.preferences = Math.min(prefScore, 100);
 
       // 7. Reliability Score (0-100, based on completion rate)
-      const totalBookings = worker.bookingsAsCleaner.length;
-      const completedBookings = worker.bookingsAsCleaner.filter(b => b.status === "COMPLETED").length;
-      const cancelledBookings = worker.bookingsAsCleaner.filter(b => b.status === "CANCELLED").length;
+      const totalBookings = worker.bookingsAsWorker.length;
+      const completedBookings = worker.bookingsAsWorker.filter(b => b.status === "COMPLETED").length;
+      const cancelledBookings = worker.bookingsAsWorker.filter(b => b.status === "CANCELLED").length;
 
       if (totalBookings > 0) {
         const completionRate = completedBookings / totalBookings;
@@ -290,7 +290,7 @@ export async function POST(request: NextRequest) {
       }
 
       // 8. Verification Score (0-100)
-      const verifiedDocs = worker.cleanerDocuments.length;
+      const verifiedDocs = worker.workerDocuments.length;
       factors.verification = profile.verified ? 100 : Math.min(verifiedDocs * 25, 75);
       if (profile.verified) {
         matchReasons.push("Verified professional");

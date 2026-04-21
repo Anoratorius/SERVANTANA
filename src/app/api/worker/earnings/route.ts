@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     // Get earnings
     const earnings = await prisma.earning.findMany({
       where: {
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         ...(dateFilter ? { createdAt: { gte: dateFilter } } : {}),
         ...(status ? { status } : {}),
       },

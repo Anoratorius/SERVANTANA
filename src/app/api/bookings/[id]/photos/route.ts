@@ -24,7 +24,7 @@ export async function POST(
     }
 
     // Only worker can upload photos
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only the worker can upload photos" },
         { status: 403 }
@@ -140,7 +140,7 @@ export async function GET(
     // Only customer or worker can view photos
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

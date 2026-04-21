@@ -19,11 +19,11 @@ export async function GET(
       where: { id },
       select: {
         customerId: true,
-        cleanerId: true,
+        workerId: true,
         teamSize: true,
         teamMembers: {
           include: {
-            cleaner: {
+            worker: {
               select: {
                 id: true,
                 firstName: true,
@@ -41,7 +41,7 @@ export async function GET(
           },
           orderBy: { isLead: "desc" },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -65,11 +65,11 @@ export async function GET(
 
     // Only customer or team members can view
     const isTeamMember = booking.teamMembers.some(
-      (m) => m.cleanerId === session.user.id
+      (m) => m.workerId === session.user.id
     );
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id &&
+      booking.workerId !== session.user.id &&
       !isTeamMember
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -77,7 +77,7 @@ export async function GET(
 
     return NextResponse.json({
       teamSize: booking.teamSize,
-      leadWorker: booking.cleaner,
+      leadWorker: booking.worker,
       teamMembers: booking.teamMembers,
     });
   } catch (error) {
@@ -102,12 +102,12 @@ export async function POST(
 
     const { id } = await params;
     const body = await request.json();
-    const { action, cleanerId } = body;
+    const { action, workerId } = body;
 
     const booking = await prisma.booking.findUnique({
       where: { id },
       select: {
-        cleanerId: true,
+        workerId: true,
         customerId: true,
         teamSize: true,
         status: true,
@@ -123,7 +123,7 @@ export async function POST(
     // Handle confirmation by team member
     if (action === "confirm") {
       const member = booking.teamMembers.find(
-        (m) => m.cleanerId === session.user.id
+        (m) => m.workerId === session.user.id
       );
       if (!member) {
         return NextResponse.json(
@@ -143,7 +143,7 @@ export async function POST(
     // Handle decline by team member
     if (action === "decline") {
       const member = booking.teamMembers.find(
-        (m) => m.cleanerId === session.user.id
+        (m) => m.workerId === session.user.id
       );
       if (!member) {
         return NextResponse.json(
@@ -160,7 +160,7 @@ export async function POST(
     }
 
     // Only lead worker can add team members
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only lead worker can manage team" },
         { status: 403 }
@@ -173,10 +173,10 @@ export async function POST(
     }
 
     // Add team member
-    if (action === "add" && cleanerId) {
+    if (action === "add" && workerId) {
       // Check if worker exists and is a worker
       const teamWorker = await prisma.user.findFirst({
-        where: { id: cleanerId, role: "WORKER" },
+        where: { id: workerId, role: "WORKER" },
       });
 
       if (!teamWorker) {
@@ -187,8 +187,8 @@ export async function POST(
       }
 
       // Check if already a member
-      const existing = booking.teamMembers.find((m) => m.cleanerId === cleanerId);
-      if (existing || cleanerId === booking.cleanerId) {
+      const existing = booking.teamMembers.find((m) => m.workerId === workerId);
+      if (existing || workerId === booking.workerId) {
         return NextResponse.json(
           { error: "Worker is already on the team" },
           { status: 400 }
@@ -201,12 +201,12 @@ export async function POST(
       const teamMember = await prisma.bookingTeamMember.create({
         data: {
           bookingId: id,
-          cleanerId,
+          workerId,
           isLead: false,
           earnings: earningsPerMember,
         },
         include: {
-          cleaner: {
+          worker: {
             select: {
               id: true,
               firstName: true,
@@ -254,7 +254,7 @@ export async function DELETE(
 
     const booking = await prisma.booking.findUnique({
       where: { id },
-      select: { cleanerId: true },
+      select: { workerId: true },
     });
 
     if (!booking) {
@@ -262,7 +262,7 @@ export async function DELETE(
     }
 
     // Only lead worker can remove members
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only lead worker can remove team members" },
         { status: 403 }

@@ -29,7 +29,7 @@ export async function POST(
         customer: {
           select: { firstName: true, lastName: true },
         },
-        cleaner: {
+        worker: {
           select: { firstName: true, lastName: true },
         },
         service: {
@@ -44,7 +44,7 @@ export async function POST(
 
     // Only customer or worker can cancel
     const isCustomer = booking.customerId === session.user.id;
-    const isWorker = booking.cleanerId === session.user.id;
+    const isWorker = booking.workerId === session.user.id;
 
     if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -93,7 +93,7 @@ export async function POST(
         cancelledAt: new Date(),
         cancellationReason: reason,
         // Track who cancelled
-        ...(isWorker && { cancelledByCleaner: true }),
+        ...(isWorker && { cancelledByWorker: true }),
       },
     });
 
@@ -115,7 +115,7 @@ export async function POST(
     // Notify the other party about the cancellation
     const notificationData = {
       bookingId: id,
-      workerName: `${booking.cleaner.firstName} ${booking.cleaner.lastName}`,
+      workerName: `${booking.worker.firstName} ${booking.worker.lastName}`,
       customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
       serviceName: booking.service?.name || "Service",
       scheduledDate: booking.scheduledDate.toLocaleDateString("en-US", {
@@ -137,7 +137,7 @@ export async function POST(
       }).catch(console.error);
     } else {
       // Customer cancelled - notify worker
-      sendNotification(booking.cleanerId, "BOOKING_CANCELLED", {
+      sendNotification(booking.workerId, "BOOKING_CANCELLED", {
         ...notificationData,
         otherPartyName: notificationData.customerName,
       }, {
@@ -153,7 +153,7 @@ export async function POST(
         reason: refund.reason,
       },
       message: "Booking cancelled successfully",
-      cancelledByCleaner: isWorker,
+      cancelledByWorker: isWorker,
       substituteUrl,
     });
   } catch (error) {
@@ -189,7 +189,7 @@ export async function GET(
     // Only customer or worker can view
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

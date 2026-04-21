@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {
-      cleanerId: session.user.id,
+      workerId: session.user.id,
       scheduledDate: {
         gte: startOfDay,
         lte: endOfDay,

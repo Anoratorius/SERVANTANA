@@ -51,7 +51,7 @@ export async function GET(
             phone: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -78,7 +78,7 @@ export async function GET(
     // Only customer or worker can view invoice
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -98,7 +98,7 @@ export async function GET(
         currency: booking.currency,
         service: booking.service,
         customer: booking.customer,
-        cleaner: booking.cleaner,
+        worker: booking.worker,
       },
     });
   } catch (error) {
@@ -129,7 +129,7 @@ export async function POST(
         invoice: true,
         service: true,
         customer: true,
-        cleaner: {
+        worker: {
           include: {
             workerProfile: {
               select: {
@@ -148,7 +148,7 @@ export async function POST(
     // Only customer or worker can generate invoice
     if (
       booking.customerId !== session.user.id &&
-      booking.cleanerId !== session.user.id
+      booking.workerId !== session.user.id
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -173,7 +173,7 @@ export async function POST(
 
     // Determine country for tax calculation
     // Priority: worker's country > default to Germany
-    const countryCode = booking.cleaner.workerProfile?.country || "DE";
+    const countryCode = booking.worker.workerProfile?.country || "DE";
 
     // Calculate tax based on country
     const invoiceAmounts = calculateInvoiceAmounts(subtotal, tipAmount, countryCode);
@@ -183,7 +183,7 @@ export async function POST(
         invoiceNumber,
         bookingId: booking.id,
         customerId: booking.customerId,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
         subtotal: invoiceAmounts.subtotal,
         tipAmount: invoiceAmounts.tipAmount,
         taxRate: invoiceAmounts.taxRate,

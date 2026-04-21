@@ -10,20 +10,20 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const cleanerId = searchParams.get("cleanerId");
+    const workerId = searchParams.get("workerId") || searchParams.get("cleanerId"); // Support both for backwards compatibility
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
 
-    if (!cleanerId) {
+    if (!workerId) {
       return NextResponse.json(
-        { error: "cleanerId is required" },
+        { error: "workerId is required" },
         { status: 400 }
       );
     }
 
-    // Get cleaner's availability schedule
+    // Get worker's availability schedule
     const workerProfile = await prisma.workerProfile.findUnique({
-      where: { userId: cleanerId },
+      where: { userId: workerId },
       include: {
         availability: {
           where: { isActive: true },
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     const existingBookings = await prisma.booking.findMany({
       where: {
-        cleanerId,
+        workerId,
         status: { in: ["PENDING", "CONFIRMED", "IN_PROGRESS"] },
         scheduledDate: {
           gte: start,

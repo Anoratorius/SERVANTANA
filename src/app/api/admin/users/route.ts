@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
           _count: {
             select: {
               bookingsAsCustomer: true,
-              bookingsAsCleaner: true,
+              bookingsAsWorker: true,
               reviewsGiven: true,
               reviewsReceived: true,
             },

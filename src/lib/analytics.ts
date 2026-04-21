@@ -217,7 +217,7 @@ export async function getWorkerPerformanceScore(workerId: string): Promise<Worke
       reviewsReceived: {
         where: { createdAt: { gte: subMonths(new Date(), 6) } },
       },
-      bookingsAsCleaner: {
+      bookingsAsWorker: {
         where: { createdAt: { gte: subMonths(new Date(), 6) } },
         include: { customer: true },
       },
@@ -235,16 +235,16 @@ export async function getWorkerPerformanceScore(workerId: string): Promise<Worke
   const responseTimeScore = Math.max(0, 100 - (responseTime / 60) * 20); // 5+ hours = 0
 
   // Calculate completion rate (0-100)
-  const completedBookings = worker.bookingsAsCleaner.filter((b) => b.status === "COMPLETED").length;
-  const totalBookings = worker.bookingsAsCleaner.length;
+  const completedBookings = worker.bookingsAsWorker.filter((b) => b.status === "COMPLETED").length;
+  const totalBookings = worker.bookingsAsWorker.length;
   const completionRate = totalBookings > 0 ? (completedBookings / totalBookings) * 100 : 100;
 
   // Calculate cancellation rate (lower is better)
-  const cancelledBookings = worker.bookingsAsCleaner.filter((b) => b.status === "CANCELLED").length;
+  const cancelledBookings = worker.bookingsAsWorker.filter((b) => b.status === "CANCELLED").length;
   const cancellationRate = totalBookings > 0 ? 100 - (cancelledBookings / totalBookings) * 100 : 100;
 
   // Calculate repeat customer rate (0-100)
-  const uniqueCustomers = new Set(worker.bookingsAsCleaner.map((b) => b.customerId)).size;
+  const uniqueCustomers = new Set(worker.bookingsAsWorker.map((b) => b.customerId)).size;
   const repeatCustomers = totalBookings > uniqueCustomers ? totalBookings - uniqueCustomers : 0;
   const repeatCustomerRate = uniqueCustomers > 0 ? (repeatCustomers / (totalBookings)) * 100 : 0;
 

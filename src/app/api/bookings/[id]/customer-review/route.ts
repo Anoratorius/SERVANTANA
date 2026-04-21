@@ -18,7 +18,7 @@ export async function GET(
     const booking = await prisma.booking.findUnique({
       where: { id },
       select: {
-        cleanerId: true,
+        workerId: true,
         customerId: true,
         status: true,
         customerReview: true,
@@ -36,7 +36,7 @@ export async function GET(
     }
 
     // Only worker can view/create customer reviews
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -83,7 +83,7 @@ export async function POST(
     const booking = await prisma.booking.findUnique({
       where: { id },
       select: {
-        cleanerId: true,
+        workerId: true,
         customerId: true,
         status: true,
         customerReview: true,
@@ -95,7 +95,7 @@ export async function POST(
     }
 
     // Only worker can review customer
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json(
         { error: "Only the worker can review the customer" },
         { status: 403 }
@@ -122,7 +122,7 @@ export async function POST(
     const review = await prisma.customerReview.create({
       data: {
         bookingId: id,
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         customerId: booking.customerId,
         punctuality,
         cleanliness,

@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
             currency: booking.currency.toLowerCase(),
             product_data: {
               name: `${booking.service?.name || "Cleaning"} Service`,
-              description: `Booking with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()} at ${booking.scheduledTime}`,
+              description: `Booking with ${booking.worker?.firstName || ""} ${booking.worker?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()} at ${booking.scheduledTime}`,
             },
             unit_amount: formatAmountForStripe(booking.totalPrice, booking.currency),
           },
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         bookingId: booking.id,
         customerId: booking.customerId,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
       },
       success_url: `${origin}/bookings/${booking.id}/confirmation?payment=success`,
       cancel_url: `${origin}/bookings/${booking.id}/confirmation?payment=cancelled`,

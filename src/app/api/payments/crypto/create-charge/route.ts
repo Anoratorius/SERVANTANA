@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
             lastName: true,
           },
         },
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     // Create Coinbase Commerce charge with fees included
     const charge = await createCryptoCharge({
       name: `${booking.service?.name || "Cleaning"} Service`,
-      description: `Booking with ${booking.cleaner?.firstName || ""} ${booking.cleaner?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()}`,
+      description: `Booking with ${booking.worker?.firstName || ""} ${booking.worker?.lastName || ""} on ${new Date(booking.scheduledDate).toLocaleDateString()}`,
       pricing_type: "fixed_price",
       local_price: {
         amount: fees.customerTotal.toFixed(2),
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         bookingId: booking.id,
         customerId: booking.customerId,
-        cleanerId: booking.cleanerId,
+        workerId: booking.workerId,
       },
       redirect_url: `${origin}/bookings/${booking.id}/confirmation?payment=success&method=crypto`,
       cancel_url: `${origin}/bookings/${booking.id}/confirmation?payment=cancelled`,
@@ -115,9 +115,9 @@ export async function POST(request: NextRequest) {
         amount: fees.customerTotal,
         bookingAmount: booking.totalPrice,
         customerFee: fees.customerFixedFee + fees.customerPercentageFee,
-        cleanerFee: fees.workerFixedFee + fees.workerPercentageFee,
+        workerFee: fees.workerFixedFee + fees.workerPercentageFee,
         platformFee: fees.platformTotal,
-        cleanerPayout: fees.workerReceives,
+        workerPayout: fees.workerReceives,
         currency,
         status: "PROCESSING",
         paymentMethod: "crypto",
@@ -130,9 +130,9 @@ export async function POST(request: NextRequest) {
         amount: fees.customerTotal,
         bookingAmount: booking.totalPrice,
         customerFee: fees.customerFixedFee + fees.customerPercentageFee,
-        cleanerFee: fees.workerFixedFee + fees.workerPercentageFee,
+        workerFee: fees.workerFixedFee + fees.workerPercentageFee,
         platformFee: fees.platformTotal,
-        cleanerPayout: fees.workerReceives,
+        workerPayout: fees.workerReceives,
         currency,
         status: "PROCESSING",
         paymentMethod: "crypto",

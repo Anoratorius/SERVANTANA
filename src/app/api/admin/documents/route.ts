@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         include: {
-          cleaner: {
+          worker: {
             select: {
               id: true,
               firstName: true,

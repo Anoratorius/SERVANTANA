@@ -60,7 +60,7 @@ export async function POST(
 
     // Only customer or worker can request reschedule
     const isCustomer = booking.customerId === session.user.id;
-    const isWorker = booking.cleanerId === session.user.id;
+    const isWorker = booking.workerId === session.user.id;
 
     if (!isCustomer && !isWorker) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

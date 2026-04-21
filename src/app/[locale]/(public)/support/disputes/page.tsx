@@ -34,7 +34,7 @@ interface Dispute {
     service: { name: string };
   };
   customer: { firstName: string; lastName: string };
-  cleaner: { firstName: string; lastName: string };
+  worker: { firstName: string; lastName: string };
   _count: { messages: number; evidence: number };
 }
 

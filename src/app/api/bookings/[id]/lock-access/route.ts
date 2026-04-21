@@ -25,7 +25,7 @@ export async function GET(
       where: { id },
       select: {
         id: true,
-        cleanerId: true,
+        workerId: true,
         customerId: true,
         propertyId: true,
         status: true,
@@ -56,7 +56,7 @@ export async function GET(
     }
 
     // Only worker assigned to booking can access
-    if (booking.cleanerId !== session.user.id) {
+    if (booking.workerId !== session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
@@ -72,7 +72,7 @@ export async function GET(
     const accessCodes = await prisma.smartLockAccess.findMany({
       where: {
         bookingId: id,
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         status: "ACTIVE",
       },
       include: {
@@ -120,7 +120,7 @@ export async function POST(
       where: { id },
       select: {
         id: true,
-        cleanerId: true,
+        workerId: true,
         customerId: true,
         propertyId: true,
         status: true,
@@ -185,7 +185,7 @@ export async function POST(
           data: {
             lockId: lock.id,
             bookingId: id,
-            cleanerId: booking.cleanerId,
+            workerId: booking.workerId,
             accessType: "TEMPORARY",
             accessCode: generateAccessCode(),
             validFrom,

@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
               email: true,
             },
           },
-          cleaner: {
+          worker: {
             select: {
               id: true,
               firstName: true,

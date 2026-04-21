@@ -15,7 +15,7 @@ interface CryptoChargeData {
   metadata: {
     bookingId: string;
     customerId: string;
-    cleanerId: string;
+    workerId: string;
   };
   redirect_url: string;
   cancel_url: string;

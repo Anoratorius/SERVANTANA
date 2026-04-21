@@ -125,7 +125,7 @@ interface Stats {
     status: string;
     totalPrice: number;
     customer: { firstName: string; lastName: string };
-    cleaner: { firstName: string; lastName: string };
+    worker: { firstName: string; lastName: string };
     service: { name: string };
   }>;
   recentUsers: Array<{
@@ -202,10 +202,10 @@ interface UserDetails extends User {
     scheduledDate: string;
     status: string;
     totalPrice: number;
-    cleaner: { firstName: string; lastName: string };
+    worker: { firstName: string; lastName: string };
     service: { name: string };
   }>;
-  bookingsAsCleaner: Array<{
+  bookingsAsWorker: Array<{
     id: string;
     scheduledDate: string;
     status: string;
@@ -268,7 +268,7 @@ interface UserDetails extends User {
     subject: string;
     createdAt: string;
   }>;
-  cleanerDocuments: Array<{
+  workerDocuments: Array<{
     id: string;
     type: string;
     status: string;
@@ -277,13 +277,13 @@ interface UserDetails extends User {
   }>;
   _count: {
     bookingsAsCustomer: number;
-    bookingsAsCleaner: number;
+    bookingsAsWorker: number;
     reviewsReceived: number;
     reviewsGiven: number;
     messagesSent: number;
     messagesReceived: number;
     properties: number;
-    favoriteCleaners: number;
+    favoriteWorkers: number;
     favoritedBy: number;
   };
 }
@@ -420,7 +420,7 @@ interface Dispute {
     lastName: string;
     email: string;
   };
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -440,7 +440,7 @@ interface Document {
   rejectionNote: string | null;
   createdAt: string;
   verifiedAt: string | null;
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -467,7 +467,7 @@ interface AdminBooking {
     email: string;
     avatar: string | null;
   };
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -1919,7 +1919,7 @@ export default function AdminPage() {
                                   {booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {booking.customer?.firstName || "N/A"} → {booking.cleaner?.firstName || "N/A"}
+                                  {booking.customer?.firstName || "N/A"} → {booking.worker?.firstName || "N/A"}
                                 </p>
                               </div>
                               <div className="text-right">
@@ -3081,9 +3081,9 @@ export default function AdminPage() {
                                     </AvatarFallback>
                                   </Avatar>
                                   <Avatar className="border-2 border-white">
-                                    <AvatarImage src={booking.cleaner?.avatar || undefined} />
+                                    <AvatarImage src={booking.worker?.avatar || undefined} />
                                     <AvatarFallback className="text-xs">
-                                      {booking.cleaner?.firstName?.[0] || "?"}{booking.cleaner?.lastName?.[0] || "?"}
+                                      {booking.worker?.firstName?.[0] || "?"}{booking.worker?.lastName?.[0] || "?"}
                                     </AvatarFallback>
                                   </Avatar>
                                 </div>
@@ -3092,7 +3092,7 @@ export default function AdminPage() {
                                     {booking.service ? (SERVICE_NAMES[booking.service.name] || booking.service.name) : "N/A"}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {booking.customer?.firstName || "N/A"} → {booking.cleaner?.firstName || "N/A"}
+                                    {booking.customer?.firstName || "N/A"} → {booking.worker?.firstName || "N/A"}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
                                     {new Date(booking.scheduledDate).toLocaleDateString()} at {booking.scheduledTime}
@@ -3194,16 +3194,16 @@ export default function AdminPage() {
                             <div className="flex items-start justify-between">
                               <div className="flex items-center gap-3">
                                 <Avatar>
-                                  <AvatarImage src={doc.cleaner.avatar || undefined} />
+                                  <AvatarImage src={doc.worker.avatar || undefined} />
                                   <AvatarFallback>
-                                    {doc.cleaner.firstName[0]}{doc.cleaner.lastName[0]}
+                                    {doc.worker.firstName[0]}{doc.worker.lastName[0]}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div>
                                   <p className="font-medium">
-                                    {doc.cleaner.firstName} {doc.cleaner.lastName}
+                                    {doc.worker.firstName} {doc.worker.lastName}
                                   </p>
-                                  <p className="text-sm text-muted-foreground">{doc.cleaner.email}</p>
+                                  <p className="text-sm text-muted-foreground">{doc.worker.email}</p>
                                   <div className="flex items-center gap-2 mt-1">
                                     <Badge variant="secondary">{doc.type}</Badge>
                                     <span className="text-xs text-muted-foreground">
@@ -3362,7 +3362,7 @@ export default function AdminPage() {
                                 </p>
                                 <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                                   <span>
-                                    {dispute.customer.firstName} vs {dispute.cleaner.firstName}
+                                    {dispute.customer.firstName} vs {dispute.worker.firstName}
                                   </span>
                                   <span>•</span>
                                   <span>${dispute.booking.totalPrice}</span>
@@ -3935,7 +3935,7 @@ export default function AdminPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="p-3 border rounded-lg text-center">
                         <Calendar className="h-5 w-5 mx-auto text-blue-500 mb-1" />
-                        <p className="text-2xl font-bold">{userDetails._count.bookingsAsCustomer + userDetails._count.bookingsAsCleaner}</p>
+                        <p className="text-2xl font-bold">{userDetails._count.bookingsAsCustomer + userDetails._count.bookingsAsWorker}</p>
                         <p className="text-xs text-muted-foreground">Total Bookings</p>
                       </div>
                       <div className="p-3 border rounded-lg text-center">
@@ -4042,10 +4042,10 @@ export default function AdminPage() {
                       <h4 className="font-medium mb-2 flex items-center gap-2">
                         <Calendar className="h-4 w-4" /> Recent Bookings
                       </h4>
-                      {(userDetails.bookingsAsCustomer.length > 0 || userDetails.bookingsAsCleaner.length > 0) ? (
+                      {(userDetails.bookingsAsCustomer.length > 0 || userDetails.bookingsAsWorker.length > 0) ? (
                         <div className="space-y-2 max-h-40 overflow-y-auto">
                           {[...userDetails.bookingsAsCustomer.map(b => ({...b, type: "customer" as const})),
-                            ...userDetails.bookingsAsCleaner.map(b => ({...b, type: "worker" as const}))]
+                            ...userDetails.bookingsAsWorker.map(b => ({...b, type: "worker" as const}))]
                             .sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime())
                             .slice(0, 10)
                             .map((booking) => (
@@ -4056,8 +4056,8 @@ export default function AdminPage() {
                                   <p className="text-xs text-muted-foreground">
                                     {new Date(booking.scheduledDate).toLocaleDateString()} -
                                     {booking.type === "customer"
-                                      ? ` with ${(booking as typeof userDetails.bookingsAsCustomer[0]).cleaner.firstName}`
-                                      : ` for ${(booking as typeof userDetails.bookingsAsCleaner[0]).customer.firstName}`}
+                                      ? ` with ${(booking as typeof userDetails.bookingsAsCustomer[0]).worker.firstName}`
+                                      : ` for ${(booking as typeof userDetails.bookingsAsWorker[0]).customer.firstName}`}
                                   </p>
                                 </div>
                                 <div className="text-right">
@@ -4256,13 +4256,13 @@ export default function AdminPage() {
                       </div>
 
                       {/* Documents */}
-                      {userDetails.cleanerDocuments.length > 0 && (
+                      {userDetails.workerDocuments.length > 0 && (
                         <div className="p-3 border rounded-lg">
                           <h4 className="font-medium mb-2 flex items-center gap-2">
                             <FileText className="h-4 w-4" /> Documents
                           </h4>
                           <div className="space-y-2">
-                            {userDetails.cleanerDocuments.map((doc) => (
+                            {userDetails.workerDocuments.map((doc) => (
                               <div key={doc.id} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
                                 <span>{doc.type}</span>
                                 <Badge variant={doc.status === "VERIFIED" ? "default" : doc.status === "REJECTED" ? "destructive" : "secondary"}>

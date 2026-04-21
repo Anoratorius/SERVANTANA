@@ -67,7 +67,7 @@ export async function POST(
     const body = await request.json();
     const {
       bookingId,
-      cleanerId,
+      workerId,
       accessType = "TEMPORARY",
       validFrom,
       validUntil,
@@ -102,7 +102,7 @@ export async function POST(
       data: {
         lockId,
         bookingId,
-        cleanerId,
+        workerId,
         accessType,
         accessCode,
         validFrom: validFrom ? new Date(validFrom) : new Date(),

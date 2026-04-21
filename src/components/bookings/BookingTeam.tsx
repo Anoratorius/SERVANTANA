@@ -28,11 +28,11 @@ import {
 
 interface TeamMember {
   id: string;
-  cleanerId: string;
+  workerId: string;
   isLead: boolean;
   confirmed: boolean;
   earnings: number | null;
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -45,7 +45,7 @@ interface TeamMember {
   };
 }
 
-interface AvailableCleaner {
+interface AvailableWorker {
   id: string;
   firstName: string;
   lastName: string;
@@ -61,22 +61,22 @@ interface AvailableCleaner {
 
 interface BookingTeamProps {
   bookingId: string;
-  isLeadCleaner: boolean;
+  isLeadWorker: boolean;
   teamSize: number;
 }
 
 export function BookingTeam({
   bookingId,
-  isLeadCleaner,
+  isLeadWorker,
   teamSize,
 }: BookingTeamProps) {
   const t = useTranslations("team");
   const { data: session } = useSession();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [leadCleaner, setLeadCleaner] = useState<TeamMember["cleaner"] | null>(null);
+  const [leadWorker, setLeadWorker] = useState<TeamMember["worker"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingOpen, setIsAddingOpen] = useState(false);
-  const [availableCleaners, setAvailableCleaners] = useState<AvailableCleaner[]>([]);
+  const [availableWorkers, setAvailableWorkers] = useState<AvailableWorker[]>([]);
   const [isLoadingAvailable, setIsLoadingAvailable] = useState(false);
   const [isActioning, setIsActioning] = useState<string | null>(null);
 
@@ -86,7 +86,7 @@ export function BookingTeam({
       if (response.ok) {
         const data = await response.json();
         setTeamMembers(data.teamMembers);
-        setLeadCleaner(data.leadCleaner);
+        setLeadWorker(data.leadWorker);
       }
     } catch (error) {
       console.error("Error fetching team:", error);
@@ -99,40 +99,40 @@ export function BookingTeam({
     fetchTeam();
   }, [fetchTeam]);
 
-  const fetchAvailableCleaners = async () => {
+  const fetchAvailableWorkers = async () => {
     setIsLoadingAvailable(true);
     try {
       const response = await fetch(`/api/bookings/${bookingId}/team/available`);
       if (response.ok) {
         const data = await response.json();
-        setAvailableCleaners(data.cleaners);
+        setAvailableWorkers(data.workers);
       }
     } catch (error) {
-      console.error("Error fetching available cleaners:", error);
+      console.error("Error fetching available workers:", error);
     } finally {
       setIsLoadingAvailable(false);
     }
   };
 
-  const handleAddMember = async (cleanerId: string) => {
-    setIsActioning(cleanerId);
+  const handleAddMember = async (workerId: string) => {
+    setIsActioning(workerId);
     try {
       const response = await fetch(`/api/bookings/${bookingId}/team`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "add", cleanerId }),
+        body: JSON.stringify({ action: "add", workerId }),
       });
 
       if (response.ok) {
         toast.success(t("memberAdded"));
         fetchTeam();
-        setAvailableCleaners((prev) => prev.filter((c) => c.id !== cleanerId));
+        setAvailableWorkers((prev) => prev.filter((c) => c.id !== workerId));
       } else {
         const error = await response.json();
         toast.error(error.error || t("addFailed"));
       }
     } catch (error) {
-      console.error("Error adding member:", error);
+      console.error("Error adding team member:", error);
       toast.error(t("addFailed"));
     } finally {
       setIsActioning(null);
@@ -231,7 +231,7 @@ export function BookingTeam({
   }
 
   const currentMember = teamMembers.find(
-    (m) => m.cleanerId === session?.user?.id
+    (m) => m.workerId === session?.user?.id
   );
   const needsToConfirm = currentMember && !currentMember.confirmed;
   const spotsRemaining = teamSize - 1 - teamMembers.length;
@@ -244,10 +244,10 @@ export function BookingTeam({
             <Users className="h-5 w-5 text-blue-500" />
             {t("title")} ({teamMembers.length + 1}/{teamSize})
           </span>
-          {isLeadCleaner && spotsRemaining > 0 && (
+          {isLeadWorker && spotsRemaining > 0 && (
             <Dialog open={isAddingOpen} onOpenChange={setIsAddingOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" onClick={() => fetchAvailableCleaners()}>
+                <Button size="sm" onClick={() => fetchAvailableWorkers()}>
                   <UserPlus className="h-4 w-4 mr-2" />
                   {t("addMember")}
                 </Button>
@@ -262,38 +262,38 @@ export function BookingTeam({
                       <Skeleton className="h-20" />
                       <Skeleton className="h-20" />
                     </>
-                  ) : availableCleaners.length === 0 ? (
+                  ) : availableWorkers.length === 0 ? (
                     <p className="text-center text-muted-foreground py-8">
                       {t("noAvailable")}
                     </p>
                   ) : (
-                    availableCleaners.map((cleaner) => (
+                    availableWorkers.map((availWorker) => (
                       <div
-                        key={cleaner.id}
+                        key={availWorker.id}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div>
                           <p className="font-medium">
-                            {cleaner.firstName} {cleaner.lastName}
+                            {availWorker.firstName} {availWorker.lastName}
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            {(cleaner.workerProfile?.averageRating ?? 0) > 0 && (
+                            {(availWorker.workerProfile?.averageRating ?? 0) > 0 && (
                               <span className="flex items-center gap-1">
                                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                {cleaner.workerProfile?.averageRating?.toFixed(1)}
+                                {availWorker.workerProfile?.averageRating?.toFixed(1)}
                               </span>
                             )}
-                            {cleaner.distance !== null && (
-                              <span>{cleaner.distance} km</span>
+                            {availWorker.distance !== null && (
+                              <span>{availWorker.distance} km</span>
                             )}
                           </div>
                         </div>
                         <Button
                           size="sm"
-                          onClick={() => handleAddMember(cleaner.id)}
-                          disabled={isActioning === cleaner.id}
+                          onClick={() => handleAddMember(availWorker.id)}
+                          disabled={isActioning === availWorker.id}
                         >
-                          {isActioning === cleaner.id ? (
+                          {isActioning === availWorker.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <UserPlus className="h-4 w-4" />
@@ -345,8 +345,8 @@ export function BookingTeam({
           </div>
         )}
 
-        {/* Lead cleaner */}
-        {leadCleaner && (
+        {/* Lead worker */}
+        {leadWorker && (
           <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-blue-200 flex items-center justify-center">
@@ -354,13 +354,13 @@ export function BookingTeam({
               </div>
               <div>
                 <p className="font-medium">
-                  {leadCleaner.firstName} {leadCleaner.lastName}
+                  {leadWorker.firstName} {leadWorker.lastName}
                 </p>
                 <div className="flex items-center gap-2 text-sm">
                   <Badge variant="secondary" className="text-xs">
                     {t("lead")}
                   </Badge>
-                  {leadCleaner.workerProfile?.verified && (
+                  {leadWorker.workerProfile?.verified && (
                     <Badge className="bg-green-100 text-green-700 text-xs">
                       {t("verified")}
                     </Badge>
@@ -368,8 +368,8 @@ export function BookingTeam({
                 </div>
               </div>
             </div>
-            {leadCleaner.phone && (
-              <a href={`tel:${leadCleaner.phone}`}>
+            {leadWorker.phone && (
+              <a href={`tel:${leadWorker.phone}`}>
                 <Button variant="ghost" size="icon">
                   <Phone className="h-4 w-4" />
                 </Button>
@@ -390,7 +390,7 @@ export function BookingTeam({
               </div>
               <div>
                 <p className="font-medium">
-                  {member.cleaner.firstName} {member.cleaner.lastName}
+                  {member.worker.firstName} {member.worker.lastName}
                 </p>
                 <div className="flex items-center gap-2 text-sm">
                   {member.confirmed ? (
@@ -412,14 +412,14 @@ export function BookingTeam({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {member.cleaner.phone && (
-                <a href={`tel:${member.cleaner.phone}`}>
+              {member.worker.phone && (
+                <a href={`tel:${member.worker.phone}`}>
                   <Button variant="ghost" size="icon">
                     <Phone className="h-4 w-4" />
                   </Button>
                 </a>
               )}
-              {isLeadCleaner && (
+              {isLeadWorker && (
                 <Button
                   variant="ghost"
                   size="icon"

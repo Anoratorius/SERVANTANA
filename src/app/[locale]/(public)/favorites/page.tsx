@@ -26,7 +26,7 @@ import { toast } from "sonner";
 interface Favorite {
   id: string;
   createdAt: string;
-  cleaner: {
+  worker: {
     id: string;
     firstName: string;
     lastName: string;
@@ -75,15 +75,15 @@ export default function FavoritesPage() {
     }
   }, [authStatus]);
 
-  const removeFavorite = async (cleanerId: string) => {
-    setRemovingId(cleanerId);
+  const removeFavorite = async (workerId: string) => {
+    setRemovingId(workerId);
     try {
-      const response = await fetch(`/api/favorites?cleanerId=${cleanerId}`, {
+      const response = await fetch(`/api/favorites?workerId=${workerId}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        setFavorites((prev) => prev.filter((f) => f.cleaner.id !== cleanerId));
+        setFavorites((prev) => prev.filter((f) => f.worker.id !== workerId));
         toast.success("Removed from favorites");
       } else {
         toast.error("Failed to remove from favorites");
@@ -129,18 +129,18 @@ export default function FavoritesPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {favorites.map((favorite) => {
-                const cleaner = favorite.cleaner;
-                const profile = cleaner.workerProfile;
-                const initials = `${cleaner.firstName[0]}${cleaner.lastName[0]}`;
+                const worker = favorite.worker;
+                const profile = worker.workerProfile;
+                const initials = `${worker.firstName[0]}${worker.lastName[0]}`;
 
                 return (
                   <Card key={favorite.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <CardContent className="p-0">
                       <div className="p-4">
                         <div className="flex items-start gap-4">
-                          <Link href={`/worker-profile/${cleaner.id}`}>
+                          <Link href={`/worker-profile/${worker.id}`}>
                             <Avatar className="h-16 w-16 ring-2 ring-red-100">
-                              <AvatarImage src={cleaner.avatar || undefined} />
+                              <AvatarImage src={worker.avatar || undefined} />
                               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white text-lg">
                                 {initials}
                               </AvatarFallback>
@@ -149,9 +149,9 @@ export default function FavoritesPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <Link href={`/worker-profile/${cleaner.id}`}>
+                              <Link href={`/worker-profile/${worker.id}`}>
                                 <h3 className="font-semibold hover:text-blue-600 transition-colors">
-                                  {cleaner.firstName} {cleaner.lastName}
+                                  {worker.firstName} {worker.lastName}
                                 </h3>
                               </Link>
                               {profile?.verified && (
@@ -186,7 +186,7 @@ export default function FavoritesPage() {
                         </div>
 
                         <div className="flex gap-2 mt-4">
-                          <Link href={`/worker-profile/${cleaner.id}/book`} className="flex-1">
+                          <Link href={`/worker-profile/${worker.id}/book`} className="flex-1">
                             <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600" size="sm">
                               <Calendar className="h-4 w-4 mr-1" />
                               Book Now
@@ -196,10 +196,10 @@ export default function FavoritesPage() {
                             variant="outline"
                             size="sm"
                             className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                            onClick={() => removeFavorite(cleaner.id)}
-                            disabled={removingId === cleaner.id}
+                            onClick={() => removeFavorite(worker.id)}
+                            disabled={removingId === worker.id}
                           >
-                            {removingId === cleaner.id ? (
+                            {removingId === worker.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
                               <Trash2 className="h-4 w-4" />

@@ -12,7 +12,7 @@ interface CoinbaseWebhookEvent {
     metadata: {
       bookingId: string;
       customerId: string;
-      cleanerId: string;
+      workerId: string;
     };
     payments: Array<{
       network: string;
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleChargeConfirmed(event: CoinbaseWebhookEvent) {
-  const { bookingId, cleanerId } = event.data.metadata || {};
+  const { bookingId, workerId } = event.data.metadata || {};
   const payment = event.data.payments?.[0];
 
   if (!bookingId) {
@@ -119,7 +119,7 @@ async function handleChargeConfirmed(event: CoinbaseWebhookEvent) {
   // Get booking for price info
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    select: { totalPrice: true, currency: true, cleanerId: true },
+    select: { totalPrice: true, currency: true, workerId: true },
   });
 
   if (!booking) {
@@ -163,7 +163,7 @@ async function handleChargeConfirmed(event: CoinbaseWebhookEvent) {
     }),
     prisma.earning.create({
       data: {
-        cleanerId: cleanerId || booking.cleanerId,
+        workerId: workerId || booking.workerId,
         bookingId: bookingId,
         amount: netAmount,
         platformFee: platformFee,

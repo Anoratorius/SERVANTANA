@@ -30,7 +30,7 @@ interface Photo {
 interface Booking {
   id: string;
   status: string;
-  cleanerId: string;
+  workerId: string;
   customerId: string;
   service: { name: string };
   scheduledDate: string;
@@ -51,9 +51,9 @@ export default function BookingPhotosPage({
   const [afterPhotos, setAfterPhotos] = useState<Photo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isCleaner = session?.user?.id === booking?.cleanerId;
+  const isWorker = session?.user?.id === booking?.workerId;
   const canUpload =
-    isCleaner &&
+    isWorker &&
     ["CONFIRMED", "IN_PROGRESS", "COMPLETED"].includes(booking?.status || "");
 
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function BookingPhotosPage({
                 <div className="text-center py-12">
                   <Camera className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">No photos uploaded yet</p>
-                  {isCleaner && !canUpload && (
+                  {isWorker && !canUpload && (
                     <p className="text-sm text-muted-foreground mt-2">
                       Photos can be uploaded once the booking is confirmed
                     </p>
@@ -190,7 +190,7 @@ export default function BookingPhotosPage({
                   bookingId={id}
                   beforePhotos={beforePhotos}
                   afterPhotos={afterPhotos}
-                  canDelete={isCleaner}
+                  canDelete={isWorker}
                   onPhotoDeleted={fetchData}
                 />
               )}

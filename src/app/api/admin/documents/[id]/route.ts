@@ -27,7 +27,7 @@ export async function PATCH(
     const document = await prisma.workerDocument.findUnique({
       where: { id },
       include: {
-        cleaner: {
+        worker: {
           select: {
             id: true,
             email: true,
@@ -69,7 +69,7 @@ export async function PATCH(
       // Check if all required documents are verified
       const verifiedDocs = await prisma.workerDocument.findMany({
         where: {
-          cleanerId: document.cleanerId,
+          workerId: document.workerId,
           status: "VERIFIED",
         },
       });
@@ -77,7 +77,7 @@ export async function PATCH(
       // If at least one document is verified, mark worker as verified
       if (verifiedDocs.length > 0) {
         await prisma.workerProfile.updateMany({
-          where: { userId: document.cleanerId },
+          where: { userId: document.workerId },
           data: { verified: true },
         });
       }
@@ -88,10 +88,10 @@ export async function PATCH(
       action: action === "verify" ? "DOCUMENT_VERIFIED" : "DOCUMENT_REJECTED",
       actorId: session.user.id,
       targetId: document.id,
-      targetType: "CleanerDocument",
+      targetType: "WorkerDocument",
       details: {
-        cleanerId: document.cleanerId,
-        cleanerEmail: document.cleaner.email,
+        workerId: document.workerId,
+        workerEmail: document.worker.email,
         documentType: document.type,
         rejectionNote: action === "reject" ? rejectionNote : undefined,
       },
@@ -125,7 +125,7 @@ export async function GET(
     const document = await prisma.workerDocument.findUnique({
       where: { id },
       include: {
-        cleaner: {
+        worker: {
           select: {
             id: true,
             firstName: true,

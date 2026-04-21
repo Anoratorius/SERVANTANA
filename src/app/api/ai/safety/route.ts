@@ -112,21 +112,21 @@ export async function POST(request: NextRequest) {
             status: true,
             createdAt: true,
             cancelledAt: true,
-            cancelledByCleaner: true,
+            cancelledByWorker: true,
           },
         },
-        bookingsAsCleaner: {
+        bookingsAsWorker: {
           select: {
             status: true,
             createdAt: true,
             cancelledAt: true,
-            cancelledByCleaner: true,
+            cancelledByWorker: true,
           },
         },
         disputesAsCustomer: {
           select: { status: true, type: true },
         },
-        disputesAsCleaner: {
+        disputesAsWorker: {
           select: { status: true, type: true },
         },
       },
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
 
     // Booking analysis
     const allBookings = user.role === "WORKER"
-      ? user.bookingsAsCleaner
+      ? user.bookingsAsWorker
       : user.bookingsAsCustomer;
 
     const totalBookings = allBookings.length;
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Dispute analysis
-    const allDisputes = [...user.disputesAsCustomer, ...user.disputesAsCleaner];
+    const allDisputes = [...user.disputesAsCustomer, ...user.disputesAsWorker];
     const disputeRate = totalBookings > 0
       ? (allDisputes.length / totalBookings) * 100
       : 0;

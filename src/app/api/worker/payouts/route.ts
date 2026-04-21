@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest) {
     }
 
     const payouts = await prisma.payout.findMany({
-      where: { cleanerId: session.user.id },
+      where: { workerId: session.user.id },
       include: {
         earnings: {
           select: {
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     // Get available earnings
     const availableEarnings = await prisma.earning.findMany({
       where: {
-        cleanerId: session.user.id,
+        workerId: session.user.id,
         status: "AVAILABLE",
         payoutId: null,
       },
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     const payout = await prisma.$transaction(async (tx) => {
       const newPayout = await tx.payout.create({
         data: {
-          cleanerId: session.user.id,
+          workerId: session.user.id,
           amount: totalAmount,
           currency: "USD",
           status: "PENDING",

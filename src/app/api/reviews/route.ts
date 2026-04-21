@@ -81,28 +81,28 @@ export async function POST(request: NextRequest) {
       data: {
         bookingId,
         reviewerId: session.user.id,
-        revieweeId: booking.cleanerId,
+        revieweeId: booking.workerId,
         rating,
         comment: comment || null,
       },
     });
 
-    // Update cleaner's average rating
-    const cleanerReviews = await prisma.review.findMany({
-      where: { revieweeId: booking.cleanerId },
+    // Update worker's average rating
+    const workerReviews = await prisma.review.findMany({
+      where: { revieweeId: booking.workerId },
       select: { rating: true },
     });
 
     const averageRating =
-      cleanerReviews.reduce((sum, r) => sum + r.rating, 0) / cleanerReviews.length;
+      workerReviews.reduce((sum, r) => sum + r.rating, 0) / workerReviews.length;
 
     await prisma.workerProfile.updateMany({
-      where: { userId: booking.cleanerId },
+      where: { userId: booking.workerId },
       data: { averageRating },
     });
 
     // Notify the worker about the new review
-    sendNotification(booking.cleanerId, "REVIEW_RECEIVED", {
+    sendNotification(booking.workerId, "REVIEW_RECEIVED", {
       customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
       serviceName: booking.service?.name || "Service",
       bookingId,
@@ -123,19 +123,19 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const cleanerId = searchParams.get("cleanerId");
+    const workerId = searchParams.get("workerId");
     const limit = parseInt(searchParams.get("limit") || "10");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    if (!cleanerId) {
+    if (!workerId) {
       return NextResponse.json(
-        { error: "cleanerId is required" },
+        { error: "workerId is required" },
         { status: 400 }
       );
     }
 
     const reviews = await prisma.review.findMany({
-      where: { revieweeId: cleanerId },
+      where: { revieweeId: workerId },
       include: {
         reviewer: {
           select: {
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
     });
 
     const total = await prisma.review.count({
-      where: { revieweeId: cleanerId },
+      where: { revieweeId: workerId },
     });
 
     return NextResponse.json({ reviews, total });
