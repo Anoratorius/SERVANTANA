@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getAnthropicClient, AI_MODEL, SYSTEM_PROMPTS } from "@/lib/ai/anthropic";
-import { KNOWLEDGE_BASE } from "@/lib/ai/knowledge-base";
+import { getKnowledgeBase } from "@/lib/ai/knowledge-base";
 import { prisma } from "@/lib/prisma";
 import { applyRateLimit, rateLimiters } from "@/lib/rate-limit";
 import { z } from "zod";
@@ -144,12 +144,12 @@ export async function POST(request: NextRequest) {
 
     const client = getAnthropicClient();
 
-    // Build system prompt with knowledge base
+    // Build system prompt with dynamic knowledge base
+    const knowledgeBase = await getKnowledgeBase();
     const systemPrompt = [
       SYSTEM_PROMPTS.chat,
       "",
-      "## Platform Knowledge Base",
-      KNOWLEDGE_BASE,
+      knowledgeBase,
       "",
       `## Current User Context`,
       userContext,

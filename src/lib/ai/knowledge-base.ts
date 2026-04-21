@@ -1,28 +1,25 @@
 /**
  * Servantana Platform Knowledge Base
- * This content is included in AI chat context to help the assistant
- * give accurate, platform-specific answers.
  *
- * EDIT THIS FILE to update what the AI knows about the platform.
+ * This module provides dynamic knowledge for the AI assistant.
+ * Categories, professions, and cities are fetched from the database
+ * so the AI always has up-to-date information.
  */
 
-export const KNOWLEDGE_BASE = `
-# Servantana Platform Knowledge Base
+import { prisma } from "@/lib/prisma";
 
+// Cache for dynamic data (refresh every 5 minutes)
+let cachedKnowledgeBase: string | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Static platform information that doesn't change often.
+ * Edit this to update policies, how booking works, etc.
+ */
+const STATIC_KNOWLEDGE = `
 ## What is Servantana?
 Servantana is a professional services marketplace connecting customers with verified workers for home and personal services.
-
-## Available Services
-- **Cleaning**: House cleaning, deep cleaning, move-in/move-out cleaning, office cleaning
-- **Plumbing**: Repairs, installations, drain cleaning, water heater service
-- **Electrical**: Wiring, outlet installation, lighting, electrical repairs
-- **Gardening**: Lawn care, landscaping, tree trimming, garden maintenance
-- **Painting**: Interior/exterior painting, wall repairs, wallpaper
-- **Moving**: Local moving, furniture assembly, packing services
-- **Handyman**: General repairs, furniture assembly, mounting, small fixes
-- **Tutoring**: Academic tutoring, language lessons, music lessons
-- **Pet Care**: Dog walking, pet sitting, grooming assistance
-- **Babysitting**: Childcare, after-school care, occasional babysitting
 
 ## How Booking Works
 1. Customer searches for workers by service type and location
@@ -80,14 +77,6 @@ Servantana is a professional services marketplace connecting customers with veri
 - Dispute resolution for booking problems
 - Help center with FAQs
 
-## Cities Available
-Currently operating in major cities across:
-- Germany (Berlin, Munich, Hamburg, Frankfurt, Cologne, Düsseldorf, Stuttgart)
-- Austria (Vienna)
-- Switzerland (Zurich)
-- Netherlands (Amsterdam)
-- And expanding to more cities
-
 ## Quick Tips for Customers
 - Book in advance for better availability
 - Read worker reviews before booking
@@ -100,3 +89,139 @@ Currently operating in major cities across:
 - Communicate clearly with customers
 - Deliver quality work to earn great reviews
 `;
+
+/**
+ * Fetch dynamic data from database
+ */
+async function fetchDynamicData(): Promise<{
+  categories: Array<{ name: string; description: string | null; emoji: string }>;
+  professions: Array<{ name: string; emoji: string; categoryName: string | null }>;
+  cities: string[];
+}> {
+  try {
+    // Fetch approved categories
+    const categories = await prisma.category.findMany({
+      where: { status: "APPROVED" },
+      select: {
+        name: true,
+        description: true,
+        emoji: true,
+      },
+      orderBy: { name: "asc" },
+    });
+
+    // Fetch active and approved professions
+    const professions = await prisma.profession.findMany({
+      where: {
+        isActive: true,
+        status: "APPROVED",
+      },
+      select: {
+        name: true,
+        emoji: true,
+        category: {
+          select: { name: true },
+        },
+      },
+      orderBy: { name: "asc" },
+    });
+
+    // Fetch unique cities where workers are located
+    const workerCities = await prisma.workerProfile.findMany({
+      where: {
+        city: { not: null },
+        isVisible: true,
+      },
+      select: { city: true },
+      distinct: ["city"],
+    });
+
+    const cities = workerCities
+      .map((w) => w.city)
+      .filter((city): city is string => city !== null)
+      .sort();
+
+    return {
+      categories,
+      professions: professions.map((p) => ({
+        name: p.name,
+        emoji: p.emoji,
+        categoryName: p.category?.name || null,
+      })),
+      cities,
+    };
+  } catch (error) {
+    console.error("Error fetching dynamic knowledge base data:", error);
+    return {
+      categories: [],
+      professions: [],
+      cities: [],
+    };
+  }
+}
+
+/**
+ * Build the complete knowledge base with dynamic data
+ */
+export async function getKnowledgeBase(): Promise<string> {
+  const now = Date.now();
+
+  // Return cached version if still fresh
+  if (cachedKnowledgeBase && now - cacheTimestamp < CACHE_DURATION) {
+    return cachedKnowledgeBase;
+  }
+
+  // Fetch fresh data
+  const { categories, professions, cities } = await fetchDynamicData();
+
+  // Build categories section
+  let categoriesSection = "## Available Service Categories\n";
+  if (categories.length > 0) {
+    categoriesSection += categories
+      .map((c) => `- ${c.emoji} **${c.name}**${c.description ? `: ${c.description}` : ""}`)
+      .join("\n");
+  } else {
+    categoriesSection += "- Various home and personal services available";
+  }
+
+  // Build professions section
+  let professionsSection = "\n\n## Available Professions/Services\n";
+  if (professions.length > 0) {
+    professionsSection += "Workers on our platform offer these services:\n";
+    professionsSection += professions
+      .map((p) => `- ${p.emoji} ${p.name}${p.categoryName ? ` (${p.categoryName})` : ""}`)
+      .join("\n");
+  } else {
+    professionsSection += "- Multiple professional services available";
+  }
+
+  // Build cities section
+  let citiesSection = "\n\n## Cities Where Workers Are Available\n";
+  if (cities.length > 0) {
+    citiesSection += `Currently operating in: ${cities.join(", ")}`;
+    citiesSection += `\n(${cities.length} cities and growing!)`;
+  } else {
+    citiesSection += "- Expanding to cities across Europe";
+  }
+
+  // Combine everything
+  const fullKnowledgeBase = [
+    "# Servantana Platform Knowledge Base",
+    categoriesSection,
+    professionsSection,
+    citiesSection,
+    STATIC_KNOWLEDGE,
+  ].join("\n");
+
+  // Update cache
+  cachedKnowledgeBase = fullKnowledgeBase;
+  cacheTimestamp = now;
+
+  return fullKnowledgeBase;
+}
+
+/**
+ * Legacy export for backwards compatibility
+ * Use getKnowledgeBase() for dynamic data
+ */
+export const KNOWLEDGE_BASE = STATIC_KNOWLEDGE;
