@@ -146,12 +146,9 @@ function HomeContent() {
         {/* CTA Section */}
         <section className="py-16 bg-gradient-to-r from-blue-600 to-green-600 text-white w-full">
           <div className="w-full px-4 text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8" style={{ fontFamily: 'var(--font-logo)' }}>
               {t("home.cta.title")}
             </h2>
-            <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              {t("home.cta.subtitle")}
-            </p>
             <CTAButtons
               customerLabel={t("home.cta.customerButton")}
               workerLabel={t("home.cta.workerButton")}
