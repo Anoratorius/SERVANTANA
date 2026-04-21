@@ -6,14 +6,12 @@ import { CTAButtons } from "@/components/home/CTAButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
   Search,
   UserCheck,
   CalendarCheck,
-  Sparkles,
   ArrowRight,
 } from "lucide-react";
 
@@ -124,16 +122,9 @@ function HomeContent() {
         {/* AI Chat Section */}
         <section className="py-16 bg-white w-full">
           <div className="w-full px-4 max-w-3xl mx-auto text-center">
-            <Badge className="mb-4 bg-purple-100 text-purple-700 hover:bg-purple-100">
-              <Sparkles className="h-3 w-3 mr-1" />
-              {t("home.ai.badge")}
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-logo)' }}>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
               {t("home.aiChat.title")}
             </h2>
-            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              {t("home.aiChat.subtitle")}
-            </p>
             <Button asChild size="lg">
               <Link href="/ai/chat">
                 {t("home.aiChat.cta")}
