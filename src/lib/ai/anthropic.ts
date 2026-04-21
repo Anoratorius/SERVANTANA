@@ -14,11 +14,14 @@ export function getAnthropicClient(): Anthropic {
   return anthropicClient;
 }
 
-// Standard model for most tasks
-export const AI_MODEL = "claude-3-haiku-20240307";
+// Standard model for most tasks (Haiku 4.5 - fast and cost-effective)
+export const AI_MODEL = "claude-haiku-4-5-20251001";
 
-// Fast model for simple tasks
-export const AI_MODEL_FAST = "claude-3-5-haiku-20241022";
+// Alias for backwards compatibility
+export const AI_MODEL_FAST = "claude-haiku-4-5-20251001";
+
+// Sonnet model for more complex tasks
+export const AI_MODEL_SONNET = "claude-sonnet-4-5-20250929";
 
 // System prompts for different AI features
 export const SYSTEM_PROMPTS = {
