@@ -4,6 +4,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // Set explicit root to avoid lockfile detection issues
+  turbopack: {
+    root: __dirname,
+  },
   experimental: {
     optimizePackageImports: [
       "lucide-react",
@@ -32,16 +36,6 @@ const nextConfig: NextConfig = {
       // Cache static assets for 1 year
       {
         source: "/:path*.(ico|svg|jpg|jpeg|png|gif|webp|woff|woff2)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      // Cache JS/CSS for 1 year (versioned by hashes)
-      {
-        source: "/_next/static/:path*",
         headers: [
           {
             key: "Cache-Control",
