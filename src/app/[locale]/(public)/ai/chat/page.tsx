@@ -1,23 +1,32 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BackButton } from "@/components/ui/back-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, Loader2, Sparkles } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, ExternalLink } from "lucide-react";
+
+interface SuggestedAction {
+  label: string;
+  type: "navigate" | "message";
+  url?: string;
+  message?: string;
+}
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  suggestedActions?: Array<{ label: string; action: string }>;
+  suggestedActions?: SuggestedAction[];
 }
 
 export default function AIChatPage() {
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -25,15 +34,16 @@ export default function AIChatPage() {
       content: "Hello! I'm your Servantana AI assistant. I can help you find services, answer questions about bookings, recommend service providers, and more. What can I help you with today?",
       timestamp: new Date(),
       suggestedActions: [
-        { label: "Find a cleaner", action: "I need to find a cleaner" },
-        { label: "Get a price estimate", action: "How much does cleaning cost?" },
-        { label: "Book a service", action: "I want to book a service" },
+        { label: "Find a worker", type: "message", message: "I need to find a worker" },
+        { label: "Get a price estimate", type: "navigate", url: "/ai/estimate" },
+        { label: "Browse services", type: "navigate", url: "/search" },
       ],
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  let idCounter = useRef(0);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -41,11 +51,16 @@ export default function AIChatPage() {
     }
   }, [messages]);
 
+  const generateId = () => {
+    idCounter.current += 1;
+    return `msg-${Date.now()}-${idCounter.current}`;
+  };
+
   const sendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: generateId(),
       role: "user",
       content: content.trim(),
       timestamp: new Date(),
@@ -77,7 +92,7 @@ export default function AIChatPage() {
       }
 
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: generateId(),
         role: "assistant",
         content: data.message,
         timestamp: new Date(),
@@ -90,7 +105,7 @@ export default function AIChatPage() {
       setMessages((prev) => [
         ...prev,
         {
-          id: (Date.now() + 1).toString(),
+          id: generateId(),
           role: "assistant",
           content: `I'm sorry, I encountered an error: ${errorMsg}`,
           timestamp: new Date(),
@@ -101,8 +116,12 @@ export default function AIChatPage() {
     }
   };
 
-  const handleSuggestedAction = (action: string) => {
-    sendMessage(action);
+  const handleSuggestedAction = (action: SuggestedAction) => {
+    if (action.type === "navigate" && action.url) {
+      router.push(action.url);
+    } else if (action.type === "message" && action.message) {
+      sendMessage(action.message);
+    }
   };
 
   return (
@@ -165,10 +184,13 @@ export default function AIChatPage() {
                               key={i}
                               variant="outline"
                               size="sm"
-                              onClick={() => handleSuggestedAction(action.action)}
-                              className="text-xs"
+                              onClick={() => handleSuggestedAction(action)}
+                              className="text-xs gap-1"
                             >
                               {action.label}
+                              {action.type === "navigate" && (
+                                <ExternalLink className="h-3 w-3" />
+                              )}
                             </Button>
                           ))}
                         </div>

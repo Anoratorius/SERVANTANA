@@ -1,9 +1,6 @@
 -- CreateEnum
 CREATE TYPE "EtaStatus" AS ENUM ('ON_THE_WAY', 'ARRIVED', 'STARTED', 'COMPLETED');
 
--- AlterEnum
-ALTER TYPE "NotificationType" ADD VALUE 'BOOKING_ETA_UPDATE';
-
 -- AlterTable: Add etaStatus to Booking
 ALTER TABLE "Booking" ADD COLUMN "etaStatus" "EtaStatus";
 
