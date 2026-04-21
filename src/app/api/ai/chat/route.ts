@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getAnthropicClient, AI_MODEL_FAST, SYSTEM_PROMPTS } from "@/lib/ai/anthropic";
+import { getAnthropicClient, AI_MODEL, SYSTEM_PROMPTS } from "@/lib/ai/anthropic";
 import { prisma } from "@/lib/prisma";
 import { applyRateLimit, rateLimiters } from "@/lib/rate-limit";
 import { z } from "zod";
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     const client = getAnthropicClient();
 
     const response = await client.messages.create({
-      model: AI_MODEL_FAST,
+      model: AI_MODEL,
       max_tokens: 1024,
       system: `${SYSTEM_PROMPTS.chat}\n\nCurrent user context: ${userContext}`,
       messages: messages.map(m => ({
