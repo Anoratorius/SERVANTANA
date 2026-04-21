@@ -19,7 +19,7 @@ export function HeroSearch() {
         className="w-full h-16 md:h-18 text-xl md:text-2xl bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all uppercase cursor-pointer"
         style={{ fontFamily: 'var(--font-logo)' }}
       >
-        {t("categories.home_services")}
+        {t("categories.browse_button")}
       </Button>
     </div>
   );
