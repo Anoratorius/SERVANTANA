@@ -23,8 +23,56 @@ interface ChatMessage {
   content: string;
 }
 
-// Rate limit config for AI chat (20 per minute)
-const aiChatLimit = { maxRequests: 20, windowMs: 60 * 1000 };
+// Common service types mapping
+const SERVICE_KEYWORDS: Record<string, string[]> = {
+  cleaning: ["clean", "cleaner", "cleaning", "maid", "housekeeping", "tidy"],
+  plumbing: ["plumb", "plumber", "plumbing", "pipe", "leak", "drain", "faucet"],
+  electrical: ["electric", "electrician", "wiring", "outlet", "power"],
+  gardening: ["garden", "gardener", "lawn", "landscap", "yard", "mow"],
+  painting: ["paint", "painter", "painting", "wall"],
+  moving: ["mov", "mover", "moving", "relocat", "furniture"],
+  handyman: ["handyman", "repair", "fix", "maintenance"],
+  tutoring: ["tutor", "teach", "lesson", "homework", "education"],
+  petcare: ["pet", "dog", "cat", "walk", "sitting"],
+  babysitting: ["babysit", "nanny", "childcare", "kids"],
+};
+
+// Common cities (extend as needed)
+const CITY_KEYWORDS = [
+  "berlin", "munich", "hamburg", "frankfurt", "cologne", "düsseldorf",
+  "stuttgart", "vienna", "zurich", "amsterdam", "london", "paris",
+  "new york", "los angeles", "chicago", "boston", "seattle", "miami"
+];
+
+function extractSearchParams(userMessage: string, conversationHistory: ChatMessage[]): {
+  service?: string;
+  location?: string;
+} {
+  const fullContext = [
+    ...conversationHistory.map(m => m.content),
+    userMessage
+  ].join(" ").toLowerCase();
+
+  // Extract service type
+  let service: string | undefined;
+  for (const [serviceType, keywords] of Object.entries(SERVICE_KEYWORDS)) {
+    if (keywords.some(kw => fullContext.includes(kw))) {
+      service = serviceType;
+      break;
+    }
+  }
+
+  // Extract location
+  let location: string | undefined;
+  for (const city of CITY_KEYWORDS) {
+    if (fullContext.includes(city)) {
+      location = city.charAt(0).toUpperCase() + city.slice(1);
+      break;
+    }
+  }
+
+  return { service, location };
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -123,12 +171,21 @@ export async function POST(request: NextRequest) {
 
     const assistantMessage = firstContent.text;
 
-    // Detect suggested actions from the response
-    const suggestedActions = detectSuggestedActions(assistantMessage, user?.role);
+    // Extract search parameters from conversation
+    const searchParams = extractSearchParams(message, conversationHistory);
+
+    // Detect suggested actions with smart search URLs
+    const suggestedActions = detectSuggestedActions(
+      assistantMessage,
+      user?.role,
+      searchParams,
+      message
+    );
 
     return NextResponse.json({
       message: assistantMessage,
       suggestedActions,
+      searchParams, // Include for debugging/future use
       usage: {
         inputTokens: response.usage.input_tokens,
         outputTokens: response.usage.output_tokens,
@@ -151,47 +208,114 @@ interface SuggestedAction {
   message?: string;
 }
 
-function detectSuggestedActions(aiMessage: string, role?: string): SuggestedAction[] {
-  const actions: SuggestedAction[] = [];
-  const lowerMessage = aiMessage.toLowerCase();
+interface SearchParams {
+  service?: string;
+  location?: string;
+}
 
-  // Common action detection - navigation buttons
-  if (lowerMessage.includes("book") || lowerMessage.includes("schedule") || lowerMessage.includes("find")) {
-    actions.push({ label: "Browse Workers", type: "navigate", url: "/search" });
+function buildSearchUrl(params: SearchParams): string {
+  const urlParams = new URLSearchParams();
+  if (params.service) urlParams.set("service", params.service);
+  if (params.location) urlParams.set("location", params.location);
+
+  const queryString = urlParams.toString();
+  return queryString ? `/search?${queryString}` : "/search";
+}
+
+function detectSuggestedActions(
+  aiMessage: string,
+  role?: string,
+  searchParams?: SearchParams,
+  userMessage?: string
+): SuggestedAction[] {
+  const actions: SuggestedAction[] = [];
+  const lowerAiMessage = aiMessage.toLowerCase();
+  const lowerUserMessage = (userMessage || "").toLowerCase();
+
+  // Check if user is looking for workers/services
+  const isSearchingForWorker =
+    lowerUserMessage.includes("need") ||
+    lowerUserMessage.includes("find") ||
+    lowerUserMessage.includes("looking for") ||
+    lowerUserMessage.includes("want") ||
+    lowerUserMessage.includes("hire") ||
+    lowerUserMessage.includes("book") ||
+    lowerAiMessage.includes("can help you find") ||
+    lowerAiMessage.includes("search for") ||
+    lowerAiMessage.includes("browse") ||
+    lowerAiMessage.includes("available");
+
+  // Smart search button with extracted parameters
+  if (isSearchingForWorker && searchParams && (searchParams.service || searchParams.location)) {
+    const searchUrl = buildSearchUrl(searchParams);
+
+    // Build descriptive label
+    let label = "View";
+    if (searchParams.service) {
+      const serviceLabel = searchParams.service.charAt(0).toUpperCase() + searchParams.service.slice(1);
+      label += ` ${serviceLabel}`;
+      if (serviceLabel === "Cleaning") label = "View Cleaners";
+      else if (serviceLabel === "Plumbing") label = "View Plumbers";
+      else if (serviceLabel === "Electrical") label = "View Electricians";
+      else if (serviceLabel === "Gardening") label = "View Gardeners";
+      else if (serviceLabel === "Painting") label = "View Painters";
+      else if (serviceLabel === "Moving") label = "View Movers";
+      else if (serviceLabel === "Tutoring") label = "View Tutors";
+      else if (serviceLabel === "Petcare") label = "View Pet Sitters";
+      else if (serviceLabel === "Babysitting") label = "View Babysitters";
+      else label += " Workers";
+    } else {
+      label = "View Workers";
+    }
+
+    if (searchParams.location) {
+      label += ` in ${searchParams.location}`;
+    }
+
+    actions.push({ label, type: "navigate", url: searchUrl });
   }
-  if (lowerMessage.includes("booking") && (lowerMessage.includes("view") || lowerMessage.includes("check") || lowerMessage.includes("status"))) {
+  // Fallback: general search if talking about finding/booking
+  else if (lowerAiMessage.includes("book") || lowerAiMessage.includes("schedule") || lowerAiMessage.includes("find")) {
+    actions.push({ label: "Browse All Workers", type: "navigate", url: "/search" });
+  }
+
+  // Check bookings
+  if (lowerAiMessage.includes("booking") && (lowerAiMessage.includes("view") || lowerAiMessage.includes("check") || lowerAiMessage.includes("status"))) {
     actions.push({ label: "My Bookings", type: "navigate", url: "/bookings" });
   }
-  if (lowerMessage.includes("message") || lowerMessage.includes("contact") || lowerMessage.includes("chat with")) {
+
+  // Messages
+  if (lowerAiMessage.includes("message") || lowerAiMessage.includes("contact") || lowerAiMessage.includes("chat with")) {
     actions.push({ label: "Messages", type: "navigate", url: "/messages" });
   }
-  if (lowerMessage.includes("payment") || lowerMessage.includes("invoice") || lowerMessage.includes("receipt")) {
+
+  // Payments
+  if (lowerAiMessage.includes("payment") || lowerAiMessage.includes("invoice") || lowerAiMessage.includes("receipt")) {
     actions.push({ label: "Invoices", type: "navigate", url: "/invoices" });
   }
-  if (lowerMessage.includes("profile") || lowerMessage.includes("account") || lowerMessage.includes("settings")) {
+
+  // Profile
+  if (lowerAiMessage.includes("profile") || lowerAiMessage.includes("account") || lowerAiMessage.includes("settings")) {
     actions.push({ label: "My Profile", type: "navigate", url: "/dashboard" });
   }
-  if (lowerMessage.includes("support") || lowerMessage.includes("help") || lowerMessage.includes("issue") || lowerMessage.includes("problem")) {
+
+  // Support
+  if (lowerAiMessage.includes("support") || lowerAiMessage.includes("issue") || lowerAiMessage.includes("problem")) {
     actions.push({ label: "Support", type: "navigate", url: "/support" });
   }
-  if (lowerMessage.includes("price") || lowerMessage.includes("cost") || lowerMessage.includes("estimate")) {
+
+  // Price estimate
+  if (lowerAiMessage.includes("price") || lowerAiMessage.includes("cost") || lowerAiMessage.includes("estimate")) {
     actions.push({ label: "Get Estimate", type: "navigate", url: "/ai/estimate" });
   }
 
   // Role-specific actions
   if (role === "WORKER") {
-    if (lowerMessage.includes("earning") || lowerMessage.includes("payout") || lowerMessage.includes("money")) {
+    if (lowerAiMessage.includes("earning") || lowerAiMessage.includes("payout") || lowerAiMessage.includes("money")) {
       actions.push({ label: "Earnings", type: "navigate", url: "/dashboard/earnings" });
     }
-    if (lowerMessage.includes("availability") || lowerMessage.includes("calendar")) {
+    if (lowerAiMessage.includes("availability") || lowerAiMessage.includes("calendar")) {
       actions.push({ label: "Calendar", type: "navigate", url: "/dashboard/calendar" });
-    }
-  }
-
-  // If no navigation actions detected, suggest follow-up messages
-  if (actions.length === 0) {
-    if (lowerMessage.includes("question") || lowerMessage.includes("help")) {
-      actions.push({ label: "Tell me more", type: "message", message: "Can you explain more?" });
     }
   }
 
