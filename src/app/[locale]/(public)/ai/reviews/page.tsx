@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Star,
   Search,
@@ -116,7 +116,7 @@ export default function ReviewInsightsPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-5xl">
-        <BackButton />
+
 
         <div className="flex items-center gap-4 mb-8">
           <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">

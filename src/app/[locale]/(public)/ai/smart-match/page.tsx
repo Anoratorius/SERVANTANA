@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BackButton } from "@/components/ui/back-button";
+
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -123,7 +123,7 @@ export default function SmartMatchPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
-        <BackButton />
+
 
         <div className="flex items-center gap-4 mb-8">
           <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">

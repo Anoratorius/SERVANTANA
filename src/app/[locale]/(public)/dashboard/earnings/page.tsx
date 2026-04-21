@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   DollarSign,
   Clock,
@@ -174,7 +174,7 @@ export default function EarningsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-8">
         <div className="container mx-auto px-4">
-          <BackButton />
+
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
               Earnings Dashboard

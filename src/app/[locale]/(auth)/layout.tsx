@@ -1,6 +1,7 @@
 "use client";
 
 import { Header } from "@/components/layout";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function AuthLayout({
   children,
@@ -10,6 +11,9 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      <div className="container mx-auto px-4 pt-4 max-w-5xl">
+        <BackButton />
+      </div>
       <main className="flex-1">{children}</main>
     </div>
   );

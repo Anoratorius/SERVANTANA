@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   MapPin,
   Navigation,
@@ -255,7 +255,7 @@ export default function BookingDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("booking.notFound")}</h1>
-            <BackButton />
+
           </div>
         </main>
         
@@ -273,7 +273,7 @@ export default function BookingDetailPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Back button */}
-          <BackButton />
+
 
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

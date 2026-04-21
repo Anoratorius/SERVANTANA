@@ -20,7 +20,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { BackButton } from "@/components/ui/back-button";
+
 import { SmartLockManager } from "@/components/properties/SmartLockManager";
 
 interface Property {
@@ -99,7 +99,7 @@ export default function PropertyDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("notFound")}</h1>
-            <BackButton />
+
           </div>
         </main>
         
@@ -114,7 +114,7 @@ export default function PropertyDetailPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Back button */}
-          <BackButton />
+
 
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

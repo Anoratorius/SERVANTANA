@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { BackButton } from "@/components/ui/back-button";
+
 import { Send, Bot, User, Loader2, Sparkles, ExternalLink } from "lucide-react";
 
 interface SuggestedAction {
@@ -132,7 +132,7 @@ export default function AIChatPage() {
       <div className="flex-shrink-0 bg-white dark:bg-gray-950 border-b px-4 py-3">
         <div className="container mx-auto max-w-3xl">
           <div className="flex items-center gap-3">
-            <BackButton />
+
             <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Bot className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             </div>

@@ -29,7 +29,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { BackButton } from "@/components/ui/back-button";
+
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 interface Service {
@@ -212,7 +212,7 @@ export default function BookingPage({
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
-            <BackButton />
+
           </div>
         </main>
         
@@ -230,7 +230,7 @@ export default function BookingPage({
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4">
           {/* Back button */}
-          <BackButton />
+
 
           <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             {t("booking.title")}

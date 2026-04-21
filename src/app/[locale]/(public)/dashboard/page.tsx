@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Calendar,
   DollarSign,
@@ -99,7 +99,7 @@ export default function DashboardPage() {
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white py-8">
       <div className="container mx-auto px-4 max-w-5xl">
-        <BackButton />
+
           {/* Welcome Section */}
           <div className="flex flex-col items-center text-center mb-8">
             <Avatar className="h-20 w-20 ring-4 ring-blue-100 mb-4">

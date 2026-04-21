@@ -17,7 +17,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   CheckCircle,
   Calendar,
@@ -294,7 +294,7 @@ export default function BookingConfirmationPage({
 
       <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-16">
         <div className="container mx-auto px-4 max-w-2xl text-center">
-          <BackButton />
+
           {/* Success/Status Icon */}
           <div className="mb-8">
             {isPaid ? (

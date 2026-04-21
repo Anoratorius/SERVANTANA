@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Calendar,
   Clock,
@@ -170,7 +170,7 @@ export default function BookingsPage() {
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <BackButton />
+
 
           {/* Offline indicator */}
           {(isOffline || isFromCache) && (

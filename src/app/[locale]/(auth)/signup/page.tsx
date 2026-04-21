@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
-import { BackButton } from "@/components/ui/back-button";
+
 import { HeroBackground } from "@/components/home/HeroBackground";
 
 function SignupForm() {
@@ -121,7 +121,7 @@ function SignupForm() {
   return (
     <Card className="w-full max-w-md relative z-10">
       <CardHeader className="text-center">
-        <BackButton />
+
         <div className="mb-4">
           <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
             {t("common.appName")}

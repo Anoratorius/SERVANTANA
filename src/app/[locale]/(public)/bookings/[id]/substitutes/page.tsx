@@ -19,7 +19,7 @@ import {
   Loader2,
   ArrowRight,
 } from "lucide-react";
-import { BackButton } from "@/components/ui/back-button";
+
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 
@@ -127,7 +127,7 @@ export default function SubstitutesPage() {
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-4" />
             <h1 className="text-2xl font-bold mb-2">{error}</h1>
-            <BackButton />
+
           </div>
         </main>
         
@@ -143,7 +143,7 @@ export default function SubstitutesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <BackButton />
+
           <div className="text-center mb-8">
             <UserCheck className="h-12 w-12 mx-auto text-blue-500 mb-4" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">

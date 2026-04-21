@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Crown,
   Check,
@@ -243,7 +243,7 @@ export default function SubscriptionPage() {
       
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto max-w-5xl px-4 py-8">
-          <BackButton />
+
 
           <div className="mb-8">
             <h1 className="text-3xl font-bold">Subscription</h1>

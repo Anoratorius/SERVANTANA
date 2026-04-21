@@ -17,7 +17,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { BackButton } from "@/components/ui/back-button";
+
 import { toast } from "sonner";
 
 interface Booking {
@@ -143,7 +143,7 @@ export default function ReviewPage({
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold mb-4">{error || "Booking not found"}</h1>
-            <BackButton />
+
           </div>
         </main>
         
@@ -163,7 +163,7 @@ export default function ReviewPage({
             <p className="text-muted-foreground mb-6">
               Only customers can leave reviews for workers.
             </p>
-            <BackButton />
+
           </div>
         </main>
         
@@ -183,7 +183,7 @@ export default function ReviewPage({
             <p className="text-muted-foreground mb-6">
               You can only review a booking after it has been completed.
             </p>
-            <BackButton />
+
           </div>
         </main>
         
@@ -274,7 +274,7 @@ export default function ReviewPage({
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
-          <BackButton />
+
 
           <Card>
             <CardHeader>

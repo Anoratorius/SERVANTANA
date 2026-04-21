@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, Loader2, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { BackButton } from "@/components/ui/back-button";
+
 import { toast } from "sonner";
 
 export default function NewPropertyPage() {
@@ -119,7 +119,7 @@ export default function NewPropertyPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
           {/* Back button */}
-          <BackButton />
+
 
           <Card>
             <CardHeader>

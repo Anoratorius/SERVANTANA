@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Select,
   SelectContent,
@@ -129,7 +129,7 @@ export default function PriceEstimatePage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
-        <BackButton />
+
 
         <div className="flex items-center gap-4 mb-8">
           <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">

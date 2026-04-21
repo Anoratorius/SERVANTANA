@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Users,
   Briefcase,
@@ -1731,7 +1731,7 @@ export default function AdminPage() {
 
       <main className="flex-1 bg-gradient-to-b from-purple-50 to-white py-4 sm:py-8">
         <div className="container mx-auto px-2 sm:px-4 max-w-6xl">
-          <BackButton />
+
           <div className="text-center mb-4 sm:mb-8">
             <Shield className="h-8 w-8 sm:h-12 sm:w-12 mx-auto text-purple-500 mb-2 sm:mb-4" />
             <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">

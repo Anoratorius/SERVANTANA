@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Briefcase, MapPin, Clock } from "lucide-react";
 
@@ -25,7 +25,7 @@ export default function CareersPage() {
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-16">
           <div className="container mx-auto px-4 max-w-4xl">
-            <BackButton />
+
             <div className="text-center">
               <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
                 {t("careers.title")}

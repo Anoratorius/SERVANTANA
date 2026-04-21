@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
+
 import { CheckCircle, XCircle, Loader2, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -45,7 +45,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full text-center">
-        <BackButton />
+
         {status === "loading" && (
           <div className="space-y-4">
             <Loader2 className="h-16 w-16 text-blue-500 mx-auto animate-spin" />

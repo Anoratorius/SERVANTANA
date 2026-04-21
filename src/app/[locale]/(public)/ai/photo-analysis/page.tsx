@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Camera,
   Upload,
@@ -171,7 +171,7 @@ export default function PhotoAnalysisPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-5xl">
-        <BackButton />
+
 
         <div className="flex items-center gap-4 mb-8">
           <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-full">

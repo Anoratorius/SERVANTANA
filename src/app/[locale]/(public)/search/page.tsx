@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BackButton } from "@/components/ui/back-button";
+
 import { Search, Star, MapPin, CheckCircle, Leaf, PawPrint } from "lucide-react";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 
@@ -166,7 +166,7 @@ function SearchContent() {
         {/* Search Header */}
         <section className="bg-white border-b py-3 md:py-8">
           <div className="container mx-auto px-2 md:px-4 max-w-5xl">
-            <BackButton />
+
 
             <div className="text-center mb-3 md:mb-6">
               <Search className="h-7 w-7 md:h-12 md:w-12 mx-auto text-blue-500 mb-1.5 md:mb-3" />

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import { MessageCircle, CheckCircle, Clock, Wifi, WifiOff } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useMessageStream, StreamMessage } from "@/hooks/useMessageStream";
@@ -140,7 +140,7 @@ export default function MessagesPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-3xl">
-          <BackButton />
+
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
               <MessageCircle className="h-12 w-12 text-blue-500" />

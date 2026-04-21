@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/analytics/DateRangePicker";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   CreditCard,
   DollarSign,
@@ -167,7 +167,7 @@ export default function PaymentsAnalyticsPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-7xl">
-        <BackButton />
+
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>

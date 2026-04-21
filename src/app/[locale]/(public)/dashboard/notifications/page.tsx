@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/ui/back-button";
+
 import {
   Bell,
   Mail,
@@ -326,7 +326,7 @@ export default function NotificationsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <BackButton />
+
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
               <Bell className="h-6 w-6" />
