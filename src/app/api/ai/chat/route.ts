@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getAnthropicClient, AI_MODEL, SYSTEM_PROMPTS } from "@/lib/ai/anthropic";
+import { KNOWLEDGE_BASE } from "@/lib/ai/knowledge-base";
 import { prisma } from "@/lib/prisma";
 import { applyRateLimit, rateLimiters } from "@/lib/rate-limit";
 import { z } from "zod";
@@ -143,10 +144,21 @@ export async function POST(request: NextRequest) {
 
     const client = getAnthropicClient();
 
+    // Build system prompt with knowledge base
+    const systemPrompt = [
+      SYSTEM_PROMPTS.chat,
+      "",
+      "## Platform Knowledge Base",
+      KNOWLEDGE_BASE,
+      "",
+      `## Current User Context`,
+      userContext,
+    ].join("\n");
+
     const response = await client.messages.create({
       model: AI_MODEL,
       max_tokens: 1024,
-      system: `${SYSTEM_PROMPTS.chat}\n\nCurrent user context: ${userContext}`,
+      system: systemPrompt,
       messages: messages.map(m => ({
         role: m.role,
         content: m.content,
