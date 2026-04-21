@@ -308,6 +308,19 @@ model User {
   userAnalytics       UserAnalytics[]   @relation("UserAnalyticsRecords")
   fraudSignals        FraudSignal[]     @relation("FraudSignals")
   acquisitionRecord   UserAcquisition?  @relation("UserAcquisitionRecord")
+
+  // Revolutionary features relations
+  instantPayEligibility  InstantPayEligibility?   @relation("InstantPayEligibility")
+  instantPayouts         InstantPayout[]          @relation("InstantPayouts")
+  bookingPatternsCustomer BookingPattern[]        @relation("CustomerBookingPatterns")
+  bookingPatternsWorker  BookingPattern[]         @relation("WorkerBookingPatterns")
+  bookingSuggestions     BookingSuggestion[]      @relation("CustomerSuggestions")
+  workerVerifications    WorkerVerification[]     @relation("WorkerVerifications")
+  verificationsReviewed  WorkerVerification[]     @relation("VerificationsReviewed")
+  smartHomeConnections   SmartHomeConnection[]    @relation("SmartHomeConnections")
+  voiceAssistantLinks    VoiceAssistantLink[]     @relation("VoiceAssistantLinks")
+  voiceDefaultWorkerFor  VoiceAssistantLink[]     @relation("VoiceDefaultWorker")
+  liveStreams            LiveStream[]             @relation("WorkerStreams")
 }
 
 // NextAuth.js Account model
@@ -458,6 +471,10 @@ model Service {
   // Relations
   workerServices WorkerService[]
   bookings       Booking[]
+
+  // Revolutionary features
+  bookingPatterns     BookingPattern[]
+  voiceAssistantLinks VoiceAssistantLink[]
 }
 
 // Junction table: which services a worker offers with their custom prices
@@ -565,6 +582,11 @@ model Booking {
   invoice         Invoice?
   customerReview  CustomerReview?
   guaranteeClaims GuaranteeClaim[]
+
+  // Revolutionary features
+  qualityScore       QualityScore?
+  workerVerification WorkerVerification[]
+  liveStream         LiveStream?
 
   @@index([customerId])
   @@index([propertyId])
@@ -702,10 +724,11 @@ model Earning {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  worker   User    @relation("WorkerEarnings", fields: [workerId], references: [id])
-  booking  Booking @relation(fields: [bookingId], references: [id])
-  payout   Payout? @relation(fields: [payoutId], references: [id])
-  payoutId String?
+  worker         User           @relation("WorkerEarnings", fields: [workerId], references: [id])
+  booking        Booking        @relation(fields: [bookingId], references: [id])
+  payout         Payout?        @relation(fields: [payoutId], references: [id])
+  payoutId       String?
+  instantPayouts InstantPayout[]
 
   @@index([workerId], map: "Earning_cleanerId_idx")
   @@index([status])
@@ -752,6 +775,10 @@ model Profession {
   // Demand tracking relations
   demandSignals DemandSignal[]
   industryStats IndustryStats[]
+
+  // Revolutionary features
+  bookingPatterns     BookingPattern[]
+  voiceAssistantLinks VoiceAssistantLink[]
 
   @@index([categoryId])
   @@index([status])
@@ -2202,4 +2229,383 @@ model CustomerBehaviorMetrics {
   @@index([customerId])
   @@index([date])
   @@index([ltv])
+}
+
+// ============================================
+// REVOLUTIONARY FEATURES
+// ============================================
+
+// Feature 1: AI Quality Scoring
+model QualityScore {
+  id               String   @id @default(cuid())
+  bookingId        String   @unique
+
+  // Scores
+  beforeScore      Float    // 1-10 cleanliness before
+  afterScore       Float    // 1-10 cleanliness after
+  improvementScore Float    // 0-100 improvement percentage
+
+  // Detailed metrics as JSON
+  metrics          Json     // {cleanliness, organization, thoroughness, attention_to_detail}
+
+  // Pass/fail
+  qualityPassed    Boolean
+  passThreshold    Float    @default(70)
+
+  // AI analysis
+  aiAnalysis       String?  @db.Text
+  concerns         String[]
+  highlights       String[]
+
+  // Photos analyzed
+  beforePhotoIds   String[]
+  afterPhotoIds    String[]
+
+  createdAt        DateTime @default(now())
+
+  booking          Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+}
+
+// Feature 2: Instant Pay
+enum InstantPayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model InstantPayEligibility {
+  id                   String   @id @default(cuid())
+  workerId             String   @unique @map("cleanerId")
+
+  // Trust factors
+  trustScore           Float    @default(0)  // 0-100
+  completedBookings    Int      @default(0)
+  accountAgeDays       Int      @default(0)
+
+  // Instant pay settings
+  instantPayEnabled    Boolean  @default(false)
+  instantPayFeePercent Float    @default(1.5) // 1.5% fee for instant
+
+  // Limits
+  dailyInstantLimit    Float    @default(500)
+  usedToday            Float    @default(0)
+  limitResetAt         DateTime?
+
+  // Risk factors
+  chargebackCount      Int      @default(0)
+  disputeCount         Int      @default(0)
+
+  updatedAt            DateTime @updatedAt
+
+  worker               User     @relation("InstantPayEligibility", fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId], map: "InstantPayEligibility_cleanerId_idx")
+}
+
+model InstantPayout {
+  id               String              @id @default(cuid())
+  workerId         String              @map("cleanerId")
+  earningId        String
+
+  // Amounts
+  amount           Float               // Gross amount
+  fee              Float               // Instant pay fee
+  netAmount        Float               // Net to worker
+  currency         String              @default("EUR")
+
+  // Stripe
+  stripeTransferId String?             @unique
+
+  // Status
+  status           InstantPayoutStatus @default(PENDING)
+  failureReason    String?
+
+  processedAt      DateTime?
+  createdAt        DateTime            @default(now())
+
+  worker           User                @relation("InstantPayouts", fields: [workerId], references: [id])
+  earning          Earning             @relation(fields: [earningId], references: [id])
+
+  @@index([workerId], map: "InstantPayout_cleanerId_idx")
+  @@index([earningId])
+  @@index([status])
+}
+
+// Feature 3: Predictive Auto-Booking
+enum BookingFrequency {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  CUSTOM
+}
+
+enum SuggestionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  AUTO_BOOKED
+}
+
+model BookingPattern {
+  id              String           @id @default(cuid())
+  customerId      String
+
+  // Pattern details
+  professionId    String?
+  workerId        String?          @map("cleanerId")
+  serviceId       String?
+
+  // Frequency
+  frequency       BookingFrequency
+  dayOfWeek       Int?             // 0-6 (Sunday-Saturday)
+  dayOfMonth      Int?             // 1-31
+  timeSlot        String?          // "09:00"
+
+  // Confidence
+  confidence      Float            // 0-100
+  sampleSize      Int              @default(0)
+
+  // Settings
+  autoBookEnabled Boolean          @default(false)
+  notifyDaysBefore Int             @default(3)
+
+  // Tracking
+  lastSuggested   DateTime?
+  lastBooked      DateTime?
+  timesAccepted   Int              @default(0)
+  timesDeclined   Int              @default(0)
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  customer        User             @relation("CustomerBookingPatterns", fields: [customerId], references: [id], onDelete: Cascade)
+  profession      Profession?      @relation(fields: [professionId], references: [id])
+  worker          User?            @relation("WorkerBookingPatterns", fields: [workerId], references: [id])
+  service         Service?         @relation(fields: [serviceId], references: [id])
+  suggestions     BookingSuggestion[]
+
+  @@index([customerId])
+  @@index([workerId], map: "BookingPattern_cleanerId_idx")
+}
+
+model BookingSuggestion {
+  id            String           @id @default(cuid())
+  customerId    String
+  patternId     String?
+
+  // Suggestion details
+  suggestedDate DateTime
+  suggestedTime String           // "09:00"
+  workerId      String?          @map("cleanerId")
+  professionId  String?
+  serviceId     String?
+
+  // Status
+  status        SuggestionStatus @default(PENDING)
+  respondedAt   DateTime?
+
+  // Result
+  autoBooked    Boolean          @default(false)
+  bookingId     String?          // If accepted/auto-booked
+
+  // Notification
+  notifiedAt    DateTime?
+  notificationId String?
+
+  createdAt     DateTime         @default(now())
+  expiresAt     DateTime
+
+  customer      User             @relation("CustomerSuggestions", fields: [customerId], references: [id], onDelete: Cascade)
+  pattern       BookingPattern?  @relation(fields: [patternId], references: [id])
+
+  @@index([customerId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+// Feature 4: AI Video Verification
+enum VerificationStatus {
+  PENDING
+  PASSED
+  FAILED
+  MANUAL_REVIEW
+}
+
+model WorkerVerification {
+  id               String             @id @default(cuid())
+  workerId         String             @map("cleanerId")
+  bookingId        String
+
+  // Selfie data
+  selfieUrl        String
+  selfiePublicId   String?            // Cloudinary ID for cleanup
+
+  // Verification results
+  faceMatchScore   Float              // 0-100 similarity to profile
+  livenessScore    Float              // 0-100 liveness detection
+  verified         Boolean            @default(false)
+
+  // Location (optional verification)
+  latitude         Float?
+  longitude        Float?
+  locationVerified Boolean            @default(false)
+
+  // Status
+  status           VerificationStatus @default(PENDING)
+  failureReason    String?
+
+  // Timestamps
+  createdAt        DateTime           @default(now())
+  verifiedAt       DateTime?
+  reviewedById     String?
+
+  worker           User               @relation("WorkerVerifications", fields: [workerId], references: [id])
+  booking          Booking            @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  reviewedBy       User?              @relation("VerificationsReviewed", fields: [reviewedById], references: [id])
+
+  @@unique([bookingId, workerId], map: "WorkerVerification_bookingId_cleanerId_key")
+  @@index([workerId], map: "WorkerVerification_cleanerId_idx")
+  @@index([bookingId])
+  @@index([status])
+}
+
+// Feature 5: Smart Home Integration
+enum SmartHomeProvider {
+  AUGUST
+  YALE_HOME
+  NUKI
+  SCHLAGE_ENCODE
+  RING
+  NEST
+  SMARTTHINGS
+}
+
+enum SmartHomeConnectionStatus {
+  PENDING
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  EXPIRED
+}
+
+model SmartHomeConnection {
+  id             String                    @id @default(cuid())
+  userId         String
+
+  provider       SmartHomeProvider
+  accountEmail   String?
+
+  // OAuth tokens (should be encrypted in production)
+  accessToken    String?
+  refreshToken   String?
+  tokenExpiresAt DateTime?
+
+  // Status
+  status         SmartHomeConnectionStatus @default(PENDING)
+  lastSyncAt     DateTime?
+  errorMessage   String?
+
+  createdAt      DateTime                  @default(now())
+  updatedAt      DateTime                  @updatedAt
+
+  user           User                      @relation("SmartHomeConnections", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@index([userId])
+}
+
+// Feature 6: Voice Booking
+enum VoicePlatform {
+  ALEXA
+  GOOGLE_ASSISTANT
+  SIRI
+}
+
+model VoiceAssistantLink {
+  id                  String        @id @default(cuid())
+  userId              String
+
+  platform            VoicePlatform
+  platformAccountId   String?       // Platform-specific account ID
+
+  // Defaults
+  defaultProfessionId String?
+  defaultWorkerId     String?       @map("defaultCleanerId")
+  defaultAddress      String?
+  defaultServiceId    String?
+
+  // Status
+  linked              Boolean       @default(false)
+  lastUsedAt          DateTime?
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  user                User          @relation("VoiceAssistantLinks", fields: [userId], references: [id], onDelete: Cascade)
+  defaultProfession   Profession?   @relation(fields: [defaultProfessionId], references: [id])
+  defaultWorker       User?         @relation("VoiceDefaultWorker", fields: [defaultWorkerId], references: [id])
+  defaultService      Service?      @relation(fields: [defaultServiceId], references: [id])
+
+  @@unique([userId, platform])
+  @@index([userId])
+}
+
+// Feature 7: Live Work Streaming
+enum StreamProvider {
+  MUX
+  CLOUDFLARE_STREAM
+  LIVEKIT
+}
+
+enum StreamStatus {
+  INACTIVE
+  PREPARING
+  LIVE
+  ENDED
+  ERROR
+}
+
+model LiveStream {
+  id               String         @id @default(cuid())
+  bookingId        String         @unique
+  workerId         String         @map("cleanerId")
+
+  // Stream provider
+  provider         StreamProvider @default(MUX)
+  streamKey        String?        // Worker's ingest key
+  playbackId       String?        // Mux playback ID
+  playbackUrl      String?        // Customer watch URL
+
+  // Status
+  status           StreamStatus   @default(INACTIVE)
+  startedAt        DateTime?
+  endedAt          DateTime?
+
+  // Recording
+  recordingEnabled Boolean        @default(true)
+  recordingUrl     String?
+  recordingAssetId String?
+
+  // Consent
+  workerConsent    Boolean        @default(false)
+  customerConsent  Boolean        @default(false)
+  consentedAt      DateTime?
+
+  // Stats
+  viewerCount      Int            @default(0)
+  totalDuration    Int?           // seconds
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  booking          Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  worker           User           @relation("WorkerStreams", fields: [workerId], references: [id])
+
+  @@index([bookingId])
+  @@index([workerId], map: "LiveStream_cleanerId_idx")
+  @@index([status])
 }
