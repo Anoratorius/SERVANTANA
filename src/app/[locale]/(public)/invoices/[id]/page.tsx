@@ -120,7 +120,7 @@ export default function InvoiceDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("notFound")}</h1>
-            <BackButton href="/invoices" />
+            <BackButton />
           </div>
         </main>
         <Footer />
@@ -136,7 +136,7 @@ export default function InvoiceDetailPage() {
         <div className="container mx-auto px-4 max-w-3xl">
           {/* Actions - hidden in print */}
           <div className="flex items-center justify-between mb-6 print:hidden">
-            <BackButton href="/invoices" />
+            <BackButton />
             <div className="flex gap-2">
               <Button variant="outline" onClick={handlePrint}>
                 <Printer className="h-4 w-4 mr-2" />

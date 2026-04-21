@@ -167,7 +167,7 @@ export default function PaymentsAnalyticsPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-7xl">
-        <BackButton href="/admin" />
+        <BackButton />
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>

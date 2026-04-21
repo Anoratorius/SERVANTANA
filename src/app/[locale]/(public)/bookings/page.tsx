@@ -174,7 +174,7 @@ export default function BookingsPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <BackButton href="/dashboard" />
+          <BackButton />
 
           {/* Offline indicator */}
           {(isOffline || isFromCache) && (

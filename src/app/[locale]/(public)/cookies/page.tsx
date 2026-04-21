@@ -13,7 +13,7 @@ export default function CookiePolicyPage() {
 
       <main className="flex-1 bg-white py-12">
         <div className="container mx-auto px-4 max-w-3xl">
-          <BackButton href="/" />
+          <BackButton />
           <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent text-center" style={{ fontFamily: 'var(--font-logo)' }}>{t("legal.cookies.title")}</h1>
 
           <div className="prose prose-gray max-w-none space-y-6">

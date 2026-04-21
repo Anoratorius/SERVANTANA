@@ -194,7 +194,7 @@ export default function WorkerProfilePage({
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{error || "Worker not found"}</h1>
-            <BackButton href="/search" />
+            <BackButton />
           </div>
         </main>
         <Footer />
@@ -212,7 +212,7 @@ export default function WorkerProfilePage({
       <main className="flex-1 bg-muted/30">
         {/* Back button */}
         <div className="container mx-auto px-4 py-4">
-          <BackButton href="/search" />
+          <BackButton />
         </div>
 
         {/* Profile Header */}

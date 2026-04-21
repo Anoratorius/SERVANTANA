@@ -55,7 +55,7 @@ export default function EmailVerificationRequiredPage() {
         <HeroBackground />
         <Card className="w-full max-w-md relative z-10">
           <CardHeader className="text-center">
-            <BackButton href="/" />
+            <BackButton />
             <div className="mb-4">
               <Link href="/" className="text-2xl uppercase bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-logo)' }}>
                 {t("common.appName")}

@@ -100,7 +100,7 @@ export default function PropertyDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">{t("notFound")}</h1>
-            <BackButton href="/properties" />
+            <BackButton />
           </div>
         </main>
         <Footer />
@@ -115,7 +115,7 @@ export default function PropertyDetailPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Back button */}
-          <BackButton href="/properties" />
+          <BackButton />
 
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

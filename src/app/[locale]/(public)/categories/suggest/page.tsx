@@ -43,7 +43,7 @@ export default function SuggestCategoryPage() {
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-lg">
-          <BackButton href="/categories" />
+          <BackButton />
 
           {submitted ? (
             <div className="text-center py-12">

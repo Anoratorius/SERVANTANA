@@ -108,7 +108,7 @@ export default function AIChatPage() {
   return (
     <main className="flex-1 bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4 max-w-3xl h-[calc(100vh-200px)]">
-        <BackButton href="/ai" />
+        <BackButton />
 
         <Card className="h-full flex flex-col">
           <CardHeader className="border-b">

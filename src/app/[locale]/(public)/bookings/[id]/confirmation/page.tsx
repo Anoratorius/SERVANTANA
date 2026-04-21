@@ -294,7 +294,7 @@ export default function BookingConfirmationPage({
 
       <main className="flex-1 bg-gradient-to-b from-green-50 to-white py-16">
         <div className="container mx-auto px-4 max-w-2xl text-center">
-          <BackButton href={`/bookings/${id}`} />
+          <BackButton />
           {/* Success/Status Icon */}
           <div className="mb-8">
             {isPaid ? (

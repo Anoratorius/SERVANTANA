@@ -223,7 +223,7 @@ export default function CategoryDetailPage() {
 
         <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
           <div className="container mx-auto px-4">
-            <BackButton href="/categories" />
+            <BackButton />
 
             {/* Category header */}
             <div className="flex flex-col items-center mb-12">
@@ -336,7 +336,7 @@ export default function CategoryDetailPage() {
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4">
-          <BackButton href={categorySlug === "home_services" ? "/" : "/categories"} />
+          <BackButton />
 
           {/* Category header */}
           <div className="flex flex-col items-center mb-12">

@@ -45,7 +45,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full text-center">
-        <BackButton href="/login" />
+        <BackButton />
         {status === "loading" && (
           <div className="space-y-4">
             <Loader2 className="h-16 w-16 text-blue-500 mx-auto animate-spin" />

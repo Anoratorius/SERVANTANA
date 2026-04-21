@@ -103,7 +103,7 @@ export default function DashboardPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-5xl">
-          <BackButton href="/" />
+          <BackButton />
           {/* Welcome Section */}
           <div className="flex flex-col items-center text-center mb-8">
             <Avatar className="h-20 w-20 ring-4 ring-blue-100 mb-4">

@@ -132,7 +132,7 @@ export default function BookingPhotosPage({
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-5xl">
           {/* Header */}
-          <BackButton href={`/bookings/${id}`} />
+          <BackButton />
           <div className="flex items-center gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">

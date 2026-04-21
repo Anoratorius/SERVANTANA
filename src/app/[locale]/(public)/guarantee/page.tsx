@@ -40,7 +40,7 @@ export default function GuaranteePage() {
 
       <main className="flex-1 bg-gradient-to-br from-emerald-50 via-white to-green-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
-          <BackButton href="/" />
+          <BackButton />
 
           {/* Hero Section */}
           <div className="text-center mb-12">

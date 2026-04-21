@@ -26,7 +26,7 @@ export default function SupportPage() {
 
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <BackButton href="/dashboard" />
+          <BackButton />
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
               <HelpCircle className="h-8 w-8" />

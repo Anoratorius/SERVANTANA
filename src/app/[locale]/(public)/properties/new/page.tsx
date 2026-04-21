@@ -120,7 +120,7 @@ export default function NewPropertyPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-2xl">
           {/* Back button */}
-          <BackButton href="/properties" />
+          <BackButton />
 
           <Card>
             <CardHeader>

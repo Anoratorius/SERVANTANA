@@ -244,7 +244,7 @@ export default function SubscriptionPage() {
       <Header />
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto max-w-5xl px-4 py-8">
-          <BackButton href="/dashboard" />
+          <BackButton />
 
           <div className="mb-8">
             <h1 className="text-3xl font-bold">Subscription</h1>
