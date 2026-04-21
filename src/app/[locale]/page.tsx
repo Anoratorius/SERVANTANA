@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Header, Footer } from "@/components/layout";
 import { HeaderLocation } from "@/components/layout/HeaderLocation";
 import { CTAButtons } from "@/components/home/CTAButtons";
+import { AppStoreButtons } from "@/components/home/AppStoreButtons";
 import { ScrollIndicator } from "@/components/home/ScrollIndicator";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { HeroBackground } from "@/components/home/HeroBackground";
@@ -144,6 +145,7 @@ function HomeContent() {
               customerLabel={t("home.cta.customerButton")}
               workerLabel={t("home.cta.workerButton")}
             />
+            <AppStoreButtons />
           </div>
         </section>
       </main>
