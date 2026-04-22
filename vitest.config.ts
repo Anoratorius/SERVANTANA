@@ -7,13 +7,24 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    setupFiles: ["./tests/setup.ts"],
+    include: ["tests/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", "dist", ".next"],
     coverage: {
+      provider: "v8",
       reporter: ["text", "json", "html"],
-      exclude: ["node_modules/", "src/test/"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/**/*.d.ts",
+        "src/**/types.ts",
+        "src/app/**/layout.tsx",
+        "src/app/**/loading.tsx",
+        "src/app/**/error.tsx",
+        "node_modules/",
+      ],
     },
+    testTimeout: 10000,
+    hookTimeout: 10000,
   },
   resolve: {
     alias: {
