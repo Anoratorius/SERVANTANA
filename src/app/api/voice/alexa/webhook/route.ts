@@ -7,6 +7,158 @@ import {
   getEstimatedPrice,
   buildConfirmationMessage,
 } from "@/lib/voice/slot-filler";
+import * as crypto from "crypto";
+
+// Certificate cache to avoid re-downloading
+const certCache = new Map<string, { cert: string; expiresAt: number }>();
+
+/**
+ * Verify Alexa request signature according to Amazon's specification
+ * https://developer.amazon.com/docs/custom-skills/host-a-custom-skill-as-a-web-service.html
+ */
+async function verifyAlexaSignature(
+  request: NextRequest,
+  rawBody: string
+): Promise<{ valid: boolean; error?: string }> {
+  const signatureCertChainUrl = request.headers.get("SignatureCertChainUrl");
+  const signature = request.headers.get("Signature-256");
+
+  if (!signatureCertChainUrl || !signature) {
+    return { valid: false, error: "Missing signature headers" };
+  }
+
+  // Step 1: Verify the URL is from Amazon
+  const certUrlValidation = validateCertUrl(signatureCertChainUrl);
+  if (!certUrlValidation.valid) {
+    return { valid: false, error: certUrlValidation.error };
+  }
+
+  // Step 2: Download and cache the certificate
+  const certResult = await fetchCertificate(signatureCertChainUrl);
+  if (!certResult.cert) {
+    return { valid: false, error: certResult.error || "Failed to fetch certificate" };
+  }
+
+  // Step 3: Verify the certificate is valid for Alexa
+  const certValidation = validateCertificate(certResult.cert);
+  if (!certValidation.valid) {
+    return { valid: false, error: certValidation.error };
+  }
+
+  // Step 4: Verify the request signature
+  try {
+    const signatureBuffer = Buffer.from(signature, "base64");
+    const verifier = crypto.createVerify("SHA256");
+    verifier.update(rawBody);
+    const isValid = verifier.verify(certResult.cert, signatureBuffer);
+
+    if (!isValid) {
+      return { valid: false, error: "Invalid signature" };
+    }
+  } catch (error) {
+    console.error("Signature verification error:", error);
+    return { valid: false, error: "Signature verification failed" };
+  }
+
+  // Step 5: Verify timestamp (request must be within 150 seconds)
+  try {
+    const body = JSON.parse(rawBody);
+    const timestamp = new Date(body.request?.timestamp);
+    const now = new Date();
+    const diffSeconds = Math.abs(now.getTime() - timestamp.getTime()) / 1000;
+
+    if (diffSeconds > 150) {
+      return { valid: false, error: "Request timestamp too old" };
+    }
+  } catch {
+    return { valid: false, error: "Invalid timestamp" };
+  }
+
+  return { valid: true };
+}
+
+function validateCertUrl(url: string): { valid: boolean; error?: string } {
+  try {
+    const parsedUrl = new URL(url);
+
+    // Must be HTTPS
+    if (parsedUrl.protocol !== "https:") {
+      return { valid: false, error: "Certificate URL must use HTTPS" };
+    }
+
+    // Must be from Amazon's domain
+    if (parsedUrl.hostname.toLowerCase() !== "s3.amazonaws.com") {
+      return { valid: false, error: "Certificate must be from s3.amazonaws.com" };
+    }
+
+    // Path must start with /echo.api/
+    if (!parsedUrl.pathname.startsWith("/echo.api/")) {
+      return { valid: false, error: "Certificate path must start with /echo.api/" };
+    }
+
+    // Port must be 443 or omitted
+    if (parsedUrl.port && parsedUrl.port !== "443") {
+      return { valid: false, error: "Certificate URL must use port 443" };
+    }
+
+    return { valid: true };
+  } catch {
+    return { valid: false, error: "Invalid certificate URL" };
+  }
+}
+
+async function fetchCertificate(
+  url: string
+): Promise<{ cert?: string; error?: string }> {
+  // Check cache first
+  const cached = certCache.get(url);
+  if (cached && cached.expiresAt > Date.now()) {
+    return { cert: cached.cert };
+  }
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return { error: "Failed to download certificate" };
+    }
+
+    const cert = await response.text();
+
+    // Cache for 24 hours
+    certCache.set(url, {
+      cert,
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+    });
+
+    return { cert };
+  } catch (error) {
+    console.error("Certificate fetch error:", error);
+    return { error: "Failed to fetch certificate" };
+  }
+}
+
+function validateCertificate(pem: string): { valid: boolean; error?: string } {
+  try {
+    const cert = new crypto.X509Certificate(pem);
+
+    // Check expiration
+    const now = new Date();
+    if (now < new Date(cert.validFrom) || now > new Date(cert.validTo)) {
+      return { valid: false, error: "Certificate is expired or not yet valid" };
+    }
+
+    // Check Subject Alternative Name contains echo-api.amazon.com
+    const san = cert.subjectAltName || "";
+    if (!san.includes("echo-api.amazon.com")) {
+      return { valid: false, error: "Certificate SAN must include echo-api.amazon.com" };
+    }
+
+    return { valid: true };
+  } catch (error) {
+    console.error("Certificate validation error:", error);
+    return { valid: false, error: "Invalid certificate format" };
+  }
+}
 
 export const maxDuration = 30;
 
@@ -96,26 +248,27 @@ interface AlexaResponse {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body: AlexaRequest = await request.json();
+    // Read raw body for signature verification
+    const rawBody = await request.text();
 
-    // Verify Alexa signature (placeholder - in production, implement full verification)
-    // https://developer.amazon.com/docs/custom-skills/host-a-custom-skill-as-a-web-service.html
-    const signatureCertChainUrl = request.headers.get(
-      "SignatureCertChainUrl"
-    );
-    const signature = request.headers.get("Signature-256");
+    // Verify Alexa signature (required in production)
+    const isProduction = process.env.NODE_ENV === "production";
+    const verification = await verifyAlexaSignature(request, rawBody);
 
-    if (!signatureCertChainUrl || !signature) {
-      console.warn("Alexa request missing signature headers");
-      // In production, return 400 error
-      // For development, we'll continue processing
+    if (!verification.valid) {
+      console.warn("Alexa signature verification failed:", verification.error);
+      if (isProduction) {
+        return NextResponse.json(
+          { error: "Invalid request signature" },
+          { status: 400 }
+        );
+      }
+      // In development, log warning but continue
+      console.warn("Continuing despite invalid signature (dev mode)");
     }
 
-    // TODO: Implement full Alexa signature verification
-    // 1. Verify the signing certificate URL
-    // 2. Download and verify the certificate
-    // 3. Verify the request signature
-    // 4. Verify the request timestamp
+    // Parse the verified body
+    const body: AlexaRequest = JSON.parse(rawBody);
 
     const alexaUserId = body.session?.user?.userId || body.context?.System?.user?.userId;
     const accessToken = body.session?.user?.accessToken || body.context?.System?.user?.accessToken;

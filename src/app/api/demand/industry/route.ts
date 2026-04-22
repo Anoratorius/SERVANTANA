@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { IndustryStatsSource } from "@prisma/client";
 
@@ -123,7 +124,12 @@ export async function GET(request: NextRequest) {
 // Create or update industry stats (admin only)
 export async function POST(request: NextRequest) {
   try {
-    // TODO: Add admin authentication check
+    // Verify admin authentication
+    const session = await auth();
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     const {
