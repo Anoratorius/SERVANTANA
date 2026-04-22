@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
@@ -83,7 +84,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.stripe.com https://www.paypal.com https://*.paypal.com https://*.coinbase.com https://ipinfo.io https://ipwho.is https://en.wikipedia.org",
+              "connect-src 'self' https://api.stripe.com https://www.paypal.com https://*.paypal.com https://*.coinbase.com https://ipinfo.io https://ipwho.is https://en.wikipedia.org https://*.sentry.io https://*.ingest.sentry.io",
               "frame-src 'self' https://js.stripe.com https://www.paypal.com https://*.paypal.com",
               "object-src 'none'",
               "base-uri 'self'",
@@ -101,4 +102,27 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 };
 
-export default withNextIntl(nextConfig);
+// Sentry configuration options
+const sentryWebpackPluginOptions = {
+  // Suppress source map upload warnings
+  silent: true,
+  // Organization and project from Sentry
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Auth token for uploading source maps
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Hide source maps from users
+  hideSourceMaps: true,
+  // Disable Sentry telemetry
+  telemetry: false,
+  // Widen source map upload scope
+  widenClientFileUpload: true,
+  // Tunnel route for ad-blockers
+  tunnelRoute: "/monitoring",
+  // Disable logger for cleaner output
+  disableLogger: true,
+  // Auto-instrument for request data
+  automaticVercelMonitors: true,
+};
+
+export default withSentryConfig(withNextIntl(nextConfig), sentryWebpackPluginOptions);
