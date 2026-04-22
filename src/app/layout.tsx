@@ -7,6 +7,9 @@ import "./globals.css";
 // Validate environment variables at startup (fails fast in production)
 import "@/lib/env";
 
+// Performance monitoring
+import { WebVitals } from "@/components/WebVitals";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -105,6 +108,7 @@ export default async function RootLayout({ children }: Props) {
           };
         `}} />
         {children}
+        <WebVitals />
       </body>
     </html>
   );
