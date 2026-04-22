@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Ladataan...",
+    "error": "Tapahtui virhe",
+    "save": "Tallenna",
+    "cancel": "Peruuta",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "search": "Hae",
+    "filter": "Suodata",
+    "sort": "Järjestä",
+    "viewAll": "Näytä kaikki",
+    "learnMore": "Lue lisää",
+    "getStarted": "Aloita",
+    "back": "Takaisin",
+    "next": "Seuraava",
+    "submit": "Lähetä",
+    "confirm": "Vahvista",
+    "close": "Sulje"
+  },
+  "nav": {
+    "home": "Etusivu",
+    "findWorkers": "Etsi tekijöitä",
+    "howItWorks": "Näin se toimii",
+    "about": "Tietoa",
+    "contact": "Yhteystiedot",
+    "login": "Kirjaudu",
+    "signup": "Rekisteröidy",
+    "logout": "Kirjaudu ulos",
+    "dashboard": "Hallintapaneeli",
+    "profile": "Profiili",
+    "settings": "Asetukset",
+    "bookings": "Varaukset",
+    "messages": "Viestit",
+    "favorites": "Suosikit"
+  },
+  "home": {
+    "hero": {
+      "title": "SUURIN PALVELUMARKKINAPAIKKA",
+      "subtitle": "Löydä ammattilaisia läheltäsi",
+      "searchPlaceholder": "Syötä sijaintisi...",
+      "searchButton": "Etsi tekijöitä",
+      "detectingLocation": "Tunnistetaan sijaintiasi...",
+      "selectCategory": "Valitse kategoria...",
+      "searchCategories": "Hae kategorioita...",
+      "noCategoriesFound": "Kategorioita ei löytynyt",
+      "selectJob": "Valitse ammatti...",
+      "searchJobs": "Hae ammatteja...",
+      "noJobsFound": "Ammatteja ei löytynyt"
+    },
+    "stats": {
+      "happyCustomers": "Tyytyväiset asiakkaat",
+      "verifiedWorkers": "Varmennetut tekijät",
+      "completedJobs": "Suoritetut työt",
+      "avgRating": "Keskiarviointi"
+    },
+    "features": {
+      "badge": "Miksi valita meidät",
+      "title": "Älykkäämpi tapa varata palveluita",
+      "subtitle": "Koe saumaton markkinapaikka ominaisuuksilla, jotka on suunniteltu nykyaikaiseen elämään.",
+      "verified": {
+        "title": "Varmennetut ammattilaiset",
+        "desc": "Kaikki tekijät läpikäyvät taustatarkistukset ja henkilöllisyyden varmentamisen."
+      },
+      "payment": {
+        "title": "Turvalliset maksut",
+        "desc": "Maksa turvallisesti Stripellä, PayPalilla tai kryptolla. Rahat takaisin -takuu sisältyy."
+      },
+      "ai": {
+        "title": "Tekoälyohjattu",
+        "desc": "Älykäs kohdistus, välittömät arviot ja älykäs ajoitus."
+      },
+      "booking": {
+        "title": "Välitön varaus",
+        "desc": "Varaa alle minuutissa. Saman päivän palvelu saatavilla."
+      },
+      "local": {
+        "title": "Paikalliset tekijät",
+        "desc": "Yhdistä luotettaviin ammattilaisiin naapurustossasi."
+      },
+      "reviews": {
+        "title": "Aidot arvostelut",
+        "desc": "Varmennetut arvostelut oikeilta asiakkailta. Ei väärennettyjä arvioita."
+      }
+    },
+    "howItWorks": {
+      "title": "Näin se toimii",
+      "subtitle": "Tilasi siivouttaminen on yhtä helppoa kuin 1-2-3-4",
+      "step1": {
+        "title": "Hae",
+        "description": "Syötä sijaintisi löytääksesi käytettävissä olevat tekijät alueellasi."
+      },
+      "step2": {
+        "title": "Valitse",
+        "description": "Vertaa tekijöitä arvioiden, arvostelujen ja hintojen perusteella."
+      },
+      "step3": {
+        "title": "Varaa",
+        "description": "Valitse haluamasi päivämäärä, aika ja palvelut."
+      },
+      "step4": {
+        "title": "Rentoudu",
+        "description": "Istu alas kun tilasi siivotaan ammattimaisesti."
+      }
+    },
+    "cta": {
+      "title": "Valmis aloittamaan?",
+      "subtitle": "Liity tuhansiin tyytyväisiin asiakkaisiin, jotka luottavat Servantanaan kaikissa palvelutarpeissaan.",
+      "customerButton": "Varaa tekijä",
+      "workerButton": "Olen tekijä"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Tervetuloa takaisin",
+      "subtitle": "Kirjaudu tilillesi",
+      "email": "Sähköposti",
+      "password": "Salasana",
+      "rememberMe": "Muista minut",
+      "forgotPassword": "Unohditko salasanan?",
+      "loginButton": "Kirjaudu",
+      "noAccount": "Eikö sinulla ole tiliä?",
+      "signupLink": "Rekisteröidy"
+    },
+    "signup": {
+      "title": "Luo tili",
+      "subtitle": "Liity nyt",
+      "firstName": "Etunimi",
+      "lastName": "Sukunimi",
+      "email": "Sähköposti",
+      "phone": "Puhelinnumero",
+      "password": "Salasana",
+      "confirmPassword": "Vahvista salasana",
+      "accountType": "Haluan:",
+      "customer": "Varata tekijän",
+      "worker": "Olen tekijä",
+      "terms": "Hyväksyn käyttöehdot ja tietosuojakäytännön",
+      "termsPrefix": "Hyväksyn",
+      "termsAnd": "ja",
+      "signupButton": "Luo tili",
+      "hasAccount": "Onko sinulla jo tili?",
+      "loginLink": "Kirjaudu"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Tekijäprofiili",
+      "about": "Tietoa",
+      "services": "Palvelut",
+      "reviews": "Arvostelut",
+      "availability": "Saatavuus",
+      "hourlyRate": "Tuntihinta",
+      "experience": "Kokemus",
+      "years": "vuotta",
+      "verified": "Varmennettu",
+      "rating": "Arviointi",
+      "bookings": "Suoritetut varaukset",
+      "responseTime": "Vastausaika",
+      "bookNow": "Varaa nyt",
+      "ecoFriendly": "Ympäristöystävällinen",
+      "petFriendly": "Lemmikkiystävällinen",
+      "introVideo": "Esittelyvideo"
+    },
+    "dashboard": {
+      "title": "Tekijän hallintapaneeli",
+      "earnings": "Ansiot",
+      "todayBookings": "Tämän päivän varaukset",
+      "pendingRequests": "Odottavat pyynnöt",
+      "completedJobs": "Suoritetut työt",
+      "upcomingBookings": "Tulevat varaukset",
+      "recentReviews": "Viimeisimmät arvostelut"
+    }
+  },
+  "booking": {
+    "title": "Varaa siivouspalvelu",
+    "selectService": "Valitse palvelu",
+    "selectDate": "Valitse päivämäärä ja aika",
+    "address": "Palveluosoite",
+    "notes": "Lisähuomautukset",
+    "notesPlaceholder": "Erityisohjeet tai vaatimukset...",
+    "summary": "Varauksen yhteenveto",
+    "worker": "Tekijä",
+    "service": "Palvelu",
+    "dateTime": "Päivämäärä ja aika",
+    "duration": "Kesto",
+    "hours": "tuntia",
+    "total": "Yhteensä",
+    "confirmBooking": "Vahvista varaus",
+    "status": {
+      "pending": "Odottaa",
+      "confirmed": "Vahvistettu",
+      "inProgress": "Käynnissä",
+      "completed": "Valmis",
+      "cancelled": "Peruutettu"
+    }
+  },
+  "messages": {
+    "title": "Viestit",
+    "noMessages": "Ei viestejä vielä",
+    "placeholder": "Kirjoita viesti...",
+    "send": "Lähetä",
+    "justNow": "Juuri nyt",
+    "minutesAgo": "min sitten",
+    "hoursAgo": "t sitten"
+  },
+  "footer": {
+    "description": "Yhdistämme sinut luotettaviin siivousammattilaisiin.",
+    "company": "Yritys",
+    "support": "Tuki",
+    "legal": "Oikeudellinen",
+    "aboutUs": "Tietoa meistä",
+    "careers": "Ura",
+    "press": "Lehdistö",
+    "helpCenter": "Ohjekeskus",
+    "contactUs": "Ota yhteyttä",
+    "faq": "UKK",
+    "termsOfService": "Käyttöehdot",
+    "privacyPolicy": "Tietosuojakäytäntö",
+    "cookiePolicy": "Evästekäytäntö",
+    "allRightsReserved": "Kaikki oikeudet pidätetään."
+  },
+  "days": {
+    "sunday": "Sunnuntai",
+    "monday": "Maanantai",
+    "tuesday": "Tiistai",
+    "wednesday": "Keskiviikko",
+    "thursday": "Torstai",
+    "friday": "Perjantai",
+    "saturday": "Lauantai"
+  },
+  "errors": {
+    "somethingWentWrong": "Jokin meni pieleen",
+    "tryAgainLater": "Pahoittelemme häiriötä. Yritä uudelleen tai ota yhteyttä tukeen, jos ongelma jatkuu.",
+    "tryAgain": "Yritä uudelleen",
+    "goHome": "Siirry etusivulle",
+    "pageNotFound": "Sivua ei löydy",
+    "pageNotFoundDescription": "Etsimääsi sivua ei ole olemassa tai se on siirretty.",
+    "browseServices": "Selaa palveluita"
+  }
+}

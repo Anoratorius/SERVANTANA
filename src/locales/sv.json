@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Laddar...",
+    "error": "Ett fel uppstod",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "search": "Sök",
+    "filter": "Filtrera",
+    "sort": "Sortera",
+    "viewAll": "Visa alla",
+    "learnMore": "Läs mer",
+    "getStarted": "Kom igång",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "submit": "Skicka",
+    "confirm": "Bekräfta",
+    "close": "Stäng"
+  },
+  "nav": {
+    "home": "Hem",
+    "findWorkers": "Hitta arbetare",
+    "howItWorks": "Hur det fungerar",
+    "about": "Om oss",
+    "contact": "Kontakt",
+    "login": "Logga in",
+    "signup": "Registrera",
+    "logout": "Logga ut",
+    "dashboard": "Instrumentpanel",
+    "profile": "Profil",
+    "settings": "Inställningar",
+    "bookings": "Bokningar",
+    "messages": "Meddelanden",
+    "favorites": "Favoriter"
+  },
+  "home": {
+    "hero": {
+      "title": "STÖRSTA MARKNADSPLATSEN FÖR TJÄNSTER",
+      "subtitle": "Hitta proffs nära dig",
+      "searchPlaceholder": "Ange din plats...",
+      "searchButton": "Hitta arbetare",
+      "detectingLocation": "Identifierar din plats...",
+      "selectCategory": "Välj kategori...",
+      "searchCategories": "Sök kategorier...",
+      "noCategoriesFound": "Inga kategorier hittades",
+      "selectJob": "Välj yrke...",
+      "searchJobs": "Sök yrken...",
+      "noJobsFound": "Inga yrken hittades"
+    },
+    "stats": {
+      "happyCustomers": "Nöjda kunder",
+      "verifiedWorkers": "Verifierade arbetare",
+      "completedJobs": "Utförda jobb",
+      "avgRating": "Snittbetyg"
+    },
+    "features": {
+      "badge": "Varför välja oss",
+      "title": "Det smartare sättet att boka tjänster",
+      "subtitle": "Upplev en sömlös marknadsplats med funktioner designade för det moderna livet.",
+      "verified": {
+        "title": "Verifierade proffs",
+        "desc": "Alla arbetare genomgår bakgrundskontroller och identitetsverifiering."
+      },
+      "payment": {
+        "title": "Säkra betalningar",
+        "desc": "Betala säkert med Stripe, PayPal eller krypto. Pengarna tillbaka-garanti ingår."
+      },
+      "ai": {
+        "title": "AI-driven",
+        "desc": "Smart matchning, omedelbara uppskattningar och intelligent schemaläggning."
+      },
+      "booking": {
+        "title": "Omedelbar bokning",
+        "desc": "Boka på under en minut. Samma dag-service tillgänglig."
+      },
+      "local": {
+        "title": "Lokala arbetare",
+        "desc": "Anslut med pålitliga proffs i ditt område."
+      },
+      "reviews": {
+        "title": "Riktiga recensioner",
+        "desc": "Verifierade recensioner från riktiga kunder. Inga falska betyg."
+      }
+    },
+    "howItWorks": {
+      "title": "Hur det fungerar",
+      "subtitle": "Att få ditt utrymme städat är lika enkelt som 1-2-3-4",
+      "step1": {
+        "title": "Sök",
+        "description": "Ange din plats för att hitta tillgängliga arbetare i ditt område."
+      },
+      "step2": {
+        "title": "Välj",
+        "description": "Jämför arbetare baserat på betyg, recensioner och priser."
+      },
+      "step3": {
+        "title": "Boka",
+        "description": "Välj ditt föredragna datum, tid och tjänster."
+      },
+      "step4": {
+        "title": "Koppla av",
+        "description": "Luta dig tillbaka medan ditt utrymme blir professionellt städat."
+      }
+    },
+    "cta": {
+      "title": "Redo att komma igång?",
+      "subtitle": "Anslut dig till tusentals nöjda kunder som litar på Servantana för alla sina servicebehov.",
+      "customerButton": "Boka en arbetare",
+      "workerButton": "Jag är arbetare"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Välkommen tillbaka",
+      "subtitle": "Logga in på ditt konto",
+      "email": "E-post",
+      "password": "Lösenord",
+      "rememberMe": "Kom ihåg mig",
+      "forgotPassword": "Glömt lösenord?",
+      "loginButton": "Logga in",
+      "noAccount": "Har du inget konto?",
+      "signupLink": "Registrera dig"
+    },
+    "signup": {
+      "title": "Skapa konto",
+      "subtitle": "Gå med nu",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "email": "E-post",
+      "phone": "Telefonnummer",
+      "password": "Lösenord",
+      "confirmPassword": "Bekräfta lösenord",
+      "accountType": "Jag vill:",
+      "customer": "Boka en arbetare",
+      "worker": "Jag är arbetare",
+      "terms": "Jag godkänner användarvillkoren och integritetspolicyn",
+      "termsPrefix": "Jag godkänner",
+      "termsAnd": "och",
+      "signupButton": "Skapa konto",
+      "hasAccount": "Har du redan ett konto?",
+      "loginLink": "Logga in"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Arbetarprofil",
+      "about": "Om",
+      "services": "Tjänster",
+      "reviews": "Recensioner",
+      "availability": "Tillgänglighet",
+      "hourlyRate": "Timpris",
+      "experience": "Erfarenhet",
+      "years": "år",
+      "verified": "Verifierad",
+      "rating": "Betyg",
+      "bookings": "Utförda bokningar",
+      "responseTime": "Svarstid",
+      "bookNow": "Boka nu",
+      "ecoFriendly": "Miljövänlig",
+      "petFriendly": "Djurvänlig",
+      "introVideo": "Introduktionsvideo"
+    },
+    "dashboard": {
+      "title": "Arbetarpanel",
+      "earnings": "Intäkter",
+      "todayBookings": "Dagens bokningar",
+      "pendingRequests": "Väntande förfrågningar",
+      "completedJobs": "Utförda jobb",
+      "upcomingBookings": "Kommande bokningar",
+      "recentReviews": "Senaste recensioner"
+    }
+  },
+  "booking": {
+    "title": "Boka städtjänst",
+    "selectService": "Välj tjänst",
+    "selectDate": "Välj datum och tid",
+    "address": "Tjänsteadress",
+    "notes": "Ytterligare anteckningar",
+    "notesPlaceholder": "Särskilda instruktioner eller krav...",
+    "summary": "Bokningssammanfattning",
+    "worker": "Arbetare",
+    "service": "Tjänst",
+    "dateTime": "Datum och tid",
+    "duration": "Varaktighet",
+    "hours": "timmar",
+    "total": "Totalt",
+    "confirmBooking": "Bekräfta bokning",
+    "status": {
+      "pending": "Väntande",
+      "confirmed": "Bekräftad",
+      "inProgress": "Pågående",
+      "completed": "Slutförd",
+      "cancelled": "Avbokad"
+    }
+  },
+  "messages": {
+    "title": "Meddelanden",
+    "noMessages": "Inga meddelanden ännu",
+    "placeholder": "Skriv ett meddelande...",
+    "send": "Skicka",
+    "justNow": "Just nu",
+    "minutesAgo": "min sedan",
+    "hoursAgo": "tim sedan"
+  },
+  "footer": {
+    "description": "Vi kopplar dig med pålitliga städproffs.",
+    "company": "Företag",
+    "support": "Support",
+    "legal": "Juridiskt",
+    "aboutUs": "Om oss",
+    "careers": "Karriär",
+    "press": "Press",
+    "helpCenter": "Hjälpcenter",
+    "contactUs": "Kontakta oss",
+    "faq": "FAQ",
+    "termsOfService": "Användarvillkor",
+    "privacyPolicy": "Integritetspolicy",
+    "cookiePolicy": "Cookiepolicy",
+    "allRightsReserved": "Alla rättigheter förbehållna."
+  },
+  "days": {
+    "sunday": "Söndag",
+    "monday": "Måndag",
+    "tuesday": "Tisdag",
+    "wednesday": "Onsdag",
+    "thursday": "Torsdag",
+    "friday": "Fredag",
+    "saturday": "Lördag"
+  },
+  "errors": {
+    "somethingWentWrong": "Något gick fel",
+    "tryAgainLater": "Vi ber om ursäkt för besväret. Försök igen eller kontakta support om problemet kvarstår.",
+    "tryAgain": "Försök igen",
+    "goHome": "Gå till startsidan",
+    "pageNotFound": "Sidan hittades inte",
+    "pageNotFoundDescription": "Sidan du letar efter finns inte eller har flyttats.",
+    "browseServices": "Bläddra bland tjänster"
+  }
+}

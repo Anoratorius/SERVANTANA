@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Laster...",
+    "error": "En feil oppstod",
+    "save": "Lagre",
+    "cancel": "Avbryt",
+    "delete": "Slett",
+    "edit": "Rediger",
+    "search": "Søk",
+    "filter": "Filtrer",
+    "sort": "Sorter",
+    "viewAll": "Vis alle",
+    "learnMore": "Les mer",
+    "getStarted": "Kom i gang",
+    "back": "Tilbake",
+    "next": "Neste",
+    "submit": "Send inn",
+    "confirm": "Bekreft",
+    "close": "Lukk"
+  },
+  "nav": {
+    "home": "Hjem",
+    "findWorkers": "Finn arbeidere",
+    "howItWorks": "Slik fungerer det",
+    "about": "Om oss",
+    "contact": "Kontakt",
+    "login": "Logg inn",
+    "signup": "Registrer",
+    "logout": "Logg ut",
+    "dashboard": "Dashbord",
+    "profile": "Profil",
+    "settings": "Innstillinger",
+    "bookings": "Bookinger",
+    "messages": "Meldinger",
+    "favorites": "Favoritter"
+  },
+  "home": {
+    "hero": {
+      "title": "STØRSTE MARKEDSPLASS FOR TJENESTER",
+      "subtitle": "Finn fagfolk i nærheten",
+      "searchPlaceholder": "Skriv inn din plassering...",
+      "searchButton": "Finn arbeidere",
+      "detectingLocation": "Registrerer din plassering...",
+      "selectCategory": "Velg kategori...",
+      "searchCategories": "Søk kategorier...",
+      "noCategoriesFound": "Ingen kategorier funnet",
+      "selectJob": "Velg yrke...",
+      "searchJobs": "Søk yrker...",
+      "noJobsFound": "Ingen yrker funnet"
+    },
+    "stats": {
+      "happyCustomers": "Fornøyde kunder",
+      "verifiedWorkers": "Verifiserte arbeidere",
+      "completedJobs": "Fullførte jobber",
+      "avgRating": "Gjennomsnittsvurdering"
+    },
+    "features": {
+      "badge": "Hvorfor velge oss",
+      "title": "Den smartere måten å bestille tjenester",
+      "subtitle": "Opplev en sømløs markedsplass med funksjoner designet for det moderne livet.",
+      "verified": {
+        "title": "Verifiserte fagfolk",
+        "desc": "Alle arbeidere gjennomgår bakgrunnssjekker og identitetsverifisering."
+      },
+      "payment": {
+        "title": "Sikre betalinger",
+        "desc": "Betal trygt med Stripe, PayPal eller krypto. Pengene tilbake-garanti inkludert."
+      },
+      "ai": {
+        "title": "AI-drevet",
+        "desc": "Smart matching, umiddelbare estimater og intelligent planlegging."
+      },
+      "booking": {
+        "title": "Umiddelbar booking",
+        "desc": "Book på under ett minutt. Samme dag-service tilgjengelig."
+      },
+      "local": {
+        "title": "Lokale arbeidere",
+        "desc": "Koble til med pålitelige fagfolk i ditt nabolag."
+      },
+      "reviews": {
+        "title": "Ekte anmeldelser",
+        "desc": "Verifiserte anmeldelser fra ekte kunder. Ingen falske vurderinger."
+      }
+    },
+    "howItWorks": {
+      "title": "Slik fungerer det",
+      "subtitle": "Å få rommet ditt rengjort er like enkelt som 1-2-3-4",
+      "step1": {
+        "title": "Søk",
+        "description": "Skriv inn din plassering for å finne tilgjengelige arbeidere i ditt område."
+      },
+      "step2": {
+        "title": "Velg",
+        "description": "Sammenlign arbeidere basert på vurderinger, anmeldelser og priser."
+      },
+      "step3": {
+        "title": "Book",
+        "description": "Velg din foretrukne dato, tid og tjenester."
+      },
+      "step4": {
+        "title": "Slapp av",
+        "description": "Len deg tilbake mens rommet ditt blir profesjonelt rengjort."
+      }
+    },
+    "cta": {
+      "title": "Klar til å komme i gang?",
+      "subtitle": "Bli med tusenvis av fornøyde kunder som stoler på Servantana for alle sine servicebehov.",
+      "customerButton": "Book en arbeider",
+      "workerButton": "Jeg er arbeider"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Velkommen tilbake",
+      "subtitle": "Logg inn på kontoen din",
+      "email": "E-post",
+      "password": "Passord",
+      "rememberMe": "Husk meg",
+      "forgotPassword": "Glemt passord?",
+      "loginButton": "Logg inn",
+      "noAccount": "Har du ikke en konto?",
+      "signupLink": "Registrer deg"
+    },
+    "signup": {
+      "title": "Opprett konto",
+      "subtitle": "Bli med nå",
+      "firstName": "Fornavn",
+      "lastName": "Etternavn",
+      "email": "E-post",
+      "phone": "Telefonnummer",
+      "password": "Passord",
+      "confirmPassword": "Bekreft passord",
+      "accountType": "Jeg vil:",
+      "customer": "Booke en arbeider",
+      "worker": "Jeg er arbeider",
+      "terms": "Jeg godtar vilkårene og personvernerklæringen",
+      "termsPrefix": "Jeg godtar",
+      "termsAnd": "og",
+      "signupButton": "Opprett konto",
+      "hasAccount": "Har du allerede en konto?",
+      "loginLink": "Logg inn"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Arbeiderprofil",
+      "about": "Om",
+      "services": "Tjenester",
+      "reviews": "Anmeldelser",
+      "availability": "Tilgjengelighet",
+      "hourlyRate": "Timepris",
+      "experience": "Erfaring",
+      "years": "år",
+      "verified": "Verifisert",
+      "rating": "Vurdering",
+      "bookings": "Fullførte bookinger",
+      "responseTime": "Svartid",
+      "bookNow": "Book nå",
+      "ecoFriendly": "Miljøvennlig",
+      "petFriendly": "Dyrevennlig",
+      "introVideo": "Introduksjonsvideo"
+    },
+    "dashboard": {
+      "title": "Arbeiderpanel",
+      "earnings": "Inntekter",
+      "todayBookings": "Dagens bookinger",
+      "pendingRequests": "Ventende forespørsler",
+      "completedJobs": "Fullførte jobber",
+      "upcomingBookings": "Kommende bookinger",
+      "recentReviews": "Siste anmeldelser"
+    }
+  },
+  "booking": {
+    "title": "Book rengjøringstjeneste",
+    "selectService": "Velg tjeneste",
+    "selectDate": "Velg dato og tid",
+    "address": "Tjenesteadresse",
+    "notes": "Ytterligere notater",
+    "notesPlaceholder": "Spesielle instruksjoner eller krav...",
+    "summary": "Bookingoversikt",
+    "worker": "Arbeider",
+    "service": "Tjeneste",
+    "dateTime": "Dato og tid",
+    "duration": "Varighet",
+    "hours": "timer",
+    "total": "Totalt",
+    "confirmBooking": "Bekreft booking",
+    "status": {
+      "pending": "Venter",
+      "confirmed": "Bekreftet",
+      "inProgress": "Pågår",
+      "completed": "Fullført",
+      "cancelled": "Avbestilt"
+    }
+  },
+  "messages": {
+    "title": "Meldinger",
+    "noMessages": "Ingen meldinger ennå",
+    "placeholder": "Skriv en melding...",
+    "send": "Send",
+    "justNow": "Akkurat nå",
+    "minutesAgo": "min siden",
+    "hoursAgo": "timer siden"
+  },
+  "footer": {
+    "description": "Vi kobler deg med pålitelige rengjøringsfagfolk.",
+    "company": "Selskap",
+    "support": "Support",
+    "legal": "Juridisk",
+    "aboutUs": "Om oss",
+    "careers": "Karriere",
+    "press": "Presse",
+    "helpCenter": "Hjelpesenter",
+    "contactUs": "Kontakt oss",
+    "faq": "FAQ",
+    "termsOfService": "Vilkår for bruk",
+    "privacyPolicy": "Personvernerklæring",
+    "cookiePolicy": "Informasjonskapsler",
+    "allRightsReserved": "Alle rettigheter forbeholdt."
+  },
+  "days": {
+    "sunday": "Søndag",
+    "monday": "Mandag",
+    "tuesday": "Tirsdag",
+    "wednesday": "Onsdag",
+    "thursday": "Torsdag",
+    "friday": "Fredag",
+    "saturday": "Lørdag"
+  },
+  "errors": {
+    "somethingWentWrong": "Noe gikk galt",
+    "tryAgainLater": "Vi beklager ulempen. Prøv igjen eller kontakt support hvis problemet vedvarer.",
+    "tryAgain": "Prøv igjen",
+    "goHome": "Gå til forsiden",
+    "pageNotFound": "Side ikke funnet",
+    "pageNotFoundDescription": "Siden du leter etter finnes ikke eller har blitt flyttet.",
+    "browseServices": "Bla gjennom tjenester"
+  }
+}

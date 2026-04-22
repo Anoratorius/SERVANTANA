@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Betöltés...",
+    "error": "Hiba történt",
+    "save": "Mentés",
+    "cancel": "Mégse",
+    "delete": "Törlés",
+    "edit": "Szerkesztés",
+    "search": "Keresés",
+    "filter": "Szűrés",
+    "sort": "Rendezés",
+    "viewAll": "Összes megtekintése",
+    "learnMore": "Tudj meg többet",
+    "getStarted": "Kezdés",
+    "back": "Vissza",
+    "next": "Következő",
+    "submit": "Beküldés",
+    "confirm": "Megerősítés",
+    "close": "Bezárás"
+  },
+  "nav": {
+    "home": "Kezdőlap",
+    "findWorkers": "Munkások keresése",
+    "howItWorks": "Hogyan működik",
+    "about": "Rólunk",
+    "contact": "Kapcsolat",
+    "login": "Bejelentkezés",
+    "signup": "Regisztráció",
+    "logout": "Kijelentkezés",
+    "dashboard": "Vezérlőpult",
+    "profile": "Profil",
+    "settings": "Beállítások",
+    "bookings": "Foglalások",
+    "messages": "Üzenetek",
+    "favorites": "Kedvencek"
+  },
+  "home": {
+    "hero": {
+      "title": "A LEGNAGYOBB SZOLGÁLTATÁSI PIACTÉR",
+      "subtitle": "Találjon szakembereket a közelében",
+      "searchPlaceholder": "Adja meg a helyét...",
+      "searchButton": "Munkások keresése",
+      "detectingLocation": "Hely észlelése...",
+      "selectCategory": "Válasszon kategóriát...",
+      "searchCategories": "Kategóriák keresése...",
+      "noCategoriesFound": "Nem található kategória",
+      "selectJob": "Válasszon szakmát...",
+      "searchJobs": "Szakmák keresése...",
+      "noJobsFound": "Nem található szakma"
+    },
+    "stats": {
+      "happyCustomers": "Elégedett ügyfelek",
+      "verifiedWorkers": "Ellenőrzött munkások",
+      "completedJobs": "Befejezett munkák",
+      "avgRating": "Átlagos értékelés"
+    },
+    "features": {
+      "badge": "Miért válasszon minket",
+      "title": "Az okosabb módja a szolgáltatások foglalásának",
+      "subtitle": "Tapasztalja meg a zökkenőmentes piacteret a modern életre tervezett funkciókkal.",
+      "verified": {
+        "title": "Ellenőrzött szakemberek",
+        "desc": "Minden munkás háttérellenőrzésen és személyazonosság-ellenőrzésen esik át."
+      },
+      "payment": {
+        "title": "Biztonságos fizetések",
+        "desc": "Fizessen biztonságosan Stripe-pal, PayPal-lal vagy kriptóval. Pénzvisszafizetési garancia."
+      },
+      "ai": {
+        "title": "MI-vezérelt",
+        "desc": "Okos párosítás, azonnali becslések és intelligens ütemezés."
+      },
+      "booking": {
+        "title": "Azonnali foglalás",
+        "desc": "Foglaljon egy perc alatt. Aznapi szolgáltatás elérhető."
+      },
+      "local": {
+        "title": "Helyi munkások",
+        "desc": "Kapcsolódjon megbízható szakemberekhez a környékén."
+      },
+      "reviews": {
+        "title": "Valódi értékelések",
+        "desc": "Ellenőrzött értékelések valódi ügyfelektől. Nincsenek hamis értékelések."
+      }
+    },
+    "howItWorks": {
+      "title": "Hogyan működik",
+      "subtitle": "A takarítás olyan egyszerű, mint 1-2-3-4",
+      "step1": {
+        "title": "Keresés",
+        "description": "Adja meg a helyét az elérhető munkások megtalálásához a környékén."
+      },
+      "step2": {
+        "title": "Választás",
+        "description": "Hasonlítsa össze a munkásokat értékelések, vélemények és árak alapján."
+      },
+      "step3": {
+        "title": "Foglalás",
+        "description": "Válassza ki a kívánt dátumot, időpontot és szolgáltatásokat."
+      },
+      "step4": {
+        "title": "Pihenés",
+        "description": "Dőljön hátra, amíg a tere professzionálisan kitakarítódik."
+      }
+    },
+    "cta": {
+      "title": "Készen áll a kezdésre?",
+      "subtitle": "Csatlakozzon ezer elégedett ügyfélhez, akik minden szolgáltatási igényükre a Servantanát választják.",
+      "customerButton": "Munkás foglalása",
+      "workerButton": "Munkás vagyok"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Üdvözöljük újra",
+      "subtitle": "Jelentkezzen be fiókjába",
+      "email": "E-mail",
+      "password": "Jelszó",
+      "rememberMe": "Emlékezzen rám",
+      "forgotPassword": "Elfelejtett jelszó?",
+      "loginButton": "Bejelentkezés",
+      "noAccount": "Nincs fiókja?",
+      "signupLink": "Regisztráció"
+    },
+    "signup": {
+      "title": "Fiók létrehozása",
+      "subtitle": "Csatlakozzon most",
+      "firstName": "Keresztnév",
+      "lastName": "Vezetéknév",
+      "email": "E-mail",
+      "phone": "Telefonszám",
+      "password": "Jelszó",
+      "confirmPassword": "Jelszó megerősítése",
+      "accountType": "Szeretnék:",
+      "customer": "Munkást foglalni",
+      "worker": "Munkás vagyok",
+      "terms": "Elfogadom a szolgáltatási feltételeket és az adatvédelmi irányelveket",
+      "termsPrefix": "Elfogadom a",
+      "termsAnd": "és",
+      "signupButton": "Fiók létrehozása",
+      "hasAccount": "Van már fiókja?",
+      "loginLink": "Bejelentkezés"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Munkásprofil",
+      "about": "Rólam",
+      "services": "Szolgáltatások",
+      "reviews": "Értékelések",
+      "availability": "Elérhetőség",
+      "hourlyRate": "Óradíj",
+      "experience": "Tapasztalat",
+      "years": "év",
+      "verified": "Ellenőrzött",
+      "rating": "Értékelés",
+      "bookings": "Befejezett foglalások",
+      "responseTime": "Válaszidő",
+      "bookNow": "Foglalás most",
+      "ecoFriendly": "Környezetbarát",
+      "petFriendly": "Állatbarát",
+      "introVideo": "Bemutatkozó videó"
+    },
+    "dashboard": {
+      "title": "Munkás vezérlőpult",
+      "earnings": "Bevételek",
+      "todayBookings": "Mai foglalások",
+      "pendingRequests": "Függő kérések",
+      "completedJobs": "Befejezett munkák",
+      "upcomingBookings": "Közelgő foglalások",
+      "recentReviews": "Legutóbbi értékelések"
+    }
+  },
+  "booking": {
+    "title": "Takarítási szolgáltatás foglalása",
+    "selectService": "Szolgáltatás kiválasztása",
+    "selectDate": "Dátum és idő kiválasztása",
+    "address": "Szolgáltatás címe",
+    "notes": "További megjegyzések",
+    "notesPlaceholder": "Különleges utasítások vagy követelmények...",
+    "summary": "Foglalás összefoglalása",
+    "worker": "Munkás",
+    "service": "Szolgáltatás",
+    "dateTime": "Dátum és idő",
+    "duration": "Időtartam",
+    "hours": "óra",
+    "total": "Összesen",
+    "confirmBooking": "Foglalás megerősítése",
+    "status": {
+      "pending": "Függőben",
+      "confirmed": "Megerősítve",
+      "inProgress": "Folyamatban",
+      "completed": "Befejezve",
+      "cancelled": "Lemondva"
+    }
+  },
+  "messages": {
+    "title": "Üzenetek",
+    "noMessages": "Még nincsenek üzenetek",
+    "placeholder": "Írjon üzenetet...",
+    "send": "Küldés",
+    "justNow": "Most",
+    "minutesAgo": "perc",
+    "hoursAgo": "óra"
+  },
+  "footer": {
+    "description": "Összekapcsoljuk Önt megbízható takarító szakemberekkel.",
+    "company": "Cég",
+    "support": "Támogatás",
+    "legal": "Jogi információk",
+    "aboutUs": "Rólunk",
+    "careers": "Karrier",
+    "press": "Sajtó",
+    "helpCenter": "Súgóközpont",
+    "contactUs": "Kapcsolat",
+    "faq": "GYIK",
+    "termsOfService": "Szolgáltatási feltételek",
+    "privacyPolicy": "Adatvédelmi irányelvek",
+    "cookiePolicy": "Cookie szabályzat",
+    "allRightsReserved": "Minden jog fenntartva."
+  },
+  "days": {
+    "sunday": "Vasárnap",
+    "monday": "Hétfő",
+    "tuesday": "Kedd",
+    "wednesday": "Szerda",
+    "thursday": "Csütörtök",
+    "friday": "Péntek",
+    "saturday": "Szombat"
+  },
+  "errors": {
+    "somethingWentWrong": "Valami hiba történt",
+    "tryAgainLater": "Elnézést a kellemetlenségért. Kérjük, próbálja újra, vagy lépjen kapcsolatba az ügyfélszolgálattal, ha a probléma továbbra is fennáll.",
+    "tryAgain": "Próbálja újra",
+    "goHome": "Kezdőlapra",
+    "pageNotFound": "Az oldal nem található",
+    "pageNotFoundDescription": "A keresett oldal nem létezik vagy áthelyezték.",
+    "browseServices": "Szolgáltatások böngészése"
+  }
+}

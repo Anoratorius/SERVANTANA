@@ -1,0 +1,247 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "viewAll": "Tümünü Gör",
+    "learnMore": "Daha Fazla",
+    "getStarted": "Başla",
+    "back": "Geri",
+    "next": "İleri",
+    "submit": "Gönder",
+    "confirm": "Onayla",
+    "close": "Kapat"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "findWorkers": "Çalışan Bul",
+    "howItWorks": "Nasıl Çalışır",
+    "about": "Hakkında",
+    "contact": "İletişim",
+    "login": "Giriş Yap",
+    "signup": "Kayıt Ol",
+    "logout": "Çıkış",
+    "dashboard": "Panel",
+    "profile": "Profil",
+    "settings": "Ayarlar",
+    "bookings": "Rezervasyonlar",
+    "messages": "Mesajlar",
+    "favorites": "Favoriler"
+  },
+  "home": {
+    "hero": {
+      "title": "EN BÜYÜK İŞGÜCÜ PAZARI",
+      "subtitle": "Yakınınızdaki Profesyonelleri Bulun",
+      "searchPlaceholder": "Konumunuzu girin...",
+      "searchButton": "Çalışan Bul",
+      "detectingLocation": "Konumunuz belirleniyor...",
+      "selectCategory": "Kategori seçin...",
+      "searchCategories": "Kategorileri ara...",
+      "noCategoriesFound": "Kategori bulunamadı",
+      "selectJob": "Meslek seçin...",
+      "searchJobs": "Meslekleri ara...",
+      "noJobsFound": "Meslek bulunamadı"
+    },
+    "stats": {
+      "happyCustomers": "Mutlu Müşteriler",
+      "verifiedWorkers": "Doğrulanmış Çalışanlar",
+      "completedJobs": "Tamamlanan İşler",
+      "avgRating": "Ortalama Puan"
+    },
+    "features": {
+      "badge": "Neden Bizi Seçmelisiniz",
+      "title": "Hizmet Rezervasyonunun Akıllı Yolu",
+      "subtitle": "Modern yaşam için tasarlanmış özelliklerle sorunsuz bir hizmet pazaryeri deneyimi yaşayın.",
+      "verified": {
+        "title": "Doğrulanmış Profesyoneller",
+        "desc": "Tüm çalışanlar geçmiş kontrolü ve kimlik doğrulamasından geçer."
+      },
+      "payment": {
+        "title": "Güvenli Ödemeler",
+        "desc": "Stripe, PayPal veya kripto ile güvenle ödeme yapın. Para iade garantisi dahil."
+      },
+      "ai": {
+        "title": "Yapay Zeka Destekli",
+        "desc": "Akıllı eşleştirme, anında tahminler ve akıllı planlama."
+      },
+      "booking": {
+        "title": "Anında Rezervasyon",
+        "desc": "Bir dakikadan kısa sürede rezervasyon yapın. Aynı gün hizmet mümkün."
+      },
+      "local": {
+        "title": "Yerel Çalışanlar",
+        "desc": "Mahallenizden güvenilir profesyonellerle bağlantı kurun."
+      },
+      "reviews": {
+        "title": "Gerçek Yorumlar",
+        "desc": "Gerçek müşterilerden doğrulanmış yorumlar. Sahte puanlama yok."
+      }
+    },
+    "howItWorks": {
+      "title": "Nasıl Çalışır",
+      "subtitle": "Alanınızı temizletmek 1-2-3-4 kadar kolay",
+      "step1": {
+        "title": "Ara",
+        "description": "Bölgenizdeki mevcut çalışanları bulmak için konumunuzu girin."
+      },
+      "step2": {
+        "title": "Seç",
+        "description": "Puanlar, yorumlar ve fiyatlara göre çalışanları karşılaştırın."
+      },
+      "step3": {
+        "title": "Rezerve Et",
+        "description": "Tercih ettiğiniz tarih, saat ve hizmetleri seçin."
+      },
+      "step4": {
+        "title": "Rahatlayın",
+        "description": "Alanınız profesyonelce temizlenirken arkanıza yaslanın."
+      }
+    },
+    "cta": {
+      "title": "Başlamaya Hazır mısınız?",
+      "subtitle": "Tüm hizmet ihtiyaçları için Servantana'ya güvenen binlerce mutlu müşteriye katılın.",
+      "customerButton": "Çalışan Rezerve Et",
+      "workerButton": "Çalışanım"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Tekrar Hoş Geldiniz",
+      "subtitle": "Hesabınıza giriş yapın",
+      "email": "E-posta",
+      "password": "Şifre",
+      "rememberMe": "Beni hatırla",
+      "forgotPassword": "Şifremi unuttum",
+      "loginButton": "Giriş Yap",
+      "noAccount": "Hesabınız yok mu?",
+      "signupLink": "Kayıt olun"
+    },
+    "signup": {
+      "title": "Hesap Oluştur",
+      "subtitle": "Şimdi Katılın",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta",
+      "phone": "Telefon Numarası",
+      "password": "Şifre",
+      "confirmPassword": "Şifreyi Onayla",
+      "accountType": "İstediğim:",
+      "customer": "Çalışan Rezerve Et",
+      "worker": "Çalışanım",
+      "terms": "Hizmet Şartları ve Gizlilik Politikasını kabul ediyorum",
+      "termsPrefix": "Kabul ediyorum",
+      "termsAnd": "ve",
+      "signupButton": "Hesap Oluştur",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "loginLink": "Giriş yapın"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Çalışan Profili",
+      "about": "Hakkında",
+      "services": "Hizmetler",
+      "reviews": "Yorumlar",
+      "availability": "Müsaitlik",
+      "hourlyRate": "Saatlik Ücret",
+      "experience": "Deneyim",
+      "years": "yıl",
+      "verified": "Doğrulandı",
+      "rating": "Puan",
+      "bookings": "Tamamlanan Rezervasyonlar",
+      "responseTime": "Yanıt Süresi",
+      "bookNow": "Şimdi Rezerve Et",
+      "ecoFriendly": "Çevre Dostu",
+      "petFriendly": "Evcil Hayvan Dostu",
+      "introVideo": "Tanıtım Videosu"
+    },
+    "dashboard": {
+      "title": "Çalışan Paneli",
+      "earnings": "Kazançlar",
+      "todayBookings": "Bugünkü Rezervasyonlar",
+      "pendingRequests": "Bekleyen Talepler",
+      "completedJobs": "Tamamlanan İşler",
+      "upcomingBookings": "Yaklaşan Rezervasyonlar",
+      "recentReviews": "Son Yorumlar"
+    }
+  },
+  "booking": {
+    "title": "Temizlik Hizmeti Rezerve Et",
+    "selectService": "Hizmet Seç",
+    "selectDate": "Tarih ve Saat Seç",
+    "address": "Hizmet Adresi",
+    "notes": "Ek Notlar",
+    "notesPlaceholder": "Özel talimatlar veya gereksinimler...",
+    "summary": "Rezervasyon Özeti",
+    "worker": "Çalışan",
+    "service": "Hizmet",
+    "dateTime": "Tarih ve Saat",
+    "duration": "Süre",
+    "hours": "saat",
+    "total": "Toplam",
+    "confirmBooking": "Rezervasyonu Onayla",
+    "upcoming": "Yaklaşan",
+    "past": "Geçmiş",
+    "paid": "Ödendi",
+    "paymentDue": "Ödeme Bekleniyor",
+    "payNow": "Şimdi Öde",
+    "status": {
+      "pending": "Beklemede",
+      "confirmed": "Onaylandı",
+      "inProgress": "Devam Ediyor",
+      "completed": "Tamamlandı",
+      "cancelled": "İptal Edildi"
+    }
+  },
+  "messages": {
+    "title": "Mesajlar",
+    "noMessages": "Henüz mesaj yok",
+    "placeholder": "Bir mesaj yazın...",
+    "send": "Gönder",
+    "newMessageFrom": "Yeni mesaj",
+    "justNow": "Az önce",
+    "minutesAgo": "dk önce",
+    "hoursAgo": "sa önce"
+  },
+  "footer": {
+    "description": "Sizi güvenilir temizlik profesyonelleriyle buluşturuyoruz.",
+    "company": "Şirket",
+    "support": "Destek",
+    "legal": "Yasal",
+    "aboutUs": "Hakkımızda",
+    "careers": "Kariyer",
+    "press": "Basın",
+    "helpCenter": "Yardım Merkezi",
+    "contactUs": "Bize Ulaşın",
+    "faq": "SSS",
+    "termsOfService": "Hizmet Şartları",
+    "privacyPolicy": "Gizlilik Politikası",
+    "cookiePolicy": "Çerez Politikası",
+    "allRightsReserved": "Tüm hakları saklıdır."
+  },
+  "days": {
+    "sunday": "Pazar",
+    "monday": "Pazartesi",
+    "tuesday": "Salı",
+    "wednesday": "Çarşamba",
+    "thursday": "Perşembe",
+    "friday": "Cuma",
+    "saturday": "Cumartesi"
+  },
+  "errors": {
+    "somethingWentWrong": "Bir şeyler ters gitti",
+    "tryAgainLater": "Rahatsızlık için özür dileriz. Lütfen tekrar deneyin veya sorun devam ederse destek ile iletişime geçin.",
+    "tryAgain": "Tekrar Dene",
+    "goHome": "Ana Sayfaya Git",
+    "pageNotFound": "Sayfa Bulunamadı",
+    "pageNotFoundDescription": "Aradığınız sayfa mevcut değil veya taşınmış.",
+    "browseServices": "Hizmetlere Göz At"
+  }
+}

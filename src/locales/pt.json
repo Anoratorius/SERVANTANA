@@ -1,0 +1,429 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "A carregar...",
+    "error": "Ocorreu um erro",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Pesquisar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "viewAll": "Ver Tudo",
+    "learnMore": "Saber Mais",
+    "getStarted": "Começar",
+    "back": "Voltar",
+    "next": "Seguinte",
+    "submit": "Enviar",
+    "confirm": "Confirmar",
+    "close": "Fechar"
+  },
+  "professionOnboarding": {
+    "title": "O que faz?",
+    "description": "Selecione as profissões que descrevem o seu trabalho. Isto ajuda os clientes a encontrá-lo. Pode selecionar várias profissões.",
+    "searchProfessions": "Pesquisar profissões...",
+    "selected": "selecionado",
+    "clickToSetPrimary": "Clique duas vezes para definir como principal",
+    "primary": "Principal",
+    "selectAtLeastOne": "Por favor, selecione pelo menos uma profissão",
+    "saved": "Profissões guardadas com sucesso!",
+    "saveFailed": "Falha ao guardar profissões",
+    "suggestNew": "Não encontra a sua profissão? Sugira uma",
+    "newProfessionName": "Nome da profissão",
+    "enterProfessionName": "Insira o nome da profissão",
+    "suggestionSubmitted": "Sugestão enviada! Será revista pelo administrador.",
+    "suggestionFailed": "Falha ao enviar sugestão",
+    "suggestionNote": "A sua sugestão será revista pela nossa equipa e adicionada se aprovada.",
+    "continue": "Continuar",
+    "noResults": "Nenhuma profissão encontrada com a sua pesquisa",
+    "noProfessions": "Ainda não há profissões disponíveis"
+  },
+  "location": {
+    "verifyYourLocation": "Verifique a Sua Localização",
+    "verificationExplanation": "Para garantir uma correspondência precisa de serviços e proteger a nossa comunidade, precisamos de verificar a sua localização.",
+    "whyRequired": "Porque é necessário?",
+    "reason1": "Conectar-lhe com trabalhadores/clientes na sua área",
+    "reason2": "Prevenir fraudes e garantir qualidade do serviço",
+    "reason3": "Fornecer estimativas de distância precisas",
+    "selectedLocation": "Localização selecionada",
+    "confirmLocation": "Confirmar a Minha Localização",
+    "pleaseSelectLocation": "Por favor, selecione a sua localização no mapa",
+    "locationVerified": "Localização verificada com sucesso!",
+    "verificationFailed": "Falha ao verificar localização. Por favor, tente novamente.",
+    "updateLocation": "Atualizar Localização",
+    "currentLocation": "Localização Atual",
+    "notVerified": "Não verificada"
+  },
+  "nav": {
+    "home": "Início",
+    "findWorkers": "Encontrar Trabalhadores",
+    "howItWorks": "Como Funciona",
+    "about": "Sobre",
+    "contact": "Contacto",
+    "login": "Entrar",
+    "signup": "Registar",
+    "logout": "Sair",
+    "dashboard": "Painel",
+    "profile": "Perfil",
+    "settings": "Definições",
+    "bookings": "Reservas",
+    "messages": "Mensagens",
+    "favorites": "Favoritos"
+  },
+  "home": {
+    "hero": {
+      "title": "O MAIOR MERCADO DE SERVIÇOS",
+      "subtitle": "Encontre Profissionais Perto de Si",
+      "searchPlaceholder": "Insira a sua localização...",
+      "searchButton": "Encontrar Trabalhadores",
+      "detectingLocation": "A detetar a sua localização...",
+      "selectCategory": "Selecione a categoria...",
+      "searchCategories": "Pesquisar categorias...",
+      "noCategoriesFound": "Nenhuma categoria encontrada",
+      "selectJob": "Selecione a profissão...",
+      "searchJobs": "Pesquisar profissões...",
+      "noJobsFound": "Nenhuma profissão encontrada"
+    },
+    "stats": {
+      "happyCustomers": "Clientes Satisfeitos",
+      "verifiedWorkers": "Trabalhadores Verificados",
+      "completedJobs": "Trabalhos Concluídos",
+      "avgRating": "Avaliação Média"
+    },
+    "features": {
+      "badge": "Porquê Escolher-nos",
+      "title": "A Forma Mais Inteligente de Reservar Serviços",
+      "subtitle": "Experimente um mercado de serviços fluido com funcionalidades pensadas para a vida moderna.",
+      "verified": {
+        "title": "Profissionais Verificados",
+        "desc": "Todos os trabalhadores passam por verificações de antecedentes e identidade."
+      },
+      "payment": {
+        "title": "Pagamentos Seguros",
+        "desc": "Pague com segurança via Stripe, PayPal ou cripto. Garantia de reembolso incluída."
+      },
+      "ai": {
+        "title": "Powered by IA",
+        "desc": "Correspondência inteligente, orçamentos instantâneos e agendamento inteligente."
+      },
+      "booking": {
+        "title": "Reserva Instantânea",
+        "desc": "Reserve em menos de um minuto. Serviço no mesmo dia disponível."
+      },
+      "local": {
+        "title": "Trabalhadores Locais",
+        "desc": "Conecte-se com profissionais de confiança no seu bairro."
+      },
+      "reviews": {
+        "title": "Avaliações Reais",
+        "desc": "Avaliações verificadas de clientes reais. Sem classificações falsas."
+      }
+    },
+    "ai": {
+      "badge": "Powered by IA",
+      "title": "Reservas Mais Inteligentes com IA",
+      "subtitle": "A nossa IA avançada ajuda-o a encontrar a correspondência perfeita, obter orçamentos instantâneos e reservar nos melhores horários.",
+      "feature1": "Correspondência Inteligente IA encontra o seu prestador de serviços perfeito",
+      "feature2": "Orçamentos instantâneos baseados em fotos",
+      "feature3": "Previsão de procura para melhor agendamento",
+      "feature4": "Análise inteligente de avaliações e pontuações de confiança",
+      "cta": "Explorar Funcionalidades IA",
+      "card1": "Correspondência Inteligente",
+      "card2": "Encontrar Trabalhadores",
+      "card3": "Melhores Horários",
+      "card4": "Pontuações de Confiança"
+    },
+    "aiChat": {
+      "title": "Assistente IA de Chat",
+      "subtitle": "Obtenha respostas instantâneas às suas perguntas. O nosso assistente IA ajuda-o a encontrar serviços, obter informações e fazer reservas.",
+      "cta": "Começar a Conversar"
+    },
+    "app": {
+      "badge": "Aplicações Móveis",
+      "title": "Reserve Serviços em Movimento",
+      "subtitle": "Descarregue as nossas aplicações nativas para iOS e Android para a melhor experiência móvel.",
+      "appStore": "App Store",
+      "playStore": "Google Play"
+    },
+    "howItWorks": {
+      "title": "Como Funciona",
+      "subtitle": "Ter o seu espaço limpo é tão fácil como 1-2-3-4",
+      "step1": {
+        "title": "Pesquisar",
+        "description": "Insira a sua localização para encontrar trabalhadores disponíveis na sua área."
+      },
+      "step2": {
+        "title": "Escolher",
+        "description": "Compare trabalhadores com base em avaliações, críticas e preços."
+      },
+      "step3": {
+        "title": "Reservar",
+        "description": "Selecione a sua data, hora e serviços preferidos."
+      },
+      "step4": {
+        "title": "Relaxar",
+        "description": "Sente-se enquanto o seu espaço é limpo profissionalmente."
+      }
+    },
+    "cta": {
+      "title": "Pronto para Começar?",
+      "subtitle": "Junte-se a milhares de clientes satisfeitos que confiam na Servantana para todas as suas necessidades de serviços.",
+      "customerButton": "Reservar um Trabalhador",
+      "workerButton": "Sou um Trabalhador"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bem-vindo de Volta",
+      "subtitle": "Entre na sua conta",
+      "email": "Email",
+      "password": "Palavra-passe",
+      "rememberMe": "Lembrar-me",
+      "forgotPassword": "Esqueceu a palavra-passe?",
+      "loginButton": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "signupLink": "Registar-se"
+    },
+    "signup": {
+      "title": "Criar Conta",
+      "subtitle": "Junte-se Agora",
+      "firstName": "Primeiro Nome",
+      "lastName": "Último Nome",
+      "email": "Email",
+      "phone": "Número de Telefone",
+      "password": "Palavra-passe",
+      "confirmPassword": "Confirmar Palavra-passe",
+      "accountType": "Quero:",
+      "customer": "Reservar um Trabalhador",
+      "worker": "Sou um Trabalhador",
+      "terms": "Concordo com os Termos de Serviço e Política de Privacidade",
+      "termsPrefix": "Concordo com os",
+      "termsAnd": "e",
+      "signupButton": "Criar Conta",
+      "hasAccount": "Já tem uma conta?",
+      "loginLink": "Entrar"
+    },
+    "phone": {
+      "title": "Verificar Número de Telefone",
+      "subtitle": "Enviaremos um código de verificação",
+      "sendCode": "Enviar Código",
+      "verifyCode": "Inserir Código de Verificação",
+      "resend": "Reenviar Código",
+      "verify": "Verificar"
+    },
+    "forgotPassword": {
+      "title": "Esqueceu a Palavra-passe?",
+      "subtitle": "Não se preocupe! Insira o seu email ou número de telefone e enviaremos um código de recuperação.",
+      "emailTab": "Email",
+      "phoneTab": "Telefone",
+      "emailLabel": "Endereço de Email",
+      "phoneLabel": "Número de Telefone",
+      "sendCode": "Enviar Código de Recuperação",
+      "backToLogin": "Voltar ao Login",
+      "verifyTitle": "Inserir Código de Verificação",
+      "codeLabel": "Código de 6 Dígitos",
+      "verifyCode": "Verificar Código",
+      "changeMethod": "Alterar",
+      "resendCode": "Reenviar Código",
+      "resetTitle": "Criar Nova Palavra-passe",
+      "resetSubtitle": "Escolha uma palavra-passe forte com pelo menos 8 caracteres.",
+      "newPassword": "Nova Palavra-passe",
+      "confirmPassword": "Confirmar Palavra-passe",
+      "passwordHint": "Deve conter maiúsculas, minúsculas e um número",
+      "resetButton": "Recuperar Palavra-passe",
+      "successTitle": "Palavra-passe Recuperada!",
+      "successMessage": "A sua palavra-passe foi recuperada com sucesso. Pode agora entrar com a sua nova palavra-passe.",
+      "goToLogin": "Ir para Login"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Perfil do Trabalhador",
+      "about": "Sobre",
+      "services": "Serviços",
+      "reviews": "Avaliações",
+      "availability": "Disponibilidade",
+      "hourlyRate": "Tarifa Horária",
+      "experience": "Experiência",
+      "years": "anos",
+      "verified": "Verificado",
+      "rating": "Avaliação",
+      "bookings": "Reservas Concluídas",
+      "responseTime": "Tempo de Resposta",
+      "bookNow": "Reservar Agora",
+      "ecoFriendly": "Ecológico",
+      "petFriendly": "Amigo de Animais",
+      "introVideo": "Vídeo de Introdução"
+    },
+    "dashboard": {
+      "title": "Painel do Trabalhador",
+      "earnings": "Ganhos",
+      "todayBookings": "Reservas de Hoje",
+      "pendingRequests": "Pedidos Pendentes",
+      "completedJobs": "Trabalhos Concluídos",
+      "upcomingBookings": "Próximas Reservas",
+      "recentReviews": "Avaliações Recentes"
+    },
+    "services": {
+      "regular": "Limpeza Regular",
+      "deep": "Limpeza Profunda",
+      "moveInOut": "Limpeza de Mudança",
+      "office": "Limpeza de Escritório",
+      "window": "Limpeza de Janelas",
+      "carpet": "Limpeza de Carpetes",
+      "laundry": "Serviço de Lavandaria",
+      "organizing": "Organização",
+      "postConstruction": "Limpeza Pós-Construção",
+      "airbnb": "Rotatividade Airbnb"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "title": "O Meu Painel",
+      "upcomingBookings": "Próximas Reservas",
+      "pastBookings": "Reservas Anteriores",
+      "favoriteWorkers": "Trabalhadores Favoritos",
+      "quickBook": "Reserva Rápida"
+    },
+    "search": {
+      "title": "Encontrar Trabalhadores",
+      "location": "Localização",
+      "service": "Tipo de Serviço",
+      "date": "Data",
+      "priceRange": "Faixa de Preço",
+      "rating": "Avaliação Mínima",
+      "results": "trabalhadores encontrados",
+      "noResults": "Nenhum trabalhador encontrado na sua área",
+      "ecoFriendly": "Ecológico",
+      "petFriendly": "Amigo de Animais",
+      "specialtyServices": "Serviços Especializados"
+    }
+  },
+  "booking": {
+    "title": "Reservar Serviço de Limpeza",
+    "selectService": "Selecionar Serviço",
+    "selectDate": "Selecionar Data e Hora",
+    "address": "Morada do Serviço",
+    "notes": "Notas Adicionais",
+    "notesPlaceholder": "Instruções ou requisitos especiais...",
+    "summary": "Resumo da Reserva",
+    "worker": "Trabalhador",
+    "service": "Serviço",
+    "dateTime": "Data e Hora",
+    "duration": "Duração",
+    "hours": "horas",
+    "total": "Total",
+    "confirmBooking": "Confirmar Reserva",
+    "upcoming": "Próximas",
+    "past": "Anteriores",
+    "paid": "Pago",
+    "paymentDue": "Pagamento Pendente",
+    "payNow": "Pagar Agora",
+    "message": "Mensagem",
+    "confirm": "Confirmar",
+    "startJob": "Iniciar Trabalho",
+    "complete": "Concluir",
+    "cancel": "Cancelar",
+    "leaveReview": "Deixar Avaliação",
+    "reviewed": "Avaliado",
+    "bookAgain": "Reservar Novamente",
+    "rebookingInfo": "A re-reservar a partir do seu pedido anterior - morada e serviço pré-preenchidos",
+    "noUpcoming": "Sem reservas próximas",
+    "noUpcomingDesc": "Ainda não tem reservas próximas.",
+    "findWorker": "Encontrar um Trabalhador",
+    "noPast": "Sem reservas anteriores",
+    "noPastDesc": "As suas reservas concluídas e canceladas aparecerão aqui.",
+    "status": {
+      "pending": "Pendente",
+      "confirmed": "Confirmada",
+      "inProgress": "Em Curso",
+      "completed": "Concluída",
+      "cancelled": "Cancelada"
+    },
+    "details": "Detalhes da Reserva",
+    "date": "Data",
+    "time": "Hora",
+    "location": "Localização",
+    "customer": "Cliente",
+    "notFound": "Reserva não encontrada"
+  },
+  "tracking": {
+    "title": "Rastreamento em Tempo Real",
+    "workerDescription": "Partilhe a sua localização para o cliente ver quando vai chegar",
+    "startSharing": "Começar a Partilhar Localização",
+    "stopSharing": "Parar Partilha",
+    "sharingActive": "Partilha de localização ativa",
+    "navigate": "Navegar",
+    "started": "Partilha de localização iniciada",
+    "stopped": "Partilha de localização parada",
+    "startFailed": "Falha ao iniciar rastreamento",
+    "stopFailed": "Falha ao parar rastreamento",
+    "gpsNotSupported": "GPS não é suportado neste dispositivo",
+    "locationError": "Não foi possível obter a sua localização",
+    "workerEnRoute": "{name} está a caminho",
+    "distance": "Distância",
+    "eta": "Chegada Estimada",
+    "lastUpdate": "Última atualização",
+    "notStarted": "Rastreamento não iniciado",
+    "notStartedDesc": "O trabalhador partilhará a sua localização quando estiver a caminho"
+  },
+  "chat": {
+    "title": "Chat",
+    "noMessages": "Ainda não há mensagens. Inicie a conversa!",
+    "placeholder": "Escreva a sua mensagem...",
+    "sendError": "Falha ao enviar mensagem",
+    "today": "Hoje",
+    "yesterday": "Ontem"
+  },
+  "messages": {
+    "title": "Mensagens",
+    "noMessages": "Ainda não há mensagens",
+    "placeholder": "Escreva uma mensagem...",
+    "send": "Enviar",
+    "newMessageFrom": "Nova mensagem de",
+    "reply": "Responder",
+    "fullChat": "Chat completo",
+    "unread": "não lidas",
+    "noNewMessages": "Sem novas mensagens",
+    "markAsRead": "Marcar como lida",
+    "viewAllMessages": "Ver todas as mensagens",
+    "justNow": "Agora mesmo",
+    "minutesAgo": "min atrás",
+    "hoursAgo": "h atrás"
+  },
+  "footer": {
+    "description": "A conectá-lo com profissionais de limpeza de confiança.",
+    "company": "Empresa",
+    "support": "Suporte",
+    "legal": "Legal",
+    "aboutUs": "Sobre Nós",
+    "careers": "Carreiras",
+    "press": "Imprensa",
+    "helpCenter": "Centro de Ajuda",
+    "contactUs": "Contacte-nos",
+    "faq": "FAQ",
+    "termsOfService": "Termos de Serviço",
+    "privacyPolicy": "Política de Privacidade",
+    "cookiePolicy": "Política de Cookies",
+    "allRightsReserved": "Todos os direitos reservados."
+  },
+  "days": {
+    "sunday": "Domingo",
+    "monday": "Segunda-feira",
+    "tuesday": "Terça-feira",
+    "wednesday": "Quarta-feira",
+    "thursday": "Quinta-feira",
+    "friday": "Sexta-feira",
+    "saturday": "Sábado"
+  },
+  "errors": {
+    "somethingWentWrong": "Algo correu mal",
+    "tryAgainLater": "Pedimos desculpa pelo incómodo. Por favor, tente novamente ou contacte o suporte se o problema persistir.",
+    "tryAgain": "Tentar Novamente",
+    "goHome": "Ir para Início",
+    "pageNotFound": "Página Não Encontrada",
+    "pageNotFoundDescription": "A página que procura não existe ou foi movida.",
+    "browseServices": "Explorar Serviços"
+  }
+}

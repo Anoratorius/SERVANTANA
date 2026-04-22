@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Učitavanje...",
+    "error": "Došlo je do pogreške",
+    "save": "Spremi",
+    "cancel": "Odustani",
+    "delete": "Izbriši",
+    "edit": "Uredi",
+    "search": "Pretraži",
+    "filter": "Filtriraj",
+    "sort": "Sortiraj",
+    "viewAll": "Prikaži sve",
+    "learnMore": "Saznaj više",
+    "getStarted": "Započni",
+    "back": "Natrag",
+    "next": "Dalje",
+    "submit": "Pošalji",
+    "confirm": "Potvrdi",
+    "close": "Zatvori"
+  },
+  "nav": {
+    "home": "Početna",
+    "findWorkers": "Pronađi radnike",
+    "howItWorks": "Kako funkcionira",
+    "about": "O nama",
+    "contact": "Kontakt",
+    "login": "Prijava",
+    "signup": "Registracija",
+    "logout": "Odjava",
+    "dashboard": "Nadzorna ploča",
+    "profile": "Profil",
+    "settings": "Postavke",
+    "bookings": "Rezervacije",
+    "messages": "Poruke",
+    "favorites": "Favoriti"
+  },
+  "home": {
+    "hero": {
+      "title": "NAJVEĆE TRŽIŠTE USLUGA",
+      "subtitle": "Pronađite profesionalce u blizini",
+      "searchPlaceholder": "Unesite svoju lokaciju...",
+      "searchButton": "Pronađi radnike",
+      "detectingLocation": "Otkrivanje lokacije...",
+      "selectCategory": "Odaberite kategoriju...",
+      "searchCategories": "Pretraži kategorije...",
+      "noCategoriesFound": "Kategorije nisu pronađene",
+      "selectJob": "Odaberite zanimanje...",
+      "searchJobs": "Pretraži zanimanja...",
+      "noJobsFound": "Zanimanja nisu pronađena"
+    },
+    "stats": {
+      "happyCustomers": "Zadovoljni kupci",
+      "verifiedWorkers": "Verificirani radnici",
+      "completedJobs": "Završeni poslovi",
+      "avgRating": "Prosječna ocjena"
+    },
+    "features": {
+      "badge": "Zašto odabrati nas",
+      "title": "Pametniji način rezerviranja usluga",
+      "subtitle": "Doživite besprijekorno tržište s značajkama dizajniranim za moderni život.",
+      "verified": {
+        "title": "Verificirani profesionalci",
+        "desc": "Svi radnici prolaze provjeru pozadine i verifikaciju identiteta."
+      },
+      "payment": {
+        "title": "Sigurna plaćanja",
+        "desc": "Platite sigurno putem Stripea, PayPala ili kriptovaluta. Uključena garancija povrata novca."
+      },
+      "ai": {
+        "title": "Pokreće AI",
+        "desc": "Pametno uparivanje, trenutne procjene i inteligentno zakazivanje."
+      },
+      "booking": {
+        "title": "Trenutna rezervacija",
+        "desc": "Rezervirajte za manje od minute. Dostupna usluga isti dan."
+      },
+      "local": {
+        "title": "Lokalni radnici",
+        "desc": "Povežite se s pouzdanim profesionalcima u vašem susjedstvu."
+      },
+      "reviews": {
+        "title": "Prave recenzije",
+        "desc": "Verificirane recenzije od stvarnih kupaca. Bez lažnih ocjena."
+      }
+    },
+    "howItWorks": {
+      "title": "Kako funkcionira",
+      "subtitle": "Čišćenje vašeg prostora jednostavno je kao 1-2-3-4",
+      "step1": {
+        "title": "Pretraži",
+        "description": "Unesite svoju lokaciju kako biste pronašli dostupne radnike u vašem području."
+      },
+      "step2": {
+        "title": "Odaberi",
+        "description": "Usporedite radnike na temelju ocjena, recenzija i cijena."
+      },
+      "step3": {
+        "title": "Rezerviraj",
+        "description": "Odaberite željeni datum, vrijeme i usluge."
+      },
+      "step4": {
+        "title": "Opusti se",
+        "description": "Sjednite dok se vaš prostor profesionalno čisti."
+      }
+    },
+    "cta": {
+      "title": "Spremni za početak?",
+      "subtitle": "Pridružite se tisućama zadovoljnih kupaca koji vjeruju Servantani za sve svoje potrebe za uslugama.",
+      "customerButton": "Rezerviraj radnika",
+      "workerButton": "Ja sam radnik"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Dobrodošli natrag",
+      "subtitle": "Prijavite se u svoj račun",
+      "email": "E-pošta",
+      "password": "Lozinka",
+      "rememberMe": "Zapamti me",
+      "forgotPassword": "Zaboravljena lozinka?",
+      "loginButton": "Prijava",
+      "noAccount": "Nemate račun?",
+      "signupLink": "Registrirajte se"
+    },
+    "signup": {
+      "title": "Kreiraj račun",
+      "subtitle": "Pridružite se sada",
+      "firstName": "Ime",
+      "lastName": "Prezime",
+      "email": "E-pošta",
+      "phone": "Broj telefona",
+      "password": "Lozinka",
+      "confirmPassword": "Potvrdi lozinku",
+      "accountType": "Želim:",
+      "customer": "Rezervirati radnika",
+      "worker": "Ja sam radnik",
+      "terms": "Prihvaćam uvjete korištenja i politiku privatnosti",
+      "termsPrefix": "Prihvaćam",
+      "termsAnd": "i",
+      "signupButton": "Kreiraj račun",
+      "hasAccount": "Već imate račun?",
+      "loginLink": "Prijava"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Profil radnika",
+      "about": "O meni",
+      "services": "Usluge",
+      "reviews": "Recenzije",
+      "availability": "Dostupnost",
+      "hourlyRate": "Satnica",
+      "experience": "Iskustvo",
+      "years": "godina",
+      "verified": "Verificiran",
+      "rating": "Ocjena",
+      "bookings": "Završene rezervacije",
+      "responseTime": "Vrijeme odgovora",
+      "bookNow": "Rezerviraj sada",
+      "ecoFriendly": "Ekološki",
+      "petFriendly": "Prijateljski prema ljubimcima",
+      "introVideo": "Video predstavljanje"
+    },
+    "dashboard": {
+      "title": "Nadzorna ploča radnika",
+      "earnings": "Zarada",
+      "todayBookings": "Današnje rezervacije",
+      "pendingRequests": "Zahtjevi na čekanju",
+      "completedJobs": "Završeni poslovi",
+      "upcomingBookings": "Nadolazeće rezervacije",
+      "recentReviews": "Nedavne recenzije"
+    }
+  },
+  "booking": {
+    "title": "Rezerviraj uslugu čišćenja",
+    "selectService": "Odaberi uslugu",
+    "selectDate": "Odaberi datum i vrijeme",
+    "address": "Adresa usluge",
+    "notes": "Dodatne napomene",
+    "notesPlaceholder": "Posebne upute ili zahtjevi...",
+    "summary": "Sažetak rezervacije",
+    "worker": "Radnik",
+    "service": "Usluga",
+    "dateTime": "Datum i vrijeme",
+    "duration": "Trajanje",
+    "hours": "sati",
+    "total": "Ukupno",
+    "confirmBooking": "Potvrdi rezervaciju",
+    "status": {
+      "pending": "Na čekanju",
+      "confirmed": "Potvrđeno",
+      "inProgress": "U tijeku",
+      "completed": "Završeno",
+      "cancelled": "Otkazano"
+    }
+  },
+  "messages": {
+    "title": "Poruke",
+    "noMessages": "Još nema poruka",
+    "placeholder": "Napišite poruku...",
+    "send": "Pošalji",
+    "justNow": "Upravo sada",
+    "minutesAgo": "min prije",
+    "hoursAgo": "h prije"
+  },
+  "footer": {
+    "description": "Povezujemo vas s pouzdanim profesionalcima za čišćenje.",
+    "company": "Tvrtka",
+    "support": "Podrška",
+    "legal": "Pravne informacije",
+    "aboutUs": "O nama",
+    "careers": "Karijera",
+    "press": "Tisak",
+    "helpCenter": "Centar za pomoć",
+    "contactUs": "Kontaktirajte nas",
+    "faq": "ČPP",
+    "termsOfService": "Uvjeti korištenja",
+    "privacyPolicy": "Politika privatnosti",
+    "cookiePolicy": "Politika kolačića",
+    "allRightsReserved": "Sva prava pridržana."
+  },
+  "days": {
+    "sunday": "Nedjelja",
+    "monday": "Ponedjeljak",
+    "tuesday": "Utorak",
+    "wednesday": "Srijeda",
+    "thursday": "Četvrtak",
+    "friday": "Petak",
+    "saturday": "Subota"
+  },
+  "errors": {
+    "somethingWentWrong": "Nešto je pošlo po zlu",
+    "tryAgainLater": "Ispričavamo se zbog neugodnosti. Pokušajte ponovno ili kontaktirajte podršku ako se problem nastavi.",
+    "tryAgain": "Pokušaj ponovno",
+    "goHome": "Idi na početnu",
+    "pageNotFound": "Stranica nije pronađena",
+    "pageNotFoundDescription": "Stranica koju tražite ne postoji ili je premještena.",
+    "browseServices": "Pregledaj usluge"
+  }
+}

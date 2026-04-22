@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Načítání...",
+    "error": "Došlo k chybě",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "search": "Hledat",
+    "filter": "Filtrovat",
+    "sort": "Seřadit",
+    "viewAll": "Zobrazit vše",
+    "learnMore": "Zjistit více",
+    "getStarted": "Začít",
+    "back": "Zpět",
+    "next": "Další",
+    "submit": "Odeslat",
+    "confirm": "Potvrdit",
+    "close": "Zavřít"
+  },
+  "nav": {
+    "home": "Domů",
+    "findWorkers": "Najít pracovníky",
+    "howItWorks": "Jak to funguje",
+    "about": "O nás",
+    "contact": "Kontakt",
+    "login": "Přihlásit se",
+    "signup": "Registrace",
+    "logout": "Odhlásit se",
+    "dashboard": "Přehled",
+    "profile": "Profil",
+    "settings": "Nastavení",
+    "bookings": "Rezervace",
+    "messages": "Zprávy",
+    "favorites": "Oblíbené"
+  },
+  "home": {
+    "hero": {
+      "title": "NEJVĚTŠÍ TRŽIŠTĚ SLUŽEB",
+      "subtitle": "Najděte profesionály ve vašem okolí",
+      "searchPlaceholder": "Zadejte vaši polohu...",
+      "searchButton": "Najít pracovníky",
+      "detectingLocation": "Zjišťování vaší polohy...",
+      "selectCategory": "Vyberte kategorii...",
+      "searchCategories": "Hledat kategorie...",
+      "noCategoriesFound": "Kategorie nenalezeny",
+      "selectJob": "Vyberte profesi...",
+      "searchJobs": "Hledat profese...",
+      "noJobsFound": "Profese nenalezeny"
+    },
+    "stats": {
+      "happyCustomers": "Spokojení zákazníci",
+      "verifiedWorkers": "Ověření pracovníci",
+      "completedJobs": "Dokončené práce",
+      "avgRating": "Průměrné hodnocení"
+    },
+    "features": {
+      "badge": "Proč si vybrat nás",
+      "title": "Chytřejší způsob rezervace služeb",
+      "subtitle": "Zažijte bezproblémové tržiště s funkcemi navrženými pro moderní život.",
+      "verified": {
+        "title": "Ověření profesionálové",
+        "desc": "Všichni pracovníci procházejí kontrolou pozadí a ověřením identity."
+      },
+      "payment": {
+        "title": "Bezpečné platby",
+        "desc": "Plaťte bezpečně přes Stripe, PayPal nebo krypto. Garance vrácení peněz v ceně."
+      },
+      "ai": {
+        "title": "Poháněno AI",
+        "desc": "Chytré párování, okamžité odhady a inteligentní plánování."
+      },
+      "booking": {
+        "title": "Okamžitá rezervace",
+        "desc": "Rezervujte za méně než minutu. K dispozici služba ještě dnes."
+      },
+      "local": {
+        "title": "Místní pracovníci",
+        "desc": "Spojte se s důvěryhodnými profesionály ve vašem sousedství."
+      },
+      "reviews": {
+        "title": "Skutečné recenze",
+        "desc": "Ověřené recenze od skutečných zákazníků. Žádná falešná hodnocení."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak to funguje",
+      "subtitle": "Nechat si uklidit je jednoduché jako 1-2-3-4",
+      "step1": {
+        "title": "Hledejte",
+        "description": "Zadejte svou polohu a najděte dostupné pracovníky ve vašem okolí."
+      },
+      "step2": {
+        "title": "Vyberte",
+        "description": "Porovnejte pracovníky podle hodnocení, recenzí a cen."
+      },
+      "step3": {
+        "title": "Rezervujte",
+        "description": "Vyberte si preferované datum, čas a služby."
+      },
+      "step4": {
+        "title": "Odpočívejte",
+        "description": "Posaďte se, zatímco váš prostor bude profesionálně uklizen."
+      }
+    },
+    "cta": {
+      "title": "Jste připraveni začít?",
+      "subtitle": "Připojte se k tisícům spokojených zákazníků, kteří důvěřují Servantaně pro všechny své potřeby služeb.",
+      "customerButton": "Rezervovat pracovníka",
+      "workerButton": "Jsem pracovník"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Vítejte zpět",
+      "subtitle": "Přihlaste se ke svému účtu",
+      "email": "E-mail",
+      "password": "Heslo",
+      "rememberMe": "Zapamatovat si mě",
+      "forgotPassword": "Zapomněli jste heslo?",
+      "loginButton": "Přihlásit se",
+      "noAccount": "Nemáte účet?",
+      "signupLink": "Zaregistrujte se"
+    },
+    "signup": {
+      "title": "Vytvořit účet",
+      "subtitle": "Připojte se nyní",
+      "firstName": "Jméno",
+      "lastName": "Příjmení",
+      "email": "E-mail",
+      "phone": "Telefonní číslo",
+      "password": "Heslo",
+      "confirmPassword": "Potvrdit heslo",
+      "accountType": "Chci:",
+      "customer": "Rezervovat pracovníka",
+      "worker": "Jsem pracovník",
+      "terms": "Souhlasím s podmínkami služby a zásadami ochrany osobních údajů",
+      "termsPrefix": "Souhlasím s",
+      "termsAnd": "a",
+      "signupButton": "Vytvořit účet",
+      "hasAccount": "Už máte účet?",
+      "loginLink": "Přihlásit se"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Profil pracovníka",
+      "about": "O mně",
+      "services": "Služby",
+      "reviews": "Recenze",
+      "availability": "Dostupnost",
+      "hourlyRate": "Hodinová sazba",
+      "experience": "Zkušenosti",
+      "years": "let",
+      "verified": "Ověřeno",
+      "rating": "Hodnocení",
+      "bookings": "Dokončené rezervace",
+      "responseTime": "Doba odezvy",
+      "bookNow": "Rezervovat nyní",
+      "ecoFriendly": "Ekologický",
+      "petFriendly": "Přátelský ke zvířatům",
+      "introVideo": "Úvodní video"
+    },
+    "dashboard": {
+      "title": "Panel pracovníka",
+      "earnings": "Výdělky",
+      "todayBookings": "Dnešní rezervace",
+      "pendingRequests": "Čekající požadavky",
+      "completedJobs": "Dokončené práce",
+      "upcomingBookings": "Nadcházející rezervace",
+      "recentReviews": "Poslední recenze"
+    }
+  },
+  "booking": {
+    "title": "Rezervovat úklidovou službu",
+    "selectService": "Vybrat službu",
+    "selectDate": "Vybrat datum a čas",
+    "address": "Adresa služby",
+    "notes": "Další poznámky",
+    "notesPlaceholder": "Speciální pokyny nebo požadavky...",
+    "summary": "Souhrn rezervace",
+    "worker": "Pracovník",
+    "service": "Služba",
+    "dateTime": "Datum a čas",
+    "duration": "Délka",
+    "hours": "hodin",
+    "total": "Celkem",
+    "confirmBooking": "Potvrdit rezervaci",
+    "status": {
+      "pending": "Čeká",
+      "confirmed": "Potvrzeno",
+      "inProgress": "Probíhá",
+      "completed": "Dokončeno",
+      "cancelled": "Zrušeno"
+    }
+  },
+  "messages": {
+    "title": "Zprávy",
+    "noMessages": "Zatím žádné zprávy",
+    "placeholder": "Napište zprávu...",
+    "send": "Odeslat",
+    "justNow": "Právě teď",
+    "minutesAgo": "min zpět",
+    "hoursAgo": "hod zpět"
+  },
+  "footer": {
+    "description": "Spojujeme vás s důvěryhodnými úklidovými profesionály.",
+    "company": "Společnost",
+    "support": "Podpora",
+    "legal": "Právní informace",
+    "aboutUs": "O nás",
+    "careers": "Kariéra",
+    "press": "Tisk",
+    "helpCenter": "Centrum pomoci",
+    "contactUs": "Kontaktujte nás",
+    "faq": "FAQ",
+    "termsOfService": "Podmínky služby",
+    "privacyPolicy": "Zásady ochrany osobních údajů",
+    "cookiePolicy": "Zásady cookies",
+    "allRightsReserved": "Všechna práva vyhrazena."
+  },
+  "days": {
+    "sunday": "Neděle",
+    "monday": "Pondělí",
+    "tuesday": "Úterý",
+    "wednesday": "Středa",
+    "thursday": "Čtvrtek",
+    "friday": "Pátek",
+    "saturday": "Sobota"
+  },
+  "errors": {
+    "somethingWentWrong": "Něco se pokazilo",
+    "tryAgainLater": "Omlouváme se za nepříjemnosti. Zkuste to prosím znovu nebo kontaktujte podporu, pokud problém přetrvává.",
+    "tryAgain": "Zkusit znovu",
+    "goHome": "Jít domů",
+    "pageNotFound": "Stránka nenalezena",
+    "pageNotFoundDescription": "Stránka, kterou hledáte, neexistuje nebo byla přesunuta.",
+    "browseServices": "Procházet služby"
+  }
+}

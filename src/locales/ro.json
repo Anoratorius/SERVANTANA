@@ -1,0 +1,241 @@
+{
+  "common": {
+    "appName": "Servantana",
+    "loading": "Se încarcă...",
+    "error": "A apărut o eroare",
+    "save": "Salvează",
+    "cancel": "Anulează",
+    "delete": "Șterge",
+    "edit": "Editează",
+    "search": "Caută",
+    "filter": "Filtrează",
+    "sort": "Sortează",
+    "viewAll": "Vezi toate",
+    "learnMore": "Află mai multe",
+    "getStarted": "Începe",
+    "back": "Înapoi",
+    "next": "Următorul",
+    "submit": "Trimite",
+    "confirm": "Confirmă",
+    "close": "Închide"
+  },
+  "nav": {
+    "home": "Acasă",
+    "findWorkers": "Găsește lucrători",
+    "howItWorks": "Cum funcționează",
+    "about": "Despre",
+    "contact": "Contact",
+    "login": "Autentificare",
+    "signup": "Înregistrare",
+    "logout": "Deconectare",
+    "dashboard": "Panou",
+    "profile": "Profil",
+    "settings": "Setări",
+    "bookings": "Rezervări",
+    "messages": "Mesaje",
+    "favorites": "Favorite"
+  },
+  "home": {
+    "hero": {
+      "title": "CEA MAI MARE PIAȚĂ DE SERVICII",
+      "subtitle": "Găsește profesioniști în apropiere",
+      "searchPlaceholder": "Introdu locația ta...",
+      "searchButton": "Găsește lucrători",
+      "detectingLocation": "Se detectează locația...",
+      "selectCategory": "Selectează categoria...",
+      "searchCategories": "Caută categorii...",
+      "noCategoriesFound": "Nu s-au găsit categorii",
+      "selectJob": "Selectează profesia...",
+      "searchJobs": "Caută profesii...",
+      "noJobsFound": "Nu s-au găsit profesii"
+    },
+    "stats": {
+      "happyCustomers": "Clienți mulțumiți",
+      "verifiedWorkers": "Lucrători verificați",
+      "completedJobs": "Lucrări finalizate",
+      "avgRating": "Rating mediu"
+    },
+    "features": {
+      "badge": "De ce să ne alegi",
+      "title": "Modul mai inteligent de a rezerva servicii",
+      "subtitle": "Experimentează o piață fluidă cu funcții concepute pentru viața modernă.",
+      "verified": {
+        "title": "Profesioniști verificați",
+        "desc": "Toți lucrătorii trec prin verificări de fond și verificare a identității."
+      },
+      "payment": {
+        "title": "Plăți sigure",
+        "desc": "Plătește în siguranță cu Stripe, PayPal sau cripto. Garanție de rambursare inclusă."
+      },
+      "ai": {
+        "title": "Alimentat de AI",
+        "desc": "Potrivire inteligentă, estimări instantanee și programare inteligentă."
+      },
+      "booking": {
+        "title": "Rezervare instantanee",
+        "desc": "Rezervă în mai puțin de un minut. Serviciu în aceeași zi disponibil."
+      },
+      "local": {
+        "title": "Lucrători locali",
+        "desc": "Conectează-te cu profesioniști de încredere din vecinătatea ta."
+      },
+      "reviews": {
+        "title": "Recenzii reale",
+        "desc": "Recenzii verificate de la clienți reali. Fără rating-uri false."
+      }
+    },
+    "howItWorks": {
+      "title": "Cum funcționează",
+      "subtitle": "Curățenia spațiului tău este la fel de ușoară ca 1-2-3-4",
+      "step1": {
+        "title": "Caută",
+        "description": "Introdu locația pentru a găsi lucrători disponibili în zona ta."
+      },
+      "step2": {
+        "title": "Alege",
+        "description": "Compară lucrătorii pe baza rating-urilor, recenziilor și prețurilor."
+      },
+      "step3": {
+        "title": "Rezervă",
+        "description": "Selectează data, ora și serviciile preferate."
+      },
+      "step4": {
+        "title": "Relaxează-te",
+        "description": "Stai liniștit în timp ce spațiul tău este curățat profesional."
+      }
+    },
+    "cta": {
+      "title": "Ești gata să începi?",
+      "subtitle": "Alătură-te miilor de clienți mulțumiți care au încredere în Servantana pentru toate nevoile lor de servicii.",
+      "customerButton": "Rezervă un lucrător",
+      "workerButton": "Sunt lucrător"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bine ai revenit",
+      "subtitle": "Autentifică-te în contul tău",
+      "email": "Email",
+      "password": "Parolă",
+      "rememberMe": "Ține-mă minte",
+      "forgotPassword": "Ai uitat parola?",
+      "loginButton": "Autentificare",
+      "noAccount": "Nu ai cont?",
+      "signupLink": "Înregistrează-te"
+    },
+    "signup": {
+      "title": "Creează cont",
+      "subtitle": "Alătură-te acum",
+      "firstName": "Prenume",
+      "lastName": "Nume",
+      "email": "Email",
+      "phone": "Număr de telefon",
+      "password": "Parolă",
+      "confirmPassword": "Confirmă parola",
+      "accountType": "Vreau să:",
+      "customer": "Rezerv un lucrător",
+      "worker": "Sunt lucrător",
+      "terms": "Accept termenii și condițiile și politica de confidențialitate",
+      "termsPrefix": "Accept",
+      "termsAnd": "și",
+      "signupButton": "Creează cont",
+      "hasAccount": "Ai deja cont?",
+      "loginLink": "Autentifică-te"
+    }
+  },
+  "worker": {
+    "profile": {
+      "title": "Profil lucrător",
+      "about": "Despre",
+      "services": "Servicii",
+      "reviews": "Recenzii",
+      "availability": "Disponibilitate",
+      "hourlyRate": "Tarif orar",
+      "experience": "Experiență",
+      "years": "ani",
+      "verified": "Verificat",
+      "rating": "Rating",
+      "bookings": "Rezervări finalizate",
+      "responseTime": "Timp de răspuns",
+      "bookNow": "Rezervă acum",
+      "ecoFriendly": "Eco-friendly",
+      "petFriendly": "Prietenos cu animalele",
+      "introVideo": "Video de prezentare"
+    },
+    "dashboard": {
+      "title": "Panou lucrător",
+      "earnings": "Câștiguri",
+      "todayBookings": "Rezervări de azi",
+      "pendingRequests": "Cereri în așteptare",
+      "completedJobs": "Lucrări finalizate",
+      "upcomingBookings": "Rezervări viitoare",
+      "recentReviews": "Recenzii recente"
+    }
+  },
+  "booking": {
+    "title": "Rezervă serviciu de curățenie",
+    "selectService": "Selectează serviciul",
+    "selectDate": "Selectează data și ora",
+    "address": "Adresa serviciului",
+    "notes": "Note suplimentare",
+    "notesPlaceholder": "Instrucțiuni sau cerințe speciale...",
+    "summary": "Rezumat rezervare",
+    "worker": "Lucrător",
+    "service": "Serviciu",
+    "dateTime": "Data și ora",
+    "duration": "Durată",
+    "hours": "ore",
+    "total": "Total",
+    "confirmBooking": "Confirmă rezervarea",
+    "status": {
+      "pending": "În așteptare",
+      "confirmed": "Confirmat",
+      "inProgress": "În desfășurare",
+      "completed": "Finalizat",
+      "cancelled": "Anulat"
+    }
+  },
+  "messages": {
+    "title": "Mesaje",
+    "noMessages": "Nu există mesaje încă",
+    "placeholder": "Scrie un mesaj...",
+    "send": "Trimite",
+    "justNow": "Chiar acum",
+    "minutesAgo": "min în urmă",
+    "hoursAgo": "ore în urmă"
+  },
+  "footer": {
+    "description": "Te conectăm cu profesioniști de curățenie de încredere.",
+    "company": "Companie",
+    "support": "Suport",
+    "legal": "Legal",
+    "aboutUs": "Despre noi",
+    "careers": "Cariere",
+    "press": "Presă",
+    "helpCenter": "Centru de ajutor",
+    "contactUs": "Contactează-ne",
+    "faq": "FAQ",
+    "termsOfService": "Termeni și condiții",
+    "privacyPolicy": "Politica de confidențialitate",
+    "cookiePolicy": "Politica de cookie-uri",
+    "allRightsReserved": "Toate drepturile rezervate."
+  },
+  "days": {
+    "sunday": "Duminică",
+    "monday": "Luni",
+    "tuesday": "Marți",
+    "wednesday": "Miercuri",
+    "thursday": "Joi",
+    "friday": "Vineri",
+    "saturday": "Sâmbătă"
+  },
+  "errors": {
+    "somethingWentWrong": "Ceva nu a mers bine",
+    "tryAgainLater": "Ne cerem scuze pentru inconveniență. Te rugăm să încerci din nou sau să contactezi suportul dacă problema persistă.",
+    "tryAgain": "Încearcă din nou",
+    "goHome": "Mergi acasă",
+    "pageNotFound": "Pagina nu a fost găsită",
+    "pageNotFoundDescription": "Pagina pe care o cauți nu există sau a fost mutată.",
+    "browseServices": "Răsfoiește servicii"
+  }
+}
