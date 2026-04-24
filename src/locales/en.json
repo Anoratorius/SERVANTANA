@@ -135,9 +135,9 @@
       "card4": "Trust Scores"
     },
     "aiChat": {
-      "title": "AI Chat Assistant",
+      "title": "AI Assistant",
       "subtitle": "Get instant answers to your questions. Our AI assistant helps you find services, get information, and book appointments.",
-      "cta": "Start Chatting"
+      "cta": "Ask AI"
     },
     "app": {
       "badge": "Mobile Apps",
@@ -1784,7 +1784,7 @@
     "tryNow": "Try it now",
     "features": {
       "chat": {
-        "title": "AI Chat Assistant",
+        "title": "AI Assistant",
         "desc": "Get instant answers about services, bookings, and recommendations"
       },
       "smartMatch": {

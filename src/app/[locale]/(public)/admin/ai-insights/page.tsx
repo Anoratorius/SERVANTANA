@@ -607,7 +607,7 @@ export default function AIInsightsPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {[
-                      { name: "AI Chat Assistant", usage: 2847, trend: "+12%" },
+                      { name: "AI Assistant", usage: 2847, trend: "+12%" },
                       { name: "Smart Matching", usage: 1523, trend: "+8%" },
                       { name: "Photo Analysis", usage: 892, trend: "+23%" },
                       { name: "Price Estimator", usage: 654, trend: "+45%" },
