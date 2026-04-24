@@ -158,8 +158,8 @@ export default function AIChatPage() {
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto"
       >
-        <div className="container mx-auto max-w-3xl px-4 py-4">
-          <div className="space-y-4">
+        <div className="container mx-auto max-w-3xl px-4 py-2">
+          <div className="space-y-2">
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -239,7 +239,7 @@ export default function AIChatPage() {
                 )}
 
                 {/* Scroll anchor */}
-                <div ref={messagesEndRef} className="h-4" />
+                <div ref={messagesEndRef} className="h-2" />
               </div>
             </div>
           </div>
