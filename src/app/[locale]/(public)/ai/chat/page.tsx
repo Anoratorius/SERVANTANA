@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-import { Send, Bot, User, Loader2, Sparkles, ExternalLink } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, ExternalLink, ArrowLeft } from "lucide-react";
 
 interface SuggestedAction {
   label: string;
@@ -132,7 +132,14 @@ export default function AIChatPage() {
       <div className="flex-shrink-0 bg-white dark:bg-gray-950 border-b px-4 py-3">
         <div className="container mx-auto max-w-3xl">
           <div className="flex items-center gap-3">
-
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()}
+              className="h-10 w-10 shrink-0"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Bot className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             </div>
