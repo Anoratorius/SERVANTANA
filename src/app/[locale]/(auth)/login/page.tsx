@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -68,8 +68,14 @@ function LoginForm() {
         } else {
           localStorage.removeItem(REMEMBERED_EMAIL_KEY);
         }
-        // Force full page reload to ensure session cookies are properly set
-        window.location.href = callbackUrl;
+        // Fetch session to check user role
+        const session = await getSession();
+        // Redirect admins to admin panel, others to callbackUrl
+        if (session?.user?.role === "ADMIN") {
+          window.location.href = `/${locale}/admin`;
+        } else {
+          window.location.href = callbackUrl;
+        }
       }
     } catch {
       setErrorMessage("An error occurred. Please try again.");

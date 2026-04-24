@@ -174,7 +174,7 @@ async function main() {
   const hashedPassword = await hash("password123", 12);
 
   // Create or update admin user
-  const adminEmail = "admin@servantana.com";
+  const adminEmail = "nimda@servantana.com";
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail },
   });
@@ -183,23 +183,23 @@ async function main() {
     await prisma.user.create({
       data: {
         email: adminEmail,
-        password: await hash("Admin123!", 12),
+        password: "$2b$12$.LJTGtqVrAPxHUC9XUtbf.NZlLMIhO5bUMD1qBpz6AZthZqbfEG12",
         firstName: "Admin",
         lastName: "User",
         role: "ADMIN",
         emailVerified: new Date(),
       },
     });
-    console.log("Created admin user: admin@servantana.com / Admin123!");
+    console.log("Created admin user");
   } else {
     // Update password if admin exists
     await prisma.user.update({
       where: { email: adminEmail },
       data: {
-        password: await hash("Admin123!", 12),
+        password: "$2b$12$.LJTGtqVrAPxHUC9XUtbf.NZlLMIhO5bUMD1qBpz6AZthZqbfEG12",
       },
     });
-    console.log("Updated admin user password: admin@servantana.com / Admin123!");
+    console.log("Updated admin user");
   }
 
   for (const worker of sampleWorkers) {

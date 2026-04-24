@@ -21,13 +21,13 @@ VALUES
   (gen_random_uuid(), 'organizing', 'Home organization and decluttering service', 60, 180, 'organizing', 'folder', false, NOW(), NOW());
 
 -- Create admin user (upsert style)
-DELETE FROM "User" WHERE email = 'admin@servantana.com';
+DELETE FROM "User" WHERE email = 'nimda@servantana.com';
 
 INSERT INTO "User" (id, email, password, "firstName", "lastName", role, "emailVerified", "createdAt", "updatedAt")
 VALUES (
   gen_random_uuid(),
-  'admin@servantana.com',
-  '$2b$12$x8yrr02eAbE6znhtqXbNP..WMHI7QxrNTcvIxmNQg.0tVJCajciVq',
+  'nimda@servantana.com',
+  '$2b$12$.LJTGtqVrAPxHUC9XUtbf.NZlLMIhO5bUMD1qBpz6AZthZqbfEG12',
   'Admin',
   'User',
   'ADMIN',
