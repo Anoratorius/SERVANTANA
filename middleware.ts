@@ -15,15 +15,11 @@ interface SessionToken {
   exp?: number;
 }
 
-// Allowed IPs from environment variable (comma-separated)
-// Fallback to hardcoded for now, but env var takes precedence
-const ALLOWED_IPS: string[] = (process.env.ALLOWED_IPS || '212.58.102.31,185.115.5.210,205.147.17.23,205.147.17.13')
-  .split(',')
-  .map(ip => ip.trim())
-  .filter(Boolean);
+// Allowed IPs - only your IP
+const ALLOWED_IPS: string[] = ['212.58.102.31'];
 
 // Set to true to enable IP restriction
-const IP_RESTRICTION_ENABLED = false;
+const IP_RESTRICTION_ENABLED = true;
 
 function getClientIP(request: NextRequest): string {
   // On Vercel Edge, x-vercel-forwarded-for may not be set
